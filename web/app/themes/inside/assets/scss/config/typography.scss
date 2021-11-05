@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "NN";
+  src: url("../fonts/NNNouvelleGroteskSTD-Normal.woff2") format("woff2"),
+    url("../fonts/NNNouvelleGroteskSTD-Normal.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "NN";
+  font-size: 16px;
+
+  @include media-breakpoint-down(sm) {
+    font-size: 14px;
+  }
+}
