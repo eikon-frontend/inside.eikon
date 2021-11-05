@@ -3,17 +3,18 @@
 Website for the eikon 2021 open house. Using Wordpress / Bedrock / Timber / ACF and Webpack.
 
 More info:
-— https://wordpress.org/
-— https://roots.io/bedrock/
-— https://github.com/timber/timber
-— https://www.advancedcustomfields.com/
-— https://webpack.js.org/
+
+- https://wordpress.org/
+- https://roots.io/bedrock/
+- https://github.com/timber/timber
+- https://www.advancedcustomfields.com/
+- https://webpack.js.org/
 
 ## Pre-requist
 
-— Composer -> https://getcomposer.org/download/
-— Nodejs / npm -> https://nodejs.org/en/
-— Yarn -> https://yarnpkg.com/getting-started/install
+- Composer -> https://getcomposer.org/download/
+- Nodejs / npm -> https://nodejs.org/en/
+- Yarn -> https://yarnpkg.com/getting-started/install
 
 ## Setup
 
