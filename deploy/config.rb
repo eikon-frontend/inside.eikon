@@ -29,7 +29,9 @@ namespace :deploy do
     end
   end
 end
-after 'deploy:finishing', 'deploy:clear_cache', 'deploy:yarn_build'
+after 'deploy:finishing', 'deploy:yarn_build'
+after 'deploy:finished', 'deploy:clear_cache'
+
 
 
 
