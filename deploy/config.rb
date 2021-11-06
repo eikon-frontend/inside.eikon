@@ -24,8 +24,8 @@ namespace :deploy do
 	end
   task :yarn_build do
 	 	on roles(:app) do
-      execute "yarn --cwd '#{fetch(:deploy_to)}/current/web/app/themes/inside'"
-      execute "yarn --cwd '#{fetch(:deploy_to)}/current/web/app/themes/inside' build"
+      execute "yarn --cwd '#{fetch(:release_path)}/web/app/themes/inside'"
+      execute "yarn --cwd '#{fetch(:release_path)}/web/app/themes/inside' build"
     end
   end
 end
