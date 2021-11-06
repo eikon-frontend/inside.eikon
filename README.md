@@ -62,3 +62,13 @@ then you can use the following commands to build or watch the assets
 ```
   yarn watch
 ```
+
+### Deployment
+
+Deploys are automatically launched using github actions when commit are pushed on the branch `main`
+
+You can manually deploy the project using:
+
+```
+cap production deploy
+```
