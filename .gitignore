@@ -25,3 +25,4 @@ web/.htaccess
 wp-cli.local.yml
 
 .DS_Store
+/log
