@@ -1,11 +1,11 @@
 import 'bootstrap';
 
 import navigation from './components/navigation';
-import gallery from './components/gallery';
+import slider from './components/slider';
 
 const init = () => {
   navigation();
-  gallery();
+  slider();
 };
 
 init();

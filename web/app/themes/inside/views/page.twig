@@ -5,8 +5,46 @@
     <h1>
       {{post.title}}
     </h1>
-    <div class="page-content">
+    <div>
+      <div class="ratio ratio-16x9">
+        {{post.get_field('video')}}
+      </div>
       {{post.content}}
     </div>
+    {% if post.get_field('videomaton') %}
+      {% include 'parts/title-banner.twig' with { title: "Photo maton" } %}
+      <div class="row">
+        {% for item in post.get_field('videomaton') %}
+          <div class="col-6">
+            <div class="ratio ratio-1x1">
+              {{ item.video }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if projects %}
+      {% include 'parts/title-banner.twig' with { title: "Travaux" } %}
+      <div class="row">
+        {% for project in projects %}
+          <div class="col-4">
+            <a class="project-teaser" href="{{ project.link }}">
+              <img src="{{ project.thumbnail.src("medium") }}" alt="{{ project.thumbnail.alt }}">
+              <div class="project-data">
+                <span>
+                  {{ project.terms('subjects')[0].name }}
+                </span>
+                -
+                <span>
+                  {{ project.title }}
+                </span>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
   </div>
 {% endblock %}

@@ -42,8 +42,8 @@ function project_post_type() {
 		'label'                 => __( 'Projet', 'project' ),
 		'description'           => __( 'Travaux d\'écoles', 'project' ),
 		'labels'                => $labels,
-		'supports'              => array( 'title' ),
-		'taxonomies'            => array( 'year' ),
+		'supports'              => array( 'title', 'editor', 'thumbnail' ),
+		'taxonomies'            => array( 'year', 'subjects' ),
 		'hierarchical'          => false,
 		'public'                => true,
 		'show_ui'               => true,
@@ -84,4 +84,25 @@ register_taxonomy('years',array('project'), array(
     'show_admin_column' => true,
     'query_var' => true,
     'rewrite' => array( 'slug' => 'year' ),
+  ));
+
+register_taxonomy('subjects',array('project'), array(
+    'labels' => array(
+                'name' => _x( 'Branches', 'taxonomy general name' ),
+                'singular_name' => _x( 'Branche', 'taxonomy singular name' ),
+                'search_items' =>  __( 'Chercher branche' ),
+                'all_items' => __( 'Toutes les branches' ),
+                'parent_item' => __( 'Branche parente' ),
+                'parent_item_colon' => __( 'Branche parente:' ),
+                'edit_item' => __( 'Éditer l\'branche' ),
+                'update_item' => __( 'Mettre à jour l\'branche' ),
+                'add_new_item' => __( 'Nouvelle branche' ),
+                'new_item_name' => __( 'Nom de la nouvelle branche' ),
+                'menu_name' => __( 'Branches' ),
+              ),
+    'show_ui' => true,
+    'show_in_rest' => true,
+    'show_admin_column' => true,
+    'query_var' => true,
+    'rewrite' => array( 'slug' => 'subjects' ),
   ));
