@@ -1,13 +1,12 @@
 {% extends "base.twig" %}
 
 {% block content %}
-  <div class="container">
-    <h1>
-      frontpage:
-      {{post.title}}
-    </h1>
-    <div class="page-content">
-      {{post.content}}
-    </div>
-  </div>
+  {% include 'sections/section-landing.twig' %}
+  {% include 'sections/section-director.twig' %}
+  {% include 'sections/section-bigtitle.twig' %}
+  {% include 'sections/section-vlog.twig' %}
+  {% include 'sections/section-livefeed.twig' %}
+  {% include 'sections/section-navigationhub.twig' %}
+  {% include 'sections/section-showreel.twig' %}
+  {% include 'sections/section-inscription.twig' %}
 {% endblock %}
