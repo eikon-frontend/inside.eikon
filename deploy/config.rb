@@ -5,7 +5,7 @@ set :branch, :main
 set :log_level, :info
 
 set :linked_files, fetch(:linked_files, []).push('.env', 'web/.htaccess')
-set :linked_dirs, fetch(:linked_dirs, []).push('web/content/uploads')
+set :linked_dirs, fetch(:linked_dirs, []).push('web/app/uploads')
 set :linked_dirs, fetch(:linked_dirs, []).push('storage/framework/sessions')
 
 # In your config/deploy.rb file add the following task
