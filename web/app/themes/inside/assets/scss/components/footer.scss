@@ -1,4 +1,35 @@
 .site-footer {
-  margin-top: auto;
-  padding: ($spacer * 6) 0;
+  margin: auto;
+  // padding: ($spacer * 6) 0;
+  padding: 45px 0;
+  background: black;
+  color: white;
+  line-height: 22px;
+  font-size: 16px;
+}
+
+.site-footer a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer_cta {
+  text-align: center;
+}
+
+.footer_cta img {
+  height: 40px;
+}
+
+.footer_cta_sn {
+  margin: 15px auto;
+  max-width: 160px;
+}
+
+.footer_cta_lg {
+  max-width: 250px;
+}
+
+.footer_logos {
+  width: 70px;
 }
