@@ -1,0 +1,14 @@
+.project-teaser {
+  display: block;
+  width: 100%;
+  height: auto;
+  text-decoration: none;
+  color: $black;
+
+  img {
+    width: 100%;
+    height: auto;
+    border: 1px solid $black;
+    box-sizing: border-box;
+  }
+}
