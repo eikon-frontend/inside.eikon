@@ -1,0 +1,4 @@
+.grid-sizer,
+.grid-item {
+  width: calc(33.33% - $grid-gutter-width);
+}

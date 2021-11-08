@@ -1,10 +1,10 @@
 import 'bootstrap';
 
-import navigation from './components/navigation';
+import masonry from './components/masonry';
 import slider from './components/slider';
 
 const init = () => {
-  navigation();
+  masonry();
   slider();
 };
 

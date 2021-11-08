@@ -5,6 +5,13 @@ $themeColor: $black !default;
 .swiper {
   position: relative;
 
+  .swiper-slide {
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
   .swiper-prev {
     position: absolute;
     top: 50%;
