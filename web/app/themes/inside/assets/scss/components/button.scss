@@ -6,9 +6,18 @@
   padding: 10px 20px;
   margin: 10px;
   border: 1px solid black;
-  border-radius: 20px;
+  border-radius: 40px;
   background: white;
   text-transform: uppercase;
+  transition:.2s;
+}
+
+.jpo_btn:hover {
+  background: black;
+}
+
+.jpo_btn:hover a {
+  color: white;
 }
 
 .jpo_btn a {

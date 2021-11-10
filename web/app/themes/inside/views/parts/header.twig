@@ -1,7 +1,16 @@
 <header class="site-header">
-  <div class="container">
+  <div class="containerfluid">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="header_nav">
+        <a href="#">Inside eikon</a>
+      </div>
+      <div class="header_nav">
+        {% include 'parts/menu.twig' %}
+      </div>
+      <div class="header_nav">
+        <a href="#">Inscriptions →</a>
+      </div>
+    </div>
     <hr>
-    {% include 'parts/menu.twig' %}
-    {% include 'components/icon.twig' with { icon_name: 'arrow_left', icon_class: 'mx-auto' } %}
   </div>
 </header>
