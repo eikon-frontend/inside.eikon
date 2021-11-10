@@ -50,6 +50,7 @@
     "masonry-layout": "^4.2.2",
     "mini-css-extract-plugin": "^0.9.0",
     "popper.js": "^1.16.1",
+    "scrollmagic": "^2.0.8",
     "svg-spritemap-webpack-plugin": "^3.5.7",
     "swiper": "^7.2.0",
     "url-loader": "^4.1.0"
