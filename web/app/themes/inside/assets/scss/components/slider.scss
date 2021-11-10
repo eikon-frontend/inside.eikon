@@ -4,31 +4,34 @@ $themeColor: $black !default;
 
 .swiper {
   position: relative;
+}
 
-  .swiper-slide {
-    img {
-      width: 100%;
-      height: auto;
-    }
+.swiper-slide {
+  img {
+    width: 100%;
+    height: auto;
   }
+}
 
-  .swiper-prev {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: auto;
-    background: red;
-    z-index: 1000;
-    cursor: pointer;
-  }
+.swiper-prev,
+.swiper-next {
+  position: absolute;
+  top: 50%;
+  width: auto;
+  color: #5e5d5e;
+  z-index: 1000;
+  cursor: pointer;
+  transform: translateY(-50%);
 
-  .swiper-next {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    width: auto;
-    background: red;
-    z-index: 1000;
-    cursor: pointer;
+  .icon {
+    font-size: 2rem;
   }
+}
+
+.swiper-prev {
+  left: 0;
+}
+
+.swiper-next {
+  right: 0;
 }

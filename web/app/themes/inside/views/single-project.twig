@@ -1,35 +1,24 @@
 {% extends "base.twig" %}
 
 {% block content %}
-  <div class="container">
-    <h1>single project: {{ post.title }}</h1>
-    {{ post.terms("years")[0].name }}
-    {{ post.terms("subjects")[0].name }}
-    <div>
-      {{ post.content }}
-    </div>
-    {% if post.galerie %}
-      <div>
-        <div class="swiper">
-          <div class="swiper-wrapper">
-            {% for item in post.get_field("galerie") %}
-              <div class="swiper-slide">
-                {% if item.acf_fc_layout == "image" %}
-                  <img src="{{ item.image.sizes.large }}">
-                {% elseif item.acf_fc_layout == "video" %}
-                  <div class="ratio ratio-16x9">
-                    {{ item.video }}
-                  </div>
-                {% endif %}
-              </div>
-            {% endfor %}
-          </div>
-          <div class="row d-flex justify-content-between">
-            <div class="swiper-prev">←</div>
-            <div class="swiper-next">→</div>
-          </div>
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-md-8">
+        {% include 'components/galerie-slider.twig' with {galerie: post.get_field("galerie")} %}
+      </div>
+      <div class="col-md-4">
+        <div class="mb-5">
+          <h1>{{ post.title }}</h1>
+          <span class="badge">
+            {{ post.terms("years")[0].name }}
+          </span>
+          <span class="badge">
+            {{ post.terms("subjects")[0].name }}
+          </span>
+        </div>
+        <div>
+          {{ post.content }}
         </div>
       </div>
     </div>
-    {% endif %}
 {% endblock %}
