@@ -11,23 +11,26 @@
       </div>
       {{post.content}}
     </div>
+  </div>
     {% if post.get_field('videomaton') %}
       {% include 'parts/title-banner.twig' with { title: "Photo maton" } %}
-      <div class="row">
-        {% for item in post.get_field('videomaton') %}
-          <div class="col-6">
-            <div class="ratio ratio-1x1">
-              {{ item.video }}
+      <div class="container py-5">
+        <div class="row">
+          {% for item in post.get_field('videomaton') %}
+            <div class="col-6">
+              <div class="ratio ratio-1x1">
+                {{ item.video }}
+              </div>
             </div>
-          </div>
-        {% endfor %}
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
+  </div>
 
-
-
-    {% if projects %}
-      {% include 'parts/title-banner.twig' with { title: "Travaux" } %}
+  {% if projects %}
+    {% include 'parts/title-banner.twig' with { title: "Travaux" } %}
+    <div class="container py-5">
       <div class="grid">
         <div class="grid-sizer"></div>
         {% for project in projects %}
@@ -47,7 +50,8 @@
           </div>
         {% endfor %}
       </div>
-    {% endif %}
+    </div>
+  {% endif %}
 
   </div>
 {% endblock %}

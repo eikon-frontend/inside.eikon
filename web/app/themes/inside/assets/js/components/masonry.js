@@ -7,6 +7,10 @@ const masonry = () => {
     percentPosition: true,
     gutter: 20
   });
+
+  window.onload = (event) => {
+    msnry.layout();
+  };
 };
 
 export default masonry;

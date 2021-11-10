@@ -26,3 +26,5 @@ wp-cli.local.yml
 
 .DS_Store
 /log
+
+.DS_Store
