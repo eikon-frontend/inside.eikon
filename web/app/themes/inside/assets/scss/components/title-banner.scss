@@ -17,3 +17,10 @@
     width: 200%;
     margin: 50px 0;
 }
+
+@media (max-width: 768px) {
+    .tb_title {
+        font-size: 17px;
+    line-height: 20px;
+    }
+}

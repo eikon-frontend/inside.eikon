@@ -3,9 +3,23 @@
     background-size: contain;
     background-repeat: no-repeat;
     margin: 70px;
-    padding: 250px 40px 50px 100px;
+    padding: 20% 10%;
     width: 1000px;
     height: 557px;
     text-align: center;
     font-size: 22px;
+}
+
+@media (max-width: 1000px) {
+    .cta_bloc {
+        font-size: 16px;
+        width: 100%;
+        padding: 12% 0 12% 2%;
+    }
+
+    .d-flex.cta {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 }
