@@ -1,6 +1,7 @@
 .cta_bloc {
     background-image: url(../img/backgrounds/rectangle_downright_midfull.png);
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
     margin: 70px;
     padding: 250px 40px 50px 100px;
     width: 1000px;
