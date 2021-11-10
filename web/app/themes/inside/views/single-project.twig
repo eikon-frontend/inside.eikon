@@ -3,13 +3,28 @@
 {% block content %}
   <div class="container my-5">
     <div class="row">
+      <div class="col-12">
+        {% if 'imd' in post.terms("years")[0].slug %}
+          <a href="interactive-media-designer">
+            Retour au projet des IMD
+          </a>
+        {% elseif 'mp2' in post.terms("years")[0].slug %}
+          <a href="/maturite-artistique-post-cfc">
+            Retour au projet des MP2
+          </a>
+        {% elseif 'prepa' in post.terms("years")[0].slug %}
+          <a href="/annee-preparatoire">
+            Retour au projet des Prépa
+          </a>
+        {% endif %}
+      </div>
       <div class="col-md-8">
         {% include 'components/galerie-slider.twig' with {galerie: post.get_field("galerie")} %}
       </div>
       <div class="col-md-4">
         <div class="mb-5">
           <h1>{{ post.title }}</h1>
-          <span class="badge">
+          <span class="badge badge-dark">
             {{ post.terms("years")[0].name }}
           </span>
           <span class="badge">
