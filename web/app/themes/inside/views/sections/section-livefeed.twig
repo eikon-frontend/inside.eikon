@@ -1,4 +1,18 @@
-{% include 'parts/title-banner.twig' with { title: "le titre" } %}
+{% include 'parts/title-banner.twig' with { title: "live" } %}
 <div class="container">
-  <h2>section: livefeed</h2>
+  <div class="row schedule">
+    <div class="col">Année préparatoire →  14h</div>
+    <div class="col">Interactive Media Designer →  15h</div>
+    <div class="col">Maturité Post-CFC MP2 →  16h</div>
+  </div>
+  <div class="ratio ratio-16x9">
+    <iframe src="https://player.vimeo.com/video/369521302?h=64aa6feb2c" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="live_input mb-5">
+    {% if options.contact_form_shortcode %}
+      <div>
+        {{ function('do_shortcode', options.contact_form_shortcode) }}
+      </div>
+    {% endif %}
+  </div>
 </div>

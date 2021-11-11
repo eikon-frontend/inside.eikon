@@ -1,4 +1,45 @@
 .site-header {
-  margin: ($spacer * 6) 0;
+  margin: 20px 0;
   font-size: 1.125rem;
+}
+
+.header_nav {
+  padding: 0 60px;
+}
+
+.header_nav li {
+  list-style: none;
+}
+
+.header_nav li a,
+.header_nav a {
+  color: black;
+  text-decoration: none;
+}
+
+.container.landing {
+  margin: 0 auto 70px auto;
+}
+
+.homepagetitle {
+  margin-top: 50px;
+  text-transform: uppercase;
+  font-size: 80px;
+  line-height: 100px;
+}
+
+.landing {
+  margin: 30px 0;
+}
+
+header hr {
+  border-color: black;
+  opacity: 1;
+}
+
+@media (max-width: 1000px) {
+  .homepagetitle {
+    font-size: 45px;
+    line-height: 55px;
+  }
 }
