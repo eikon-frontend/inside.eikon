@@ -31,10 +31,15 @@
 
 .footer_logos {
   width: 70px;
+  margin: 10px;
 }
 
-@media (max-width: 991px) {
-  .d-flex.footer_cta_lg {
+.footer_block .col-12.col-md-4 {
+  margin: 20px auto;
+}
+
+@media (max-width: 767px) {
+  .footer_block {
     flex-direction: column!important;
   }
 }
