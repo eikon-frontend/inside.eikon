@@ -32,3 +32,9 @@
 .footer_logos {
   width: 70px;
 }
+
+@media (max-width: 991px) {
+  .d-flex.footer_cta_lg {
+    flex-direction: column!important;
+  }
+}
