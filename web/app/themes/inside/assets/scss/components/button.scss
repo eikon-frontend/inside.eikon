@@ -20,12 +20,11 @@
 
 .jpo_btn {
   padding: 10px 20px;
-  margin: 10px;
   border: 1px solid black;
   border-radius: 40px;
   background: white;
   text-transform: uppercase;
-  transition:.2s;
+  transition: 0.2s;
 }
 
 .jpo_btn:hover {
@@ -43,7 +42,6 @@
 }
 
 @media (max-width: 1000px) {
-
   .jpo_btn {
     padding: 5px 10px;
     margin: 10px auto;

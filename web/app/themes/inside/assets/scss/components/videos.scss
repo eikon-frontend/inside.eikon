@@ -1,63 +1,85 @@
 .schedule {
-    text-align: center;
-    padding: 40px 0 15px 0;
+  text-align: center;
+  padding: 40px 0 15px 0;
 }
 
 .ratio.ratio-16x9 {
-    margin: 25px 0;
+  margin: 25px 0;
 }
 
 .live_questions_input {
-    border-radius: 20px;
+  border-radius: 20px;
 }
 
 .live_input {
-    margin: 50px;
+  margin: 50px;
 }
 
-.form-control:focus {
+.wpforms-field-label {
+  display: none;
+}
+
+.wpforms-confirmation-container,
+.wpforms-submit-container {
+  text-align: center;
+}
+
+.wpforms-field {
+  margin-bottom: 1rem;
+}
+
+.wpforms-error {
+  padding-left: 1rem;
+}
+
+.wpforms-field-small,
+.wpforms-field-medium {
+  @extend .form-control;
+
+  &:focus {
     border-color: black;
     box-shadow: 0 0 0 0.25rem rgb(0 0 0 / 25%);
+  }
 }
 
 .live_btn {
-    width: 100px;
-    border-radius: 20px;
-    background-color: white;
-    color: black;
-    margin-bottom: 20px;
+  width: 100px;
+  border-radius: 20px;
+  background-color: white;
+  color: black;
+  margin-bottom: 20px;
 }
 
 .live_btn:hover {
-    background-color: black;
+  background-color: black;
 }
 
 .ratio.ratio-16x9.showreel {
-    margin: 0;
+  margin: 0;
 }
 
 .container.vlog {
-    height: 550px;
-    width: 900px;
-    margin-top: 80px;
+  height: 550px;
+  width: 900px;
+  margin-top: 80px;
 }
 
 .position-relative.vlog {
-    height: 550px;
-    width: 900px; 
+  height: 550px;
+  width: 900px;
 }
 
 .ratio.ratio-16x9.vlog {
-    width: 748px;
-    border: 4px solid black;
-    margin: 0;
+  width: 748px;
+  border: 4px solid black;
+  margin: 0;
 }
 
 .position-absolute.vlog {
-    top: -16px;
-    left: 4.4px;
+  top: -16px;
+  left: 4.4px;
 }
 
 .vlog_block img {
-    width: 802px;
+  width: 802px;
 }
