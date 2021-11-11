@@ -7,53 +7,6 @@
   margin: 25px 0;
 }
 
-.live_questions_input {
-  border-radius: 20px;
-}
-
-.live_input {
-  margin: 50px;
-}
-
-.wpforms-field-label {
-  display: none;
-}
-
-.wpforms-confirmation-container,
-.wpforms-submit-container {
-  text-align: center;
-}
-
-.wpforms-field {
-  margin-bottom: 1rem;
-}
-
-.wpforms-error {
-  padding-left: 1rem;
-}
-
-.wpforms-field-small,
-.wpforms-field-medium {
-  @extend .form-control;
-
-  &:focus {
-    border-color: black;
-    box-shadow: 0 0 0 0.25rem rgb(0 0 0 / 25%);
-  }
-}
-
-.live_btn {
-  width: 100px;
-  border-radius: 20px;
-  background-color: white;
-  color: black;
-  margin-bottom: 20px;
-}
-
-.live_btn:hover {
-  background-color: black;
-}
-
 .ratio.ratio-16x9.showreel {
   margin: 0;
 }
