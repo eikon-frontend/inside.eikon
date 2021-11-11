@@ -12,7 +12,12 @@
     text-align: center;
 }
 
-.bigtitle {
+.containerfull.bigtitle {
+    width: 100%!important;
+    overflow: hidden;
+}
+
+.title.bigtitle {
     font-size: 250px;
     width: 200%;
     margin: 50px 0;

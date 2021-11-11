@@ -7,3 +7,9 @@
     justify-content: center;
     margin: 0 auto;
 }
+
+@media (max-width: 900px) {
+    .nhub_container {
+        height: 500px;
+    }
+}
