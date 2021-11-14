@@ -82,8 +82,22 @@ class StarterSite extends Timber\Site {
 	 * @param string $context context['this'] Being the Twig's {{ this }}.
 	 */
 	public function add_to_context( $context ) {
-		$context['menu']  = new Timber\Menu();
-		$context['site']  = $this;
+		$context['menu']  = new Timber\Menu('main-nav');
+
+    $current_post_id = get_the_id();
+    if(is_single()){
+      $first_term_id = get_the_terms( $current_post_id, 'years' )[0]->term_id;
+      $archive_page = get_field('archive_page', 'term_'.$first_term_id);
+
+      $context['menu']->items = array_map(function($item) use ($archive_page) {
+        if(is_single()){
+          $item->current = ($item->slug === $archive_page->post_name) ?: false;
+        }
+        return $item;
+      }, (new TimberMenu('main-nav'))->get_items());
+    }
+
+    $context['site']  = $this;
 		$context['options'] = get_fields('options');
 		return $context;
 	}

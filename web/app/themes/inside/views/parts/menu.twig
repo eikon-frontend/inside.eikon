@@ -1,10 +1,8 @@
 {% if menu %}
-<h2>menu</h2>
-	<ul>
-	{% for item in menu.items %}
-		<li class="{{ item.classes | join(' ') }}">
-			<a target="{{ item.target }}" href="{{ item.link }}">{{ item.title }}</a>
-		</li>
-	{% endfor %}
-	</ul>
+
+  <nav class="main-menu">
+    {% for item in menu.items %}
+      <a class="menu-item {% if item.current %}current-menu-item{% endif %}" target="{{ item.target }}" href="{{ item.link }}">{{ item.title }}</a>
+    {% endfor %}
+  </nav>
 {% endif %}
