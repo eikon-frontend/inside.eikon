@@ -7,28 +7,27 @@
 {% endblock %}
 
 	<body class="{{body_class}}" data-template="base.twig">
-  		<div class="icons-container">{{ source('/dist/icons.svg') }}</div>
+  	<div class="icons-container">{{ source('/dist/icons.svg') }}</div>
 
 		<a class="skip-link screen-reader-text" href="#content">{{ _e( 'Skip to content') }}</a>
-			{% block header %}
-				{% include 'parts/header.twig' %}
-			{% endblock %}
-		</header>
+    <div class="site-wrapper">
+      {% block header %}
+        {% include 'parts/header.twig' %}
+      {% endblock %}
 
-		<section id="content" role="main" class="content-wrapper">
-			<div class="wrapper">
-				{% block content %}
-					Sorry, no content
-				{% endblock %}
-      </div>
-		</section>
+      <section id="content" role="main" class="content-wrapper">
+        <div class="wrapper">
+          {% block content %}
+            Sorry, no content
+          {% endblock %}
+        </div>
+      </section>
 
-		{% block footer %}
-			<footer id="footer">
-				{% include 'parts/footer.twig' %}
-			</footer>
-			{{ function('wp_footer') }}
-		{% endblock %}
+      {% block footer %}
+        {% include 'parts/footer.twig' %}
+        {{ function('wp_footer') }}
+      {% endblock %}
+    </div>
     <script src="{{ site.theme.path }}/dist/main.js"></script>
 	</body>
 </html>
