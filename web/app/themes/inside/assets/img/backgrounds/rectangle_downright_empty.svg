@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1416.762" height="783" viewBox="0 0 1416.762 783">
+  <defs>
+    <rect id="rect-1" width="1319.765" height="709.651" x="0" y="0"/>
+    <mask id="mask-2" x="0" y="0" maskContentUnits="userSpaceOnUse" maskUnits="userSpaceOnUse">
+      <rect width="1416.762" height="783" x="0" y="0" fill="black"/>
+      <use fill="white" xlink:href="#rect-1"/>
+    </mask>
+    <rect id="rect-3" width="1319.765" height="709.651" x="42.159" y="36.674"/>
+    <mask id="mask-4" x="0" y="0" maskContentUnits="userSpaceOnUse" maskUnits="userSpaceOnUse">
+      <rect width="1416.762" height="783" x="0" y="0" fill="black"/>
+      <use fill="white" xlink:href="#rect-3"/>
+    </mask>
+    <rect id="rect-5" width="1319.765" height="709.651" x="85.235" y="73.349"/>
+    <mask id="mask-6" x="0" y="0" maskContentUnits="userSpaceOnUse" maskUnits="userSpaceOnUse">
+      <rect width="1416.762" height="783" x="0" y="0" fill="black"/>
+      <use fill="white" xlink:href="#rect-5"/>
+    </mask>
+  </defs>
+  <g>
+    <g>
+      <use fill="rgb(255,255,255)" xlink:href="#rect-1"/>
+      <use fill-opacity="0" stroke="rgb(0,0,0)" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="10" mask="url(#mask-2)" xlink:href="#rect-1"/>
+    </g>
+    <g>
+      <use fill="rgb(255,255,255)" xlink:href="#rect-3"/>
+      <use fill-opacity="0" stroke="rgb(0,0,0)" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="10" mask="url(#mask-4)" xlink:href="#rect-3"/>
+    </g>
+    <g>
+      <use fill="rgb(255,255,255)" xlink:href="#rect-5"/>
+      <use fill-opacity="0" stroke="rgb(0,0,0)" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="10" mask="url(#mask-6)" xlink:href="#rect-5"/>
+    </g>
+    <path fill="none" stroke="rgb(0,0,0)" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="5" d="M1405 119.19203747H87.06784083"/>
+    <ellipse cx="109.522" cy="98.563" fill="rgb(0,0,0)" rx="8.707" ry="8.71"/>
+    <ellipse cx="137.017" cy="98.563" fill="rgb(0,0,0)" rx="8.707" ry="8.71"/>
+    <ellipse cx="164.512" cy="98.563" fill="rgb(0,0,0)" rx="8.707" ry="8.71"/>
+  </g>
+</svg>

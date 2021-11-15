@@ -2,14 +2,21 @@
 
 {% block content %}
 	<div class="container py-5">
-		<h1>
+		<h1 class="mb-4">
 			{{post.title}}
 		</h1>
 		<div>
       {% if post.get_field('video') %}
-        <div class="ratio ratio-16x9">
-          {{post.get_field('video')}}
-        </div>
+	  <div class="d-flex">
+		<div class="redif-frame ratio ratio-custom">
+			<div class="iframe-container">
+				<div class="ratio ratio-16x9">
+				{{post.get_field('video')}}
+				</div>
+			</div>
+		</div>
+		<h2 class="title_redif">Rediffusion du live</h2>
+	  </div>
       {% endif %}
 
 			{{post.content}}
