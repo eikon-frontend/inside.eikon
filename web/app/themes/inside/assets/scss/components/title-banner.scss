@@ -19,8 +19,26 @@
 
 .title.bigtitle {
   font-size: 250px;
+  @include media-breakpoint-down(sm) {
+    font-size: 100px;
+  }
   width: 200%;
-  margin: 50px 0;
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1;
+  text-align: center;
+}
+
+.scroll-container {
+  margin: 150px 0;
+  @include media-breakpoint-down(sm) {
+    margin: 100px 0;
+  }
+}
+
+.scroll-left,
+.scroll-right {
+  position: relative;
 }
 
 @include media-breakpoint-down(md) {
