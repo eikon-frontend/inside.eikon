@@ -6,7 +6,7 @@
     <div class="col-12 col-md-4 my-2">Maturité Post-CFC MP2 →  16h</div>
   </div>
   <div class="ratio ratio-16x9 mb-3">
-    <iframe src="https://player.vimeo.com/video/369521302?h=64aa6feb2c" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    {{ post.get_field('video_livefeed') }}
   </div>
   <div class="live_input mb-5">
     {% if options.contact_form_shortcode %}
