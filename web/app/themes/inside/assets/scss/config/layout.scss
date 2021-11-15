@@ -3,3 +3,17 @@
   flex-direction: column;
   min-height: 100vh;
 }
+
+.project-cartouche {
+  border: 1px solid black;
+
+  .project-slider {
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .project-infos {
+    border-left: 1px solid black;
+  }
+}
