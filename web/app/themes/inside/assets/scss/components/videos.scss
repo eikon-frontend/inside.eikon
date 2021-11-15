@@ -1,3 +1,7 @@
+.ratio-custom {
+  --bs-aspect-ratio: 63.25%;
+}
+
 .vlog-frame {
   background-image: url(../img/backgrounds/rectangle_upleft_empty.svg);
   background-repeat: no-repeat;
@@ -6,13 +10,13 @@
 }
 
 .iframe-container {
-  top: 6.1%;
+  top: 6.6%;
   left: 0.7%;
   background: #000;
   position: absolute;
   box-sizing: border-box;
-  width: 81.3%;
-  height: 82.6%;
+  width: 91.4%;
+  height: 82.1%;
 
   iframe {
     width: 100%;

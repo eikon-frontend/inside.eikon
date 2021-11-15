@@ -1,7 +1,9 @@
-<div class="container pb-5">
-  <div class="vlog-frame ratio ratio-16x9">
-    <div class="iframe-container">
-      <iframe src="https://player.vimeo.com/video/369521302?h=64aa6feb2c" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+{% if post.get_field('video_vlog') %}
+  <div class="container pb-5">
+    <div class="vlog-frame ratio ratio-custom">
+      <div class="iframe-container">
+        {{ post.get_field('video_vlog') }}
+      </div>
     </div>
   </div>
-</div>
+{% endif %}
