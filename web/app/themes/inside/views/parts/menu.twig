@@ -2,7 +2,16 @@
 
   <nav class="main-menu">
     {% for item in menu.items %}
-      <a class="menu-item {% if item.current %}current-menu-item{% endif %}" target="{{ item.target }}" href="{{ item.link }}">{{ item.title }}</a>
+      <a class="menu-item {% if item.current %}current-menu-item{% endif %}" target="{{ item.target }}" href="{{ item.link }}">
+        <span class="d-none d-lg-block">{{ item.title }}</span>
+        <span class="d-lg-none">
+          {% if item.raccourci %}
+            {{ item.raccourci }}
+          {% else %}
+            {{ item.title }}
+          {% endif %}
+        </span>
+      </a>
     {% endfor %}
   </nav>
 {% endif %}
