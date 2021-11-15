@@ -19,18 +19,18 @@
 
 .title.bigtitle {
   font-size: 250px;
-  @include media-breakpoint-down(sm) {
-    font-size: 100px;
-  }
-  width: 200%;
   margin: 0;
   white-space: nowrap;
   line-height: 1;
   text-align: center;
+
+  @include media-breakpoint-down(sm) {
+    font-size: 100px;
+  }
 }
 
 .scroll-container {
-  margin: 150px 0;
+  margin: 200px 0;
   @include media-breakpoint-down(sm) {
     margin: 100px 0;
   }

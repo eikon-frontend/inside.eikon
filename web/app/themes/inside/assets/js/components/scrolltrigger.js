@@ -13,8 +13,8 @@ const scrolltrigger = () => {
       toggleActions: "restart pause pause reset", // onEnter, onLeave, onEnterBack, onLeaveBack
     },
   });
-  tl.fromTo(".scroll-left", { xPercent: -50 }, { xPercent: 0 }, "timeline");
-  tl.fromTo(".scroll-right", { xPercent: 0 }, { xPercent: -50 }, "timeline");
+  tl.fromTo(".scroll-left", { xPercent: -100 }, { xPercent: 100 }, "timeline");
+  tl.fromTo(".scroll-right", { xPercent: 100 }, { xPercent: -100 }, "timeline");
 };
 
 export default scrolltrigger;
