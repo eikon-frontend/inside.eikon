@@ -91,7 +91,7 @@
             {
                 "param": "page",
                 "operator": "==",
-                "value": "48"
+                "value": "58"
             }
         ]
     ],
@@ -103,5 +103,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1636984990
+    "show_in_rest": 0,
+    "modified": 1636986806
 }
