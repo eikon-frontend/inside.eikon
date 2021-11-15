@@ -48,7 +48,7 @@
   }
 }
 
-@media (max-width: 1000px) {
+@include media-breakpoint-down(lg) {
   .homepagetitle {
     font-size: 45px;
     line-height: 55px;

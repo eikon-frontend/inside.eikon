@@ -16,7 +16,7 @@
   }
 }
 
-@media (max-width: 1000px) {
+@include media-breakpoint-down(lg) {
   .wpforms-submit {
     padding: 5px 10px;
     margin: 10px auto;

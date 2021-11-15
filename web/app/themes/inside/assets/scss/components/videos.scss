@@ -12,27 +12,57 @@
 }
 
 .container.vlog {
-  height: 550px;
-  width: 900px;
-  margin-top: 80px;
+  height: 500px;
+  width: 100%;
+  margin: 80px auto;
+  background-image: url(../img/backgrounds/rectangle_upleft_empty.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: center;
 }
 
-.position-relative.vlog {
-  height: 550px;
-  width: 900px;
+.dvlog {
+  width: 64%;
+  margin-top: -4%;
+  margin-left: -4.7%;
 }
 
 .ratio.ratio-16x9.vlog {
-  width: 748px;
   border: 4px solid black;
-  margin: 0;
 }
 
-.position-absolute.vlog {
-  top: -16px;
-  left: 4.4px;
+@include media-breakpoint-down(xxl) {
+  .dvlog {
+    width: 75%;
+    margin-top: -5%;
+    margin-left: -6%;
+  }
 }
 
-.vlog_block img {
-  width: 802px;
+@include media-breakpoint-down(xl) {
+  .dvlog {
+    width: 88%;
+    margin-top: -5.2%;
+    margin-left: -5.8%;
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .dvlog {
+    width: 96%;
+    margin-top: -6%;
+    margin-left: -5.7%;
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .container.vlog {
+    width: 100%;
+    background-size: 100%;
+  }
+  .dvlog {
+    width: 98%;
+    margin-top: -7.4%;
+    margin-left: -6.7%;
+  }
 }

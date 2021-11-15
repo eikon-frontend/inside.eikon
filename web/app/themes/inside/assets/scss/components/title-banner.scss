@@ -1,26 +1,31 @@
 .tb_title {
-    font-size: 20px;
-    line-height: 24px;
-    text-transform: uppercase;
-    margin: 0;
+  font-size: 20px;
+  line-height: 24px;
+  text-transform: uppercase;
+  margin: 0;
 }
 
 .tb_bloc {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    padding: 15px 30px;
-    text-align: center;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 15px 30px;
+  text-align: center;
 }
 
-.bigtitle {
-    font-size: 250px;
-    width: 200%;
-    margin: 50px 0;
+.containerfull.bigtitle {
+  width: 100% !important;
+  overflow: hidden;
 }
 
-@media (max-width: 768px) {
-    .tb_title {
-        font-size: 17px;
+.title.bigtitle {
+  font-size: 250px;
+  width: 200%;
+  margin: 50px 0;
+}
+
+@include media-breakpoint-down(md) {
+  .tb_title {
+    font-size: 17px;
     line-height: 20px;
-    }
+  }
 }

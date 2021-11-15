@@ -1,9 +1,15 @@
 .nhub_container {
-    width: 100%;
-    height: 700px;
-    background-image: url(../img/backgrounds/bgnavhub.png);
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
+  width: 100%;
+  height: 700px;
+  background-image: url(../img/backgrounds/bgnavhub.png);
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+@include media-breakpoint-down(lg) {
+  .nhub_container {
+    height: 500px;
+  }
 }

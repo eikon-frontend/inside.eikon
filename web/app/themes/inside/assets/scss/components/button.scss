@@ -3,6 +3,12 @@
   border: 2px solid $black;
   padding: 0.5rem 0.75rem 0.25rem;
   display: inline-block;
+}
+
+.jpo_btn {
+  padding: 10px 20px;
+  border: 1px solid black;
+  border-radius: 40px;
   background: white;
 
   &.badge-dark {
