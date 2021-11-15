@@ -20,6 +20,60 @@
             "prepend": "",
             "append": "",
             "maxlength": ""
+        },
+        {
+            "key": "field_6188fc17268ff",
+            "label": "Adresse",
+            "name": "adresse",
+            "type": "textarea",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": "br"
+        },
+        {
+            "key": "field_61921a4387349",
+            "label": "URL Inscription",
+            "name": "url_inscription",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_61921a4f8734a",
+            "label": "Fichier Brochure",
+            "name": "file_brochure",
+            "type": "file",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": ""
         }
     ],
     "location": [
@@ -39,5 +93,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1636565465
+    "modified": 1636965001
 }

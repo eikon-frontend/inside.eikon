@@ -1,4 +1,12 @@
 .grid-sizer,
 .grid-item {
-  width: calc(33.33% - $grid-gutter-width);
+  width: calc(33.3333% - $grid-gutter-width);
+
+  @include media-breakpoint-down(md) {
+    width: calc(50% - $grid-gutter-width);
+  }
+
+  @include media-breakpoint-down(sm) {
+    width: calc(100% - $grid-gutter-width);
+  }
 }

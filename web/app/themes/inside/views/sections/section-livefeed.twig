@@ -10,9 +10,7 @@
   </div>
   <div class="live_input mb-5">
     {% if options.contact_form_shortcode %}
-      <div>
-        {{ function('do_shortcode', options.contact_form_shortcode) }}
-      </div>
+      {{ function('do_shortcode', options.contact_form_shortcode) }}
     {% endif %}
   </div>
 </div>

@@ -1,6 +1,11 @@
 .site-header {
-  margin: 20px 0;
   font-size: 1.125rem;
+  border-bottom: 1px solid black;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 9999;
 }
 
 .header_nav {
@@ -28,11 +33,6 @@
 
 .landing {
   margin: 30px 0;
-}
-
-header hr {
-  border-color: black;
-  opacity: 1;
 }
 
 .main-menu {

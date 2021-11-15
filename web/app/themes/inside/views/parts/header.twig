@@ -1,5 +1,5 @@
 <header class="site-header">
-  <div class="container-fluid">
+  <div class="container">
     <div class="d-flex justify-content-between align-items-center">
       <div class="header_nav">
         <a href="{{ site.link }}">Inside eikon</a>
@@ -7,10 +7,11 @@
       <div class="header_nav">
         {% include 'parts/menu.twig' %}
       </div>
-      <div class="header_nav">
-        <a href="#">Inscriptions →</a>
-      </div>
+      {% if options.url_inscription %}
+        <div class="header_nav">
+          <a href="{{ options.url_inscription }}" target="_blank">Inscriptions →</a>
+        </div>
+      {% endif %}
     </div>
-    <hr>
   </div>
 </header>

@@ -3,8 +3,12 @@
   <div class="cta_bloc">
     <p>Les inscriptions sont ouvertes à partir du <u>20.11.2021</u><br>jusqu'au vendredi <u>14.01.2022</u></p>
     <div class="d-flex justify-content-center">
-      <a href="#" class="jpo_btn mx-1">Inscriptions</a>
-      <a href="#" class="jpo_btn mx-1">Brochure d'informations</a>
+      {% if options.url_inscription %}
+        <a href="{{ options.url_inscription }}" target="_blank" class="jpo_btn mx-1">Inscriptions</a>
+      {% endif %}
+      {% if options.file_brochure %}
+        <a href="{{ options.file_brochure.url }}" target="_blank" class="jpo_btn mx-1">Brochure d'informations</a>
+      {% endif %}
     </div>
   </div>
 </div>
