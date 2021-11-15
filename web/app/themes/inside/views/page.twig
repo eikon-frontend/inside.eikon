@@ -17,11 +17,13 @@
 	</div>
 	{% if post.get_field('videomaton') %}
 		{% include 'parts/title-banner.twig' with { title: "Videomaton" } %}
-		<div class="container py-5">
+		<div class="containerfull vm py-5">
       <div class="col-6 mx-auto">
-        <div class="ratio ratio-1x1">
-          {{post.get_field('video')}}
-        </div>
+		<div class="vm_block">
+			<div class="ratio ratio-1x1">
+			{{post.get_field('video')}}
+			</div>
+		</div>
       </div>
 		</div>
 	{% endif %}
