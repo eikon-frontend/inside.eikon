@@ -1,68 +1,23 @@
-.schedule {
-  text-align: center;
-  padding: 40px 0 15px 0;
-}
-
-.ratio.ratio-16x9 {
-  margin: 25px 0;
-}
-
-.ratio.ratio-16x9.showreel {
-  margin: 0;
-}
-
-.container.vlog {
-  height: 500px;
-  width: 100%;
-  margin: 80px auto;
-  background-image: url(../img/backgrounds/rectangle_upleft_empty.png);
-  background-size: contain;
+.vlog-frame {
+  background-image: url(../img/backgrounds/rectangle_upleft_empty.svg);
   background-repeat: no-repeat;
-  background-position-x: center;
+  background-size: contain;
+  position: relative;
 }
 
-.dvlog {
-  width: 64%;
-  margin-top: -4%;
-  margin-left: -4.7%;
-}
+.iframe-container {
+  top: 6.1%;
+  left: 0.7%;
+  background: #000;
+  position: absolute;
+  box-sizing: border-box;
+  width: 81.3%;
+  height: 82.6%;
 
-.ratio.ratio-16x9.vlog {
-  border: 4px solid black;
-}
-
-@include media-breakpoint-down(xxl) {
-  .dvlog {
-    width: 75%;
-    margin-top: -5%;
-    margin-left: -6%;
-  }
-}
-
-@include media-breakpoint-down(xl) {
-  .dvlog {
-    width: 88%;
-    margin-top: -5.2%;
-    margin-left: -5.8%;
-  }
-}
-
-@include media-breakpoint-down(lg) {
-  .dvlog {
-    width: 96%;
-    margin-top: -6%;
-    margin-left: -5.7%;
-  }
-}
-
-@include media-breakpoint-down(md) {
-  .container.vlog {
+  iframe {
     width: 100%;
-    background-size: 100%;
-  }
-  .dvlog {
-    width: 98%;
-    margin-top: -7.4%;
-    margin-left: -6.7%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
   }
 }

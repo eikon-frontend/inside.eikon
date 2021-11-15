@@ -1,20 +1,22 @@
 {% extends "base.twig" %}
 
 {% block content %}
-  <div class="container my-5">
-    <div class="row">
-      <div class="col-12 mb-4">
-        {% if archive_page_url %}
-          <a href="{{ archive_page_url }}" class="jpo_btn">
-            ← {{ archive_page_name }}
-          </a>
-        {% endif %}
-      </div>
-      <div class="col-md-8">
+  {% if archive_page_url %}
+    <div class="container mt-5 mb-4 p-0">
+      <a href="{{ archive_page_url }}" class="jpo_btn ml-0">
+        ← {{ archive_page_name }}
+      </a>
+    </div>
+  {% endif %}
+  <div class="container mb-5">
+
+
+    <div class="row border border-dark">
+      <div class="col-md-8 p-0">
         {% include 'components/galerie-slider.twig' with {galerie: post.get_field("galerie")} %}
       </div>
-      <div class="col-md-4">
-        <div class="mb-5">
+      <div class="col-md-4 border-start border-dark">
+        <div class="p-4">
           <h1>{{ post.title }}</h1>
           <span class="badge badge-dark">
             {{ post.terms("years")[0].name }}
