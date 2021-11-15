@@ -25,3 +25,26 @@
     padding: 0;
   }
 }
+
+.containerfull.vm {
+  background-image: url(../img/backgrounds/bgvideomaton.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.vm_block {
+  background-image: url(../img/backgrounds/bgvideomaton_block.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: relative;
+}
+
+.vm_block iframe {
+  top: 6.5%;
+  left: 1.9%;
+  background: rgba(0, 0, 0, .5);
+  position: absolute;
+  box-sizing: border-box;
+  width: 93%;
+  height: 93%;
+}
