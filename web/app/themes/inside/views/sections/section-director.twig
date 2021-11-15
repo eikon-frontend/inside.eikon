@@ -1,5 +1,7 @@
-<div class="container">
-  <div class="ratio ratio-16x9">
-    {{ post.get_field('video_director') }}
+{% if post.get_field('video_director') %}
+  <div class="container">
+    <div class="ratio ratio-16x9">
+      {{ post.get_field('video_director') }}
+    </div>
   </div>
-</div>
+{% endif %}

@@ -1,4 +1,6 @@
-{% include 'parts/title-banner.twig' with { title: "showreel" } %}
-<div class="ratio ratio-16x9 m-0">
-  {{ post.get_field('video_showreel') }}
-</div>
+{% if post.get_field('video_showreel') %}
+  {% include 'parts/title-banner.twig' with { title: "showreel" } %}
+  <div class="ratio ratio-16x9 m-0">
+    {{ post.get_field('video_showreel') }}
+  </div>
+{% endif %}
