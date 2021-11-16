@@ -2,7 +2,8 @@
   --bs-aspect-ratio: 63.25%;
 }
 
-.vlog-frame {
+.vlog-frame,
+.redif-frame {
   background-image: url(../img/backgrounds/rectangle_upleft_empty.svg);
   background-repeat: no-repeat;
   background-size: contain;
@@ -12,7 +13,6 @@
 .iframe-container {
   top: 6.6%;
   left: 0.7%;
-  background: #000;
   position: absolute;
   box-sizing: border-box;
   width: 91.4%;
@@ -26,7 +26,7 @@
   }
 }
 
-.containerfull.vm {
+.vm {
   background-image: url(../img/backgrounds/bgvideomaton.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -42,7 +42,7 @@
 .vm_block iframe {
   top: 6.5%;
   left: 1.9%;
-  background: rgba(0, 0, 0, .5);
+  background: black;
   position: absolute;
   box-sizing: border-box;
   width: 93%;

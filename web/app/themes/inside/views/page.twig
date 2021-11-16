@@ -2,30 +2,44 @@
 
 {% block content %}
 	<div class="container py-5">
-		<h1>
+		<h1 class="mb-4 page_title">
 			{{post.title}}
 		</h1>
 		<div>
       {% if post.get_field('video') %}
-        <div class="ratio ratio-16x9">
-          {{post.get_field('video')}}
-        </div>
+	  <div class="d-flex">
+		<div class="redif-frame ratio ratio-custom">
+			<div class="iframe-container">
+				<div class="ratio ratio-16x9">
+				{{post.get_field('video')}}
+				</div>
+			</div>
+		</div>
+		<h2 class="title_redif">Rediffusion du live</h2>
+	  </div>
       {% endif %}
-
+		<div class="container page_desc my-3 my-md-5">
 			{{post.content}}
+		</div>
 		</div>
 	</div>
 	{% if post.get_field('videomaton') %}
 		{% include 'parts/title-banner.twig' with { title: "Videomaton" } %}
-		<div class="containerfull vm py-5">
-      <div class="col-6 mx-auto">
-		<div class="vm_block">
-			<div class="ratio ratio-1x1">
-			{{post.get_field('video')}}
-			</div>
-		</div>
+    <div class="vm py-5">
+      <div class="container my-5">
+        <div class="row">
+          {% for item in post.get_field('videomaton') %}
+            <div class="col-6">
+              <div class="vm_block">
+                <div class="ratio ratio-1x1">
+                {{ item.video }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
-		</div>
+    </div>
 	{% endif %}
 
 	{% if projects %}

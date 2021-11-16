@@ -47,3 +47,29 @@
     line-height: 20px;
   }
 }
+
+.title_redif {
+  font-size: 22px;
+  text-transform: uppercase;
+  text-orientation: mixed;
+  writing-mode: tb-rl;
+  text-align: center;
+}
+
+.page_title {
+  font-size: 80px;
+}
+
+.page_desc {
+  padding-left: 30%;
+}
+
+@include media-breakpoint-down(lg) {
+  .page_title {
+    font-size: 40px;
+  }
+
+  .page_desc {
+    padding-left: 0;
+  }
+}
