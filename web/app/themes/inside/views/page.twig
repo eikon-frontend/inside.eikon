@@ -2,7 +2,7 @@
 
 {% block content %}
 	<div class="container py-5">
-		<h1 class="mb-4">
+		<h1 class="mb-4 page_title">
 			{{post.title}}
 		</h1>
 		<div>
@@ -18,8 +18,9 @@
 		<h2 class="title_redif">Rediffusion du live</h2>
 	  </div>
       {% endif %}
-
+		<div class="container page_desc my-3 my-md-5">
 			{{post.content}}
+		</div>
 		</div>
 	</div>
 	{% if post.get_field('videomaton') %}
