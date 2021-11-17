@@ -6,7 +6,6 @@ web/app/upgrade
 web/app/cache/
 web/app/uploads/*
 !web/app/uploads/.gitkeep
-web/app/cache/matomo/
 
 # WordPress
 web/wp

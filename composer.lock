@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d0cc3dc2bdc6a1de9e3fff2f5ab6b08f",
+    "content-hash": "e27625deb588fbe251b62d995160050c",
     "packages": [
         {
             "name": "advanced-custom-fields/advanced-custom-fields-pro",
@@ -1134,24 +1134,6 @@
                 }
             ],
             "time": "2021-11-10T01:08:39+00:00"
-        },
-        {
-            "name": "wpackagist-plugin/matomo",
-            "version": "4.5.0",
-            "source": {
-                "type": "svn",
-                "url": "https://plugins.svn.wordpress.org/matomo/",
-                "reference": "tags/4.5.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/matomo.4.5.0.zip"
-            },
-            "require": {
-                "composer/installers": "~1.0 || ~2.0"
-            },
-            "type": "wordpress-plugin",
-            "homepage": "https://wordpress.org/plugins/matomo/"
         },
         {
             "name": "wpackagist-plugin/timber-library",
