@@ -5,14 +5,39 @@
   text-decoration: none;
   color: $black;
 
+  &:hover {
+    color: $black;
+
+    .project-thumbnail {
+      opacity: 0.7;
+
+      img {
+        transform: scale(1.05);
+      }
+    }
+  }
+
   .project-data {
     padding: 0.25rem 0 1rem;
   }
 
-  img {
-    width: 100%;
-    height: auto;
+  .project-thumbnail {
     border: 1px solid $black;
-    box-sizing: border-box;
+    background: #eee;
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+
+    img {
+      width: 100%;
+      height: auto;
+      box-sizing: border-box;
+      transform: scale(1);
+      transition: opacity 0.3s ease, transform ease 0.5s;
+
+      &.hidden {
+        opacity: 0;
+        transition: opacity 0s ease;
+      }
+    }
   }
 }

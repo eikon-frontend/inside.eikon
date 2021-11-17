@@ -1,4 +1,5 @@
 import Masonry from 'masonry-layout';
+import imagesLoaded from 'imagesloaded';
 
 const masonry = () => {
   [...document.querySelectorAll('.grid')].forEach(
@@ -10,9 +11,24 @@ const masonry = () => {
         gutter: 20
       });
 
+      [...gridElement.querySelectorAll('.grid-item')].forEach(
+        (gridItem) => {
+          gridItem.querySelector('img').classList.add("hidden");
+        }
+      );
+
       window.onload = (event) => {
         msnry.layout();
       };
+
+      const imgLoad = imagesLoaded(gridElement);
+
+      imgLoad.on('progress', function (instance, image) {
+        image.img.classList.remove("hidden");
+
+        console.log("image loade", image);
+        msnry.layout();
+      });
     }
   );
 

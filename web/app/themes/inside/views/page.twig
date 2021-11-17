@@ -50,7 +50,9 @@
 				{% for project in projects %}
 					<div class="grid-item">
 						<a class="project-teaser" href="{{ project.link }}">
-							<img src="{{ project.thumbnail.src("medium") }}" alt="{{ project.thumbnail.alt }}">
+              <div class="project-thumbnail">
+							  <img loading="lazy" style="aspect-ratio: {{ getAspectRatio(project.thumbnail.width, project.thumbnail.height) }};" src="{{ project.thumbnail.src("medium") }}" alt="{{ project.thumbnail.alt }}">
+              </div>
 							<div class="project-data">
 								<span>
 									{{ project.terms('subjects')[0].name }}
