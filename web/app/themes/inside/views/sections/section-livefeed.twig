@@ -11,8 +11,8 @@
         {{ post.get_field('video_livefeed') }}
       </div>
       <div class="live_input mb-5">
-        {% if options.contact_form_shortcode %}
-          {{ function('do_shortcode', options.contact_form_shortcode) }}
+        {% if options.contact_form_id %}
+          {{ function('do_shortcode', '[wpforms id="' ~ options.contact_form_id ~ '"]') }}
         {% endif %}
       </div>
     </div>
