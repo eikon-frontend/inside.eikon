@@ -12,17 +12,20 @@ const gallery = () => {
   };
 
   const openPhotoSwipe = (psGallery) => {
-    const images = psGallery.querySelector('.swiper-slide').children;
+    const images = psGallery.querySelector('.swiper-slide');
 
     console.log(images);
 
     const galleryItems = [];
     for (let i = 0; i < images.length; i += 1) {
-      galleryItems.push({
-        src: images[i].querySelector('img').src,
-        w: images[i].querySelector('img').dataset.w,
-        h: images[i].querySelector('img').dataset.h,
-      });
+      if (images[i].querySelector('img')) {
+
+        galleryItems.push({
+          src: images[i].querySelector('img').src,
+          w: images[i].querySelector('img').dataset.w,
+          h: images[i].querySelector('img').dataset.h,
+        });
+      }
     }
 
     // Initializes and opens PhotoSwipe
@@ -36,7 +39,6 @@ const gallery = () => {
   };
 
   for (let i = 0; i < galleries.length; i += 1) {
-    console.log(galleries[i].querySelector('.open-gallery'));
     galleries[i].querySelector('.open-gallery').onclick = () =>
       openPhotoSwipe(galleries[i]);
   }
