@@ -22,7 +22,7 @@
             "key": "field_61891c3c9bc74",
             "label": "Videomaton",
             "name": "videomaton",
-            "type": "oembed",
+            "type": "repeater",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -31,8 +31,29 @@
                 "class": "",
                 "id": ""
             },
-            "width": "",
-            "height": ""
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "",
+            "sub_fields": [
+                {
+                    "key": "field_61941be13ee79",
+                    "label": "Video",
+                    "name": "video",
+                    "type": "oembed",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "width": "",
+                    "height": ""
+                }
+            ]
         },
         {
             "key": "field_618923982b8e5",
@@ -80,5 +101,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1636986815
+    "modified": 1637097084
 }
