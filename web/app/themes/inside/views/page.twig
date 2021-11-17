@@ -51,8 +51,9 @@
 					<div class="grid-item">
 						<a class="project-teaser" href="{{ project.link }}">
               <div class="project-thumbnail">
-							  <img loading="lazy" style="aspect-ratio: {{ getAspectRatio(project.thumbnail.width, project.thumbnail.height) }};" src="{{ project.thumbnail.src("medium") }}" alt="{{ project.thumbnail.alt }}">
-              </div>
+                {% if project.thumbnail %}
+							    <img loading="lazy" style="aspect-ratio: {{ getAspectRatio(project.thumbnail.width, project.thumbnail.height) }};" src="{{ project.thumbnail.src("medium") }}" alt="{{ project.thumbnail.alt }}">
+                {% endif %}              </div>
 							<div class="project-data">
 								<span>
 									{{ project.terms('subjects')[0].name }}
