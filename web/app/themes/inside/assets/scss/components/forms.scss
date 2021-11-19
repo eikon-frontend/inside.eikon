@@ -39,6 +39,18 @@
   text-align: center;
 }
 
+.wpforms-confirmation-container {
+  margin: 40px 0;
+  display: flex;
+  justify-content: center;
+
+  p {
+    background: #ddd;
+    padding: 20px 30px;
+    border-radius: 15px;
+  }
+}
+
 .wpforms-field {
   margin-bottom: 1rem;
 }

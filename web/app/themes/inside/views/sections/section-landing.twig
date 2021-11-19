@@ -5,5 +5,7 @@
       {{ post.content }}
     </p>
   </div>
-  <a href="#livefeed" class="jpo_btn">Vous êtes venus pour le live ? C'est par ici !  →</a>
+  {% if post.get_field('video_livefeed') %}
+    <a href="#livefeed" class="jpo_btn">Vous êtes venus pour le live ? C'est par ici !  →</a>
+  {% endif %}
 </div>

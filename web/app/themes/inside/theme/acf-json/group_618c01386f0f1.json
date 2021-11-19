@@ -4,9 +4,9 @@
     "fields": [
         {
             "key": "field_618c013f3592b",
-            "label": "Contact form shortcode",
-            "name": "contact_form_shortcode",
-            "type": "text",
+            "label": "Contact form ID",
+            "name": "contact_form_id",
+            "type": "number",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -16,10 +16,12 @@
                 "id": ""
             },
             "default_value": "",
-            "placeholder": "[wpforms id=\"61\"]",
+            "placeholder": "",
             "prepend": "",
             "append": "",
-            "maxlength": ""
+            "min": "",
+            "max": "",
+            "step": ""
         },
         {
             "key": "field_6188fc17268ff",
@@ -93,5 +95,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1636965001
+    "show_in_rest": 0,
+    "modified": 1637153864
 }

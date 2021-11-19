@@ -10,4 +10,6 @@ const init = () => {
   scrolltrigger();
 };
 
-init();
+document.addEventListener("DOMContentLoaded", function () {
+  init();
+});

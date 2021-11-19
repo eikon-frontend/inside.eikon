@@ -1,29 +1,27 @@
 {% if post.galerie %}
-	<div>
-		<div {% if galerie|length > 1 %} class="swiper" {% endif %}>
-			<div class="swiper-wrapper">
-				{% for item in galerie %}
-					<div class="swiper-slide">
-						{% if item.acf_fc_layout == "image" %}
-							<img src="{{ item.image.sizes.large }}">
-						{% elseif item.acf_fc_layout == "video" %}
-							<div class="ratio ratio-16x9">
-								{{ item.video }}
-							</div>
-						{% endif %}
-					</div>
-				{% endfor %}
-			</div>
-			{% if galerie|length > 1 %}
-				<div class="row d-flex justify-content-between">
-					<div class="swiper-prev">
-						{% include 'components/icon.twig' with { icon_name: 'chevron-left', icon_class: '' } %}
-					</div>
-					<div class="swiper-next">
-						{% include 'components/icon.twig' with { icon_name: 'chevron-right', icon_class: '' } %}
-					</div>
-				</div>
-			{% endif %}
-		</div>
-	</div>
+  <div {% if galerie|length > 1 %} class="swiper" {% endif %}>
+    <div class="swiper-wrapper">
+      {% for item in galerie %}
+        <div class="swiper-slide">
+          {% if item.acf_fc_layout == "image" %}
+            <img src="{{ item.image.sizes.large }}">
+          {% elseif item.acf_fc_layout == "video" %}
+            <div class="ratio ratio-16x9">
+              {{ item.video }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    {% if galerie|length > 1 %}
+      <div class="row d-flex justify-content-between">
+        <div class="swiper-prev">
+          {% include 'components/icon.twig' with { icon_name: 'chevron-left', icon_class: '' } %}
+        </div>
+        <div class="swiper-next">
+          {% include 'components/icon.twig' with { icon_name: 'chevron-right', icon_class: '' } %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
 {% endif %}

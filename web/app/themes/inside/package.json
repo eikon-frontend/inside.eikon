@@ -45,6 +45,7 @@
     "file-loader": "^6.0.0",
     "filemanager-webpack-plugin": "^2.0.5",
     "gsap": "^3.8.0",
+    "imagesloaded": "^4.1.4",
     "jquery": "^3.5.1",
     "lax.js": "^1.2.5",
     "masonry-layout": "^4.2.2",
