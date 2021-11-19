@@ -1,6 +1,6 @@
 {
     "key": "group_61891c011224e",
-    "title": "Page",
+    "title": "Section",
     "fields": [
         {
             "key": "field_61891c059bc73",
@@ -81,14 +81,9 @@
     "location": [
         [
             {
-                "param": "post_type",
+                "param": "page_template",
                 "operator": "==",
-                "value": "page"
-            },
-            {
-                "param": "page",
-                "operator": "!=",
-                "value": "58"
+                "value": "page_section.php"
             }
         ]
     ],
@@ -101,5 +96,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1637097084
+    "modified": 1637318739
 }
