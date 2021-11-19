@@ -73,8 +73,8 @@
             "key": "field_6192675911e70",
             "label": "Video \"Showreel\"",
             "name": "video_showreel",
-            "type": "oembed",
-            "instructions": "",
+            "type": "text",
+            "instructions": "Pour cette vidéo, il ne faut pas mettre l'url, mais plutôt l'ID (numérique) de la vidéo.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -82,8 +82,11 @@
                 "class": "",
                 "id": ""
             },
-            "width": "",
-            "height": ""
+            "default_value": "",
+            "placeholder": 25986574,
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         }
     ],
     "location": [
@@ -104,5 +107,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1636986806
+    "modified": 1637313671
 }

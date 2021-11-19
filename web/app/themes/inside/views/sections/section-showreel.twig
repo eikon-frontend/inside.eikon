@@ -1,6 +1,6 @@
 {% if post.get_field('video_showreel') %}
   {% include 'parts/title-banner.twig' with { title: "showreel" } %}
   <div class="ratio ratio-16x9 m-0">
-    {{ post.get_field('video_showreel') }}
+    <iframe src="https://player.vimeo.com/video/{{ post.get_field('video_showreel') }}?autoplay=true&muted=1" width="640" height="360" frameborder="0" allow="autoplay ; fullscreen" allowfullscreen></iframe>
   </div>
 {% endif %}

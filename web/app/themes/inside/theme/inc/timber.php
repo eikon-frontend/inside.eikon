@@ -167,7 +167,6 @@ class StarterSite extends Timber\Site {
     return $newArray;
   }
 
-
   public function getAspectRatio( $width, $height ) {
     $greatestCommonDivisor = static function($width, $height) use (&$greatestCommonDivisor) {
         return ($width % $height) ? $greatestCommonDivisor($height, $width % $height) : $height;

@@ -53,7 +53,8 @@
               <div class="project-thumbnail">
                 {% if project.thumbnail %}
 							    <img loading="lazy" style="aspect-ratio: {{ getAspectRatio(project.thumbnail.width, project.thumbnail.height) }};" src="{{ project.thumbnail.src("medium") }}" alt="{{ project.thumbnail.alt }}">
-                {% endif %}              </div>
+                {% endif %}
+              </div>
 							<div class="project-data">
 								<span>
 									{{ project.terms('subjects')[0].name }}
