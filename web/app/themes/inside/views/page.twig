@@ -7,7 +7,7 @@
 		</h1>
     <div class="row">
       <div class="col-md-6">
-        <img class="img-fluid" style="aspect-ratio: {{ getAspectRatio(post.thumbnail.width, post.thumbnail.height) }};" src="{{ post.thumbnail.src("medium") }}" alt="{{ post.thumbnail.alt }}">
+        <img class="img-fluid" style="aspect-ratio: {{ getAspectRatio(post.thumbnail.width, post.thumbnail.height) }};" src="{{ post.thumbnail.src("large") }}" alt="{{ post.thumbnail.alt }}">
       </div>
       <div class="col-md-6">
 			  {{post.content}}
