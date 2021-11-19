@@ -2,7 +2,7 @@
 
 {% block content %}
   {% if archive_page_url %}
-    <div class="container mt-5 mb-5 mb-md-3 p-0 d-flex justify-content-center justify-content-md-start">
+    <div class="container mt-5 mb-5 mb-lg-3 p-0 d-flex justify-content-center justify-content-lg-start">
       <a href="{{ archive_page_url }}" class="jpo_btn ml-0">
         ← {{ archive_page_name }}
       </a>
@@ -10,10 +10,10 @@
   {% endif %}
   <div class="container mb-5">
     <div class="row project-cartouche">
-      <div class="col-md-8 project-slider">
+      <div class="col-lg-8 project-slider p-0">
         {% include 'components/galerie-slider.twig' with {galerie: post.get_field("galerie")} %}
       </div>
-      <div class="col-md-4 p-4 project-infos">
+      <div class="col-lg-4 p-4 project-infos">
         <div class="mb-3">
           <h1>{{ post.title }}</h1>
           <span class="badge badge-dark">
