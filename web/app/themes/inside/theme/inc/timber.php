@@ -156,7 +156,27 @@ class StarterSite extends Timber\Site {
 		add_theme_support( 'menus' );
 	}
 
+  public function shuffle_array($array) {
+    shuffle( $array );
+    $newArray = [];
 
+    foreach ( $array as $item ) {
+      array_push( $newArray, $item );
+    }
+
+    return $newArray;
+  }
+
+
+  public function getAspectRatio( $width, $height ) {
+    $greatestCommonDivisor = static function($width, $height) use (&$greatestCommonDivisor) {
+        return ($width % $height) ? $greatestCommonDivisor($height, $width % $height) : $height;
+    };
+
+    $divisor = $greatestCommonDivisor($width, $height);
+
+    return $width / $divisor . '/' . $height / $divisor;
+  }
 
 
 	/** This is where you can add your own functions to twig.
@@ -164,8 +184,9 @@ class StarterSite extends Timber\Site {
 	 * @param string $twig get extension.
 	 */
 	public function add_to_twig( $twig ) {
+    $twig->addFilter( new Timber\Twig_Filter( 'shuffle', array( $this, 'shuffle_array' ) ) );
+		$twig->addFunction( new Timber\Twig_Function( 'getAspectRatio', array( $this, 'getAspectRatio' ) ) );
 		$twig->addExtension( new Twig\Extension\StringLoaderExtension() );
-		$twig->addFunction( new Timber\Twig_Function( 'getAspectRatio', 'getAspectRatio' ) );
 		return $twig;
 	}
 
