@@ -32,3 +32,15 @@
 .footer_logos {
   width: 70px;
 }
+
+.social-link {
+  width: 40px;
+  height: auto;
+  display: inline-block;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
