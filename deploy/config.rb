@@ -22,14 +22,7 @@ namespace :deploy do
 			end
 		end
 	end
-  task :yarn_build do
-	 	on roles(:app) do
-      execute "yarn --cwd '#{fetch(:release_path)}/web/app/themes/inside'"
-      execute "yarn --cwd '#{fetch(:release_path)}/web/app/themes/inside' build"
-    end
-  end
 end
-after 'composer:run', 'deploy:yarn_build'
 after 'deploy:finished', 'deploy:clear_cache'
 
 

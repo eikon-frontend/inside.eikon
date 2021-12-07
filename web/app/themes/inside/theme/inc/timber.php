@@ -168,13 +168,17 @@ class StarterSite extends Timber\Site {
   }
 
   public function getAspectRatio( $width, $height ) {
-    $greatestCommonDivisor = static function($width, $height) use (&$greatestCommonDivisor) {
-        return ($width % $height) ? $greatestCommonDivisor($height, $width % $height) : $height;
-    };
+    if ($height) {
+      $greatestCommonDivisor = static function($width, $height) use (&$greatestCommonDivisor) {
+          return ($width % $height) ? $greatestCommonDivisor($height, $width % $height) : $height;
+      };
 
-    $divisor = $greatestCommonDivisor($width, $height);
+      $divisor = $greatestCommonDivisor($width, $height);
 
-    return $width / $divisor . '/' . $height / $divisor;
+      return $width / $divisor . '/' . $height / $divisor;
+    } else {
+      return '1/1';
+    }
   }
 
 
