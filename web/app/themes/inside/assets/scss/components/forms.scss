@@ -25,19 +25,19 @@
 
 .wp-block-button__link {
   padding: 10px 20px;
-  border: 1px solid black;
+  border: 1px solid black!important;
   border-radius: 40px;
-  background: white;
+  background: white!important;
   text-transform: uppercase;
   transition: 0.2s;
-  color: black;
+  color: black!important;
   text-decoration: none;
   font-size: 16px;
   display: inline-block;
 
   &:hover {
-    background: black;
-    color: white;
+    background: black!important;
+    color: white!important;
   }
 }
 
