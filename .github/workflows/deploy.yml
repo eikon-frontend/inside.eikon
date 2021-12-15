@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: "12"
           cache: "yarn"
-          cache-dependency-path: "./web/app/themes/inside//yarn.lock"
+          cache-dependency-path: "./web/app/themes/inside/yarn.lock"
       - name: Yarn
         run: |
           yarn --cwd 'web/app/themes/inside'

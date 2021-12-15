@@ -24,8 +24,3 @@ namespace :deploy do
 	end
 end
 after 'deploy:finished', 'deploy:clear_cache'
-
-
-
-
-
