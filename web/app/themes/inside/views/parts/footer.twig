@@ -1,68 +1,30 @@
 <footer class="site-footer" id="footer">
 	<div class="container">
 		<div class="row">
-      <div class="col-4 col-md-2 col-xxl-1">
-        <img src="{{ theme.link }}/dist/img/logo_eikon_full_white.svg" class="w-100" alt="logo d'eikon."><br>
-        <img src="{{ theme.link }}/dist/img/logo_etatfr.svg" class="w-75 mt-4" alt="logo de l'Etat de Fribourg.">
-      </div>
-      <div class="col-4 col-md-3 offset-md-1">
-        {{ options.adresse }}
-      </div>
-      <div class="col-4 col-md-3">
-        <p class="mb-1">Suivez-nous sur :</p>
-        <div class="mb-3 d-flex">
-          <a class="social-link mr-1" href="https://fr-fr.facebook.com/eikon.fribourg/" target="_blank"><img src="{{ theme.link }}/dist/img/cta_facebook.svg" alt="logo de Facebook."></a>
-          <a class="social-link mx-1" href="https://www.instagram.com/eikon.fribourg/?hl=fr" target="_blank"><img src="{{ theme.link }}/dist/img/cta_instagram.svg" alt="logo d'Instagram."></a>
-          <a class="social-link mx-1 mr-0" href="https://www.fr.ch/eikon" target="_blank"><img src="{{ theme.link }}/dist/img/cta_website.svg" alt="logo de site internet."></a>
-        </div>
-      </div>
-      <div class="col-4 col-md-3 d-flex flex-column">
-        {% for item in menu.items %}
-          <a target="{{ item.target }}" href="{{ item.link }}">
-            <span class="d-none d-lg-block">{{ item.title }}</span>
-            <span class="d-lg-none">
-              {% if item.raccourci %}
-                {{ item.raccourci }}
-              {% else %}
-                {{ item.title }}
-              {% endif %}
-            </span>
-          </a>
-        {% endfor %}
-        <a href="/credits">Crédits</a>
-      </div>
-
-			{# <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-				<div class="col mb-5 mb-md-0">
-					<div class="row">
-						<div class="d-flex justify-content-center align-items-center footer_cta_lg">
-							<div class="col">
-								<div class="d-flex justify-content-center footer_logos mx-2 mx-md-0">
-
-								</div>
-							</div>
-							<div class="col">
-								<div class="d-flex justify-content-center footer_logos mx-2 mx-md-0">
-
-								</div>
-							</div>
-						</div>
-					</div>
-          <p class="mt-4 text-center text-md-start">
-            <a href="/credits">Crédits</a>
-          </p>
+			<div class="col-4 col-md-2 col-xxl-1 mb-4">
+				<img src="{{ theme.link }}/dist/img/logo_eikon_full_white.svg" class="w-100" alt="logo d'eikon."><br>
+				<img src="{{ theme.link }}/dist/img/logo_etatfr.svg" class="w-75 mt-4" alt="logo de l'Etat de Fribourg.">
+			</div>
+			<div class="col-6 offset-2 col-md-3 offset-md-1">
+				{{ options.adresse }}
+			</div>
+			<div class="col-6 col-md-3">
+				<p class="mb-1">Suivez-nous sur&nbsp;:</p>
+				<div class="mb-3 d-flex">
+					<a class="social-link mr-1" href="https://fr-fr.facebook.com/eikon.fribourg/" target="_blank"><img src="{{ theme.link }}/dist/img/cta_facebook.svg" alt="logo de Facebook."></a>
+					<a class="social-link mx-1" href="https://www.instagram.com/eikon.fribourg/?hl=fr" target="_blank"><img src="{{ theme.link }}/dist/img/cta_instagram.svg" alt="logo d'Instagram."></a>
+					<a class="social-link mx-1 mr-0" href="https://www.fr.ch/eikon" target="_blank"><img src="{{ theme.link }}/dist/img/cta_website.svg" alt="logo de site internet."></a>
 				</div>
-				<div class="col mb-5 mb-md-0">
-					<div class="d-flex justify-content-center">
-						{{ options.adresse }}
-					</div>
-				</div>
-				<div class="col">
-					<div class="text-center text-md-end">
-
-					</div>
-				</div>
-			</div> #}
+			</div>
+			<div class="col-6 col-md-3 d-flex flex-column">
+        <p class="mb-1">Navigation&nbsp;:</p>
+				{% for item in menu.items %}
+					<a target="{{ item.target }}" href="{{ item.link }}">
+						{{ item.title }}
+					</a>
+				{% endfor %}
+				<a href="/credits">Crédits</a>
+			</div>
 		</div>
 	</div>
 </footer>
