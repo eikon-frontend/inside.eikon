@@ -1,8 +1,10 @@
 <header class="site-header">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="header_nav">
-        <a href="{{ site.link }}">inside.eikon</a>
+    <div class="d-flex justify-content-between align-items-end">
+      <div class="header_nav mb-1">
+        <a href="{{ site.link }}">
+          <img src="{{ theme.link }}/dist/img/logo_eikon_black.svg" class="w-100" alt="logo d'eikon.">
+        </a>
       </div>
       <div class="header_nav">
         {% include 'parts/menu.twig' %}
