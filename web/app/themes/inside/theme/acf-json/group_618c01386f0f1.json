@@ -27,7 +27,7 @@
             "key": "field_6188fc17268ff",
             "label": "Adresse",
             "name": "adresse",
-            "type": "textarea",
+            "type": "wysiwyg",
             "instructions": "",
             "required": 1,
             "conditional_logic": 0,
@@ -37,10 +37,10 @@
                 "id": ""
             },
             "default_value": "",
-            "placeholder": "",
-            "maxlength": "",
-            "rows": "",
-            "new_lines": "br"
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 1,
+            "delay": 0
         },
         {
             "key": "field_61921a4387349",
@@ -96,5 +96,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1637153864
+    "modified": 1646143848
 }

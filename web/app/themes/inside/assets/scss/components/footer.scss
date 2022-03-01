@@ -3,13 +3,13 @@
   padding: 45px 0;
   background: black;
   color: white;
-  line-height: 22px;
-  font-size: 16px;
+  line-height: 1.4;
+  font-size: 13px;
 }
 
 .site-footer a {
   color: white;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .footer_cta {
@@ -34,7 +34,7 @@
 }
 
 .social-link {
-  width: 40px;
+  width: 30px;
   height: auto;
   display: inline-block;
 
