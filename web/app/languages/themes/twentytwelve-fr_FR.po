@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Twelve package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-02-23 09:24:43+0000\n"
+"PO-Revision-Date: 2022-01-25 23:59:15+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,6 +19,51 @@ msgstr "Le thème 2012 de WordPress est un thème conçu pour s&rsquo;afficher d
 #: inc/block-patterns.php:20
 msgid "Twenty Twelve"
 msgstr "Twenty Twelve"
+
+#: inc/block-patterns.php:106
+msgid "It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth."
+msgstr "C‘est un pays paradisiaque, dans lequel des parties de phrases grillées volent dans votre bouche. Même le tout-puissant Pointage n‘a aucun contrôle sur les textes aveugles ; c‘est une vie presque sans orthographe. Un jour pourtant, une petite ligne de texte aveugle du nom de Lorem Ipsum a décidé de partir pour le lointain Monde de la Grammaire. Très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, là vivent les textes aveugles. Séparés, ils vivent à Bookmarksgrove, juste au bord de la Sémantique, un grand océan linguistique. Une petite rivière nommée Duden coule près de chez eux et les approvisionne en regelialia nécessaire. C‘est un pays paradisiaque, dans lequel les parties grillées des phrases volent dans votre bouche."
+
+#: inc/block-patterns.php:103
+msgid "The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn&#8217;t listen. She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then."
+msgstr "Le Grand Oxmox lui conseilla de ne pas le faire, parce qu‘il y avait des milliers de mauvaises virgules, de points d‘interrogation sauvages et de sémikoli sournois, mais le Petit Texte Aveugle n‘écouta pas. Il emballa ses sept versalia, mit son initiale dans la ceinture et se mit en route. Lorsqu‘il atteignit les premières collines des montagnes italiques, il eut une dernière vue sur la ligne d‘horizon de sa ville natale, Bookmarksgrove, l‘initiale du village d‘Alphabet et la sous-ligne de sa propre route, le Chemin des Lignes. Une question rhétorique courut alors sur sa joue."
+
+#: inc/block-patterns.php:100
+msgid "Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth."
+msgstr "Très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles. Séparés, ils vivent à Bookmarksgrove, juste au bord de la Sémantique, un grand océan linguistique. Une petite rivière nommée Duden coule près de chez eux et les approvisionne en regelialia nécessaire. C‘est un pays paradisiaque, dans lequel les parties grillées des phrases volent dans votre bouche."
+
+#: inc/block-patterns.php:89
+msgid "Left-aligned Image and Paragraph"
+msgstr "Image et paragraphe alignés à gauche"
+
+#: inc/block-patterns.php:80
+msgid "—  Albert Einstein"
+msgstr "—  Albert Einstein"
+
+#: inc/block-patterns.php:78
+msgid "\"Few people are capable of expressing with equanimity opinions which differ from the prejudices of their social eznvironment. Most people are even incapable of forming such opinions.\""
+msgstr "« Peu de gens sont capables d’exprimer avec sérénité des opinions qui diffèrent des préjugés de leur environnement social. La plupart des gens sont incapables de se forger de telles opinions. »"
+
+#: inc/block-patterns.php:74
+msgid "Left-aligned Large Quote"
+msgstr "Grande citation alignée à gauche"
+
+#: inc/block-patterns.php:48 inc/block-patterns.php:95
+msgid "Close up of a yellow leaf."
+msgstr "Gros plan d‘une feuille jaune."
+
+#: inc/block-patterns.php:43 inc/block-patterns.php:54
+#: inc/block-patterns.php:62
+msgid "Close up of a yellow and green leaf."
+msgstr "Gros plan d‘une feuille jaune et verte."
+
+#: inc/block-patterns.php:33
+msgid "Floating Images Gallery"
+msgstr "Galerie d‘images flottantes"
+
+#: functions.php:459
+msgid "Your comment is awaiting moderation. This is a preview; your comment will be visible after it has been approved."
+msgstr "Votre commentaire est en attente de modération. Il s’agit d’un aperçu, votre commentaire sera visible lorsqu’il sera approuvé."
 
 #. translators: %s: The post title.
 #: comments.php:35
@@ -94,6 +139,13 @@ msgstr "Suivant &rarr;"
 msgid "&larr; Previous"
 msgstr "&larr; Précédent"
 
+#. translators: 1: Date, 2: Date, 3: Attachment URL, 4: Image width in pixels,
+#. 5: Image height in pixels, 6: Post parent permalink, 7: Post parent title,
+#. 8: Post parent title.
+#: image.php:31
+msgid "<span class=\"meta-prep meta-prep-entry-date\">Published </span> <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\">%2$s</time></span> at <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Go to %7$s\" rel=\"gallery\">%8$s</a>."
+msgstr "<span class=\"meta-prep meta-prep-entry-date\">Publié le </span> <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\">%2$s</time></span> à <a href=\"%3$s\" title=\"Lien vers l'image en taille originale\">%4$s &times; %5$s</a> dans <a href=\"%6$s\" title=\"Aller à %7$s\" rel=\"gallery\">%8$s</a>."
+
 #: header.php:45
 msgid "Skip to content"
 msgstr "Aller au contenu"
@@ -122,7 +174,6 @@ msgstr "Cette entrée a été publiée dans %1$s, et marquée avec %2$s, le %3$s
 msgid "View all posts by %s"
 msgstr "Afficher tous les articles par %s"
 
-#. translators: Used between list items, there is a space after the comma.
 #. translators: Used between list items, there is a space after the comma.
 #: functions.php:506 functions.php:509
 msgid ", "
@@ -265,9 +316,6 @@ msgstr "1 réponse"
 msgid "Leave a reply"
 msgstr "Laisser un commentaire"
 
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
 #. translators: %s: Post title.
 #: content-aside.php:11 content-link.php:11 content-quote.php:11
 #: content-status.php:11

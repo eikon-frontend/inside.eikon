@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Fourteen package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-07-26 08:32:32+0000\n"
+"PO-Revision-Date: 2022-01-25 23:36:54+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -97,7 +97,7 @@ msgid "2016"
 msgstr "2016"
 
 #: inc/block-patterns.php:47
-msgid "In 2012, I expanded my travels to Europe. I spent time in Poland, Germany, Italy, France, and Spain.  "
+msgid "In 2012, I expanded my travels to Europe. I spent time in Poland, Germany, Italy, France, and Spain."
 msgstr "En 2012, j’ai voyagé à travers Europe. J’ai passé du temps en Pologne, en Allemagne, en Italie et en Espagne."
 
 #: inc/block-patterns.php:47
@@ -188,15 +188,15 @@ msgstr "Archives par mot-clé&nbsp;: %s"
 msgid "Search Results for: %s"
 msgstr "Résultats de recherche pour %s"
 
-#: inc/widgets.php:303
+#: inc/widgets.php:305
 msgid "Post format to show:"
 msgstr "Format d&rsquo;article à afficher&nbsp;:"
 
-#: inc/widgets.php:300
+#: inc/widgets.php:302
 msgid "Number of posts to show:"
 msgstr "Nombre d&rsquo;articles à afficher&nbsp;:"
 
-#: inc/widgets.php:297
+#: inc/widgets.php:299
 msgid "Title:"
 msgstr "Titre&nbsp;:"
 
@@ -357,7 +357,6 @@ msgid "featured"
 msgstr "mis-en-avant"
 
 #. translators: 1: Featured tag editor URL, 2: Post editor URL.
-#. translators: 1: Featured tag editor URL, 2: Post editor URL.
 #: inc/customizer.php:64 inc/featured-content.php:384
 msgid "Use a <a href=\"%1$s\">tag</a> to feature your posts. If no posts match the tag, <a href=\"%2$s\">sticky posts</a> will be displayed instead."
 msgstr "Utilisez un <a href=\"%1$s\">mot-clé</a> pour mettre vos articles en avant. Si aucun article ne correspond à votre mot-clé, les <a href=\"%2$s\">articles mis en avant</a> seront affichés à la place."
@@ -382,8 +381,6 @@ msgstr "Afficher le titre du site et son slogan"
 msgid "Site Title Color"
 msgstr "Couleur du titre du site"
 
-#. translators: %s: WordPress version.
-#. translators: %s: WordPress version.
 #. translators: %s: WordPress version.
 #: inc/back-compat.php:41 inc/back-compat.php:56 inc/back-compat.php:77
 msgid "Twenty Fourteen requires at least WordPress version 3.6. You are running version %s. Please upgrade and try again."
@@ -410,12 +407,12 @@ msgid "Search"
 msgstr "Recherche"
 
 #. translators: %s: Page number.
-#: functions.php:644
+#: functions.php:659
 msgid "Page %s"
 msgstr "Page %s"
 
 #. translators: %d: Post count.
-#: functions.php:523
+#: functions.php:538
 msgid "%d Article"
 msgid_plural "%d Articles"
 msgstr[0] "%d article"
@@ -496,14 +493,6 @@ msgstr "Aucun résultat"
 msgid "Pages:"
 msgstr "Pages&nbsp;:"
 
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
-#. translators: %s: Post title.
 #. translators: %s: Post title.
 #: content-aside.php:49 content-audio.php:49 content-gallery.php:49
 #: content-image.php:49 content-link.php:49 content-quote.php:49
