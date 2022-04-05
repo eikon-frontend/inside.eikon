@@ -5,16 +5,6 @@
 		<h1 class="mb-4 page_title">
 			{{post.title}}
 		</h1>
-    {% if post.get_field('cartouche') %}
-      <div class="cartouche">
-        {% for row in post.get_field('cartouche') %}
-          <div class="cartouche-cell">
-            <div class="cartouche-title">{{ row.title }}</div>
-            <div class="cartouche-content">{{ row.content }}</div>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
 		<div>
 			{% if post.get_field('video') %}
 				<div class="d-flex">
@@ -31,6 +21,16 @@
 			{% endif %}
 			<div class="container page_desc my-3 my-md-5">
 				{{post.content}}
+        {% if post.get_field('cartouche') %}
+          <div class="cartouche mt-5">
+            {% for row in post.get_field('cartouche') %}
+              <div class="cartouche-cell">
+                <div class="cartouche-title">{{ row.title }}</div>
+                <div class="cartouche-content">{{ row.content }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
 			</div>
 		</div>
 	</div>
