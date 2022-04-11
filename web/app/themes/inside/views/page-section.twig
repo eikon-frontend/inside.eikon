@@ -21,7 +21,7 @@
 			{% endif %}
 			<div class="container my-3 my-md-5">
         <div class="row">
-          <div class="col-md-4 p-0">
+          <div class="col-md-5 col-lg-4 col-xl-3 p-0">
             {% if post.get_field('cartouche') %}
               <div class="cartouche">
                 {% for row in post.get_field('cartouche') %}
@@ -33,7 +33,7 @@
               </div>
             {% endif %}
           </div>
-          <div class="col-md-6 offset-md-1">
+          <div class="col-md-7 col-lg-8 col-xl-8">
 				    {{post.content}}
           </div>
         </div>
