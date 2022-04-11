@@ -2,15 +2,12 @@
   position: relative;
   margin: 0 0 50px;
   display: flex;
+  flex-direction: column;
   border-top: 2px solid black;
   border-left: 2px solid black;
   width: fit-content;
   padding: 0;
 
-  @include media-breakpoint-down(sm) {
-    flex-direction: column;
-    width: 90%;
-  }
 
   &::after {
     content: "";

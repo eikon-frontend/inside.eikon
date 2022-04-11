@@ -19,18 +19,24 @@
 						portes ouvertes du 20.11.21</h2>
 				</div>
 			{% endif %}
-			<div class="container page_desc my-3 my-md-5">
-				{{post.content}}
-        {% if post.get_field('cartouche') %}
-          <div class="cartouche mt-5">
-            {% for row in post.get_field('cartouche') %}
-              <div class="cartouche-cell">
-                <div class="cartouche-title">{{ row.title }}</div>
-                <div class="cartouche-content">{{ row.content }}</div>
+			<div class="container my-3 my-md-5">
+        <div class="row">
+          <div class="col-md-4 p-0">
+            {% if post.get_field('cartouche') %}
+              <div class="cartouche">
+                {% for row in post.get_field('cartouche') %}
+                  <div class="cartouche-cell">
+                    <div class="cartouche-title">{{ row.title }}</div>
+                    <div class="cartouche-content">{{ row.content }}</div>
+                  </div>
+                {% endfor %}
               </div>
-            {% endfor %}
+            {% endif %}
           </div>
-        {% endif %}
+          <div class="col-md-6 offset-md-1">
+				    {{post.content}}
+          </div>
+        </div>
 			</div>
 		</div>
 	</div>
