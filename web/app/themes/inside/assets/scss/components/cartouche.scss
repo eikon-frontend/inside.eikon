@@ -8,6 +8,9 @@
   width: fit-content;
   padding: 0;
 
+  @include media-breakpoint-down(md) {
+    margin: 0 auto 50px;
+  }
 
   &::after {
     content: "";

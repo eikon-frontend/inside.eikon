@@ -54,6 +54,11 @@
   text-orientation: mixed;
   writing-mode: tb-rl;
   text-align: center;
+
+  @include media-breakpoint-down(md) {
+    writing-mode: horizontal-tb;
+    text-align: left;
+  }
 }
 
 .page_title {
