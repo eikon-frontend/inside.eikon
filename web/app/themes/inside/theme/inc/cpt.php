@@ -45,6 +45,9 @@ function project_post_type() {
 		'supports'              => array( 'title', 'editor', 'thumbnail' ),
 		'taxonomies'            => array( 'year', 'subjects' ),
 		'hierarchical'          => false,
+    'show_in_graphql'       => true,
+    'graphql_single_name'   => 'project',
+    'graphql_plural_name'   => 'projects',
 		'public'                => true,
 		'show_ui'               => true,
 		'show_in_menu'          => true,
@@ -84,6 +87,9 @@ register_taxonomy('years',array('project'), array(
     'show_admin_column' => true,
     'query_var' => true,
     'rewrite' => array( 'slug' => 'year' ),
+    'show_in_graphql'       => true,
+    'graphql_single_name'   => 'year',
+    'graphql_plural_name'   => 'years',
   ));
 
 register_taxonomy('subjects',array('project'), array(
@@ -105,4 +111,7 @@ register_taxonomy('subjects',array('project'), array(
     'show_admin_column' => true,
     'query_var' => true,
     'rewrite' => array( 'slug' => 'subjects' ),
+    'show_in_graphql'       => true,
+    'graphql_single_name'   => 'subject',
+    'graphql_plural_name'   => 'subjects',
   ));
