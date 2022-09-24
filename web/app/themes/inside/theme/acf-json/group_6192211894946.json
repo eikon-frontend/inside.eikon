@@ -27,7 +27,7 @@
             {
                 "param": "nav_menu_item",
                 "operator": "==",
-                "value": "location\/main-nav"
+                "value": "location\/mainNav"
             }
         ]
     ],
@@ -39,5 +39,10 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1636966717
+    "show_in_rest": 0,
+    "show_in_graphql": 1,
+    "graphql_field_name": "menuCustomFields",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": "",
+    "modified": 1664023088
 }

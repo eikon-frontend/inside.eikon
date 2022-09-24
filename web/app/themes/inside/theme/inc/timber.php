@@ -82,7 +82,7 @@ class StarterSite extends Timber\Site {
 	 * @param string $context context['this'] Being the Twig's {{ this }}.
 	 */
 	public function add_to_context( $context ) {
-		$context['menu']  = new Timber\Menu('main-nav');
+		$context['menu']  = new Timber\Menu('mainNav');
 
     $current_post_id = get_the_id();
     if(is_single()){
@@ -94,7 +94,7 @@ class StarterSite extends Timber\Site {
           $item->current = ($item->slug === $archive_page->post_name) ?: false;
         }
         return $item;
-      }, (new TimberMenu('main-nav'))->get_items());
+      }, (new TimberMenu('mainNav'))->get_items());
     }
 
     $context['site']  = $this;
