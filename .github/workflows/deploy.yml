@@ -26,19 +26,23 @@ jobs:
           node-version: "12"
           cache: "yarn"
           cache-dependency-path: "./web/app/themes/inside/yarn.lock"
+
       - name: Yarn
         run: |
           yarn --cwd 'web/app/themes/inside'
           yarn --cwd 'web/app/themes/inside' build
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
       - uses: miloserdow/capistrano-deploy@master
         with:
           target: production # Defines the environment that will be used for the deployment
           deploy_key: ${{ secrets.DEPLOY_ENC_KEY }} # Name of the variable configured in Settings/Secrets of your github project
           enc_rsa_key_pth: "deploy/deploy_id_rsa_enc"
+
       - name: RSync theme
         id: deploy
         uses: Pendect/action-rsyncer@v1.1.0
@@ -47,6 +51,6 @@ jobs:
         with:
           flags: "-avzr"
           options: ""
-          ssh_options: "-p 2121"
+          ssh_options: ""
           src: "/web/app/themes/inside/theme/*"
-          dest: "ftpeik78749@eikon.ch:inside.eikon.ch/current/web/app/themes/inside/theme/"
+          dest: ${{secrets.DEPLOY_DEST}}
