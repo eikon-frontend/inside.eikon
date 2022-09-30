@@ -88,7 +88,7 @@ register_taxonomy('year', array('project'), array(
   'rewrite' => array('slug' => 'year'),
   'show_in_graphql'       => true,
   'graphql_single_name'   => 'year',
-  'graphql_plural_name'   => 'year',
+  'graphql_plural_name'   => 'years',
 ));
 
 register_taxonomy('section',array('project'), array(
@@ -111,8 +111,8 @@ register_taxonomy('section',array('project'), array(
     'query_var' => true,
     'rewrite' => array( 'slug' => 'year' ),
     'show_in_graphql'       => true,
-    'graphql_single_name'   => 'year',
-    'graphql_plural_name'   => 'section',
+    'graphql_single_name'   => 'section',
+    'graphql_plural_name'   => 'sections',
   ));
 
 register_taxonomy('subjects',array('project'), array(
