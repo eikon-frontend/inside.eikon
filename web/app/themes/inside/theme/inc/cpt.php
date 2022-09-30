@@ -109,7 +109,7 @@ register_taxonomy('section',array('project'), array(
     'show_in_rest' => true,
     'show_admin_column' => true,
     'query_var' => true,
-    'rewrite' => array( 'slug' => 'year' ),
+    'rewrite' => array( 'slug' => 'section' ),
     'show_in_graphql'       => true,
     'graphql_single_name'   => 'section',
     'graphql_plural_name'   => 'sections',
