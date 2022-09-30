@@ -14,10 +14,16 @@ if ($projects_section) {
     'post_type' => 'project',
     'posts_per_page' => -1,
     'tax_query' => array(
+      'relation' => 'AND',
       array(
         'taxonomy' => 'section',
         'field'    => 'id',
         'terms' => array_values($projects_section)
+      ),
+      array(
+        'taxonomy' => 'year',
+        'field'    => 'name',
+        'terms'    => "2021"
       ),
     ),
     'orderby' => array(
