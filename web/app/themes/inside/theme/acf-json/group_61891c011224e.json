@@ -116,8 +116,8 @@
         },
         {
             "key": "field_618923982b8e5",
-            "label": "Années des projets",
-            "name": "projects_years",
+            "label": "Section des projets",
+            "name": "projects_section",
             "type": "taxonomy",
             "instructions": "",
             "required": 0,
@@ -127,7 +127,7 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "years",
+            "taxonomy": "section",
             "field_type": "multi_select",
             "allow_null": 0,
             "add_term": 0,

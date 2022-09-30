@@ -30,7 +30,7 @@
             {
                 "param": "taxonomy",
                 "operator": "==",
-                "value": "years"
+                "value": "section"
             }
         ]
     ],

@@ -67,20 +67,43 @@ function project_post_type() {
 }
 add_action( 'init', 'project_post_type', 0 );
 
+register_taxonomy('year', array('project'), array(
+  'labels' => array(
+    'name' => _x('Années', 'taxonomy general name'),
+    'singular_name' => _x('Année', 'taxonomy singular name'),
+    'search_items' =>  __('Chercher Année'),
+    'all_items' => __('Toutes les Années'),
+    'parent_item' => __('Année parente'),
+    'parent_item_colon' => __('Année parente:'),
+    'edit_item' => __('Éditer l\'Année'),
+    'update_item' => __('Mettre à jour l\'Année'),
+    'add_new_item' => __('Nouvelle Année'),
+    'new_item_name' => __('Nom de la nouvelle Année'),
+    'menu_name' => __('Années'),
+  ),
+  'show_ui' => true,
+  'show_in_rest' => true,
+  'show_admin_column' => true,
+  'query_var' => true,
+  'rewrite' => array('slug' => 'year'),
+  'show_in_graphql'       => true,
+  'graphql_single_name'   => 'year',
+  'graphql_plural_name'   => 'year',
+));
 
-register_taxonomy('years',array('project'), array(
+register_taxonomy('section',array('project'), array(
     'labels' => array(
-                'name' => _x( 'Années', 'taxonomy general name' ),
-                'singular_name' => _x( 'Année', 'taxonomy singular name' ),
-                'search_items' =>  __( 'Chercher année' ),
-                'all_items' => __( 'Toutes les années' ),
-                'parent_item' => __( 'Année parente' ),
-                'parent_item_colon' => __( 'Année parente:' ),
-                'edit_item' => __( 'Éditer l\'année' ),
-                'update_item' => __( 'Mettre à jour l\'année' ),
-                'add_new_item' => __( 'Nouvelle année' ),
-                'new_item_name' => __( 'Nom de la nouvelle année' ),
-                'menu_name' => __( 'Années' ),
+                'name' => _x( 'Sections', 'taxonomy general name' ),
+                'singular_name' => _x( 'Section', 'taxonomy singular name' ),
+                'search_items' =>  __( 'Chercher Section' ),
+                'all_items' => __( 'Toutes les Sections' ),
+                'parent_item' => __( 'Section parente' ),
+                'parent_item_colon' => __( 'Section parente:' ),
+                'edit_item' => __( 'Éditer l\'Section' ),
+                'update_item' => __( 'Mettre à jour l\'Section' ),
+                'add_new_item' => __( 'Nouvelle Section' ),
+                'new_item_name' => __( 'Nom de la nouvelle Section' ),
+                'menu_name' => __( 'Sections' ),
               ),
     'show_ui' => true,
     'show_in_rest' => true,
@@ -89,7 +112,7 @@ register_taxonomy('years',array('project'), array(
     'rewrite' => array( 'slug' => 'year' ),
     'show_in_graphql'       => true,
     'graphql_single_name'   => 'year',
-    'graphql_plural_name'   => 'years',
+    'graphql_plural_name'   => 'section',
   ));
 
 register_taxonomy('subjects',array('project'), array(

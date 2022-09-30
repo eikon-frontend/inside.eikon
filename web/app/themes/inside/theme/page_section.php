@@ -8,16 +8,16 @@ $context = Timber::context();
 $timber_post     = new Timber\Post();
 $context['post'] = $timber_post;
 
-$projects_years = get_field("projects_years", $post);
-if ($projects_years) {
+$projects_section = get_field("projects_section", $post);
+if ($projects_section) {
   $args = array(
     'post_type' => 'project',
     'posts_per_page' => -1,
     'tax_query' => array(
       array(
-        'taxonomy' => 'years',
+        'taxonomy' => 'section',
         'field'    => 'id',
-        'terms' => array_values($projects_years)
+        'terms' => array_values($projects_section)
       ),
     ),
     'orderby' => array(

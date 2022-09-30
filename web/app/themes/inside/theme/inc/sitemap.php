@@ -5,7 +5,7 @@ add_filter( 'wp_sitemaps_add_provider', function ($provider, $name) {
 }, 10, 2);
 
 function remove_tax_from_sitemap( $taxonomies ) {
-     unset( $taxonomies['years'] );
+     unset( $taxonomies['section'] );
      unset( $taxonomies['category'] );
      unset( $taxonomies['subjects'] );
      return $taxonomies;

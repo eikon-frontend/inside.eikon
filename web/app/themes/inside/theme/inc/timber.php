@@ -86,7 +86,7 @@ class StarterSite extends Timber\Site {
 
     $current_post_id = get_the_id();
     if(is_single()){
-      $first_term_id = get_the_terms( $current_post_id, 'years' )[0]->term_id;
+      $first_term_id = get_the_terms( $current_post_id, 'section' )[0]->term_id;
       $archive_page = get_field('archive_page', 'term_'.$first_term_id);
 
       $context['menu']->items = array_map(function($item) use ($archive_page) {
