@@ -7,6 +7,9 @@ web/app/cache/
 web/app/uploads/*
 !web/app/uploads/.gitkeep
 
+# Custom query, not available on composer
+!web/app/plugins/wp-graphql-tax-query
+
 # WordPress
 web/wp
 web/.htaccess
