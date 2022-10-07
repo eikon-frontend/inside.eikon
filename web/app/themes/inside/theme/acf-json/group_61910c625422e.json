@@ -1,6 +1,6 @@
 {
     "key": "group_61910c625422e",
-    "title": "Section",
+    "title": "Section taxonomy",
     "fields": [
         {
             "key": "field_61910c7708bc4",
@@ -44,8 +44,8 @@
     "description": "",
     "show_in_rest": 0,
     "show_in_graphql": 1,
-    "graphql_field_name": "annéE",
+    "graphql_field_name": "sectionTax",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1665166340
+    "modified": 1665168371
 }
