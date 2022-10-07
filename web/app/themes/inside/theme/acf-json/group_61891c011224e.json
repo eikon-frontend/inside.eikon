@@ -3,65 +3,6 @@
     "title": "Section",
     "fields": [
         {
-            "key": "field_6248ac622db91",
-            "label": "Cartouche",
-            "name": "cartouche",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "collapsed": "",
-            "min": 0,
-            "max": 0,
-            "layout": "table",
-            "button_label": "",
-            "sub_fields": [
-                {
-                    "key": "field_6248ac702db92",
-                    "label": "Titre",
-                    "name": "title",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_6248ac7d2db93",
-                    "label": "Contenu",
-                    "name": "content",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                }
-            ]
-        },
-        {
             "key": "field_61891c059bc73",
             "label": "Video",
             "name": "video",
@@ -116,7 +57,7 @@
         },
         {
             "key": "field_618923982b8e5",
-            "label": "Section des projets",
+            "label": "Années des projets",
             "name": "projects_section",
             "type": "taxonomy",
             "instructions": "",
@@ -127,7 +68,7 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "section",
+            "taxonomy": "years",
             "field_type": "multi_select",
             "allow_null": 0,
             "add_term": 0,
@@ -155,5 +96,9 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1648929943
+    "show_in_graphql": 1,
+    "graphql_field_name": "section",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": "",
+    "modified": 1665166309
 }

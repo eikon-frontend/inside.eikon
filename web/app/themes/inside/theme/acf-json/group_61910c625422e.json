@@ -1,6 +1,6 @@
 {
     "key": "group_61910c625422e",
-    "title": "Année",
+    "title": "Section",
     "fields": [
         {
             "key": "field_61910c7708bc4",
@@ -42,5 +42,10 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1636895904
+    "show_in_rest": 0,
+    "show_in_graphql": 1,
+    "graphql_field_name": "annéE",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": "",
+    "modified": 1665166340
 }
