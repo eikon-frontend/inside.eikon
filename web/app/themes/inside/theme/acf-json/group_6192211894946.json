@@ -27,7 +27,7 @@
             {
                 "param": "nav_menu_item",
                 "operator": "==",
-                "value": "location\/mainNav"
+                "value": "all"
             }
         ]
     ],
@@ -44,5 +44,5 @@
     "graphql_field_name": "menuCustomFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1665733921
+    "modified": 1665823288
 }
