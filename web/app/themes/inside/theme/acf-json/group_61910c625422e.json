@@ -42,10 +42,10 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "show_in_rest": 0,
+    "show_in_rest": 1,
     "show_in_graphql": 1,
     "graphql_field_name": "sectionTax",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1665168371
+    "modified": 1665733921
 }

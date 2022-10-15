@@ -50,6 +50,7 @@ function project_post_type() {
     'graphql_plural_name'   => 'projects',
 		'public'                => true,
 		'show_ui'               => true,
+    'show_in_rest'          => true,
 		'show_in_menu'          => true,
 		'menu_position'         => 5,
 		'menu_icon'             => 'dashicons-portfolio',
