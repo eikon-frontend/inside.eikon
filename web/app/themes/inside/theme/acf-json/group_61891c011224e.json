@@ -76,6 +76,26 @@
             "load_terms": 0,
             "return_format": "id",
             "multiple": 0
+        },
+        {
+            "key": "field_6367c48121e11",
+            "label": "Brochure pdf",
+            "name": "brochure_pdf",
+            "type": "file",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "pdf"
         }
     ],
     "location": [
@@ -100,5 +120,5 @@
     "graphql_field_name": "section",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1665733921
+    "modified": 1667745014
 }
