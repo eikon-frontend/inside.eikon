@@ -118,7 +118,10 @@
     "show_in_rest": 1,
     "show_in_graphql": 1,
     "graphql_field_name": "section",
-    "map_graphql_types_from_location_rules": 0,
-    "graphql_types": "",
-    "modified": 1667745014
+    "map_graphql_types_from_location_rules": 1,
+    "graphql_types": [
+        "Page",
+        "Template_Sections"
+    ],
+    "modified": 1667745667
 }
