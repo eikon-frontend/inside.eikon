@@ -3,6 +3,66 @@
     "title": "Section",
     "fields": [
         {
+            "key": "field_636b80c400a0d",
+            "label": "Durée de formation",
+            "name": "duree_formation",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_636b80f300a0e",
+            "label": "Attestation obtenue",
+            "name": "attestation_obtenue",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_636b810900a0f",
+            "label": "Cours",
+            "name": "liste_cours",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": ""
+        },
+        {
             "key": "field_61891c059bc73",
             "label": "Video",
             "name": "video",
@@ -123,5 +183,5 @@
         "Page",
         "Template_Sections"
     ],
-    "modified": 1667745667
+    "modified": 1667989822
 }

@@ -3,6 +3,23 @@
     "title": "Projets",
     "fields": [
         {
+            "key": "field_636b79013b933",
+            "label": "Lien externe",
+            "name": "external_link",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
             "key": "field_6188f62ec37cc",
             "label": "Galerie",
             "name": "galerie",
@@ -80,23 +97,6 @@
             "button_label": "Ajouter un élément",
             "min": "",
             "max": ""
-        },
-        {
-            "key": "field_636b79013b933",
-            "label": "Lien externe",
-            "name": "external_link",
-            "type": "url",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "show_in_graphql": 1,
-            "default_value": "",
-            "placeholder": ""
         }
     ],
     "location": [
@@ -121,5 +121,5 @@
     "graphql_field_name": "projets",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1667987949
+    "modified": 1667989691
 }
