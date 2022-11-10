@@ -22,7 +22,7 @@
                 "2",
                 "3"
             ],
-            "default_value": 1,
+            "default_value": 0,
             "allow_null": 0,
             "multiple": 0,
             "ui": 0,
@@ -49,7 +49,7 @@
                 "#00928B": "Vert",
                 "#FF9F00": "Jaune"
             },
-            "default_value": "Rouge",
+            "default_value": "#FF615C",
             "allow_null": 0,
             "multiple": 0,
             "ui": 0,
@@ -90,5 +90,5 @@
         "Page",
         "Project"
     ],
-    "modified": 1668092159
+    "modified": 1668092875
 }
