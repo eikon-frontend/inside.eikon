@@ -22,7 +22,7 @@
                 "2",
                 "3"
             ],
-            "default_value": 0,
+            "default_value": 1,
             "allow_null": 0,
             "multiple": 0,
             "ui": 0,
@@ -90,5 +90,5 @@
         "Page",
         "Project"
     ],
-    "modified": 1668091805
+    "modified": 1668092159
 }
