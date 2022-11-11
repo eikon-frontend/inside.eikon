@@ -102,8 +102,25 @@
         },
         {
             "key": "field_6192673711e6e",
-            "label": "Video \"Livefeed\"",
-            "name": "video_livefeed",
+            "label": "URL \"Livefeed\" Twitch",
+            "name": "twitch_livefeed_url",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_636e620235eec",
+            "label": "Video \"Rediffusion\"",
+            "name": "video_rediffusion",
             "type": "oembed",
             "instructions": "",
             "required": 0,
@@ -113,6 +130,7 @@
                 "class": "",
                 "id": ""
             },
+            "show_in_graphql": 1,
             "width": "",
             "height": ""
         }
@@ -139,5 +157,5 @@
     "graphql_field_name": "accueil",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1667745600
+    "modified": 1668178782
 }
