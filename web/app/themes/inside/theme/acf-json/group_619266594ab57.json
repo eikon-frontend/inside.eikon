@@ -50,41 +50,6 @@
             "return_format": "object"
         },
         {
-            "key": "field_6192677411e71",
-            "label": "On air",
-            "name": "on_air",
-            "type": "true_false",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "message": "",
-            "default_value": 0,
-            "ui": 0,
-            "ui_on_text": "",
-            "ui_off_text": ""
-        },
-        {
-            "key": "field_619266b611e6c",
-            "label": "Video \"Mot du directeur\"",
-            "name": "video_director",
-            "type": "oembed",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "width": "",
-            "height": ""
-        },
-        {
             "key": "field_6192672811e6d",
             "label": "Video \"Vlog\"",
             "name": "video_vlog",
@@ -105,7 +70,7 @@
             "label": "URL \"Livefeed\" Twitch",
             "name": "twitch_livefeed_url",
             "type": "url",
-            "instructions": "",
+            "instructions": "Insérer l'url de l'iframe au format: \"https:\/\/player.twitch.tv\/?channel=eikontwitch\"",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -157,5 +122,5 @@
     "graphql_field_name": "accueil",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1668178782
+    "modified": 1668180013
 }
