@@ -42,7 +42,7 @@ function project_post_type() {
 		'label'                 => __( 'Projet', 'project' ),
 		'description'           => __( 'Travaux d\'écoles', 'project' ),
 		'labels'                => $labels,
-		'supports'              => array( 'title', 'editor', 'thumbnail' ),
+		'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt'),
 		'taxonomies'            => array( 'year', 'subjects' ),
 		'hierarchical'          => false,
     'show_in_graphql'       => true,
@@ -139,3 +139,5 @@ register_taxonomy('subjects',array('project'), array(
     'graphql_single_name'   => 'subject',
     'graphql_plural_name'   => 'subjects',
   ));
+
+add_post_type_support("page", "excerpt");
