@@ -3,23 +3,6 @@
     "title": "Inscriptions",
     "fields": [
         {
-            "key": "field_636e1e874748a",
-            "label": "Video",
-            "name": "video",
-            "type": "oembed",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "show_in_graphql": 1,
-            "width": "",
-            "height": ""
-        },
-        {
             "key": "field_636e1ead4748c",
             "label": "Sections",
             "name": "sections",
@@ -118,6 +101,23 @@
                     "min_size": "",
                     "max_size": "",
                     "mime_types": "pdf"
+                },
+                {
+                    "key": "field_6372431102acc",
+                    "label": "External link",
+                    "name": "external_link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "show_in_graphql": 1,
+                    "default_value": "",
+                    "placeholder": ""
                 }
             ]
         }
@@ -144,5 +144,5 @@
     "graphql_field_name": "inscriptions",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1668161816
+    "modified": 1668432672
 }
