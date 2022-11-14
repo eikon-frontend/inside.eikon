@@ -141,3 +141,5 @@ register_taxonomy('subjects',array('project'), array(
   ));
 
 add_post_type_support("page", "excerpt");
+
+remove_filter('the_excerpt', 'wpautop');
