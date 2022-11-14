@@ -98,6 +98,51 @@
             "show_in_graphql": 1,
             "width": "",
             "height": ""
+        },
+        {
+            "key": "field_63723ce7be7f9",
+            "label": "JPO Texte",
+            "name": "jpo_texte",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "delay": 0
+        },
+        {
+            "key": "field_63723cfebe7fa",
+            "label": "JPO Poster",
+            "name": "jpo_poster",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
         }
     ],
     "location": [
@@ -122,5 +167,5 @@
     "graphql_field_name": "accueil",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1668180013
+    "modified": 1668431120
 }
