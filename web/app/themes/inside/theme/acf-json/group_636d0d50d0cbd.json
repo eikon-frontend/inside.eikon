@@ -72,6 +72,13 @@
                 "operator": "==",
                 "value": "project"
             }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "department"
+            }
         ]
     ],
     "menu_order": 0,
@@ -87,8 +94,9 @@
     "graphql_field_name": "cutout",
     "map_graphql_types_from_location_rules": 1,
     "graphql_types": [
+        "Department",
         "Page",
         "Project"
     ],
-    "modified": 1668092875
+    "modified": 1670075299
 }

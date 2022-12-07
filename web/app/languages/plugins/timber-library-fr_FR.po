@@ -1,0 +1,50 @@
+# Translation of Plugins - Timber - Stable (latest release) in French (France)
+# This file is distributed under the same license as the Plugins - Timber - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-06-02 10:57:16+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/4.0.0-alpha.3\n"
+"Language: fr\n"
+"Project-Id-Version: Plugins - Timber - Stable (latest release)\n"
+
+#. translators: %s: Human-readable time difference.
+#: lib/Twig.php:367
+msgid "%s from now"
+msgstr "%s à partir de maintenant"
+
+#. translators: %s: Human-readable time difference.
+#: lib/Twig.php:362
+msgid "%s ago"
+msgstr "Il y a %s"
+
+#. translators: If your word count is based on single characters (East Asian
+#. characters), enter 'characters'. Otherwise, enter 'words'. Do not translate
+#. into your own language.
+#: lib/TextHelper.php:50
+msgctxt "word count: words or characters?"
+msgid "words"
+msgstr "mots"
+
+#: lib/Pagination.php:181 lib/TextHelper.php:41
+msgid "&hellip;"
+msgstr "&hellip;"
+
+#: lib/Pagination.php:116
+msgid "Next &raquo;"
+msgstr "Suivant &raquo;"
+
+#: lib/Pagination.php:115
+msgid "&laquo; Previous"
+msgstr "&laquo; Précédent"
+
+#: lib/Archives.php:162
+msgid "%1$s"
+msgstr "%1$s"
+
+#: lib/Archives.php:160
+msgid "%1$s %2$d"
+msgstr "%1$s %2$d"
