@@ -26,7 +26,7 @@
             "key": "field_636e1ef147490",
             "label": "Brochure PDF",
             "name": "brochure_pdf",
-            "type": "file",
+            "type": "url",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
