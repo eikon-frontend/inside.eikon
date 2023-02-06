@@ -36,11 +36,8 @@
                 "id": ""
             },
             "show_in_graphql": 1,
-            "return_format": "array",
-            "library": "all",
-            "min_size": "",
-            "max_size": "",
-            "mime_types": "pdf"
+            "default_value": "",
+            "placeholder": ""
         },
         {
             "key": "field_6372431102acc",
