@@ -208,7 +208,6 @@ function department_post_type()
 }
 add_action('init', 'department_post_type', 0);
 
-
 // Removes the post editor from the page editing screen
 function remove_menu()
 {
