@@ -1,0 +1,12 @@
+<?php
+
+$wp_roles = new WP_Roles();
+$wp_roles->remove_role("matomo_write_role");
+$wp_roles->remove_role("matomo_view_role");
+$wp_roles->remove_role("matomo_superuser_role");
+$wp_roles->remove_role("matomo_admin_role");
+$wp_roles->remove_role("contributor");
+$wp_roles->remove_role("author");
+
+$wp_roles->add_role("supervisor", "Enseignant / enseignante");
+$wp_roles->add_role("responsable", "Responsable de branche");
