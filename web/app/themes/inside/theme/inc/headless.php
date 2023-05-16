@@ -16,11 +16,13 @@ function customize_wp_admin_bar_preview_links($wp_admin_bar)
   $view_site->href = $base_url;
 
   $view = $wp_admin_bar->get_node('view');
-  $url_data = wp_parse_url($view->href);
-  $view->href = untrailingslashit($base_url) . $url_data['path'] . (isset($url_data['query']) ? '?' . $url_data['query'] : '');
+  if ($view) {
+    $url_data = wp_parse_url($view->href);
+    $view->href = untrailingslashit($base_url) . $url_data['path'] . (isset($url_data['query']) ? '?' . $url_data['query'] : '');
 
-  $wp_admin_bar->add_node($view_site);
-  $wp_admin_bar->add_node($view);
+    $wp_admin_bar->add_node($view_site);
+    $wp_admin_bar->add_node($view);
+  }
 }
 
 function filter_preview_link($permalink)
