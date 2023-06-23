@@ -64,6 +64,11 @@
                 "param": "post_type",
                 "operator": "==",
                 "value": "page"
+            },
+            {
+                "param": "current_user_role",
+                "operator": "==",
+                "value": "administrator"
             }
         ],
         [
@@ -71,6 +76,11 @@
                 "param": "post_type",
                 "operator": "==",
                 "value": "project"
+            },
+            {
+                "param": "current_user_role",
+                "operator": "==",
+                "value": "administrator"
             }
         ],
         [
@@ -78,6 +88,11 @@
                 "param": "post_type",
                 "operator": "==",
                 "value": "department"
+            },
+            {
+                "param": "current_user_role",
+                "operator": "==",
+                "value": "administrator"
             }
         ]
     ],
@@ -98,5 +113,5 @@
         "Page",
         "Project"
     ],
-    "modified": 1670075299
+    "modified": 1687502764
 }
