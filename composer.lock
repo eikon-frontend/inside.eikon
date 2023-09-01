@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f9440e2eae07e6dbe8f45b4e34bd9c2",
+    "content-hash": "5a7f1dc510b73bed5b137c8de8bfac61",
     "packages": [
         {
             "name": "advanced-custom-fields/advanced-custom-fields-pro",
@@ -1324,6 +1324,24 @@
             "homepage": "https://wordpress.org/plugins/wp-graphql/"
         },
         {
+            "name": "wpackagist-plugin/wp-mail-smtp",
+            "version": "3.9.0",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/wp-mail-smtp/",
+                "reference": "tags/3.9.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/wp-mail-smtp.3.9.0.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/wp-mail-smtp/"
+        },
+        {
             "name": "wpackagist-plugin/wpforms-lite",
             "version": "1.8.1.2",
             "source": {
@@ -2023,5 +2041,5 @@
     "platform-overrides": {
         "php": "7.2"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
