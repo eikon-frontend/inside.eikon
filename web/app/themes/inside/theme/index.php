@@ -1,3 +1,2 @@
 <?php
-  header( "Location: https://eikon.ch" );
-?>
+  header( "Location: https://inside.eikon.ch/admin" );
