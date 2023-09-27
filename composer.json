@@ -45,9 +45,7 @@
     "roots/wp-config": "1.0.0",
     "roots/wp-password-bcrypt": "1.0.0",
     "advanced-custom-fields/advanced-custom-fields-pro": "^5.10",
-    "wpackagist-plugin/timber-library": "^1.19",
-    "wpackagist-plugin/wpforms-lite": "^1.7",
-    "wpackagist-plugin/wp-graphql": "^1.10",
+    "wpackagist-plugin/wp-graphql": "^1.16",
     "wp-graphql/wp-graphql-acf": "^0.6.1",
     "wpackagist-plugin/members": "^3.2",
     "wpackagist-plugin/wp-mail-smtp": "^3.9"
