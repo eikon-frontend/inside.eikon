@@ -1,12 +1,11 @@
 # Inside eikon
 
-Website for the eikon 2021 open house. Using Wordpress / Bedrock / Timber / ACF and Webpack.
+Website for the eikon 2021 open house. Using Wordpress / Bedrock / ACF and Webpack.
 
 More info:
 
 - https://wordpress.org/
 - https://roots.io/bedrock/
-- https://github.com/timber/timber
 - https://www.advancedcustomfields.com/
 - https://webpack.js.org/
 
