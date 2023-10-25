@@ -1,3 +1,4 @@
+
 {
     "key": "group_6188f620ce1ee",
     "title": "Projets",
@@ -44,14 +45,15 @@
                             "label": "Video",
                             "name": "video",
                             "type": "oembed",
-                            "instructions": "",
+                            "instructions": "Uploadez la vidéo sur un service externe (par exemple: YouTube ou Vimeo) puis insérez l'url de la vidéo ici.",
                             "required": 1,
-                            "conditional_logic": 0,
+                                                        "conditional_logic": 0,
                             "wrapper": {
                                 "width": "",
                                 "class": "",
                                 "id": ""
                             },
+                            "show_in_graphql": 1,
                             "width": "",
                             "height": ""
                         }
@@ -68,9 +70,9 @@
                         {
                             "key": "field_6188f66fc37d0",
                             "label": "Image",
-                            "name": "image",
+                             "name": "image",
                             "type": "image",
-                            "instructions": "",
+                            "instructions": "Format libre, mais ne pas dépasser un ratio longueur\/largeur de 16\/9 ou 9\/16\r\n(3000px de large, au maximum)",
                             "required": 1,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -78,14 +80,15 @@
                                 "class": "",
                                 "id": ""
                             },
+                            "show_in_graphql": 1,
                             "return_format": "array",
                             "preview_size": "medium",
                             "library": "all",
                             "min_width": "",
                             "min_height": "",
                             "min_size": "",
-                            "max_width": "",
-                            "max_height": "",
+                            "max_width": 3000,
+                            "max_height": 3000,
                             "max_size": "",
                             "mime_types": ""
                         }
@@ -114,12 +117,12 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": true,
+        "active": true,
     "description": "",
     "show_in_rest": 1,
     "show_in_graphql": 1,
     "graphql_field_name": "projets",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1687503039
+    "modified": 1698230613
 }
