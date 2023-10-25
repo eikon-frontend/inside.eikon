@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Add HTTP basic auth credentials for ACF
-        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/wordpress/auth.json
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
 
       - uses: ruby/setup-ruby@v1
         with:
