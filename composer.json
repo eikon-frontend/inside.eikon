@@ -31,7 +31,7 @@
     },
     {
       "type": "composer",
-      "url": "https://pivvenit.github.io/acf-composer-bridge/composer/v3/wordpress-muplugin/"
+      "url": "https://connect.advancedcustomfields.com"
     }
   ],
   "require": {
@@ -44,7 +44,7 @@
     "roots/wordpress": "^6",
     "roots/wp-config": "1.0.0",
     "roots/wp-password-bcrypt": "1.0.0",
-    "advanced-custom-fields/advanced-custom-fields-pro": "^5.10",
+    "wpengine/advanced-custom-fields-pro": "^6.2",
     "wpackagist-plugin/wp-graphql": "^1.16",
     "wp-graphql/wp-graphql-acf": "^0.6.1",
     "wpackagist-plugin/members": "^3.2",
