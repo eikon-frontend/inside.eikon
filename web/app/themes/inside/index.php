@@ -1,2 +1,2 @@
 <?php
-// header("Location: " . admin_url());
+header("Location: " . admin_url());
