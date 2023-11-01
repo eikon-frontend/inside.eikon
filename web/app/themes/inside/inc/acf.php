@@ -7,6 +7,7 @@ if (function_exists('acf_add_options_page') && current_user_can('manage_options'
     'menu_slug'   => 'theme-settings',
     'capability'  => 'edit_posts',
     'redirect'    => false,
-    'icon_url' => 'dashicons-block-default'
+    'icon_url' => 'dashicons-block-default',
+    'show_in_graphql' => true,
   ));
 }
