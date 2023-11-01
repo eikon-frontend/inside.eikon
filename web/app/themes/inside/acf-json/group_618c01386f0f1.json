@@ -1,0 +1,49 @@
+{
+    "key": "group_618c01386f0f1",
+    "title": "Thème",
+    "fields": [
+        {
+            "key": "field_6188fc17268ff",
+            "label": "Adresse",
+            "name": "adresse",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": "br"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "theme-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 1,
+    "show_in_graphql": 1,
+    "graphql_field_name": "thèMe",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": "",
+    "modified": 1698795863
+}
