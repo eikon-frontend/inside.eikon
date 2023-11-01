@@ -1,4 +1,3 @@
-
 {
     "key": "group_6188f620ce1ee",
     "title": "Projets",
@@ -7,6 +6,7 @@
             "key": "field_636b79013b933",
             "label": "Lien externe",
             "name": "external_link",
+            "aria-label": "",
             "type": "url",
             "instructions": "",
             "required": 0,
@@ -24,6 +24,7 @@
             "key": "field_6188f62ec37cc",
             "label": "Galerie",
             "name": "galerie",
+            "aria-label": "",
             "type": "flexible_content",
             "instructions": "",
             "required": 0,
@@ -33,6 +34,7 @@
                 "class": "",
                 "id": ""
             },
+            "show_in_graphql": 1,
             "layouts": {
                 "layout_6188f63633823": {
                     "key": "layout_6188f63633823",
@@ -44,10 +46,11 @@
                             "key": "field_6188f63ac37cd",
                             "label": "Video",
                             "name": "video",
+                            "aria-label": "",
                             "type": "oembed",
                             "instructions": "Uploadez la vidéo sur un service externe (par exemple: YouTube ou Vimeo) puis insérez l'url de la vidéo ici.",
                             "required": 1,
-                                                        "conditional_logic": 0,
+                            "conditional_logic": 0,
                             "wrapper": {
                                 "width": "",
                                 "class": "",
@@ -70,7 +73,8 @@
                         {
                             "key": "field_6188f66fc37d0",
                             "label": "Image",
-                             "name": "image",
+                            "name": "image",
+                            "aria-label": "",
                             "type": "image",
                             "instructions": "Format libre, mais ne pas dépasser un ratio longueur\/largeur de 16\/9 ou 9\/16\r\n(3000px de large, au maximum)",
                             "required": 1,
@@ -95,11 +99,39 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_65419e5206c4c": {
+                    "key": "layout_65419e5206c4c",
+                    "name": "twitch",
+                    "label": "Twitch",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_65419e5a06c4e",
+                            "label": "Twitch",
+                            "name": "twitch",
+                            "aria-label": "",
+                            "type": "url",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "show_in_graphql": 1,
+                            "default_value": "URL du replay ou du live twitch",
+                            "placeholder": ""
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
-            "button_label": "Ajouter un élément",
             "min": "",
-            "max": ""
+            "max": "",
+            "button_label": "Ajouter un élément"
         }
     ],
     "location": [
@@ -117,12 +149,12 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-        "active": true,
+    "active": true,
     "description": "",
     "show_in_rest": 1,
     "show_in_graphql": 1,
     "graphql_field_name": "projets",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1698230613
+    "modified": 1698799229
 }
