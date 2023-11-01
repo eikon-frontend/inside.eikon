@@ -112,7 +112,7 @@
                             "name": "twitch",
                             "aria-label": "",
                             "type": "url",
-                            "instructions": "",
+                            "instructions": "URL du replay ou du live twitch",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -121,7 +121,7 @@
                                 "id": ""
                             },
                             "show_in_graphql": 1,
-                            "default_value": "URL du replay ou du live twitch",
+                            "default_value": "",
                             "placeholder": ""
                         }
                     ],
@@ -156,5 +156,5 @@
     "graphql_field_name": "projets",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1698799229
+    "modified": 1698799401
 }
