@@ -217,3 +217,31 @@ function remove_menu()
 add_action('admin_menu', 'remove_menu');
 
 add_theme_support('post-thumbnails');
+
+/*
+ * Add Event Column
+ */
+function users_projects_column($cols)
+{
+  $cols['user_projects'] = 'Projets';
+  return $cols;
+}
+
+/*
+ * Print Event Column Value
+ */
+function user_projects_column_value($value, $column_name, $id)
+{
+  if ($column_name == 'user_projects') {
+    global $wpdb;
+    $count = (int) $wpdb->get_var($wpdb->prepare(
+      "SELECT COUNT(ID) FROM $wpdb->posts WHERE
+       post_type = 'project' AND post_status = 'publish' AND post_author = %d",
+      $id
+    ));
+    return $count;
+  }
+}
+
+add_filter('manage_users_custom_column', 'user_projects_column_value', 10, 3);
+add_filter('manage_users_columns', 'users_projects_column');
