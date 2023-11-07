@@ -236,7 +236,7 @@ function user_projects_column_value($value, $column_name, $id)
     global $wpdb;
     $count = (int) $wpdb->get_var($wpdb->prepare(
       "SELECT COUNT(ID) FROM $wpdb->posts WHERE
-       post_type = 'project' AND post_status = 'publish' AND post_author = %d",
+       post_type = 'project' AND post_author = %d",
       $id
     ));
     return $count;
