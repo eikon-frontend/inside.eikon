@@ -59,6 +59,27 @@
                             "show_in_graphql": 1,
                             "width": "",
                             "height": ""
+                        },
+                        {
+                            "key": "field_6554f28a0c3ad",
+                            "label": "Légende",
+                            "name": "caption",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "show_in_graphql": 1,
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         }
                     ],
                     "min": "",
@@ -123,6 +144,27 @@
                             "show_in_graphql": 1,
                             "default_value": "",
                             "placeholder": ""
+                        },
+                        {
+                            "key": "field_6554f2a00c3ae",
+                            "label": "Légende",
+                            "name": "caption",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "show_in_graphql": 1,
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         }
                     ],
                     "min": "",
@@ -156,5 +198,5 @@
     "graphql_field_name": "projets",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1698799401
+    "modified": 1700065971
 }
