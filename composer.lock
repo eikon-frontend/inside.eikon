@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9ec52e12e5a70e41e0839c168f727a8",
+    "content-hash": "41b8e58d3d55953b4c975aca49bbfdd1",
     "packages": [
         {
             "name": "composer/installers",
@@ -218,6 +218,48 @@
                 }
             ],
             "time": "2021-11-21T21:41:47+00:00"
+        },
+        {
+            "name": "jysperu/php-qr-code",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jysperu/php-qr-code.git",
+                "reference": "de3fb6e42d1df8cc50355180eb8b1ab36bb66c93"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jysperu/php-qr-code/zipball/de3fb6e42d1df8cc50355180eb8b1ab36bb66c93",
+                "reference": "de3fb6e42d1df8cc50355180eb8b1ab36bb66c93",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QRcode\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "description": "Based in http://phpqrcode.sourceforge.net/",
+            "keywords": [
+                "PHP QR",
+                "qr",
+                "qr-code",
+                "qr-code-generator",
+                "qr-generator",
+                "qrcode",
+                "qrcode-generator"
+            ],
+            "support": {
+                "source": "https://github.com/jysperu/php-qr-code/tree/2.0.2"
+            },
+            "time": "2022-03-09T03:42:59+00:00"
         },
         {
             "name": "oscarotero/env",

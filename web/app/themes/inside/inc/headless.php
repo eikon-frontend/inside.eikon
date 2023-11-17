@@ -1,48 +1,31 @@
 <?php
 
-//Changes the preview URL of the CMS to the base url of the front-end website.
+use QRcode\QRcode;
+use QRcode\QRstr;
 
-add_filter('preview_post_link', 'filter_preview_link');
-add_filter('preview_page_link', 'filter_preview_link');
-add_filter('get_sample_permalink', 'filter_preview_link');
-add_filter('get_sample_permalink_html', 'filter_replace_base_url');
-add_action('admin_bar_menu', 'customize_wp_admin_bar_preview_links', 9999);
-
-
-function customize_wp_admin_bar_preview_links($wp_admin_bar)
+function add_custom_meta_box()
 {
-  $base_url = "https://eikon.ch";
-  $view_site = $wp_admin_bar->get_node('view-site');
-  $view_site->href = $base_url;
-
-  $view = $wp_admin_bar->get_node('view');
-  if ($view) {
-    $url_data = wp_parse_url($view->href);
-    $view->href = untrailingslashit($base_url) . $url_data['path'] . (isset($url_data['query']) ? '?' . $url_data['query'] : '');
-
-    $wp_admin_bar->add_node($view_site);
-    $wp_admin_bar->add_node($view);
-  }
+  add_meta_box(
+    'infos-box',
+    'Informations du projet',
+    'info_box',
+    'project',
+    'side',
+    'low'
+  ); //spaces were here
 }
+add_action('add_meta_boxes', 'add_custom_meta_box');
 
-function filter_preview_link($permalink)
+function info_box($post)
 {
-  $base_url = "https://eikon.ch";
-
-  if (is_array($permalink)) {
-    $url_data = wp_parse_url($permalink[0]);
-    $permalink[0] = str_replace($url_data['scheme'] . '://' . $url_data['host'], untrailingslashit($base_url), $permalink[0]);
-    return $permalink;
+  if ($post->post_name) {
+    $base_url = "https://eikon.ch";
+    $post_external_url = $base_url . "/projets/" . $post->post_name;
+    echo '<h3>URL Externe & QR Code</h3>';
+    echo '<a href="' . $post_external_url . '" target="_blank">' . $post_external_url . '</a><hr />';
+    $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
+    echo '<img src="' . $base64_data . '" />';
   } else {
-    $url_data = wp_parse_url($permalink);
-    $permalink = untrailingslashit($base_url) . $url_data['path'] . (isset($url_data['query']) ? '?' . $url_data['query'] : '');
-    return $permalink;
+    echo "Enregistrez d'abord le projet pour obtenir l'URL externe et le QR Code.";
   }
-};
-
-function filter_replace_base_url($html)
-{
-  $base_url = "https://eikon.ch";
-  $html = str_replace(untrailingslashit(site_url()), untrailingslashit($base_url), $html);
-  return $html;
 }
