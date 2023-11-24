@@ -4,7 +4,7 @@
     "fields": [
         {
             "key": "field_6192675911e70",
-            "label": "Video \"Showreel\"",
+            "label": "Showreel",
             "name": "video_showreel",
             "aria-label": "",
             "type": "text",
@@ -16,59 +16,12 @@
                 "class": "",
                 "id": ""
             },
+            "show_in_graphql": 1,
             "default_value": "",
+            "maxlength": "",
             "placeholder": 25986574,
             "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_636e620235eec",
-            "label": "Video \"Rediffusion\"",
-            "name": "video_rediffusion",
-            "aria-label": "",
-            "type": "oembed",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "show_in_graphql": 1,
-            "width": "",
-            "height": ""
-        },
-        {
-            "key": "field_635fa0f93d2f6",
-            "label": "Projets",
-            "name": "projets",
-            "aria-label": "",
-            "type": "relationship",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "show_in_graphql": 1,
-            "post_type": [
-                "project"
-            ],
-            "taxonomy": "",
-            "filters": [
-                "search",
-                "post_type",
-                "taxonomy"
-            ],
-            "elements": "",
-            "min": "",
-            "max": "",
-            "return_format": "object",
-            "bidirectional_target": []
+            "append": ""
         },
         {
             "key": "field_6560dd7eea1b1",
@@ -114,5 +67,5 @@
     "graphql_field_name": "accueil",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1700846996
+    "modified": 1700852083
 }
