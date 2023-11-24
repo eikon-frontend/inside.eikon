@@ -5,7 +5,7 @@ set :branch, :main
 
 set :deploy_to, -> { "/home/eikon/www/#{fetch(:application)}" }
 
-set :opcache_file_url, "https://eikon.ch/opcache_clear.php"
+set :opcache_file_url, "https://inside.eikon.ch/opcache_clear.php"
 
 # Extended Server Syntax
 # ======================
