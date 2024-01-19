@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.4.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-11-23 09:11:41+0000\n"
+"PO-Revision-Date: 2024-01-16 14:10:49+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1049,6 +1049,11 @@ msgctxt "block description"
 msgid "Displays a page inside a list of all pages."
 msgstr "Affiche une page à l’intérieur d’une liste de toutes les pages."
 
+#: wp-includes/blocks/page-list-item/block.json
+msgctxt "block title"
+msgid "Page List Item"
+msgstr "Élément de liste de type Page"
+
 #: wp-includes/js/dist/edit-site.js:21372 wp-admin/includes/theme.php:345
 msgid "Style Variations"
 msgstr "Variations de styles"
@@ -1064,7 +1069,7 @@ msgstr "Emplacement"
 msgid "Sticky"
 msgstr "Épinglé"
 
-#: wp-login.php:1318
+#: wp-login.php:1320
 msgid "https://wordpress.org/documentation/article/cookies/"
 msgstr "https://fr.wordpress.org/support/article/cookies/"
 
@@ -1362,11 +1367,11 @@ msgstr "Il ne semble pas y avoir de fichier %s. Celui-ci est nécessaire pour qu
 msgid "The date and time the preferences were updated."
 msgstr "La date et l’heure auxquelles les préférences ont été mises à jour."
 
-#: wp-includes/theme.php:4141
+#: wp-includes/theme.php:4104
 msgid "Whether the theme disables generated layout styles."
 msgstr "Indique si le thème désactive les styles de mise en page générés."
 
-#: wp-includes/theme.php:3951
+#: wp-includes/theme.php:3914
 msgid "Whether a theme uses block-based template parts."
 msgstr "Si un thème utilise des éléments de modèle basées sur des blocs."
 
@@ -1444,7 +1449,7 @@ msgstr "*"
 #. translators: 1: User name, 2: Edit user link, 3: Logout URL.
 #: wp-includes/comment-template.php:2604
 msgid "Logged in as %1$s. <a href=\"%2$s\">Edit your profile</a>. <a href=\"%3$s\">Log out?</a>"
-msgstr "Connecté·e en tant que %1$s. <a href=\"%2$s\">Modifier votre profil</a>. <a href=\"%3$s\">Se déconnecter ?</a>"
+msgstr "Connexion en tant que %1$s. <a href=\"%2$s\">Modifier votre profil</a>. <a href=\"%3$s\">Se déconnecter ?</a>"
 
 #. translators: %s: Digit to indicate multiple of sizing, eg. 2X-Large.
 #: wp-includes/class-wp-theme-json.php:3464
@@ -1564,7 +1569,7 @@ msgstr "Erreur d’événement de déplanification de tâche pour le crochet %1$
 msgid "Cron reschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s"
 msgstr "Erreur d’événement de replanification de tâche pour le crochet %1$s. Code d’erreur : %2$s. Message d’erreur : %3$s. Données : %4$s"
 
-#: wp-includes/theme.php:3944
+#: wp-includes/theme.php:3907
 msgid "Whether a theme uses block-based templates."
 msgstr "Si un thème utilise des modèles basés sur des blocs."
 
@@ -1790,7 +1795,7 @@ msgstr "Avatar par défaut"
 msgid "There is already a ping from that URL for this post."
 msgstr "Il y a déjà un ping de cette URL pour cette publication."
 
-#: wp-login.php:968
+#: wp-login.php:970
 msgid "The password cannot be a space or all spaces."
 msgstr "Le mot de passe ne peut pas être uniquement composé d’espaces."
 
@@ -3815,19 +3820,19 @@ msgstr "Saisir « / » pour choisir un bloc"
 msgid "Layout"
 msgstr "Mise en page"
 
-#: wp-login.php:1434
+#: wp-login.php:1436
 msgid "<strong>Error:</strong> User registration is currently not allowed."
 msgstr "<strong>Erreur :</strong> l’inscription n’est actuellement pas autorisée."
 
-#: wp-login.php:974
+#: wp-login.php:976
 msgid "<strong>Error:</strong> The passwords do not match."
 msgstr "<strong>Erreur :</strong> les mots de passe ne correspondent pas."
 
-#: wp-login.php:838
+#: wp-login.php:840
 msgid "<strong>Error:</strong> Your password reset link has expired. Please request a new link below."
 msgstr "<strong>Erreur :</strong> votre lien de réinitialisation de mot de passe a expiré. Veuillez demander un nouveau lien ci-dessous."
 
-#: wp-login.php:836
+#: wp-login.php:838
 msgid "<strong>Error:</strong> Your password reset link appears to be invalid. Please request a new link below."
 msgstr "<strong>Erreur :</strong> votre lien de réinitialisation de mot de passe semble non valide. Veuillez demander un nouveau lien ci-dessous."
 
@@ -4960,15 +4965,15 @@ msgstr "Désolé, vous n’avez pas l’autorisation de visualiser le thème act
 msgid "[block rendering halted]"
 msgstr "[rendu du bloc interrompu]"
 
-#: wp-login.php:1064
+#: wp-login.php:1066
 msgid "Save Password"
 msgstr "Enregistrer le mot de passe"
 
-#: wp-login.php:1063
+#: wp-login.php:1065
 msgid "Generate Password"
 msgstr "Générer un mot de passe"
 
-#: wp-login.php:1010
+#: wp-login.php:1012
 msgid "Enter your new password below or generate one."
 msgstr "Saisissez votre nouveau mot de passe ci-dessous ou générez-en un."
 
@@ -5189,11 +5194,11 @@ msgstr "Version de l’API de l’éditeur de blocs."
 msgid "Invalid parameters."
 msgstr "Paramètres non valides."
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1668
+#: wp-includes/rest-api/class-wp-rest-server.php:1675
 msgid "The requested route does not support batch requests."
 msgstr "La route demandée ne prend pas en charge les demandes par lots."
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1618
+#: wp-includes/rest-api/class-wp-rest-server.php:1625
 msgid "Could not parse the path."
 msgstr "Impossible d’analyser le chemin."
 
@@ -5201,7 +5206,7 @@ msgstr "Impossible d’analyser le chemin."
 msgid "The handler for the route is invalid."
 msgstr "Le gestionnaire de route n’est pas valide."
 
-#: wp-includes/theme.php:2717
+#: wp-includes/theme.php:2680
 msgid "You need to pass an array of post formats."
 msgstr "Vous devez passer un tableau de formats de publications."
 
@@ -5330,7 +5335,7 @@ msgid "Please use %s to add new schema properties."
 msgstr "Veuillez utiliser %s pour ajouter de nouvelles propriétés de schéma."
 
 #. translators: %s: prepare_callback
-#: wp-includes/theme.php:3352
+#: wp-includes/theme.php:3315
 msgid "The \"%s\" must be a callable function."
 msgstr "« %s » doit être une fonction pouvant être appelée."
 
@@ -6135,44 +6140,44 @@ msgstr "Lors de l’enregistrement d’une valeur de métadonnée par défaut, l
 msgid "RSS Feed"
 msgstr "Flux RSS"
 
-#: wp-includes/theme.php:4277
+#: wp-includes/theme.php:4240
 msgid "The post types that support thumbnails or true if all post types are supported."
 msgstr "Les types de publications qui supportent les miniatures, ou « true » si tous les types de publication sont supportés."
 
-#: wp-includes/theme.php:3339
+#: wp-includes/theme.php:3302
 msgid "When registering an \"object\" feature, the feature's schema must include the \"properties\" keyword."
 msgstr "Lors de l’enregistrement d’une fonctionnalité de type « object », le schéma de la fonctionnalité doit inclure le mot-clé « properties »."
 
-#: wp-includes/theme.php:3332
+#: wp-includes/theme.php:3295
 msgid "When registering an \"array\" feature, the feature's schema must include the \"items\" keyword."
 msgstr "Lors de l’enregistrement d’une fonctionnalité de type « array », le schéma de la fonctionnalité doit inclure le mot-clé « items »."
 
-#: wp-includes/theme.php:3325
+#: wp-includes/theme.php:3288
 msgid "When registering an \"array\" or \"object\" feature to show in the REST API, the feature's schema must also be defined."
 msgstr "Lors de l’enregistrement une fonctionnalité de type « array » ou « object » à afficher dans l’API REST, le schéma des fonctionnalités doit également être défini."
 
-#: wp-includes/theme.php:3317
+#: wp-includes/theme.php:3280
 msgid "When registering a \"variadic\" theme feature, the \"type\" must be an \"array\"."
 msgstr "Lors de l’enregistrement d’une fonctionnalité de thème « variadic », le « type » doit être « array »."
 
-#: wp-includes/theme.php:3310
+#: wp-includes/theme.php:3273
 msgid "The feature \"type\" is not valid JSON Schema type."
 msgstr "Le « type » de fonctionnalité n’est pas un type de schéma JSON valide."
 
 #. translators: %s: Theme name.
-#: wp-includes/theme.php:1013
+#: wp-includes/theme.php:976
 msgctxt "theme"
 msgid "<strong>Error:</strong> Current WordPress version does not meet minimum requirements for %s."
 msgstr "<strong>Erreur :</strong> la version actuelle de WordPress ne répond pas aux prérequis minimums de %s."
 
 #. translators: %s: Theme name.
-#: wp-includes/theme.php:1004
+#: wp-includes/theme.php:967
 msgctxt "theme"
 msgid "<strong>Error:</strong> Current PHP version does not meet minimum requirements for %s."
 msgstr "<strong>Erreur :</strong> la version actuelle de PHP ne répond pas aux prérequis minimums pour %s."
 
 #. translators: %s: Theme name.
-#: wp-includes/theme.php:995
+#: wp-includes/theme.php:958
 msgctxt "theme"
 msgid "<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for %s."
 msgstr "<strong>Erreur :</strong> les versions actuelles de WordPress et PHP ne répondent pas aux prérequis minimums de %s."
@@ -6240,17 +6245,17 @@ msgstr "Les champs autres que %s ne sont pas supportés par les plans de sites p
 msgid "Fields other than %s are not currently supported for the sitemap index."
 msgstr "Les champs différents de %s ne sont actuellement pas supportés pour l’index du plan de site."
 
-#: wp-login.php:1229
+#: wp-login.php:1231
 msgid "Check your email"
 msgstr "Vérifiez vos e-mails"
 
 #. translators: %s: Link to the login page.
-#: wp-login.php:1219
+#: wp-login.php:1221
 msgid "Registration complete. Please check your email, then visit the <a href=\"%s\">login page</a>."
 msgstr "Enregistrement terminé. Vérifiez vos e-mails puis rendez-vous sur la <a href=\"%s\">page de connexion</a>."
 
 #. translators: %s: Link to the login page.
-#: wp-login.php:1209
+#: wp-login.php:1211
 msgid "Check your email for the confirmation link, then visit the <a href=\"%s\">login page</a>."
 msgstr "Vérifiez vos e-mails pour le lien de confirmation puis rendez-vous sur la <a href=\"%s\">page de connexion</a>."
 
@@ -6415,71 +6420,71 @@ msgstr "Limiter le jeu de résultats en se basant sur les correspondances entre 
 msgid "The \"%1$s\" taxonomy \"%2$s\" property (%3$s) conflicts with an existing property on the REST API Posts Controller. Specify a custom \"rest_base\" when registering the taxonomy to avoid this error."
 msgstr "La propriété « %2$s » de la taxonomie « %1$s » (%3$s) ne fonctionne pas avec l’une des propriétés déjà existantes sur le contrôleur de publications de l’API REST. Spécifiez une « rest_base » personnalisée lors de l’enregistrement de la taxonomie pour éviter cette erreur."
 
-#: wp-includes/theme.php:4305
+#: wp-includes/theme.php:4268
 msgid "Whether theme opts in to default WordPress block styles for viewing."
 msgstr "Détermine si le thème utilise le style des blocs WordPress par défaut pour l’aperçu."
 
-#: wp-includes/theme.php:4298
+#: wp-includes/theme.php:4261
 msgid "Whether the theme can manage the document title tag."
 msgstr "Détermine si le thème gère les étiquettes de titre du document."
 
-#: wp-includes/theme.php:4231
+#: wp-includes/theme.php:4194
 msgid "Allows use of HTML5 markup for search forms, comment forms, comment lists, gallery, and caption."
 msgstr "Permet l’utilisation du balisage HTML5 dans les formulaires de recherche, formulaires de commentaires, listes de commentaires, galeries et légendes."
 
-#: wp-includes/theme.php:4223
+#: wp-includes/theme.php:4186
 msgid "Whether theme opts in to the editor styles CSS wrapper."
 msgstr "Détermine si le thème utilise les styles CSS d’encapsulage sur l’éditeur."
 
-#: wp-includes/theme.php:4199
+#: wp-includes/theme.php:4162
 msgid "Custom gradient presets if defined by the theme."
 msgstr "Pré-réglages de dégradés personnalisés si définis par le thème."
 
-#: wp-includes/theme.php:4174
+#: wp-includes/theme.php:4137
 msgid "Custom font sizes if defined by the theme."
 msgstr "Taille de police personnalisée si définie par le thème."
 
-#: wp-includes/theme.php:4149
+#: wp-includes/theme.php:4112
 msgid "Custom color palette if defined by the theme."
 msgstr "Palette de couleurs personnalisée si définie par le thème."
 
-#: wp-includes/theme.php:4134
+#: wp-includes/theme.php:4097
 msgid "Whether the theme disables custom gradients."
 msgstr "Si le thème désactive les dégradés personnalisés."
 
-#: wp-includes/theme.php:4127
+#: wp-includes/theme.php:4090
 msgid "Whether the theme disables custom font sizes."
 msgstr "Si le thème désactive les tailles de police personnalisées ou non."
 
-#: wp-includes/theme.php:4120
+#: wp-includes/theme.php:4083
 msgid "Whether the theme disables custom colors."
 msgstr "Si le thème désactive les couleurs personnalisées ou non."
 
-#: wp-includes/theme.php:4113
+#: wp-includes/theme.php:4076
 msgid "Whether theme opts in to the dark editor style UI."
 msgstr "Détermine si le thème opte pour l’interface sombre de l’éditeur."
 
-#: wp-includes/theme.php:4106
+#: wp-includes/theme.php:4069
 msgid "Whether the theme enables Selective Refresh for Widgets being managed with the Customizer."
 msgstr "Détermine si le thème autorise le rafraîchissement sélectif des widgets par l’outil de personnalisation."
 
-#: wp-includes/theme.php:4073
+#: wp-includes/theme.php:4036
 msgid "Custom logo if defined by the theme."
 msgstr "Logo personnalisé si défini par le thème."
 
-#: wp-includes/theme.php:3958
+#: wp-includes/theme.php:3921
 msgid "Custom background if defined by the theme."
 msgstr "Arrière-plan personnalisé si défini par le thème."
 
-#: wp-includes/theme.php:4028
+#: wp-includes/theme.php:3991
 msgid "Custom header if defined by the theme."
 msgstr "En-tête personnalisé si défini par le thème."
 
-#: wp-includes/theme.php:3937
+#: wp-includes/theme.php:3900
 msgid "Whether posts and comments RSS feed links are added to head."
 msgstr "Si les liens vers les flux RSS des articles et des commentaires sont ajoutés à l’en-tête."
 
-#: wp-includes/theme.php:3930
+#: wp-includes/theme.php:3893
 msgid "Whether theme opts in to wide alignment CSS class."
 msgstr "Détermine si le thème utilise des classes CSS pour les alignements larges."
 
@@ -6501,7 +6506,7 @@ msgctxt "minimum input length for searching post links"
 msgid "3"
 msgstr "3"
 
-#: wp-login.php:866
+#: wp-login.php:868
 msgid "Please enter your username or email address. You will receive an email message with instructions on how to reset your password."
 msgstr "Merci de renseigner votre identifiant ou votre adresse e-mail. Vous recevrez un e-mail contenant les instructions vous permettant de réinitialiser votre mot de passe."
 
@@ -6772,41 +6777,41 @@ msgstr "Le serveur a renvoyé une réponse inattendue. Cependant, le fichier a p
 msgid "https://wordpress.org/documentation/article/editing-wp-config-php/"
 msgstr "https://fr.wordpress.org/support/article/editing-wp-config-php/"
 
-#: wp-login.php:742
+#: wp-login.php:744
 msgid "Remind me later"
 msgstr "Me le rappeler ultérieurement"
 
-#: wp-login.php:726
+#: wp-login.php:728
 msgid "The email is correct"
 msgstr "L’e-mail est correct"
 
-#: wp-login.php:714
+#: wp-login.php:716
 msgid "This email may be different from your personal email address."
 msgstr "Cet e-mail peut être différent de votre adresse e-mail personnelle."
 
 #. translators: %s: Admin email address.
-#: wp-login.php:707
+#: wp-login.php:709
 msgid "Current administration email: %s"
 msgstr "E-mail d’administration actuel : %s"
 
-#: wp-login.php:696
+#: wp-login.php:698
 msgid "Why is this important?"
 msgstr "Pourquoi est-ce important ?"
 
 #. translators: URL to the WordPress help section about admin email.
-#: wp-login.php:685
+#: wp-login.php:687
 msgid "https://wordpress.org/documentation/article/settings-general-screen/#email-address"
 msgstr "https://fr.wordpress.org/support/article/settings-general-screen/"
 
-#: wp-login.php:681
+#: wp-login.php:683
 msgid "Please verify that the <strong>administration email</strong> for this website is still correct."
 msgstr "Veuillez vérifier que <strong>l’e-mail d’administration</strong> pour ce site est toujours correct."
 
-#: wp-login.php:678
+#: wp-login.php:680
 msgid "Administration email verification"
 msgstr "Vérification de l’e-mail d’administration"
 
-#: wp-login.php:649
+#: wp-login.php:651
 msgid "Confirm your administration email"
 msgstr "Confirmer votre e-mail d’administration"
 
@@ -7002,7 +7007,7 @@ msgstr "Restaurer depuis la corbeille"
 #: wp-includes/load.php:191
 #: wp-includes/rest-api/endpoints/class-wp-rest-pattern-directory-controller.php:150
 #: wp-includes/update.php:209 wp-includes/update.php:447
-#: wp-includes/update.php:728 wp-login.php:1319
+#: wp-includes/update.php:728 wp-login.php:1321
 #: wp-admin/includes/class-wp-automatic-updater.php:887
 #: wp-admin/includes/class-wp-automatic-updater.php:1323
 #: wp-admin/includes/class-wp-site-health.php:1458
@@ -7219,19 +7224,19 @@ msgstr[1] "%s commentaires en modération"
 msgid "Quote from Hello Dolly song, by Jerry Herman:"
 msgstr "Citation de la chanson Hello Dolly, par Jerry Herman :"
 
-#: wp-login.php:1438
+#: wp-login.php:1440
 msgid "Recovery Mode Initialized. Please log in to continue."
 msgstr "Mode de récupération initialisé. Veuillez vous connecter pour continuer."
 
-#: wp-login.php:1329
+#: wp-login.php:1331
 msgid "https://wordpress.org/documentation/article/cookies/#enable-cookies-in-your-browser"
 msgstr "https://fr.wordpress.org/support/article/cookies/"
 
-#: wp-login.php:1239
+#: wp-login.php:1241
 msgid "Missing confirm key."
 msgstr "Clé de confirmation manquante."
 
-#: wp-login.php:1235 wp-admin/includes/ajax-actions.php:4905
+#: wp-login.php:1237 wp-admin/includes/ajax-actions.php:4905
 #: wp-admin/includes/ajax-actions.php:5095
 msgid "Missing request ID."
 msgstr "ID de demande manquant."
@@ -7552,7 +7557,7 @@ msgstr "Élément ajouté."
 #: wp-includes/class-wp-customize-manager.php:5722
 #: wp-includes/customize/class-wp-customize-nav-menu-locations-control.php:58
 #: wp-includes/functions.php:8404 wp-includes/media-template.php:167
-#: wp-includes/widgets/class-wp-widget-custom-html.php:322 wp-login.php:690
+#: wp-includes/widgets/class-wp-widget-custom-html.php:322 wp-login.php:692
 #: wp-includes/js/dist/components.js:61982
 #: wp-includes/js/dist/customize-widgets.js:1439
 #: wp-includes/js/dist/edit-post.js:3811 wp-includes/js/dist/edit-site.js:33390
@@ -7611,7 +7616,7 @@ msgstr "Attributs pour le bloc."
 msgid "Unique registered name for the block."
 msgstr "Nom unique enregistré de ce bloc."
 
-#: wp-includes/theme.php:4291
+#: wp-includes/theme.php:4254
 msgid "Whether the theme supports responsive embedded content."
 msgstr "Si le thème est compatible avec les contenus embarqués responsive."
 
@@ -7624,7 +7629,7 @@ msgstr "Dans %s"
 msgid "Limit result set to themes assigned one or more statuses."
 msgstr "Limiter les résultats aux thèmes qui possèdent un ou plusieurs états."
 
-#: wp-includes/theme.php:4254
+#: wp-includes/theme.php:4217
 msgid "Post formats supported."
 msgstr "Formats de publication supportés."
 
@@ -7994,7 +7999,7 @@ msgstr "Média WordPress"
 msgid "Privacy Policy"
 msgstr "Politique de confidentialité"
 
-#: wp-login.php:1267
+#: wp-login.php:1269
 msgid "User action confirmed."
 msgstr "Action du compte confirmée."
 
@@ -9973,60 +9978,60 @@ msgstr "Modèle de page non valide."
 msgid "Invalid date."
 msgstr "Date non valide."
 
-#: wp-includes/theme.php:1732
+#: wp-includes/theme.php:1695
 msgid "Video is playing."
 msgstr "La vidéo en cours de lecture"
 
-#: wp-includes/theme.php:1731
+#: wp-includes/theme.php:1694
 msgid "Video is paused."
 msgstr "La vidéo est en pause"
 
-#: wp-includes/theme.php:2334
+#: wp-includes/theme.php:2297
 msgctxt "Theme starter content"
 msgid "Archives"
 msgstr "Archives"
 
-#: wp-includes/theme.php:2486
+#: wp-includes/theme.php:2449
 msgctxt "Theme starter content"
 msgid "This is an example of a homepage section. Homepage sections can be any page other than the homepage itself, including the page that shows your latest blog posts."
 msgstr "C’est un exemple de section de page d’accueil. Les sections de page d’accueil peuvent être n’importe quelle page autre que la page d’accueil elle-même, y compris la page qui affiche vos derniers articles de blog."
 
-#: wp-includes/theme.php:2478
+#: wp-includes/theme.php:2441
 msgctxt "Theme starter content"
 msgid "News"
 msgstr "Actualités"
 
-#: wp-includes/theme.php:2469
+#: wp-includes/theme.php:2432
 msgctxt "Theme starter content"
 msgid "This is a page with some basic contact information, such as an address and phone number. You might also try a plugin to add a contact form."
 msgstr "C’est une page avec des informations de contact de base, comme l’adresse et le numéro de téléphone. Vous pouvez aussi essayer une extension pour ajouter un formulaire de contact."
 
-#: wp-includes/theme.php:2461
+#: wp-includes/theme.php:2424
 msgctxt "Theme starter content"
 msgid "You might be an artist who would like to introduce yourself and your work here or maybe you are a business with a mission to describe."
 msgstr "Vous pourriez être un artiste et vouloir présenter vos travaux et vous même, ou encore être une entreprise avec une mission à promouvoir."
 
-#: wp-includes/theme.php:2453
+#: wp-includes/theme.php:2416
 msgctxt "Theme starter content"
 msgid "Welcome to your site! This is your homepage, which is what most visitors will see when they come to your site for the first time."
 msgstr "Bienvenue sur votre site ! C’est votre page d’accueil que vos visiteurs verront lorsqu’ils arriveront sur votre site la première fois."
 
-#: wp-includes/theme.php:2364
+#: wp-includes/theme.php:2327
 msgctxt "Theme starter content"
 msgid "Recent Posts"
 msgstr "Articles récents"
 
-#: wp-includes/theme.php:2358
+#: wp-includes/theme.php:2321
 msgctxt "Theme starter content"
 msgid "Recent Comments"
 msgstr "Commentaires récents"
 
-#: wp-includes/theme.php:2352
+#: wp-includes/theme.php:2315
 msgctxt "Theme starter content"
 msgid "Meta"
 msgstr "Méta"
 
-#: wp-includes/theme.php:2340
+#: wp-includes/theme.php:2303
 msgctxt "Theme starter content"
 msgid "Calendar"
 msgstr "Calendrier"
@@ -10094,37 +10099,37 @@ msgstr "Désolé, vous n’avez pas l’autorisation de lire ce commentaire."
 msgid "Sorry, you are not allowed to read comments without a post."
 msgstr "Désolé, vous n’avez pas l’autorisation de lire les commentaires sans publication existante."
 
-#: wp-includes/theme.php:2443
+#: wp-includes/theme.php:2406
 msgctxt "Theme starter content"
 msgid "YouTube"
 msgstr "YouTube"
 
-#: wp-includes/theme.php:2431
+#: wp-includes/theme.php:2394
 msgctxt "Theme starter content"
 msgid "Pinterest"
 msgstr "Pinterest"
 
-#: wp-includes/theme.php:2427
+#: wp-includes/theme.php:2390
 msgctxt "Theme starter content"
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
-#: wp-includes/theme.php:2419
+#: wp-includes/theme.php:2382
 msgctxt "Theme starter content"
 msgid "GitHub"
 msgstr "GitHub"
 
-#: wp-includes/theme.php:2415
+#: wp-includes/theme.php:2378
 msgctxt "Theme starter content"
 msgid "Foursquare"
 msgstr "Foursquare"
 
-#: wp-includes/theme.php:2326
+#: wp-includes/theme.php:2289
 msgctxt "Theme starter content"
 msgid "This may be a good place to introduce yourself and your site or include some credits."
 msgstr "C’est peut-être le bon endroit pour vous présenter et votre site ou insérer quelques crédits."
 
-#: wp-includes/theme.php:2325
+#: wp-includes/theme.php:2288
 msgctxt "Theme starter content"
 msgid "About This Site"
 msgstr "À propos de ce site"
@@ -10174,97 +10179,97 @@ msgstr "Modifier la vidéo"
 msgid "Select video"
 msgstr "Sélectionnez une vidéo"
 
-#: wp-includes/theme.php:2483
+#: wp-includes/theme.php:2446
 msgctxt "Theme starter content"
 msgid "A homepage section"
 msgstr "Une section de page d’accueil"
 
-#: wp-includes/theme.php:2474
+#: wp-includes/theme.php:2437
 msgctxt "Theme starter content"
 msgid "Blog"
 msgstr "Blog"
 
-#: wp-includes/theme.php:2466
+#: wp-includes/theme.php:2429
 msgctxt "Theme starter content"
 msgid "Contact"
 msgstr "Contact"
 
-#: wp-includes/theme.php:2458
+#: wp-includes/theme.php:2421
 msgctxt "Theme starter content"
 msgid "About"
 msgstr "À propos de"
 
-#: wp-includes/theme.php:2377 wp-includes/theme.php:2450
+#: wp-includes/theme.php:2340 wp-includes/theme.php:2413
 msgctxt "Theme starter content"
 msgid "Home"
 msgstr "Accueil"
 
-#: wp-includes/theme.php:2407
+#: wp-includes/theme.php:2370
 msgctxt "Theme starter content"
 msgid "Email"
 msgstr "E-mail"
 
-#: wp-includes/theme.php:2423
+#: wp-includes/theme.php:2386
 msgctxt "Theme starter content"
 msgid "Instagram"
 msgstr "Instagram"
 
-#: wp-includes/theme.php:2435
+#: wp-includes/theme.php:2398
 msgctxt "Theme starter content"
 msgid "Twitter"
 msgstr "Twitter"
 
-#: wp-includes/theme.php:2411
+#: wp-includes/theme.php:2374
 msgctxt "Theme starter content"
 msgid "Facebook"
 msgstr "Facebook"
 
-#: wp-includes/theme.php:2439
+#: wp-includes/theme.php:2402
 msgctxt "Theme starter content"
 msgid "Yelp"
 msgstr "Yelp"
 
-#: wp-includes/theme.php:2346
+#: wp-includes/theme.php:2309
 msgctxt "Theme starter content"
 msgid "Categories"
 msgstr "Catégories"
 
-#: wp-includes/theme.php:2370
+#: wp-includes/theme.php:2333
 msgctxt "Theme starter content"
 msgid "Search"
 msgstr "Rechercher"
 
-#: wp-includes/theme.php:2315
+#: wp-includes/theme.php:2278
 msgctxt "Theme starter content"
 msgid "Saturday &amp; Sunday: 11:00AM&ndash;3:00PM"
 msgstr "Les samedi et dimanche : 11h00&ndash;15h00"
 
-#: wp-includes/theme.php:2314
+#: wp-includes/theme.php:2277
 msgctxt "Theme starter content"
 msgid "Monday&ndash;Friday: 9:00AM&ndash;5:00PM"
 msgstr "Du lundi au vendredi : 9h00—17h00"
 
-#: wp-includes/theme.php:2313
+#: wp-includes/theme.php:2276
 msgctxt "Theme starter content"
 msgid "Hours"
 msgstr "Heures d’ouverture"
 
-#: wp-includes/theme.php:2312
+#: wp-includes/theme.php:2275
 msgctxt "Theme starter content"
 msgid "New York, NY 10001"
 msgstr "75008, Paris"
 
-#: wp-includes/theme.php:2311
+#: wp-includes/theme.php:2274
 msgctxt "Theme starter content"
 msgid "123 Main Street"
 msgstr "Avenue des Champs-Élysées"
 
-#: wp-includes/theme.php:2310
+#: wp-includes/theme.php:2273
 msgctxt "Theme starter content"
 msgid "Address"
 msgstr "Adresse"
 
-#: wp-includes/theme.php:2306
+#: wp-includes/theme.php:2269
 msgctxt "Theme starter content"
 msgid "Find Us"
 msgstr "Retrouvez-nous"
@@ -11279,7 +11284,7 @@ msgctxt "previous set of posts"
 msgid "Previous"
 msgstr "Précédent"
 
-#: wp-includes/general-template.php:525 wp-login.php:885 wp-login.php:1497
+#: wp-includes/general-template.php:525 wp-login.php:887 wp-login.php:1499
 msgid "Username or Email Address"
 msgstr "Identifiant ou adresse e-mail"
 
@@ -11635,11 +11640,11 @@ msgstr "Lecteur vidéo"
 msgid "Time Slider"
 msgstr "Curseur de temps"
 
-#: wp-includes/script-loader.php:1080 wp-includes/theme.php:1729
+#: wp-includes/script-loader.php:1080 wp-includes/theme.php:1692
 msgid "Pause"
 msgstr "Pause"
 
-#: wp-includes/script-loader.php:1079 wp-includes/theme.php:1730
+#: wp-includes/script-loader.php:1079 wp-includes/theme.php:1693
 msgid "Play"
 msgstr "Lecture"
 
@@ -11724,7 +11729,7 @@ msgid "Sorry, you are not allowed to delete this post."
 msgstr "Désolé, vous n’avez pas l’autorisation de supprimer cet article."
 
 #. translators: %s: Site title.
-#: wp-login.php:326
+#: wp-login.php:328
 msgctxt "site"
 msgid "&larr; Go to %s"
 msgstr "&larr; Aller sur %s"
@@ -11747,7 +11752,7 @@ msgstr "Aujourd’hui"
 msgid "Deleted:"
 msgstr "Supprimé !"
 
-#: wp-login.php:1038 wp-admin/install.php:173 wp-admin/user-edit.php:702
+#: wp-login.php:1040 wp-admin/install.php:173 wp-admin/user-edit.php:702
 #: wp-admin/user-new.php:611 wp-admin/js/user-profile.js:52
 msgid "Confirm use of weak password"
 msgstr "Confirmer l’utilisation du mot de passe faible"
@@ -11877,7 +11882,7 @@ msgstr "Retirer %1$s manuellement va causer des avertissements PHP. Utilisez plu
 msgid "The next group of formatting shortcuts are applied as you type or when you insert them around plain text in the same paragraph. Press Escape or the Undo button to undo."
 msgstr "Les raccourcis de mise en forme du groupe ci-dessous s’appliquent au fur et à mesure que vous écrivez ou lorsque vous les insérez autour d’un texte d’un paragraphe. Appuyez sur Échap ou sur le bouton Annuler pour revenir en arrière."
 
-#: wp-login.php:1427
+#: wp-login.php:1429
 msgid "Your session has expired. Please log in to continue where you left off."
 msgstr "Votre session a expiré. Veuillez vous reconnecter pour reprendre à la dernière page visitée."
 
@@ -12392,7 +12397,7 @@ msgstr "%1$s (depuis la %2$s ; aucune alternative disponible)"
 msgid "%1$s (since %2$s; use %3$s instead)"
 msgstr "%1$s (depuis la %2$s ; utilisez %3$s à la place)"
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1418
+#: wp-includes/rest-api/class-wp-rest-server.php:1425
 msgid "The specified namespace could not be found."
 msgstr "L’espace de nom (namespace) spécifié n’a pas pu être trouvé."
 
@@ -12400,7 +12405,7 @@ msgstr "L’espace de nom (namespace) spécifié n’a pas pu être trouvé."
 msgid "No route was found matching the URL and request method."
 msgstr "Aucune route correspondante à l’URL et à la méthode de requête n’a été trouvée."
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1741
+#: wp-includes/rest-api/class-wp-rest-server.php:1748
 msgid "The handler for the route is invalid"
 msgstr "Le gestionnaire de route n’est pas valide"
 
@@ -12734,13 +12739,13 @@ msgstr "Retirer l’élément du menu : %1$s (%2$s)"
 msgid "Edit menu item: %1$s (%2$s)"
 msgstr "Modifier l’élément de menu : %1$s (%2$s)"
 
-#: wp-login.php:1031 wp-admin/install.php:147 wp-admin/options-writing.php:183
+#: wp-login.php:1033 wp-admin/install.php:147 wp-admin/options-writing.php:183
 #: wp-admin/user-edit.php:675 wp-admin/user-new.php:592
 #: wp-admin/js/password-toggle.js:26 wp-admin/js/user-profile.js:83
 msgid "Hide password"
 msgstr "Cacher le mot de passe"
 
-#: wp-login.php:1505 wp-admin/setup-config.php:239
+#: wp-login.php:1507 wp-admin/setup-config.php:239
 #: wp-admin/js/password-toggle.js:33 wp-admin/js/user-profile.js:83
 msgid "Show password"
 msgstr "Afficher le mot de passe"
@@ -12771,7 +12776,7 @@ msgstr "En tant qu’icône de navigateur"
 msgid "No items"
 msgstr "Aucun élément"
 
-#: wp-login.php:1174
+#: wp-login.php:1176
 msgid "Registration confirmation will be emailed to you."
 msgstr "La confirmation d’inscription vous sera envoyée par e-mail."
 
@@ -13363,7 +13368,7 @@ msgid_plural "%1$s responses to %2$s"
 msgstr[0] "%1$s réponse à %2$s"
 msgstr[1] "%1$s réponses à %2$s"
 
-#: wp-includes/theme.php:3736
+#: wp-includes/theme.php:3699
 msgid "Customizer"
 msgstr "Outil de personnalisation"
 
@@ -13573,7 +13578,7 @@ msgid "Distraction-free writing mode"
 msgstr "Mode d’écriture sans distraction"
 
 #. translators: 1: title-tag, 2: wp_loaded
-#: wp-includes/theme.php:2922
+#: wp-includes/theme.php:2885
 msgid "Theme support for %1$s should be registered before the %2$s hook."
 msgstr "La reconnaissance de %1$s par le thème doit être enregistrée avec le point d’accroche %2$s"
 
@@ -13620,7 +13625,7 @@ msgstr "Les valeurs suivantes ne décrivent pas une date valide : mois de %1$s,
 msgid "%s must set a database connection for use with escaping."
 msgstr "%s doit mettre en place une connexion à la base de données pour l’utiliser avec l’échappement"
 
-#: wp-includes/theme.php:2729
+#: wp-includes/theme.php:2692
 msgid "You need to pass an array of types."
 msgstr "Vous devez passer un tableau de types."
 
@@ -13859,7 +13864,7 @@ msgctxt "add new from admin bar"
 msgid "Link"
 msgstr "Lien"
 
-#: wp-login.php:1436
+#: wp-login.php:1438
 msgid "<strong>You have successfully updated WordPress!</strong> Please log back in to see what&#8217;s new."
 msgstr "<strong>WordPress a bien été mis à jour !</strong> Veuillez vous reconnecter pour voir les nouveautés."
 
@@ -14042,12 +14047,12 @@ msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
 #. translators: %s: Browser cookie documentation URL.
-#: wp-login.php:1328
+#: wp-login.php:1330
 msgid "<strong>Error:</strong> Cookies are blocked or not supported by your browser. You must <a href=\"%s\">enable cookies</a> to use WordPress."
 msgstr "<strong>Erreur :</strong> les cookies sont bloqués ou ne sont pas reconnus par votre navigateur. Vous devez <a href=\"%s\">activer les cookies</a> pour utiliser WordPress."
 
 #. translators: 1: Browser cookie documentation URL, 2: Support forums URL.
-#: wp-login.php:1317
+#: wp-login.php:1319
 msgid "<strong>Error:</strong> Cookies are blocked due to unexpected output. For help, please see <a href=\"%1$s\">this documentation</a> or try the <a href=\"%2$s\">support forums</a>."
 msgstr "<strong>Erreur :</strong> les cookies sont bloqués en raison d’un retour inattendu. Pour obtenir de l’aide, veuillez lire <a href=\"%1$s\">cette documentation</a> ou essayez les <a href=\"%2$s\">forums d’entraide</a>."
 
@@ -14919,7 +14924,7 @@ msgstr "En-têtes téléversés aléatoires"
 msgid "https://wordpress.org/support/forum/requests-and-feedback"
 msgstr "https://wordpress.org/support/forum/requests-and-feedback"
 
-#: wp-login.php:411 wp-admin/includes/class-wp-users-list-table.php:318
+#: wp-login.php:413 wp-admin/includes/class-wp-users-list-table.php:318
 msgid "Change"
 msgstr "Modifier"
 
@@ -16644,23 +16649,23 @@ msgstr "Hauteur des miniatures"
 msgid "Thumbnail Width"
 msgstr "Largeur des miniatures"
 
-#: wp-login.php:1043
+#: wp-login.php:1045
 msgid "Confirm new password"
 msgstr "Confirmer le nouveau mot de passe"
 
-#: wp-login.php:1025
+#: wp-login.php:1027
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: wp-login.php:1008
+#: wp-login.php:1010
 msgid "Reset Password"
 msgstr "Réinitialiser le mot de passe"
 
-#: wp-login.php:993
+#: wp-login.php:995
 msgid "Your password has been reset."
 msgstr "Votre mot de passe a été réinitialisé."
 
-#: wp-login.php:991 wp-admin/user-edit.php:711
+#: wp-login.php:993 wp-admin/user-edit.php:711
 msgid "Password Reset"
 msgstr "Réinitialisation du mot de passe"
 
@@ -17546,32 +17551,32 @@ msgstr "Il ne semble pas y avoir de nouvel e-mail."
 msgid "Slow down cowboy, no need to check for new mails so often!"
 msgstr "Lève le pied, champion ! Inutile de vérifier tes e-mails aussi souvent !"
 
-#: wp-login.php:1432
+#: wp-login.php:1434
 msgid "You are now logged out."
 msgstr "Votre déconnexion a bien été effectuée."
 
-#: wp-login.php:1349
+#: wp-login.php:1351
 msgid "You have logged in successfully."
 msgstr "Votre connexion a bien été établie."
 
-#: wp-includes/user.php:194 wp-includes/user.php:266 wp-login.php:1188
-#: wp-login.php:1562
+#: wp-includes/user.php:194 wp-includes/user.php:266 wp-login.php:1190
+#: wp-login.php:1564
 msgid "Lost your password?"
 msgstr "Mot de passe oublié ?"
 
-#: wp-login.php:1144
+#: wp-login.php:1146
 msgid "Register For This Site"
 msgstr "S’inscrire sur ce site"
 
-#: wp-login.php:1142
+#: wp-login.php:1144
 msgid "Registration Form"
 msgstr "Formulaire d’inscription"
 
-#: wp-login.php:900
+#: wp-login.php:902
 msgid "Get New Password"
 msgstr "Générer un mot de passe"
 
-#: wp-login.php:864
+#: wp-login.php:866
 msgid "Lost Password"
 msgstr "Mot de passe oublié"
 
@@ -18347,7 +18352,7 @@ msgstr "Paragraphe"
 
 #. translators: Hidden accessibility text.
 #. translators: The user language selection field label.
-#: wp-includes/class-wp-editor.php:1235 wp-login.php:372
+#: wp-includes/class-wp-editor.php:1235 wp-login.php:374
 #: wp-includes/js/dist/format-library.js:1723 wp-admin/user-edit.php:381
 #: wp-admin/user-new.php:557
 msgid "Language"
@@ -18358,7 +18363,7 @@ msgid "Document properties"
 msgstr "Propriétés du document"
 
 #: wp-includes/class-wp-editor.php:1370 wp-includes/script-loader.php:1293
-#: wp-includes/theme.php:3735 wp-admin/js/nav-menu.js:1260
+#: wp-includes/theme.php:3698 wp-admin/js/nav-menu.js:1260
 #: wp-admin/js/post.js:512 wp-admin/js/theme-plugin-editor.js:71
 #: wp-admin/js/widgets.js:98
 msgid "The changes you made will be lost if you navigate away from this page."
@@ -18569,12 +18574,12 @@ msgstr "Résultats de recherche %1$s %2$s"
 msgid "Site Admin"
 msgstr "Admin. du site"
 
-#: wp-includes/general-template.php:693 wp-login.php:909 wp-login.php:1073
-#: wp-login.php:1178 wp-login.php:1554
+#: wp-includes/general-template.php:693 wp-login.php:911 wp-login.php:1075
+#: wp-login.php:1180 wp-login.php:1556
 msgid "Register"
 msgstr "Inscription"
 
-#: wp-includes/general-template.php:527 wp-login.php:1520
+#: wp-includes/general-template.php:527 wp-login.php:1522
 msgid "Remember Me"
 msgstr "Se souvenir de moi"
 
@@ -18583,8 +18588,8 @@ msgstr "Se souvenir de moi"
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: wp-includes/general-template.php:386 wp-login.php:905 wp-login.php:993
-#: wp-login.php:1069 wp-login.php:1183
+#: wp-includes/general-template.php:386 wp-login.php:907 wp-login.php:995
+#: wp-login.php:1071 wp-login.php:1185
 msgid "Log in"
 msgstr "Connexion"
 
@@ -19178,7 +19183,7 @@ msgstr "Format d’heure"
 msgid "Date Format"
 msgstr "Format de date"
 
-#: wp-includes/comment-template.php:2526 wp-login.php:1160
+#: wp-includes/comment-template.php:2526 wp-login.php:1162
 #: wp-admin/comment.php:189 wp-admin/edit-form-comment.php:63
 #: wp-admin/includes/class-wp-users-list-table.php:375
 #: wp-admin/includes/template.php:495 wp-admin/user-edit.php:540
@@ -19296,13 +19301,13 @@ msgstr "Oui"
 msgid "Edit Category"
 msgstr "Modifier la catégorie"
 
-#: wp-includes/general-template.php:528 wp-login.php:1473 wp-login.php:1522
+#: wp-includes/general-template.php:528 wp-login.php:1475 wp-login.php:1524
 #: wp-admin/install.php:229 wp-admin/install.php:448
 #: wp-admin/includes/network.php:757
 msgid "Log In"
 msgstr "Se connecter"
 
-#: wp-login.php:1034
+#: wp-login.php:1036
 msgid "Strength indicator"
 msgstr "Indicateur de robustesse"
 
@@ -19584,7 +19589,7 @@ msgid "Add or remove tags"
 msgstr "Ajouter ou retirer des étiquettes"
 
 #: wp-includes/media.php:4763 wp-includes/script-loader.php:1249
-#: wp-login.php:725 wp-includes/js/dist/edit-site.js:22589
+#: wp-login.php:727 wp-includes/js/dist/edit-site.js:22589
 #: wp-includes/js/dist/edit-widgets.js:3361 wp-includes/js/dist/editor.js:7877
 #: wp-admin/edit-form-comment.php:245 wp-admin/edit-tag-form.php:300
 #: wp-admin/includes/class-wp-plugins-list-table.php:619
@@ -19776,7 +19781,7 @@ msgstr "Appliquer"
 msgid "Redo"
 msgstr "Rétablir"
 
-#: wp-includes/general-template.php:526 wp-login.php:1502
+#: wp-includes/general-template.php:526 wp-login.php:1504
 #: wp-includes/js/dist/edit-site.js:28876
 #: wp-admin/includes/class-wp-posts-list-table.php:1772
 #: wp-admin/includes/file.php:2534 wp-admin/install.php:137
@@ -19785,7 +19790,7 @@ msgstr "Rétablir"
 msgid "Password"
 msgstr "Mot de passe"
 
-#: wp-login.php:1156 wp-admin/includes/class-wp-users-list-table.php:373
+#: wp-login.php:1158 wp-admin/includes/class-wp-users-list-table.php:373
 #: wp-admin/includes/class-wp-users-list-table.php:396
 #: wp-admin/includes/file.php:2533 wp-admin/install.php:118
 #: wp-admin/install.php:434 wp-admin/setup-config.php:230

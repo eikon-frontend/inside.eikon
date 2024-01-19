@@ -1,11 +1,11 @@
-set :application, 'inside.eikon.ch'
+set :application, 'inside-2024.eikon.ch'
 
 set :stage, :production
-set :branch, :main
+set :branch, :'refresh-2024'
 
 set :deploy_to, -> { "/home/eikon/www/#{fetch(:application)}" }
 
-set :opcache_file_url, "https://inside.eikon.ch/opcache_clear.php"
+set :opcache_file_url, "https://inside-2024.eikon.ch/opcache_clear.php"
 
 # Extended Server Syntax
 # ======================
