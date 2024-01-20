@@ -1,14 +1,23 @@
 import { useBlockProps, RichText } from '@wordpress/block-editor';
-import { TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { TextControl, SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
 export default function Edit({ attributes, setAttributes }) {
-  const { title, content } = attributes;
+  const { title, content, backgroundColor } = attributes;
 
   return (
-    <div {...useBlockProps()}>
+    <div {...useBlockProps()} style={{ backgroundColor: backgroundColor }}>
+      <SelectControl
+        label="Background Color"
+        value={backgroundColor}
+        options={[
+          { label: 'Red', value: 'red' },
+          { label: 'Blue', value: 'blue' },
+          { label: 'Green', value: 'green' },
+        ]}
+        onChange={(value) => setAttributes({ backgroundColor: value })}
+      />
       <TextControl
         label="Input Label"
         value={title}
