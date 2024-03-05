@@ -10,6 +10,7 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
     'core/heading',
     'core/list',
     'core/list-item',
-    'create-block/my-first-block'
+    'eikonblocks/test',
+    'eikonblocks/projects'
   );
 }

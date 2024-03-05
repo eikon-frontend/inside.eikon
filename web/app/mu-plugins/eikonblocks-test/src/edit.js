@@ -27,7 +27,7 @@ export default function Edit({ attributes, setAttributes }) {
         tagName="p"
         value={content}
         onChange={(content) => setAttributes({ content: content })}
-        placeholder={__('Add your custom text', 'my-first-block')}
+        placeholder={__('Add your custom text', 'eikonblocks')}
       />
     </div>
   );
