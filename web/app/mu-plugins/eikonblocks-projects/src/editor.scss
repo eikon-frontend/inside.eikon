@@ -29,6 +29,12 @@
     color: #3a3;
   }
 
+  .image-thumbnail {
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover;
+  }
+
   button {
     width: 100%;
     padding: 5px;
@@ -39,6 +45,7 @@
     font-size: 14px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     opacity: 0.6;
 
     &:hover {

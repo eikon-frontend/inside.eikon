@@ -84,8 +84,10 @@ function Edit({ attributes, setAttributes, posts, years }) {
                 <button
                   key={post.id}
                   onClick={() => removeProject(post.id)}
-                  dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                />
+                >
+                  <span dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                  <img className='image-thumbnail' src={post.featured_image_src} alt={post.title.rendered} />
+                </button>
               );
             })}
           </div>
