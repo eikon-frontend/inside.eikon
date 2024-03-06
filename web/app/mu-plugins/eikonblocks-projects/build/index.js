@@ -30,15 +30,18 @@ __webpack_require__.r(__webpack_exports__);
 function Edit({
   attributes,
   setAttributes,
-  posts
+  posts,
+  years
 }) {
   const [selectedPosts, setSelectedPosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(attributes.selectedPosts || []);
+  const [selectedYear, setSelectedYear] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const {
     editPost
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useDispatch)('core/editor');
   const postOptions = posts ? posts.map(post => ({
     value: post.id,
-    label: post.title.rendered
+    label: post.title.rendered,
+    yearId: post.acf.year
   })) : [];
   const handleSelectChange = event => {
     const selectedOptions = Array.from(event.target.options).filter(option => option.selected);
@@ -57,16 +60,27 @@ function Edit({
       }
     });
   };
+  const handleYearChange = event => {
+    setSelectedYear(event.target.value);
+  };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)()
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, "Year:", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
+    value: selectedYear,
+    onChange: handleYearChange
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
+    value: ""
+  }), years && years.map(year => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
+    key: year.id,
+    value: year.id
+  }, year.name)))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
     multiple: true,
     value: selectedPosts.map(post => post.id),
     onChange: handleSelectChange,
     style: {
       width: '100%'
     }
-  }, postOptions.map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
+  }, postOptions.filter(option => selectedYear == "" || option.yearId == selectedYear).map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
     key: option.value,
     value: option.value,
     dangerouslySetInnerHTML: {
@@ -89,8 +103,12 @@ function Edit({
   const posts = getEntityRecords("postType", "project", {
     per_page: -1
   });
+  const years = getEntityRecords("taxonomy", "year", {
+    per_page: -1
+  });
   return {
-    posts
+    posts,
+    years
   };
 })(Edit));
 
