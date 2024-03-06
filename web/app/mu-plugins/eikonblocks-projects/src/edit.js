@@ -6,70 +6,91 @@ import { __ } from "@wordpress/i18n";
 import "./editor.scss";
 
 function Edit({ attributes, setAttributes, posts, years }) {
-  const [selectedPosts, setSelectedPosts] = useState(attributes.selectedPosts || []);
-  const [selectedYear, setSelectedYear] = useState('');
   const { editPost } = useDispatch('core/editor');
 
+  const [selectedPosts, setSelectedPosts] = useState(attributes.selectedPosts || []);
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedOptions, setSelectedOptions] = useState(attributes.selectedOptions || []);
 
   const postOptions = posts
     ? posts.map((post) => ({ value: post.id, label: post.title.rendered, yearId: post.acf.year }))
     : [];
 
-  const handleSelectChange = (event) => {
-    const selectedOptions = Array.from(event.target.options)
-      .filter((option) => option.selected);
+  const addProject = (value) => {
+    const selectedOption = postOptions.find(option => option.value === value);
+    if (selectedOption) {
+      setSelectedOptions(prevOptions => [...prevOptions, selectedOption]);
 
-    const newSelectedPosts = [];
-    for (const option of selectedOptions) {
-      const post = posts.find((post) => post.id === Number(option.value));
-      newSelectedPosts.push(post);
+      const post = posts.find((post) => post.id === Number(selectedOption.value));
+      if (post) {
+        setSelectedPosts(prevPosts => [...prevPosts, post]);
+      }
     }
+  };
+
+  const removeProject = (postId) => {
+    const newSelectedPosts = selectedPosts.filter(post => post.id !== postId);
     setSelectedPosts(newSelectedPosts);
-    setAttributes({ selectedPosts: newSelectedPosts });
-    editPost({ meta: { selectedPosts: newSelectedPosts } });
+
+    const newSelectedOptions = selectedOptions.filter(option => option.value !== postId);
+    setSelectedOptions(newSelectedOptions);
   };
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
   };
 
+  useEffect(() => {
+    setAttributes({ selectedPosts, selectedOptions });
+    editPost({ meta: { selectedPosts } });
+  }, [selectedPosts, selectedOptions]);
+
   return (
     <div {...useBlockProps()}>
-      <label>
-        Year:
-        <select value={selectedYear} onChange={handleYearChange}>
-          <option value=""></option>
-          {years && years.map((year) => (
-            <option key={year.id} value={year.id}>{year.name}</option>
-          ))}
-        </select>
-      </label>
-      <label>
-        <select
-          multiple
-          value={selectedPosts.map((post) => post.id)}
-          onChange={handleSelectChange}
-          style={{ width: '100%' }}
-        >
-          {postOptions
-            .filter(option => selectedYear == "" || option.yearId == selectedYear)
-            .map((option) => (
-              <option
-                key={option.value}
-                value={option.value}
-                dangerouslySetInnerHTML={{ __html: option.label }}
-              />
+      <div>
+        <label>
+          Year:
+          <select value={selectedYear} onChange={handleYearChange}>
+            <option value=""></option>
+            {years && years.map((year) => (
+              <option key={year.id} value={year.id}>{year.name}</option>
             ))}
-        </select>
-      </label>
-      {selectedPosts.map((post, index) => {
-        return (
-          <div key={index}>
-            <h2 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-            <pre>{JSON.stringify(post.slug, null, 2)}</pre>
+          </select>
+        </label>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
+        <div style={{ width: '50%' }}>
+          <h2>Project</h2>
+          <div className='list-projects list-projects-available'>
+            {postOptions
+              .filter(option => selectedYear == "" || option.yearId == selectedYear)
+              .filter(option => !selectedOptions.map(post => post.value).includes(option.value))
+              .map((option, index) => (
+                <button
+                  key={option.value}
+                  value={option.value}
+                  className='project'
+                  onClick={() => addProject(option.value)}
+                  dangerouslySetInnerHTML={{ __html: option.label }}
+                />
+              ))}
           </div>
-        );
-      })}
+        </div>
+        <div style={{ width: '50%', overflow: 'scroll' }}>
+          <h2>Selected project</h2>
+          <div className='list-projects list-projects-selected'>
+            {selectedPosts.map((post, index) => {
+              return (
+                <button
+                  key={post.id}
+                  onClick={() => removeProject(post.id)}
+                  dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -8,7 +8,9 @@ export default function save({ attributes }) {
       {selectedPosts.map((post) => (
         <div key={post.id}>
           <RichText.Content tagName="h2" value={post.title.rendered} />
-          <RichText.Content tagName="pre" value={JSON.stringify(post.slug, null, 2)} />
+          {post.featured_image_src && (
+            <img src={post.featured_image_src} alt={post.title.rendered} />
+          )}
         </div>
       ))}
     </div>

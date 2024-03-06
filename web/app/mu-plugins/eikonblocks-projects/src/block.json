@@ -20,6 +20,10 @@
     "selectedPosts": {
       "type": "array",
       "default": []
+    },
+    "selectedOptions": {
+      "type": "array",
+      "default": []
     }
   }
 }

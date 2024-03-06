@@ -33,39 +33,50 @@ function Edit({
   posts,
   years
 }) {
-  const [selectedPosts, setSelectedPosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(attributes.selectedPosts || []);
-  const [selectedYear, setSelectedYear] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const {
     editPost
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useDispatch)('core/editor');
+  const [selectedPosts, setSelectedPosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(attributes.selectedPosts || []);
+  const [selectedYear, setSelectedYear] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  const [selectedOptions, setSelectedOptions] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(attributes.selectedOptions || []);
   const postOptions = posts ? posts.map(post => ({
     value: post.id,
     label: post.title.rendered,
     yearId: post.acf.year
   })) : [];
-  const handleSelectChange = event => {
-    const selectedOptions = Array.from(event.target.options).filter(option => option.selected);
-    const newSelectedPosts = [];
-    for (const option of selectedOptions) {
-      const post = posts.find(post => post.id === Number(option.value));
-      newSelectedPosts.push(post);
-    }
-    setSelectedPosts(newSelectedPosts);
-    setAttributes({
-      selectedPosts: newSelectedPosts
-    });
-    editPost({
-      meta: {
-        selectedPosts: newSelectedPosts
+  const addProject = value => {
+    const selectedOption = postOptions.find(option => option.value === value);
+    if (selectedOption) {
+      setSelectedOptions(prevOptions => [...prevOptions, selectedOption]);
+      const post = posts.find(post => post.id === Number(selectedOption.value));
+      if (post) {
+        setSelectedPosts(prevPosts => [...prevPosts, post]);
       }
-    });
+    }
+  };
+  const removeProject = postId => {
+    const newSelectedPosts = selectedPosts.filter(post => post.id !== postId);
+    setSelectedPosts(newSelectedPosts);
+    const newSelectedOptions = selectedOptions.filter(option => option.value !== postId);
+    setSelectedOptions(newSelectedOptions);
   };
   const handleYearChange = event => {
     setSelectedYear(event.target.value);
   };
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    setAttributes({
+      selectedPosts,
+      selectedOptions
+    });
+    editPost({
+      meta: {
+        selectedPosts
+      }
+    });
+  }, [selectedPosts, selectedOptions]);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)()
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, "Year:", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, "Year:", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
     value: selectedYear,
     onChange: handleYearChange
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
@@ -73,28 +84,42 @@ function Edit({
   }), years && years.map(year => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
     key: year.id,
     value: year.id
-  }, year.name)))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
-    multiple: true,
-    value: selectedPosts.map(post => post.id),
-    onChange: handleSelectChange,
+  }, year.name))))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     style: {
-      width: '100%'
+      display: 'flex',
+      justifyContent: 'space-between',
+      gap: '5px'
     }
-  }, postOptions.filter(option => selectedYear == "" || option.yearId == selectedYear).map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    style: {
+      width: '50%'
+    }
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Project"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "list-projects list-projects-available"
+  }, postOptions.filter(option => selectedYear == "" || option.yearId == selectedYear).filter(option => !selectedOptions.map(post => post.value).includes(option.value)).map((option, index) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     key: option.value,
     value: option.value,
+    className: "project",
+    onClick: () => addProject(option.value),
     dangerouslySetInnerHTML: {
       __html: option.label
     }
-  })))), selectedPosts.map((post, index) => {
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      key: index
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", {
+  })))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    style: {
+      width: '50%',
+      overflow: 'scroll'
+    }
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Selected project"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "list-projects list-projects-selected"
+  }, selectedPosts.map((post, index) => {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+      key: post.id,
+      onClick: () => removeProject(post.id),
       dangerouslySetInnerHTML: {
         __html: post.title.rendered
       }
-    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("pre", null, JSON.stringify(post.slug, null, 2)));
-  }));
+    });
+  })))));
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.withSelect)(select => {
   const {
@@ -143,9 +168,9 @@ function save({
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
     tagName: "h2",
     value: post.title.rendered
-  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
-    tagName: "pre",
-    value: JSON.stringify(post.slug, null, 2)
+  }), post.featured_image_src && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+    src: post.featured_image_src,
+    alt: post.title.rendered
   }))));
 }
 
@@ -219,7 +244,7 @@ module.exports = window["wp"]["i18n"];
   \************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"eikonblocks/projects","version":"0.1.0","title":"Projects block","category":"widgets","icon":"welcome-widgets-menus","description":"Project block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"eikonblocks","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js","attributes":{"selectedPosts":{"type":"array","default":[]}}}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"eikonblocks/projects","version":"0.1.0","title":"Projects block","category":"widgets","icon":"welcome-widgets-menus","description":"Project block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"eikonblocks","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js","attributes":{"selectedPosts":{"type":"array","default":[]},"selectedOptions":{"type":"array","default":[]}}}');
 
 /***/ })
 
