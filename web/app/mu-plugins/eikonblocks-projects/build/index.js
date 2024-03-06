@@ -26,51 +26,46 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 function Edit({
   attributes,
   setAttributes,
-  posts,
-  getMedia
+  posts
 }) {
+  const [selectedPosts, setSelectedPosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(attributes.selectedPosts || []);
   const {
-    selectedPosts
-  } = attributes;
+    editPost
+  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useDispatch)('core/editor');
   const postOptions = posts ? posts.map(post => ({
     value: post.id,
     label: post.title.rendered
   })) : [];
-  const handleSelectChange = async event => {
-    const selectedOptions = Array.from(event.target.options).filter(option => option.selected).map(async option => {
-      // Find the full post object in the posts array
+  const handleSelectChange = event => {
+    const selectedOptions = Array.from(event.target.options).filter(option => option.selected);
+    const newSelectedPosts = [];
+    for (const option of selectedOptions) {
       const post = posts.find(post => post.id === Number(option.value));
-
-      // Fetch the media for the selected post
-      if (post.featured_media) {
-        const media = await getMedia(post.featured_media);
-        if (media && media.source_url) {
-          // Add the thumbnail URL to the post object
-          post.thumbnail = media.source_url;
-        }
-      }
-
-      // Return an object with the post id, title, and thumbnail (if available)
-      return {
-        id: post.id,
-        title: post.title.rendered,
-        thumbnail: post.thumbnail || null
-      };
-    });
-    const resolvedOptions = await Promise.all(selectedOptions);
+      newSelectedPosts.push(post);
+    }
+    setSelectedPosts(newSelectedPosts);
     setAttributes({
-      selectedPosts: resolvedOptions
+      selectedPosts: newSelectedPosts
+    });
+    editPost({
+      meta: {
+        selectedPosts: newSelectedPosts
+      }
     });
   };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)()
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, "Select Posts", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
     multiple: true,
     value: selectedPosts.map(post => post.id),
-    onChange: handleSelectChange
+    onChange: handleSelectChange,
+    style: {
+      width: '100%'
+    }
   }, postOptions.map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
     key: option.value,
     value: option.value,
@@ -82,12 +77,9 @@ function Edit({
       key: index
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", {
       dangerouslySetInnerHTML: {
-        __html: post.title
+        __html: post.title.rendered
       }
-    }), post.thumbnail && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
-      src: post.thumbnail,
-      alt: post.title.rendered
-    }));
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("pre", null, JSON.stringify(post.slug, null, 2)));
   }));
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.withSelect)(select => {
@@ -100,13 +92,7 @@ function Edit({
   return {
     posts
   };
-})((0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.withDispatch)((dispatch, props, {
-  select
-}) => {
-  return {
-    getMedia: id => select("core").getMedia(id)
-  };
-})(Edit)));
+})(Edit));
 
 /***/ }),
 
@@ -138,10 +124,10 @@ function save({
     key: post.id
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
     tagName: "h2",
-    value: post.title
-  }), post.thumbnail && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
-    src: post.thumbnail,
-    alt: post.title
+    value: post.title.rendered
+  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
+    tagName: "pre",
+    value: JSON.stringify(post.slug, null, 2)
   }))));
 }
 

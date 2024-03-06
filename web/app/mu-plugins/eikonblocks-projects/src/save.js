@@ -7,8 +7,8 @@ export default function save({ attributes }) {
     <div {...useBlockProps.save()}>
       {selectedPosts.map((post) => (
         <div key={post.id}>
-          <RichText.Content tagName="h2" value={post.title} />
-          {post.thumbnail && <img src={post.thumbnail} alt={post.title} />}
+          <RichText.Content tagName="h2" value={post.title.rendered} />
+          <RichText.Content tagName="pre" value={JSON.stringify(post.slug, null, 2)} />
         </div>
       ))}
     </div>
