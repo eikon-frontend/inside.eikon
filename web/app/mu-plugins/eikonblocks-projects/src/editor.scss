@@ -10,35 +10,47 @@
   padding: 10px;
 }
 
+h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
 .list-projects {
   display: flex;
   flex-direction: column;
   gap: 0px;
   border: 1px solid #3333;
-  background-color: white;
+
   max-height: 50vh;
   overflow: scroll;
 
-  &.list-projects-selected button::before {
-      content: "✖️";
-      color: #d33;
-    }
+  &.list-projects-available .list-projects-item {
+    cursor: pointer;
 
-  &.list-projects-available button::after {
-    content: "➕";
-    color: #3a3;
+    &::after {
+        content: "➕";
+        color: #3a3;
+      }
   }
 
+    &.list-projects-selected .list-projects-item {
+      justify-content: flex-start;
+      gap: 5px;
+
+      button {
+        margin-left: auto;
+      }
+    }
+
   .image-thumbnail {
-    width: 2rem;
-    height: 2rem;
+    width: 3rem;
+    height: 3rem;
     object-fit: cover;
   }
 
-  button {
-    width: 100%;
+  .list-projects-item {
     padding: 5px;
-    background: transparent;
+    background-color: white;
     border: 0;
     border-bottom: 1px solid #3333;
     color: #000;
