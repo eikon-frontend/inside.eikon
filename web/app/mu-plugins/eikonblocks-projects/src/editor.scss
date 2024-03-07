@@ -5,9 +5,15 @@
  */
 
 .wp-block-eikonblocks-projects {
-  background-color: #21759b;
-  color: #fff;
   padding: 10px;
+  border: 1px solid #3333;
+  background-color: #eee;
+  color: #333;
+  border-radius: 4px;
+}
+
+.filters {
+  margin: 0 0 10px 0;
 }
 
 h2 {
@@ -20,9 +26,11 @@ h2 {
   flex-direction: column;
   gap: 0px;
   border: 1px solid #3333;
-
+  padding-right: 14px;
+  background-color: white;
   max-height: 50vh;
   overflow: scroll;
+  border-radius: 4px;
 
   &.list-projects-available .list-projects-item {
     cursor: pointer;

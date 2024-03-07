@@ -82,7 +82,8 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div {...useBlockProps()}>
-        <div>
+        <div class="filters">
+          <h2>Filtrer les projets par taxonomies</h2>
           <select value={selectedYear} onChange={handleYearChange}>
             <option value="">Années</option>
             {years && years.map((year) => (
@@ -104,7 +105,7 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
           <div style={{ width: '50%' }}>
-            <h2>Project</h2>
+            <h2>Liste des projets</h2>
             <div className='list-projects list-projects-available'>
               {postOptions
                 .filter(option => selectedYear == "" || option.yearId == selectedYear)
