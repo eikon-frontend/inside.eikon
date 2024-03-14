@@ -36,6 +36,8 @@ function custom_rest_url($url)
 
 add_filter('rest_url', 'custom_rest_url');
 
-add_action('rest_api_init', function () {
+function add_cors_http_header()
+{
   header("Access-Control-Allow-Origin: *");
-});
+}
+add_action('init', 'add_cors_http_header');
