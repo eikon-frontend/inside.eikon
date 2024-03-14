@@ -35,3 +35,7 @@ function custom_rest_url($url)
 }
 
 add_filter('rest_url', 'custom_rest_url');
+
+add_action('rest_api_init', function () {
+  header("Access-Control-Allow-Origin: *");
+});
