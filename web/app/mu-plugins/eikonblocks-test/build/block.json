@@ -20,7 +20,7 @@
     "title": {
       "type": "string",
       "source": "html",
-      "selector": "p.title"
+      "selector": "h2.title"
     },
     "content": {
       "type": "string",
@@ -29,7 +29,13 @@
     },
     "backgroundColor": {
       "type": "string",
-      "default": "red"
+      "default": "#fee"
+    },
+    "url": {
+      "type": "string",
+      "source": "attribute",
+      "selector": "a",
+      "attribute": "href"
     }
   }
 }

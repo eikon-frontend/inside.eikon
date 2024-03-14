@@ -24,7 +24,7 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   const [selectedOptions, setSelectedOptions] = useState(attributes.selectedOptions || []);
 
   const postOptions = posts
-    ? posts.map((post) => ({ value: post.id, label: post.title.rendered, yearId: post.acf.year, sectionId: post.acf.section, subjectId: post.acf.subjects }))
+    ? posts.map((post) => ({ value: post.id, label: post.title?.rendered, yearId: post.acf?.year, sectionId: post.acf?.section, subjectId: post.acf?.subjects }))
     : [];
 
   const addProject = (value) => {
@@ -82,7 +82,7 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div {...useBlockProps()}>
-        <div class="filters">
+        <div className="filters">
           <h2>Filtrer les projets par taxonomies</h2>
           <select value={selectedYear} onChange={handleYearChange}>
             <option value="">Années</option>
@@ -114,7 +114,7 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
                 .filter(option => !selectedOptions.map(post => post.value).includes(option.value))
                 .map((option, index) => (
                   <div
-                    key={option.value}
+                    key={index}
                     value={option.value}
                     className='list-projects-item'
                     onClick={() => addProject(option.value)}

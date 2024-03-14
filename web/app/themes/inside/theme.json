@@ -5,7 +5,7 @@
       "fontFamily": "NoiGrotesk, sans-serif"
     },
     "spacing": {
-      "blockGap": "60px",
+      "blockGap": "30px",
       "margin": {
         "top": "60px",
         "right": "60px",
@@ -15,6 +15,9 @@
     }
   },
   "settings": {
+    "spacing": {
+      "blockGap": true
+    },
     "layout": {
       "contentSize": "840px",
       "wideSize": "1100px"

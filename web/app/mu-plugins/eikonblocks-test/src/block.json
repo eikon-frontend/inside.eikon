@@ -1,35 +1,41 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "eikonblocks/test",
-	"version": "0.1.0",
-	"title": "Test block",
-	"category": "widgets",
-	"icon": "welcome-learn-more",
-	"description": "Example block scaffolded with Create Block tool.",
-	"example": {},
-	"supports": {
-		"html": false
-	},
-	"textdomain": "eikonblocks",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js",
-	"attributes": {
-		"title": {
-			"type": "string",
-			"source": "html",
-			"selector": "p.title"
-		},
-		"content": {
-			"type": "string",
-			"source": "html",
-			"selector": "p.content"
-		},
-		"backgroundColor": {
-			"type": "string",
-			"default": "red"
-		}
-	}
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "eikonblocks/test",
+  "version": "0.1.0",
+  "title": "Test block",
+  "category": "widgets",
+  "icon": "welcome-learn-more",
+  "description": "Example block scaffolded with Create Block tool.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "eikonblocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "source": "html",
+      "selector": "h2.title"
+    },
+    "content": {
+      "type": "string",
+      "source": "html",
+      "selector": "p.content"
+    },
+    "backgroundColor": {
+      "type": "string",
+      "default": "#fee"
+    },
+    "url": {
+      "type": "string",
+      "source": "attribute",
+      "selector": "a",
+      "attribute": "href"
+    }
+  }
 }
