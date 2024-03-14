@@ -31,8 +31,7 @@ function info_box($post)
 
 function custom_rest_url($url)
 {
-  // return $url;;
-  return "http://inside.eikon.test/wp-json/";
+  return WP_CONTENT_URL . '/wp-json/';
 }
 
 add_filter('rest_url', 'custom_rest_url');
