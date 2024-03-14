@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "styles": {
+    "typography": {
+      "fontFamily": "NoiGrotesk, sans-serif"
+    },
+    "spacing": {
+      "blockGap": "60px",
+      "margin": {
+        "top": "60px",
+        "right": "60px",
+        "bottom": "60px",
+        "left": "60px"
+      }
+    }
+  },
+  "settings": {
+    "layout": {
+      "contentSize": "840px",
+      "wideSize": "1100px"
+    },
+    "typography": {
+      "customFontSize": false,
+      "dropCap": false,
+      "fontFamilies": [],
+      "fontSizes": [],
+      "fontStyle": false,
+      "fontWeight": false,
+      "letterSpacing": false,
+      "lineHeight": false,
+      "textDecoration": false,
+      "textTransform": false
+    }
+  }
+}
