@@ -31,13 +31,7 @@ function info_box($post)
 
 function custom_rest_url($url)
 {
-  return WP_CONTENT_URL . '/wp-json/';
+  return getenv('WP_HOME_ADMIN') . '/wp-json/';
 }
 
 add_filter('rest_url', 'custom_rest_url');
-
-function add_cors_http_header()
-{
-  header("Access-Control-Allow-Origin: *");
-}
-add_action('init', 'add_cors_http_header');
