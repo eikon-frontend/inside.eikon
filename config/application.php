@@ -53,6 +53,7 @@ define('WP_ENV', env('WP_ENV') ?: 'production');
  * URLs
  */
 Config::define('WP_HOME', env('WP_HOME'));
+Config::define('WP_HOME_ADMIN', env('WP_HOME_ADMIN'));
 Config::define('WP_SITEURL', env('WP_SITEURL'));
 
 /**
@@ -60,7 +61,7 @@ Config::define('WP_SITEURL', env('WP_SITEURL'));
  */
 Config::define('CONTENT_DIR', '/app');
 Config::define('WP_CONTENT_DIR', $webroot_dir . Config::get('CONTENT_DIR'));
-Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_DIR'));
+Config::define('WP_CONTENT_URL', Config::get('WP_HOME_ADMIN') . Config::get('CONTENT_DIR'));
 
 /**
  * DB settings
