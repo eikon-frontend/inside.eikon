@@ -1,15 +1,15 @@
 <?php
 
-add_filter('allowed_block_types_all', 'misha_allowed_block_types', 25, 2);
+add_filter('allowed_block_types_all', 'eikon_allowed_block_types', 25, 2);
 
-function misha_allowed_block_types($allowed_blocks, $editor_context)
+function eikon_allowed_block_types($allowed_blocks, $editor_context)
 {
 
   return array(
     'eikonblocks/projects',
     'eikonblocks/test',
+    'eikonblocks/heading',
     'core/paragraph',
-    'core/heading',
     'core/list',
     'core/list-item'
   );
