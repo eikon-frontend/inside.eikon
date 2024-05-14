@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "eikonblocks/projects-dynamic",
+  "version": "0.1.0",
+  "title": "Projects block dynamic",
+  "category": "widgets",
+  "icon": "welcome-widgets-menus",
+  "description": "Project block scaffolded with Create Block tool.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "eikonblocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "attributes": {
+    "selectedPosts": {
+      "type": "array",
+      "default": []
+    },
+    "selectedOptions": {
+      "type": "array",
+      "default": []
+    }
+  }
+}

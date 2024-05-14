@@ -1,0 +1,74 @@
+/*!****************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/editor.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************/
+@charset "UTF-8";
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-eikonblocks-projects-dynamic {
+  padding: 10px;
+  border: 1px solid rgba(51, 51, 51, 0.2);
+  background-color: #eee;
+  color: #333;
+  border-radius: 4px;
+}
+
+.filters {
+  margin: 0 0 10px 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.list-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  border: 1px solid rgba(51, 51, 51, 0.2);
+  padding-right: 14px;
+  background-color: white;
+  max-height: 50vh;
+  overflow: scroll;
+  border-radius: 4px;
+}
+.list-projects.list-projects-available .list-projects-item {
+  cursor: pointer;
+}
+.list-projects.list-projects-available .list-projects-item::after {
+  content: "➕";
+  color: #3a3;
+}
+.list-projects.list-projects-selected .list-projects-item {
+  justify-content: flex-start;
+  gap: 5px;
+}
+.list-projects.list-projects-selected .list-projects-item button {
+  margin-left: auto;
+}
+.list-projects .image-thumbnail {
+  width: 3rem;
+  height: 3rem;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.list-projects .list-projects-item {
+  padding: 5px;
+  background-color: white;
+  border: 0;
+  border-bottom: 1px solid rgba(51, 51, 51, 0.2);
+  color: #000;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0.6;
+}
+.list-projects .list-projects-item:hover {
+  opacity: 1;
+}
+
+/*# sourceMappingURL=index.css.map*/
