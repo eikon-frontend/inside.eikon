@@ -24,3 +24,21 @@ function add_image_column_content($column, $post_id)
     echo get_the_post_thumbnail($post_id, array(80, 80));
   }
 }
+
+/**
+ * Custom function to validate user registration email addresses to restrict to edufr.ch
+ *
+ * @param WP_Error $errors An object containing any errors encountered during registration.
+ * @param string $sanitized_user_login The sanitized username.
+ * @param string $user_email The user's email address.
+ * @return WP_Error The updated error object.
+ */
+add_filter('registration_errors', 'myplugin_registration_errors', 10, 3);
+function myplugin_registration_errors($errors, $sanitized_user_login, $user_email)
+{
+  if (! preg_match('/( |^)[^ ]+@edufr\.ch( |$)/', $user_email)) {
+    $errors->add('invalid_email', __("Seule l'adresse e-mail « edufr.ch » est autorisée."));
+    $user_email = '';
+  }
+  return $errors;
+}
