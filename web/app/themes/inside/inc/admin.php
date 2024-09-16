@@ -37,7 +37,7 @@ add_filter('registration_errors', 'myplugin_registration_errors', 10, 3);
 function myplugin_registration_errors($errors, $sanitized_user_login, $user_email)
 {
   if (! preg_match('/( |^)[^ ]+@edufr\.ch( |$)/', $user_email)) {
-    $errors->add('invalid_email', __('ERROR: Only valid "mydomain" email address is allowed.'));
+    $errors->add('invalid_email', __("Seule l'adresse e-mail « edufr.ch » est autorisée."));
     $user_email = '';
   }
   return $errors;
