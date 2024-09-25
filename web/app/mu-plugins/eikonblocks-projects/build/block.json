@@ -24,6 +24,14 @@
     "selectedOptions": {
       "type": "array",
       "default": []
+    },
+    "backgroundColor": {
+      "type": "string",
+      "default": "fuchsia"
+    },
+    "textColor": {
+      "type": "string",
+      "default": "blue"
     }
   }
 }
