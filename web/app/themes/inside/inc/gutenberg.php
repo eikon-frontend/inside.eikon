@@ -58,3 +58,51 @@ function ghub_child_setup()
   add_editor_style(get_template_directory_uri() . '/css/editor.css');
 }
 add_action('after_setup_theme', 'ghub_child_setup');
+
+/**
+ * Registers support for color palette.
+ */
+add_theme_support('editor-color-palette', array(
+  array(
+    'name'  => __('Blue', 'themeLangDomain'),
+    'slug'  => 'blue',
+    'color'  => '#0000DE',
+  ),
+  array(
+    'name'  => __('Black', 'themeLangDomain'),
+    'slug'  => 'black',
+    'color'  => '#000000',
+  ),
+  array(
+    'name'  => __('White', 'themeLangDomain'),
+    'slug'  => 'white',
+    'color'  => '#FFFFFF',
+  ),
+  array(
+    'name'  => __('Red', 'themeLangDomain'),
+    'slug'  => 'red',
+    'color'  => '#FF2C00',
+  ),
+  array(
+    'name'  => __('Orange', 'themeLangDomain'),
+    'slug'  => 'orange',
+    'color'  => '#FF5F1C',
+  ),
+  array(
+    'name'  => __('Fuchsia', 'themeLangDomain'),
+    'slug'  => 'fuchsia',
+    'color'  => '#FF3EAD',
+  ),
+  array(
+    'name'  => __('Pink', 'themeLangDomain'),
+    'slug'  => 'pink',
+    'color'  => '#FFA1CE',
+  ),
+  array(
+    'name'  => __('Violet', 'themeLangDomain'),
+    'slug'  => 'violet',
+    'color'  => '#A000FF',
+  ),
+));
+
+add_theme_support('disable-custom-colors');

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useBlockProps } from "@wordpress/block-editor";
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { useDispatch, withSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
+import { PanelBody, SelectControl } from '@wordpress/components';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import "./editor.scss";
 
@@ -22,6 +23,19 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   const [selectedSection, setSelectedSection] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedOptions, setSelectedOptions] = useState(attributes.selectedOptions || []);
+
+  const { backgroundColor, textColor } = attributes;
+
+  const colors = [
+    { label: 'Blue', value: 'blue' },
+    { label: 'Black', value: 'black' },
+    { label: 'White', value: 'white' },
+    { label: 'Red', value: 'red' },
+    { label: 'Orange', value: 'orange' },
+    { label: 'Fuchsia', value: 'fuchsia' },
+    { label: 'Pink', value: 'pink' },
+    { label: 'Violet', value: 'violet' },
+  ];
 
   const postOptions = posts
     ? posts.map((post) => ({ value: post.id, label: post.title?.rendered, yearId: post.acf?.year, sectionId: post.acf?.section, subjectId: post.acf?.subjects }))
@@ -80,79 +94,100 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   }, [selectedPosts, selectedOptions]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div {...useBlockProps()}>
-        <div className="filters">
-          <h2>Filtrer les projets par taxonomies</h2>
-          <select value={selectedYear} onChange={handleYearChange}>
-            <option value="">Années</option>
-            {years && years.map((year) => (
-              <option key={year.id} value={year.id}>{year.name}</option>
-            ))}
-          </select>
-          <select value={selectedSection} onChange={handleSectionChange}>
-            <option value="">Sections</option>
-            {sections && sections.map((section) => (
-              <option key={section.id} value={section.id}>{section.name}</option>
-            ))}
-          </select>
-          <select value={selectedSubject} onChange={handleSubjectChange}>
-            <option value="">Subjects</option>
-            {subjects && subjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>{subject.name}</option>
-            ))}
-          </select>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
-          <div style={{ width: '50%' }}>
-            <h2>Liste des projets</h2>
-            <div className='list-projects list-projects-available'>
-              {postOptions
-                .filter(option => selectedYear == "" || option.yearId == selectedYear)
-                .filter(option => selectedSection == "" || option.sectionId == selectedSection)
-                .filter(option => selectedSubject == "" || option.subjectId == selectedSubject)
-                .filter(option => !selectedOptions.map(post => post.value).includes(option.value))
-                .map((option, index) => (
-                  <div
-                    key={index}
-                    value={option.value}
-                    className='list-projects-item'
-                    onClick={() => addProject(option.value)}
-                    dangerouslySetInnerHTML={{ __html: option.label }}
-                  />
+    <>
+      <InspectorControls>
+        <PanelBody title="Color Settings">
+          <SelectControl
+            label="Background Color"
+            value={backgroundColor}
+            options={colors}
+            onChange={(value) => setAttributes({ backgroundColor: value })}
+          />
+          <SelectControl
+            label="Text Color"
+            value={textColor}
+            options={colors}
+            style={{ width: '100%' }}
+            onChange={(value) => setAttributes({ textColor: value })}
+          />
+        </PanelBody>
+      </InspectorControls>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>
+          <div className="filters">
+            <h2>Filtrer les projets par taxonomies</h2>
+            <div className="select-container">
+              <select value={selectedYear} onChange={handleYearChange}>
+                <option value="">Années</option>
+                {years && years.map((year) => (
+                  <option key={year.id} value={year.id}>{year.name}</option>
                 ))}
+              </select>
+              <select value={selectedSection} onChange={handleSectionChange}>
+                <option value="">Sections</option>
+                {sections && sections.map((section) => (
+                  <option key={section.id} value={section.id}>{section.name}</option>
+                ))}
+              </select>
+              <select value={selectedSubject} onChange={handleSubjectChange}>
+                <option value="">Subjects</option>
+                {subjects && subjects.map((subject) => (
+                  <option key={subject.id} value={subject.id}>{subject.name}</option>
+                ))}
+              </select>
             </div>
           </div>
-          <div style={{ width: '50%' }}>
-            <h2>Selected project</h2>
-            <Droppable droppableId="droppable">
-              {(provided) => (
-                <div className='list-projects list-projects-selected' {...provided.droppableProps} ref={provided.innerRef}>
-                  {selectedPosts.map((post, index) => (
-                    <Draggable key={post.id} draggableId={String(post.id)} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <div className='list-projects-item'>
-                            <img className='image-thumbnail' src={post.featured_image_src} alt={post.title.rendered} />
-                            <span dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                            <button onClick={() => removeProject(post.id)}>✖️</button>
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
+            <div style={{ width: '50%' }}>
+              <h2>Liste des projets</h2>
+              <div className='list-projects list-projects-available'>
+                {postOptions
+                  .filter(option => selectedYear == "" || option.yearId == selectedYear)
+                  .filter(option => selectedSection == "" || option.sectionId == selectedSection)
+                  .filter(option => selectedSubject == "" || option.subjectId == selectedSubject)
+                  .filter(option => !selectedOptions.map(post => post.value).includes(option.value))
+                  .map((option, index) => (
+                    <div
+                      key={index}
+                      value={option.value}
+                      className='list-projects-item'
+                      onClick={() => addProject(option.value)}
+                      dangerouslySetInnerHTML={{ __html: option.label }}
+                    />
                   ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+              </div>
+            </div>
+            <div style={{ width: '50%' }}>
+              <h2>Projets sélectionnés</h2>
+              <Droppable droppableId="droppable">
+                {(provided) => (
+                  <div className='list-projects list-projects-selected' {...provided.droppableProps} ref={provided.innerRef}>
+                    {selectedPosts.map((post, index) => (
+                      <Draggable key={post.id} draggableId={String(post.id)} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <div className='list-projects-item'>
+                              <img className='image-thumbnail' src={post.featured_image_src} alt={post.title.rendered} />
+                              <span dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                              <button onClick={() => removeProject(post.id)}>✖️</button>
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
           </div>
         </div>
-      </div>
-    </DragDropContext>
+      </DragDropContext>
+    </>
   );
 }
 

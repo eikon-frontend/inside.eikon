@@ -116,24 +116,26 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
         <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>
           <div className="filters">
             <h2>Filtrer les projets par taxonomies</h2>
-            <select value={selectedYear} onChange={handleYearChange}>
-              <option value="">Années</option>
-              {years && years.map((year) => (
-                <option key={year.id} value={year.id}>{year.name}</option>
-              ))}
-            </select>
-            <select value={selectedSection} onChange={handleSectionChange}>
-              <option value="">Sections</option>
-              {sections && sections.map((section) => (
-                <option key={section.id} value={section.id}>{section.name}</option>
-              ))}
-            </select>
-            <select value={selectedSubject} onChange={handleSubjectChange}>
-              <option value="">Subjects</option>
-              {subjects && subjects.map((subject) => (
-                <option key={subject.id} value={subject.id}>{subject.name}</option>
-              ))}
-            </select>
+            <div className="select-container">
+              <select value={selectedYear} onChange={handleYearChange}>
+                <option value="">Années</option>
+                {years && years.map((year) => (
+                  <option key={year.id} value={year.id}>{year.name}</option>
+                ))}
+              </select>
+              <select value={selectedSection} onChange={handleSectionChange}>
+                <option value="">Sections</option>
+                {sections && sections.map((section) => (
+                  <option key={section.id} value={section.id}>{section.name}</option>
+                ))}
+              </select>
+              <select value={selectedSubject} onChange={handleSubjectChange}>
+                <option value="">Subjects</option>
+                {subjects && subjects.map((subject) => (
+                  <option key={subject.id} value={subject.id}>{subject.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
             <div style={{ width: '50%' }}>
@@ -156,7 +158,7 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
               </div>
             </div>
             <div style={{ width: '50%' }}>
-              <h2>Selected project</h2>
+              <h2>Projets sélectionnés</h2>
               <Droppable droppableId="droppable">
                 {(provided) => (
                   <div className='list-projects list-projects-selected' {...provided.droppableProps} ref={provided.innerRef}>

@@ -1,5 +1,4 @@
-import { useBlockProps, RichText, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
+import { useBlockProps, RichText, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
@@ -7,35 +6,25 @@ export default function Edit(props) {
   const { attributes, setAttributes } = props;
   const { content, backgroundColor, textColor } = attributes;
 
-  const colors = [
-    { label: 'Blue', value: 'blue' },
-    { label: 'Black', value: 'black' },
-    { label: 'White', value: 'white' },
-    { label: 'Red', value: 'red' },
-    { label: 'Orange', value: 'orange' },
-    { label: 'Fuchsia', value: 'fuchsia' },
-    { label: 'Pink', value: 'pink' },
-    { label: 'Violet', value: 'violet' },
-  ]
-
   return (
     <>
       <InspectorControls>
-        <PanelBody title="Color Settings">
-          <SelectControl
-            label="Background Color"
-            value={backgroundColor}
-            options={colors}
-            onChange={(value) => setAttributes({ backgroundColor: value })}
-          />
-          <SelectControl
-            label="Text Color"
-            value={textColor}
-            options={colors}
-            style={{ width: '100%' }}
-            onChange={(value) => setAttributes({ textColor: value })}
-          />
-        </PanelBody>
+        <PanelColorSettings
+          title={__('Color Settings', 'eikonblocks')}
+          initialOpen={true}
+          colorSettings={[
+            {
+              value: backgroundColor,
+              onChange: (value) => setAttributes({ backgroundColor: value }),
+              label: __('Background Color', 'eikonblocks'),
+            },
+            {
+              value: textColor,
+              onChange: (value) => setAttributes({ textColor: value }),
+              label: __('Text Color', 'eikonblocks'),
+            },
+          ]}
+        />
       </InspectorControls>
       <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>
         <RichText
