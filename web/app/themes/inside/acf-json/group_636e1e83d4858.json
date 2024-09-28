@@ -223,6 +223,30 @@
             "graphql_non_null": 0,
             "ajax": 0,
             "placeholder": ""
+        },
+        {
+            "key": "field_66f7fd8c7f7e2",
+            "label": "Sous-titre",
+            "name": "subtitle",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "subtitle",
+            "graphql_non_null": 0
         }
     ],
     "location": [
@@ -247,5 +271,5 @@
     "graphql_field_name": "departmentFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1727487372
+    "modified": 1727528380
 }
