@@ -1,0 +1,12 @@
+{
+  "name": "inside.eikon",
+  "version": "1.0.0",
+  "description": "WordPress headless CMS",
+  "main": "index.js",
+  "scripts": {
+    "build-all-blocks": "node build-all-blocks.js"
+  },
+  "devDependencies": {
+    "husky": "^7.0.0"
+  }
+}
