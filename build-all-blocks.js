@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const muPluginsDir = path.join(__dirname, 'web', 'app', 'mu-plugins');
-const blockPrefix = 'eikonblock-';
+const blockPrefix = 'eikonblocks-';
+
 
 fs.readdirSync(muPluginsDir).forEach(dir => {
   if (dir.startsWith(blockPrefix)) {
