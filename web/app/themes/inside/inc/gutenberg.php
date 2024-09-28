@@ -8,7 +8,7 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
   return array(
     'eikonblocks/projects-dynamic',
     'eikonblocks/projects',
-    'eikonblocks/test',
+    'eikonblocks/departments-teaser',
     'eikonblocks/heading',
     'eikonblocks/marquee',
     'core/paragraph',
