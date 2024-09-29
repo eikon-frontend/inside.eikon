@@ -8,6 +8,6 @@ export default function save({ attributes }) {
 
   // Save the array as a JSON string in a data attribute
   return (
-    <div {...useBlockProps.save()} data-post-ids={JSON.stringify(postIds)}></div>
+    <div class="wp-block-eikonblocks-departments-teaser"  {...useBlockProps.save()} data-post-ids={JSON.stringify(postIds)}></div>
   );
 }

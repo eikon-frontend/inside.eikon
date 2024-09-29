@@ -11,6 +11,7 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
     'eikonblocks/departments-teaser',
     'eikonblocks/heading',
     'eikonblocks/marquee',
+    'eikonblocks/numbers',
     'core/paragraph',
     'core/list',
     'core/list-item'

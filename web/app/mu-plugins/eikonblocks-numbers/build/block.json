@@ -1,11 +1,11 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "eikonblocks/marquee",
+  "name": "eikonblocks/numbers",
   "version": "0.1.0",
-  "title": "Marquee block",
+  "title": "Numbers block",
   "category": "widgets",
-  "icon": "editor-textcolor",
+  "icon": "format-quote",
   "description": "Example block scaffolded with Create Block tool.",
   "example": {},
   "supports": {
@@ -15,10 +15,13 @@
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "attributes": {
-    "content": {
+    "title": {
       "type": "string",
-      "source": "html",
-      "selector": "p.content"
+      "default": ""
+    },
+    "items": {
+      "type": "array",
+      "default": []
     },
     "backgroundColor": {
       "type": "string",
