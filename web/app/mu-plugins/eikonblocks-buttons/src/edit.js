@@ -2,6 +2,18 @@ import { useBlockProps, InspectorControls, PanelColorSettings, __experimentalLin
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
+// Mapping of hex values to color slugs
+const colorMap = {
+  '#0000DE': 'blue',
+  '#000000': 'black',
+  '#FFFFFF': 'white',
+  '#FF2C00': 'red',
+  '#FF5F1C': 'orange',
+  '#FF3EAD': 'fuchsia',
+  '#FFA1CE': 'pink',
+  '#A000FF': 'violet',
+};
+
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
   const { items, backgroundColor, textColor } = attributes;
@@ -18,9 +30,19 @@ export default function Edit(props) {
     setAttributes({ items: newItems });
   };
 
-  const addItem = () => {
-    setAttributes({ items: [...items, { url: '', opensInNewTab: false, title: '' }] });
+  const handleStyleChange = (index, style) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], style };
+    setAttributes({ items: newItems });
   };
+
+  const addItem = () => {
+    setAttributes({ items: [...items, { url: '', opensInNewTab: false, title: '', style: 'plain' }] });
+  };
+
+  // Get the color slugs from the hex values
+  const bgColorSlug = colorMap[backgroundColor] || '';
+  const textColorSlug = colorMap[textColor] || '';
 
   return (
     <>
@@ -68,6 +90,17 @@ export default function Edit(props) {
                 ]}
                 style={{ width: '100%' }}
               />
+            </label>
+            <label style={{ display: 'block', marginBottom: '5px' }}>
+              {__('Style', 'eikonblocks')}
+              <select
+                value={item.style}
+                onChange={(e) => handleStyleChange(index, e.target.value)}
+                style={{ width: '100%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+              >
+                <option value="plain">{__('Plain', 'eikonblocks')}</option>
+                <option value="outline">{__('Outline', 'eikonblocks')}</option>
+              </select>
             </label>
           </div>
         ))}

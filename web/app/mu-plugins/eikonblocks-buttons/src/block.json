@@ -32,6 +32,10 @@
           "openInNewTab": {
             "type": "boolean",
             "default": false
+          },
+          "style": {
+            "type": "string",
+            "default": "plain"
           }
         }
       }
