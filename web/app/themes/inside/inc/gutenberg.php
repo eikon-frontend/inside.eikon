@@ -12,6 +12,7 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
     'eikonblocks/heading',
     'eikonblocks/marquee',
     'eikonblocks/numbers',
+    'eikonblocks/buttons',
     'core/paragraph',
     'core/list',
     'core/list-item'
@@ -65,42 +66,42 @@ add_action('after_setup_theme', 'ghub_child_setup');
  */
 add_theme_support('editor-color-palette', array(
   array(
-    'name'  => __('Blue', 'themeLangDomain'),
+    'name'  => __('Blue', 'eikon'),
     'slug'  => 'blue',
     'color'  => '#0000DE',
   ),
   array(
-    'name'  => __('Black', 'themeLangDomain'),
+    'name'  => __('Black', 'eikon'),
     'slug'  => 'black',
     'color'  => '#000000',
   ),
   array(
-    'name'  => __('White', 'themeLangDomain'),
+    'name'  => __('White', 'eikon'),
     'slug'  => 'white',
     'color'  => '#FFFFFF',
   ),
   array(
-    'name'  => __('Red', 'themeLangDomain'),
+    'name'  => __('Red', 'eikon'),
     'slug'  => 'red',
     'color'  => '#FF2C00',
   ),
   array(
-    'name'  => __('Orange', 'themeLangDomain'),
+    'name'  => __('Orange', 'eikon'),
     'slug'  => 'orange',
     'color'  => '#FF5F1C',
   ),
   array(
-    'name'  => __('Fuchsia', 'themeLangDomain'),
+    'name'  => __('Fuchsia', 'eikon'),
     'slug'  => 'fuchsia',
     'color'  => '#FF3EAD',
   ),
   array(
-    'name'  => __('Pink', 'themeLangDomain'),
+    'name'  => __('Pink', 'eikon'),
     'slug'  => 'pink',
     'color'  => '#FFA1CE',
   ),
   array(
-    'name'  => __('Violet', 'themeLangDomain'),
+    'name'  => __('Violet', 'eikon'),
     'slug'  => 'violet',
     'color'  => '#A000FF',
   ),

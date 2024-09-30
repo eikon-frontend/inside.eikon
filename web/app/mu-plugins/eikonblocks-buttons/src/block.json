@@ -1,11 +1,11 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "eikonblocks/numbers",
+  "name": "eikonblocks/buttons",
   "version": "0.1.0",
-  "title": "Numbers block",
+  "title": "Buttons block",
   "category": "widgets",
-  "icon": "format-quote",
+  "icon": "button",
   "description": "Number block scaffolded with Create Block tool.",
   "example": {},
   "supports": {
@@ -15,17 +15,30 @@
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "attributes": {
-    "title": {
-      "type": "string",
-      "default": ""
-    },
     "items": {
       "type": "array",
-      "default": []
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "default": ""
+          },
+          "url": {
+            "type": "string",
+            "default": ""
+          },
+          "openInNewTab": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
     },
     "backgroundColor": {
       "type": "string",
-      "default": "fuchsia"
+      "default": "white"
     },
     "textColor": {
       "type": "string",
