@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 import { useDispatch, withSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import { PanelBody, SelectControl } from '@wordpress/components';
@@ -25,17 +25,6 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   const [selectedOptions, setSelectedOptions] = useState(attributes.selectedOptions || []);
 
   const { backgroundColor, textColor } = attributes;
-
-  const colors = [
-    { label: 'Blue', value: 'blue' },
-    { label: 'Black', value: 'black' },
-    { label: 'White', value: 'white' },
-    { label: 'Red', value: 'red' },
-    { label: 'Orange', value: 'orange' },
-    { label: 'Fuchsia', value: 'fuchsia' },
-    { label: 'Pink', value: 'pink' },
-    { label: 'Violet', value: 'violet' },
-  ];
 
   const postOptions = posts
     ? posts.map((post) => ({ value: post.id, label: post.title?.rendered, yearId: post.acf?.year, sectionId: post.acf?.section, subjectId: post.acf?.subjects }))
@@ -96,21 +85,22 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title="Color Settings">
-          <SelectControl
-            label="Background Color"
-            value={backgroundColor}
-            options={colors}
-            onChange={(value) => setAttributes({ backgroundColor: value })}
-          />
-          <SelectControl
-            label="Text Color"
-            value={textColor}
-            options={colors}
-            style={{ width: '100%' }}
-            onChange={(value) => setAttributes({ textColor: value })}
-          />
-        </PanelBody>
+        <PanelColorSettings
+          title={__('Color Settings', 'eikonblocks')}
+          initialOpen={true}
+          colorSettings={[
+            {
+              value: backgroundColor,
+              onChange: (value) => setAttributes({ backgroundColor: value }),
+              label: __('Background Color', 'eikonblocks'),
+            },
+            {
+              value: textColor,
+              onChange: (value) => setAttributes({ textColor: value }),
+              label: __('Text Color', 'eikonblocks'),
+            },
+          ]}
+        />
       </InspectorControls>
       <DragDropContext onDragEnd={onDragEnd}>
         <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>

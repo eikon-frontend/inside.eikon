@@ -1,16 +1,5 @@
 import { useBlockProps } from '@wordpress/block-editor';
-
-// Mapping of hex values to color slugs
-const colorMap = {
-  '#0000DE': 'blue',
-  '#000000': 'black',
-  '#FFFFFF': 'white',
-  '#FF2C00': 'red',
-  '#FF5F1C': 'orange',
-  '#FF3EAD': 'fuchsia',
-  '#FFA1CE': 'pink',
-  '#A000FF': 'violet',
-};
+import { colorMap } from './colorUtils';
 
 export default function Save(props) {
   const { attributes } = props;

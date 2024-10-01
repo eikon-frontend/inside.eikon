@@ -1,10 +1,15 @@
 import { useBlockProps, RichText } from '@wordpress/block-editor';
+import { colorMap } from './colorUtils';
 
 export default function save({ attributes }) {
   const { selectedPosts, backgroundColor, textColor } = attributes;
 
+  // Get the color slugs from the hex values
+  const bgColorSlug = colorMap[backgroundColor] || '';
+  const textColorSlug = colorMap[textColor] || '';
+
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-projects bg-${backgroundColor} text-${textColor}`} >
+    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-projects bg-${bgColorSlug} text-${textColorSlug}`}>
       {
         selectedPosts.map((post) => (
           <div className="project" key={post.id}>

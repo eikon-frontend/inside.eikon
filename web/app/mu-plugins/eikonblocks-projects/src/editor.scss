@@ -31,19 +31,19 @@
       cursor: pointer;
 
       &::after {
-          content: "➕";
-          color: #3a3;
-        }
+        content: "➕";
+        color: #3a3;
+      }
     }
 
-      &.list-projects-selected .list-projects-item {
-        justify-content: flex-start;
-        gap: 5px;
+    &.list-projects-selected .list-projects-item {
+      justify-content: flex-start;
+      gap: 5px;
 
-        button {
-          margin-left: auto;
-        }
+      button {
+        margin-left: auto;
       }
+    }
 
     .image-thumbnail {
       width: 3rem;
@@ -66,7 +66,6 @@
       &:hover {
         opacity: 1;
       }
-
     }
   }
 
@@ -78,6 +77,6 @@
 
   .select-container select {
     flex: 1;
+    color: #333 !important;
   }
 }
-

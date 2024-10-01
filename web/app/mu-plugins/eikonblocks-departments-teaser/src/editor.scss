@@ -67,7 +67,6 @@
       &:hover {
         opacity: 1;
       }
-
     }
   }
 
@@ -79,5 +78,6 @@
 
   .select-container select {
     flex: 1;
+    color: #333 !important;
   }
 }
