@@ -13,6 +13,7 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
     'eikonblocks/marquee',
     'eikonblocks/numbers',
     'eikonblocks/buttons',
+    'eikonblocks/mixedposts',
     'core/paragraph',
     'core/list',
     'core/list-item'
