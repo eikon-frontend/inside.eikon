@@ -209,13 +209,12 @@ function department_post_type()
 }
 add_action('init', 'department_post_type', 0);
 
-// Removes the post editor from the page editing screen
-function remove_menu()
+add_filter('use_block_editor_for_post_type', 'prefix_disable_gutenberg', 10, 2);
+function prefix_disable_gutenberg($current_status, $post_type)
 {
-  remove_menu_page('edit.php');
+  if ('post' === $post_type) return false;
+  return $current_status;
 }
-
-add_action('admin_menu', 'remove_menu');
 
 add_theme_support('post-thumbnails');
 
