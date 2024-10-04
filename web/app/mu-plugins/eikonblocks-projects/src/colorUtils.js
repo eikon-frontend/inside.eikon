@@ -1,3 +1,4 @@
+// Mapping of hex values to color slugs
 export const colorMap = {
   '#0000DE': 'blue',
   '#000000': 'black',

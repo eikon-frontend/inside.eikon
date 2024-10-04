@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "eikonblocks/mixedposts",
   "version": "0.1.0",
-  "title": "Mixed posts block",
+  "title": "Mixed posts",
   "category": "widgets",
   "icon": "editor-textcolor",
   "description": "Example block scaffolded with Create Block tool.",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBlockProps, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
-import { useDispatch, withSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { useDispatch, withSelect } from "@wordpress/data";
+import { __ } from "@wordpress/i18n";
 import { PanelBody, SelectControl } from '@wordpress/components';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import "./editor.scss";
@@ -24,7 +24,7 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedOptions, setSelectedOptions] = useState(attributes.selectedOptions || []);
 
-  const { content, backgroundColor, textColor } = attributes;
+  const { backgroundColor, textColor } = attributes;
 
   const postOptions = posts
     ? posts.map((post) => ({ value: post.id, label: post.title?.rendered, yearId: post.acf?.year, sectionId: post.acf?.section, subjectId: post.acf?.subjects }))
@@ -78,9 +78,9 @@ function Edit({ attributes, setAttributes, posts, years, sections, subjects }) {
   };
 
   useEffect(() => {
-    setAttributes({ selectedPosts, selectedOptions, content, backgroundColor, textColor });
+    setAttributes({ selectedPosts, selectedOptions });
     editPost({ meta: { selectedPosts } });
-  }, [selectedPosts, selectedOptions, content, backgroundColor, textColor]);
+  }, [selectedPosts, selectedOptions]);
 
   return (
     <>

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "eikonblocks/buttons",
   "version": "0.1.0",
-  "title": "Buttons block",
+  "title": "Buttons",
   "category": "widgets",
   "icon": "button",
   "description": "Number block scaffolded with Create Block tool.",

@@ -1,4 +1,4 @@
-import { useBlockProps, RichText } from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 import { colorMap } from './colorUtils';
 
 export default function save({ attributes }) {
@@ -8,20 +8,12 @@ export default function save({ attributes }) {
   const bgColorSlug = colorMap[backgroundColor] || '';
   const textColorSlug = colorMap[textColor] || '';
 
+  // Create an array of post IDs
+  const postIds = selectedPosts.map(post => post.id);
+
+  // Save the array as a JSON string in a data attribute
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-projects bg-${bgColorSlug} text-${textColorSlug}`}>
-      {
-        selectedPosts.map((post) => (
-          <div className="project" key={post.id}>
-            <a href={`/projets/${post.slug}`}>
-              <RichText.Content tagName="h2" value={post.title.rendered} />
-            </a>
-            {post.featured_image_src && (
-              <img src={post.featured_image_src} alt={post.title.rendered} />
-            )}
-          </div>
-        ))
-      }
+    <div {...useBlockProps.save()} data-post-ids={JSON.stringify(postIds)} className={`wp-block-eikonblocks-projects bg-${bgColorSlug} text-${textColorSlug}`}>
     </div>
   );
 }

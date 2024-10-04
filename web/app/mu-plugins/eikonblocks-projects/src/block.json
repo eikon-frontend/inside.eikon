@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "eikonblocks/projects",
   "version": "0.1.0",
-  "title": "Projects block",
+  "title": "Projects",
   "category": "widgets",
   "icon": "welcome-widgets-menus",
   "description": "Project block scaffolded with Create Block tool.",

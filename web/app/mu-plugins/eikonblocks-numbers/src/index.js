@@ -1,32 +1,19 @@
-/**
- * Registers a new block provided a unique name and an object defining its behavior.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
- */
+
 import { registerBlockType } from '@wordpress/blocks';
 
-/**
- * Internal dependencies
- */
+
 import edit from './edit';
 import save from './save';
 import metadata from './block.json';
+const el = wp.element.createElement;
 
-/**
- * Every block starts by registering a new block type definition.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
- */
+const iconEl = el('svg', { width: 24, height: 24 },
+  el('path', { d: "M5 3h14c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2Zm7 14h2V7h-4v2h2v8Z" })
+);
+
+
 registerBlockType(metadata.name, {
-  /**
-   * @see ./edit.js
-   */
   edit,
-
-  /**
-   * @see ./save.js
-   */
   save,
+  icon: iconEl,
 });
-
-

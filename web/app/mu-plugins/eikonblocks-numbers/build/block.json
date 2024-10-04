@@ -3,9 +3,8 @@
   "apiVersion": 3,
   "name": "eikonblocks/numbers",
   "version": "0.1.0",
-  "title": "Numbers block",
+  "title": "Numbers",
   "category": "widgets",
-  "icon": "format-quote",
   "description": "Number block scaffolded with Create Block tool.",
   "example": {},
   "supports": {

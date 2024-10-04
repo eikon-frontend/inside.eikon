@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "eikonblocks/departments-teaser",
   "version": "0.1.0",
-  "title": "Departments block",
+  "title": "Departments",
   "category": "widgets",
   "icon": "welcome-learn-more",
   "description": "Departments block scaffolded with Create Block tool.",

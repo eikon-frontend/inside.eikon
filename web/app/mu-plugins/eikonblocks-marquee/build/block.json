@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "eikonblocks/marquee",
   "version": "0.1.0",
-  "title": "Marquee block",
+  "title": "Marquee",
   "category": "widgets",
   "icon": "editor-textcolor",
   "description": "Example block scaffolded with Create Block tool.",
