@@ -1,12 +1,4 @@
-/**
- * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
- */
-
 .wp-block-eikonblocks-projects {
-  padding: 20px;
-
   .filters {
     margin: 0 0 10px 0;
   }
@@ -21,7 +13,6 @@
     flex-direction: column;
     gap: 0px;
     border: 1px solid #3333;
-    padding-right: 14px;
     background-color: white;
     max-height: 50vh;
     overflow: scroll;
@@ -62,6 +53,10 @@
       justify-content: space-between;
       align-items: center;
       opacity: 0.6;
+
+      &:last-child {
+        border-bottom: 0;
+      }
 
       &:hover {
         opacity: 1;

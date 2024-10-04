@@ -177,7 +177,7 @@ function department_post_type()
     'filter_items_list'     => __('Filtrer les départements', 'department'),
   );
   $rewrite = array(
-    'slug' => '/',
+    'slug' => '/departments',
     'with_front' => false
   );
   $args = array(

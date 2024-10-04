@@ -1,12 +1,12 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "eikonblocks/mixedposts",
+  "name": "eikonblocks/heading",
   "version": "0.1.0",
-  "title": "Mixed posts block",
-  "category": "widgets",
-  "icon": "editor-textcolor",
-  "description": "Example block scaffolded with Create Block tool.",
+  "title": "Titre",
+  "category": "common",
+  "icon": "heading",
+  "description": "Heading block scaffolded with Create Block tool.",
   "example": {},
   "supports": {
     "html": false
@@ -15,9 +15,14 @@
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "attributes": {
-    "selectedYear": {
+    "content": {
       "type": "string",
-      "default": ""
+      "source": "html",
+      "selector": "h2,h3,h4"
+    },
+    "level": {
+      "type": "number",
+      "default": 2
     },
     "backgroundColor": {
       "type": "string",

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 import { useDispatch, withSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
-import { PanelBody, SelectControl } from '@wordpress/components';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import "./editor.scss";
 
@@ -25,7 +24,7 @@ function Edit({ attributes, setAttributes, posts }) {
     ? posts.map((post) => ({ value: post.id, label: post.title?.rendered }))
     : [];
 
-  const addProject = (value) => {
+  const addDepartment = (value) => {
     const selectedOption = postOptions.find(option => option.value === value);
     if (selectedOption) {
       setSelectedOptions(prevOptions => [...prevOptions, selectedOption]);
@@ -37,7 +36,7 @@ function Edit({ attributes, setAttributes, posts }) {
     }
   };
 
-  const removeProject = (postId) => {
+  const removeDepartment = (postId) => {
     const newSelectedPosts = selectedPosts.filter(post => post.id !== postId);
     setSelectedPosts(newSelectedPosts);
 
@@ -68,39 +67,39 @@ function Edit({ attributes, setAttributes, posts }) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div {...useBlockProps()}>
+        <div className='eikonblock-title'>eikonblock // teaser department</div>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '15px' }}>
           <div style={{ width: '50%' }}>
-            <h2>Liste des projets</h2>
-            <div className='list-projects list-projects-available'>
+            <h2>Liste des départements</h2>
+            <div className='list-items-container list-item-available'>
               {postOptions
                 .filter(option => !selectedOptions.map(post => post.value).includes(option.value))
                 .map((option, index) => (
                   <div
                     key={index}
                     value={option.value}
-                    className='list-projects-item'
-                    onClick={() => addProject(option.value)}
+                    className='list-item'
+                    onClick={() => addDepartment(option.value)}
                     dangerouslySetInnerHTML={{ __html: option.label }}
                   />
                 ))}
             </div>
           </div>
           <div style={{ width: '50%' }}>
-            <h2>Projets sélectionnés</h2>
+            <h2>Départements sélectionnés</h2>
             <Droppable droppableId="droppable">
               {(provided) => (
-                <div className='list-projects list-projects-selected' {...provided.droppableProps} ref={provided.innerRef}>
+                <div className='list-items-container list-item-selected' {...provided.droppableProps} ref={provided.innerRef}>
                   {selectedPosts.map((post, index) => (
                     <Draggable key={post.id} draggableId={String(post.id)} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          {...provided.dragHandleProps}
                         >
-                          <div className='list-projects-item'>
-                            <span dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                            <button onClick={() => removeProject(post.id)}>✖️</button>
+                          <div className='list-item'>
+                            <span {...provided.dragHandleProps} className='drag-handle'>☰</span>
+                            <span onClick={() => removeDepartment(post.id)} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                           </div>
                         </div>
                       )}

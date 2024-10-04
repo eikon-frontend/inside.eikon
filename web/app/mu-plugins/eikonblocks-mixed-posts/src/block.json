@@ -19,10 +19,6 @@
       "type": "string",
       "default": ""
     },
-    "selectedSubject": {
-      "type": "string",
-      "default": ""
-    },
     "backgroundColor": {
       "type": "string",
       "default": "white"

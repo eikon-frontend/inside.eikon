@@ -19,7 +19,7 @@
       "defaultPalette": false
     },
     "spacing": {
-      "blockGap": true
+      "blockGap": null
     },
     "layout": {
       "contentSize": "840px",

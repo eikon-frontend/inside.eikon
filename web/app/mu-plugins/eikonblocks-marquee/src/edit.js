@@ -27,6 +27,7 @@ export default function Edit(props) {
         />
       </InspectorControls>
       <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>
+        <div className='eikonblock-title'>eikonblock // marquee</div>
         <RichText
           tagName="p"
           value={content}

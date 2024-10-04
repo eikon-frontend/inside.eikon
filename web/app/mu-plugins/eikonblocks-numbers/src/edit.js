@@ -42,6 +42,7 @@ export default function Edit(props) {
         />
       </InspectorControls>
       <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>
+        <div className='eikonblock-title'>eikonblock // numbers</div>
         <div style={{ marginBottom: '20px' }}>
           <label htmlFor="title" style={{ display: 'block', marginBottom: '5px' }}>
             {__('Titre', 'eikonblocks')}

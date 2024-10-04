@@ -2,18 +2,6 @@ import { useBlockProps, InspectorControls, PanelColorSettings, __experimentalLin
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
-// Mapping of hex values to color slugs
-const colorMap = {
-  '#0000DE': 'blue',
-  '#000000': 'black',
-  '#FFFFFF': 'white',
-  '#FF2C00': 'red',
-  '#FF5F1C': 'orange',
-  '#FF3EAD': 'fuchsia',
-  '#FFA1CE': 'pink',
-  '#A000FF': 'violet',
-};
-
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
   const { items, backgroundColor, textColor } = attributes;
@@ -40,10 +28,6 @@ export default function Edit(props) {
     setAttributes({ items: [...items, { url: '', opensInNewTab: false, title: '', style: 'plain' }] });
   };
 
-  // Get the color slugs from the hex values
-  const bgColorSlug = colorMap[backgroundColor] || '';
-  const textColorSlug = colorMap[textColor] || '';
-
   return (
     <>
       <InspectorControls>
@@ -65,6 +49,7 @@ export default function Edit(props) {
         />
       </InspectorControls>
       <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor, padding: '20px', borderRadius: '5px' }}>
+        <div className='eikonblock-title'>eikonblock // buttons</div>
         {items.map((item, index) => (
           <div key={index} style={{ marginBottom: '20px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
             <label style={{ display: 'block', marginBottom: '5px' }}>

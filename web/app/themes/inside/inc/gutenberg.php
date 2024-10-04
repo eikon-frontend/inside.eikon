@@ -20,6 +20,30 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
   );
 }
 
+function eikon_block_wrapper($block_content, $block)
+{
+  if ($block['blockName'] === 'core/paragraph' || $block['blockName'] === 'core/list') {
+    $background_color_class = isset($block['attrs']['backgroundColor']) ? 'has-' . $block['attrs']['backgroundColor'] . '-background-color' : '';
+    $text_color_class = isset($block['attrs']['textColor']) ? 'has-' . $block['attrs']['textColor'] . '-color' : '';
+
+    $classes = $block['blockName'] === 'core/paragraph' ? 'wp-block-paragraph' : 'wp-block-list';
+    if ($background_color_class) {
+      $classes .= ' ' . $background_color_class;
+    }
+    if ($text_color_class) {
+      $classes .= ' ' . $text_color_class;
+    }
+
+    $content = '<div class="' . esc_attr($classes) . '">';
+    $content .= $block_content;
+    $content .= '</div>';
+    return $content;
+  }
+  return $block_content;
+}
+
+add_filter('render_block', 'eikon_block_wrapper', 10, 2);
+
 function enqueue_custom_fonts()
 {
   $theme_directory = get_template_directory_uri();
@@ -39,16 +63,6 @@ function enqueue_custom_fonts()
   wp_add_inline_style('wp-editor', $css);
 }
 add_action('enqueue_block_editor_assets', 'enqueue_custom_fonts');
-
-function remove_h1_from_editor()
-{
-  wp_enqueue_script(
-    'remove-h1',
-    get_template_directory_uri() . '/js/block-filters.js',
-    array('wp-blocks', 'wp-dom-ready', 'wp-edit-post')
-  );
-}
-add_action('enqueue_block_editor_assets', 'remove_h1_from_editor');
 
 /**
  * Registers support for editor styles & Enqueue it.
