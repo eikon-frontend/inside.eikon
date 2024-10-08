@@ -52,6 +52,6 @@ jobs:
 
       - name: Deploy to staging
         run: |
-          bundle exec cap staging deploy
+          bundle exec cap production deploy
         env:
           SSHKIT_COLOR: "1" # Enable colored output for better readability
