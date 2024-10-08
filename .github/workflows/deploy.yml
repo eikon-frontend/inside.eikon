@@ -42,7 +42,8 @@ jobs:
         run: |
           ls ~/.ssh
           cat ~/.ssh/config
-          ssh -o StrictHostKeyChecking=no -t eikon@ssh-eikon.alwaysdata.net "ls -al"
+          cat ~/.ssh/github-actions.pub
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=no -t eikon@ssh-eikon.alwaysdata.net "ls -al"
 
       - name: Remove Bundler Deployment Config
         run: bundle config --delete deployment
