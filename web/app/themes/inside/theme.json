@@ -16,7 +16,49 @@
   },
   "settings": {
     "color": {
-      "defaultPalette": false
+      "defaultPalette": false,
+      "palette": [
+        {
+          "name": "Blue",
+          "slug": "blue",
+          "color": "#0000DE"
+        },
+        {
+          "name": "Black",
+          "slug": "black",
+          "color": "#000000"
+        },
+        {
+          "name": "White",
+          "slug": "white",
+          "color": "#FFFFFF"
+        },
+        {
+          "name": "Red",
+          "slug": "red",
+          "color": "#FF2C00"
+        },
+        {
+          "name": "Orange",
+          "slug": "orange",
+          "color": "#FF5F1C"
+        },
+        {
+          "name": "Fuchsia",
+          "slug": "fuchsia",
+          "color": "#FF3EAD"
+        },
+        {
+          "name": "Pink",
+          "slug": "pink",
+          "color": "#FFA1CE"
+        },
+        {
+          "name": "Violet",
+          "slug": "violet",
+          "color": "#A000FF"
+        }
+      ]
     },
     "spacing": {
       "blockGap": null

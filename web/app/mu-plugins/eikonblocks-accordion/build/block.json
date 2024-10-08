@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "eikonblocks/accordion",
+  "version": "0.1.0",
+  "title": "Accordion",
+  "category": "widgets",
+  "icon": "editor-help",
+  "description": "A block to create a list of Accordions with titles and contents.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "eikonblocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "attributes": {
+    "items": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "default": ""
+          },
+          "text": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      }
+    },
+    "backgroundColor": {
+      "type": "string",
+      "default": "white"
+    },
+    "textColor": {
+      "type": "string",
+      "default": "blue"
+    }
+  }
+}
