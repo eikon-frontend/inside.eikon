@@ -8,7 +8,7 @@ export default function Save({ attributes }) {
   const textColorSlug = colorMap[textColor] || backgroundColor;
 
   return (
-    <div {...useBlockProps.save()} className={`bg-${bgColorSlug} text-${textColorSlug}`}>
+    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-heading bg-${bgColorSlug} text-${textColorSlug}`}>
       <RichText.Content
         tagName={'h' + level}
         className='content'
