@@ -20,6 +20,28 @@ jobs:
           ruby-version: 2.6
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
+      - name: Install SSH Host Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.DEPLOY_KEY }}
+          name: github-actions
+          known_hosts: ${{ secrets.HOST_KEY }}
+          config: |
+            host ssh-eikon.alwaysdata.net
+            IdentityFile ~/.ssh/github-actions
+            IdentitiesOnly yes
+            ForwardAgent yes
+
+      - name: Install SSH Key
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add -D
+          ssh-add ~/.ssh/github-actions
+
+      - name: Check SSH Key Viability
+        run: |
+          echo "ls -al" | ssh eikon@ssh-eikon.alwaysdata.net
+
       - uses: miloserdow/capistrano-deploy@master
         with:
           target: production # Defines the environment that will be used for the deployment
