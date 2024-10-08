@@ -40,6 +40,8 @@ jobs:
 
       - name: Check SSH Key Viability
         run: |
+          ls ~/.ssh
+          cat ~/.ssh/config
           ssh -o StrictHostKeyChecking=no -t eikon@ssh-eikon.alwaysdata.net "ls -al"
 
       - name: Remove Bundler Deployment Config
