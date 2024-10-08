@@ -8,7 +8,7 @@ set :deploy_to, -> { "/home/eikon/www/#{fetch(:application)}" }
 set :opcache_file_url, "https://inside-2024.eikon.ch/opcache_clear.php"
 
 set :ssh_options, {
-  keys: %w(~/.ssh/id_rsa ~/.ssh/github-actions),
+  keys: %w(/.ssh/github-actions),
   forward_agent: true,
 }
 
