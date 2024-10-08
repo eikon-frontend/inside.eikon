@@ -7,6 +7,11 @@ set :deploy_to, -> { "/home/eikon/www/#{fetch(:application)}" }
 
 set :opcache_file_url, "https://inside-2024.eikon.ch/opcache_clear.php"
 
+set :ssh_options, {
+  keys: %w(~/deploy/deploy_id_rsa_enc),
+  forward_agent: true,
+}
+
 # Extended Server Syntax
 # ======================
 server 'ssh-eikon.alwaysdata.net', user: 'eikon', roles: %w{web app db}
