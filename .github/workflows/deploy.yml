@@ -40,7 +40,7 @@ jobs:
 
       - name: Check SSH Key Viability
         run: |
-          echo "ls -al" | ssh eikon@ssh-eikon.alwaysdata.net
+          ssh -o StrictHostKeyChecking=no -t eikon@ssh-eikon.alwaysdata.net "ls -al"
 
       - uses: miloserdow/capistrano-deploy@master
         with:
