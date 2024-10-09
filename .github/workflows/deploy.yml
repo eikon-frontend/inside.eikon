@@ -59,8 +59,11 @@ jobs:
 
       - name: Set up environment
         run: |
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/.env ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/.env; fi"
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/shared/.env /home/eikon/www/inside-2024.eikon.ch/current/.env"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess; fi"
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/shared/web/.htaccess /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads; fi"
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside.eikon.ch/shared/web/app/uploads /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads"
 
       - name: Clear opcache
