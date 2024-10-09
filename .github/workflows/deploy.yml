@@ -39,6 +39,11 @@ jobs:
         env:
           RS_RSH: "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa"
 
+      - name: Debug SSH connection
+        run: ssh -v -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net
+        env:
+          RS_RSH: "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa"
+
       - name: Set up environment
         run: |
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/.env /home/eikon/www/inside-2024.eikon.ch/current/.env"
