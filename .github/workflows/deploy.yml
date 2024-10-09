@@ -54,8 +54,6 @@ jobs:
 
       - name: Sync files to server
         run: rsync -avz --delete --exclude '.env' --exclude 'web/.htaccess' ./ ssh-eikon.alwaysdata.net:/home/eikon/www/inside-2024.eikon.ch
-        env:
-          RSYNC_RSH: "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes"
 
       - name: Set up environment
         run: |
