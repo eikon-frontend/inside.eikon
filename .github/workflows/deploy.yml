@@ -36,7 +36,7 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add -D
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/github-actions
+          echo "${{ secrets.DEPLOY_KEY }}" | tr -d '\r' > ~/.ssh/github-actions
           chmod 600 ~/.ssh/github-actions
           ssh-add ~/.ssh/github-actions
 
