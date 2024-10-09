@@ -36,7 +36,7 @@ jobs:
             IdentitiesOnly yes
             ForwardAgent yes
 
-      - name: Start SSH Agent and Add Key
+      - name: Install SSH Key
         run: |
           eval "$(ssh-agent -s)"
           ssh-add -D
@@ -49,8 +49,21 @@ jobs:
         run: |
           ls -la ~/.ssh
           cat ~/.ssh/config
-          ssh-add -l
+          cat ~/.ssh/github-actions
           ssh -o BatchMode=yes -o StrictHostKeyChecking=no eikon@ssh-eikon.alwaysdata.net "ls -al"
 
       - name: Sync files to server
         run: rsync -avz --delete --exclude '.env' --exclude 'web/.htaccess' -e "ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o IdentitiesOnly=yes" ./ ssh-eikon.alwaysdata.net:/home/eikon/www/inside-2024.eikon.ch
+        env:
+          RSYNC_RSH: "ssh -o BatchMode=yes -o StrictHostKeyChecking=no"
+
+      - name: Set up environment
+        run: |
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/.env /home/eikon/www/inside-2024.eikon.ch/current/.env"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/web/.htaccess /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "mkdir -p /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads"
+
+      - name: Clear opcache
+        run: |
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "echo '<?php opcache_reset(); ?>' > /home/eikon/www/inside-2024.eikon.ch/current/web/opcache_clear.php"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "curl -s https://inside-2024.eikon.ch/opcache_clear.php"
