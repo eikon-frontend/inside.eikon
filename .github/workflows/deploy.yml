@@ -3,7 +3,7 @@ name: Deploy to Production
 on:
   push:
     branches:
-      - refresh-2024
+      - main
 
 jobs:
   deploy:
@@ -28,6 +28,11 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --optimize-autoloader
+
+      - name: Add SSH host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan ssh-eikon.alwaysdata.net >> ~/.ssh/known_hosts
 
       - name: Sync files to server
         run: rsync -avz --delete --exclude '.env' --exclude 'web/.htaccess' ./ ssh-eikon.alwaysdata.net:/home/eikon/www/inside-2024.eikon.ch
