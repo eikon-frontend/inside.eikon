@@ -36,7 +36,7 @@ jobs:
             IdentitiesOnly yes
             ForwardAgent yes
 
-      - name: Install SSH Key
+      - name: Start SSH Agent and Add Key
         run: |
           eval "$(ssh-agent -s)"
           ssh-add -D
