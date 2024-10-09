@@ -3,7 +3,7 @@ name: Deploy to Production
 on:
   push:
     branches:
-      - main
+      - refresh-2024
 
 jobs:
   deploy:
