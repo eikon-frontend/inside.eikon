@@ -38,6 +38,9 @@ jobs:
           ssh-add -D
           ssh-add ~/.ssh/github-actions
 
+      - name: Set SSH Key Permissions
+        run: chmod 600 ~/.ssh/github-actions
+
       - name: Check SSH Key Viability
         run: |
           ls -la ~/.ssh
