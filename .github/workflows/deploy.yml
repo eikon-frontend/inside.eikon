@@ -1,4 +1,4 @@
-name: Deploy staging with Capistrano
+name: Deploy to Production
 
 on:
   push:
