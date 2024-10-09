@@ -37,20 +37,18 @@ jobs:
       - name: Sync files to server
         run: rsync -avz --delete --exclude '.env' --exclude 'web/.htaccess' ./ ssh-eikon.alwaysdata.net:/home/eikon/www/inside-2024.eikon.ch
         env:
-          RS_RSH: "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa"
+          RSYNC_RSH: "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes"
 
       - name: Debug SSH connection
         run: ssh -v -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net
-        env:
-          RS_RSH: "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa"
 
       - name: Set up environment
         run: |
-          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/.env /home/eikon/www/inside-2024.eikon.ch/current/.env"
-          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/web/.htaccess /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess"
-          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa ssh-eikon.alwaysdata.net "mkdir -p /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/.env /home/eikon/www/inside-2024.eikon.ch/current/.env"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/web/.htaccess /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "mkdir -p /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads"
 
       - name: Clear opcache
         run: |
-          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa ssh-eikon.alwaysdata.net "echo '<?php opcache_reset(); ?>' > /home/eikon/www/inside-2024.eikon.ch/current/web/opcache_clear.php"
-          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ~/.ssh/id_rsa ssh-eikon.alwaysdata.net "curl -s https://inside-2024.eikon.ch/opcache_clear.php"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "echo '<?php opcache_reset(); ?>' > /home/eikon/www/inside-2024.eikon.ch/current/web/opcache_clear.php"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes ssh-eikon.alwaysdata.net "curl -s https://inside-2024.eikon.ch/opcache_clear.php"
