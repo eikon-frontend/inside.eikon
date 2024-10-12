@@ -64,7 +64,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess; fi"
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/shared/web/.htaccess /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess"
           ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads; fi"
-          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside.eikon.ch/shared/web/app/uploads /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads"
+          ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside.eikon.ch/shared/web/app/uploads /home/eikon/www/inside-2024.eikon.ch/current/web/app"
 
       - name: Clear opcache
         run: |
