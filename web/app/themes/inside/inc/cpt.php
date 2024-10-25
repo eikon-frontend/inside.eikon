@@ -250,6 +250,28 @@ function modify_page_post_type_args($args, $post_type)
 {
   if ($post_type === 'page') {
     $args['hierarchical'] = false;
+    $args['labels'] = array(
+      'name'                  => 'Pages',
+      'singular_name'         => 'Page',
+      'menu_name'             => 'Pages',
+      'name_admin_bar'        => 'Page',
+      'add_new'               => 'Nouvelle page',
+      'add_new_item'          => 'Nouvelle page',
+      'new_item'              => 'Nouvelle page',
+      'edit_item'             => 'Éditer la page',
+      'view_item'             => 'Voir la page',
+      'all_items'             => 'Toutes les pages',
+      'search_items'          => 'Rechercher des pages',
+      'parent_item_colon'     => 'Page Parente:',
+      'not_found'             => 'Aucune page trouvée.',
+      'not_found_in_trash'    => 'Aucune page trouvée dans la Corbeille.',
+      'archives'              => 'Archives des pages',
+      'insert_into_item'      => 'Insérer dans la page',
+      'uploaded_to_this_item' => 'Téléversé dans cette page',
+      'filter_items_list'     => 'Filtrer la liste des pages',
+      'items_list_navigation' => 'Navigation de la liste des pages',
+      'items_list'            => 'Liste des pages',
+    );
   }
   return $args;
 }
