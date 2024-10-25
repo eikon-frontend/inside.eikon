@@ -4,8 +4,8 @@ import { colorMap } from './colorUtils';
 export default function Save({ attributes }) {
   const { backgroundColor, textColor, selectedYear } = attributes;
 
-  const bgColorSlug = colorMap[backgroundColor] || '';
-  const textColorSlug = colorMap[textColor] || '';
+  const bgColorSlug = colorMap[backgroundColor] || 'white';
+  const textColorSlug = colorMap[textColor] || 'blue';
 
   return (
     <div

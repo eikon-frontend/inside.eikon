@@ -245,3 +245,12 @@ function user_projects_column_value($value, $column_name, $id)
 
 add_filter('manage_users_custom_column', 'user_projects_column_value', 10, 3);
 add_filter('manage_users_columns', 'users_projects_column');
+
+function modify_page_post_type_args($args, $post_type)
+{
+  if ($post_type === 'page') {
+    $args['hierarchical'] = false;
+  }
+  return $args;
+}
+add_filter('register_post_type_args', 'modify_page_post_type_args', 10, 2);

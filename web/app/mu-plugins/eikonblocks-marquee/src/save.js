@@ -6,8 +6,8 @@ export default function Save({ attributes }) {
 
   const animationDuration = `${content.length / 5}s`;
 
-  const bgColorSlug = colorMap[backgroundColor] || '';
-  const textColorSlug = colorMap[textColor] || '';
+  const bgColorSlug = colorMap[backgroundColor] || 'white';
+  const textColorSlug = colorMap[textColor] || 'blue';
 
   return (
     <div {...useBlockProps.save()} className={`wp-block-eikonblocks-marquee bg-${bgColorSlug} text-${textColorSlug}`}>

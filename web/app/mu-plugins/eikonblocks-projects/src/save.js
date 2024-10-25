@@ -5,8 +5,8 @@ export default function save({ attributes }) {
   const { selectedPosts, backgroundColor, textColor } = attributes;
 
   // Get the color slugs from the hex values
-  const bgColorSlug = colorMap[backgroundColor] || '';
-  const textColorSlug = colorMap[textColor] || '';
+  const bgColorSlug = colorMap[backgroundColor] || 'white';
+  const textColorSlug = colorMap[textColor] || 'blue';
 
   // Create an array of post IDs
   const postIds = selectedPosts.map(post => post.id);

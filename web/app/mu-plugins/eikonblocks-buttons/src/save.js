@@ -6,8 +6,8 @@ export default function Save(props) {
   const { items, backgroundColor, textColor } = attributes;
 
   // Get the color slugs from the hex values
-  const bgColorSlug = colorMap[backgroundColor] || '';
-  const textColorSlug = colorMap[textColor] || '';
+  const bgColorSlug = colorMap[backgroundColor] || 'white';
+  const textColorSlug = colorMap[textColor] || 'blue';
 
   return (
     <div {...useBlockProps.save()} className={`wp-block-eikonblocks-buttons bg-${bgColorSlug} text-${textColorSlug}`}>

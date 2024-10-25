@@ -5,8 +5,8 @@ const SaveComponent = (props) => {
   const { attributes } = props;
   const { items, backgroundColor, textColor } = attributes
 
-  const bgColorSlug = colorMap[backgroundColor] || '';
-  const textColorSlug = colorMap[textColor] || '';
+  const bgColorSlug = colorMap[backgroundColor] || 'white';
+  const textColorSlug = colorMap[textColor] || 'blue';
 
   return (
     <div {...useBlockProps.save()} className={`wp-block-eikonblocks-accordion bg-${bgColorSlug} text-${textColorSlug}`}>
