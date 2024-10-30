@@ -1,7 +1,5 @@
 import { ToolbarGroup } from '@wordpress/components';
 import {
-  InspectorControls,
-  PanelColorSettings,
   BlockControls,
   RichText,
   useBlockProps
@@ -12,7 +10,7 @@ import './editor.scss';
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
 
-  const { content, level, backgroundColor, textColor } = attributes;
+  const { content, level } = attributes;
 
   return (
     <>
@@ -29,25 +27,7 @@ export default function Edit(props) {
           }))}
         />
       </BlockControls>
-      <InspectorControls>
-        <PanelColorSettings
-          title={__('Color Settings', 'eikonblocks')}
-          initialOpen={true}
-          colorSettings={[
-            {
-              value: backgroundColor,
-              onChange: (color) => setAttributes({ backgroundColor: color }),
-              label: __('Background Color', 'eikonblocks'),
-            },
-            {
-              value: textColor,
-              onChange: (color) => setAttributes({ textColor: color }),
-              label: __('Text Color', 'eikonblocks'),
-            },
-          ]}
-        />
-      </InspectorControls>
-      <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor }}>
+      <div {...useBlockProps()}>
         <div className='eikonblock-title'>eikonblock // headings</div>
         <RichText
           tagName={`h${level}`}

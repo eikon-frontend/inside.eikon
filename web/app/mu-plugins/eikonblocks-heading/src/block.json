@@ -23,14 +23,6 @@
     "level": {
       "type": "number",
       "default": 2
-    },
-    "backgroundColor": {
-      "type": "string",
-      "default": "white"
-    },
-    "textColor": {
-      "type": "string",
-      "default": "blue"
     }
   }
 }

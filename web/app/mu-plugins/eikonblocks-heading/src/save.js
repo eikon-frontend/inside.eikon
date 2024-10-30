@@ -1,14 +1,10 @@
 import { useBlockProps, RichText } from '@wordpress/block-editor';
-import { colorMap } from './colorUtils';
 
 export default function Save({ attributes }) {
-  const { content, level, backgroundColor, textColor } = attributes;
-
-  const bgColorSlug = colorMap[backgroundColor] || textColor;
-  const textColorSlug = colorMap[textColor] || backgroundColor;
+  const { content, level } = attributes;
 
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-heading bg-${bgColorSlug} text-${textColorSlug}`}>
+    <div {...useBlockProps.save()} className="wp-block-eikonblocks-heading">
       <RichText.Content
         tagName={'h' + level}
         className='content'

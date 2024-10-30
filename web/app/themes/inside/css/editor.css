@@ -103,3 +103,9 @@
 .list-item-selected .list-item::after {
   transform: rotate(45deg);
 }
+
+.block-editor-link-control__search-input,
+.block-editor-link-control__search-item {
+  margin: 0;
+  padding: 0;
+}

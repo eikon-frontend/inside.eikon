@@ -1,16 +1,12 @@
 import { useBlockProps, RichText } from '@wordpress/block-editor';
-import { colorMap } from './colorUtils';
 
 export default function Save({ attributes }) {
-  const { content, backgroundColor, textColor } = attributes;
+  const { content } = attributes;
 
   const animationDuration = `${content.length / 5}s`;
 
-  const bgColorSlug = colorMap[backgroundColor] || 'white';
-  const textColorSlug = colorMap[textColor] || 'blue';
-
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-marquee bg-${bgColorSlug} text-${textColorSlug}`}>
+    <div {...useBlockProps.save()} className="wp-block-eikonblocks-marquee">
       <div className="marquee-container">
         <RichText.Content className="content" tagName="p" data-text={content} value={content} style={{ animationDuration }} />
       </div>

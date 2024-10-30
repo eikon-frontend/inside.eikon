@@ -1,15 +1,10 @@
 import { useBlockProps } from '@wordpress/block-editor';
-import { colorMap } from './colorUtils';
 
 export default function Save({ attributes }) {
-  const { title, items = [], backgroundColor, textColor } = attributes;
-
-  // Get the color slugs from the hex values
-  const bgColorSlug = colorMap[backgroundColor] || 'white';
-  const textColorSlug = colorMap[textColor] || 'blue';
+  const { title, items = [] } = attributes;
 
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-numbers bg-${bgColorSlug} text-${textColorSlug}`}>
+    <div {...useBlockProps.save()} className="wp-block-eikonblocks-numbers">
       <div className="numbers-container">
         <div className="item">
           <div className="item-arrow">

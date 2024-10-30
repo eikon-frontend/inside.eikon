@@ -14,6 +14,9 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
     'eikonblocks/numbers',
     'eikonblocks/buttons',
     'eikonblocks/mixedposts',
+    'eikonblocks/section',
+    'eikonblocks/grid',
+    'core/image',
     'core/paragraph',
     'core/list',
     'core/list-item'
@@ -77,3 +80,18 @@ function ghub_child_setup()
 add_action('after_setup_theme', 'ghub_child_setup');
 
 add_theme_support('disable-custom-colors');
+
+/**
+ * Enqueue editor assets.
+ */
+function my_editor_assets()
+{
+  $script_path = get_template_directory() . '/js/unregister-group-block-variations.js';
+  if (file_exists($script_path)) {
+    wp_enqueue_script('my-unregister-block-group-variations', get_template_directory_uri() . '/js/unregister-group-block-variations.js', ['wp-blocks', 'wp-editor'], filemtime($script_path), false);
+  } else {
+    error_log('File not found: ' . $script_path);
+  }
+}
+
+add_action('enqueue_block_editor_assets', 'my_editor_assets');

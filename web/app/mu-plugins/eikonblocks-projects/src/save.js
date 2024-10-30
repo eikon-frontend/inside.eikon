@@ -1,19 +1,11 @@
 import { useBlockProps } from '@wordpress/block-editor';
-import { colorMap } from './colorUtils';
 
-export default function save({ attributes }) {
-  const { selectedPosts, backgroundColor, textColor } = attributes;
+export default function Save({ attributes }) {
+  const { selectedYear, selectedSection } = attributes;
 
-  // Get the color slugs from the hex values
-  const bgColorSlug = colorMap[backgroundColor] || 'white';
-  const textColorSlug = colorMap[textColor] || 'blue';
-
-  // Create an array of post IDs
-  const postIds = selectedPosts.map(post => post.id);
-
-  // Save the array as a JSON string in a data attribute
   return (
-    <div {...useBlockProps.save()} data-post-ids={JSON.stringify(postIds)} className={`wp-block-eikonblocks-projects bg-${bgColorSlug} text-${textColorSlug}`}>
-    </div>
+    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-projects`} data-year={selectedYear} data-section={selectedSection}></div>
   );
 }
+
+

@@ -61,7 +61,24 @@
       ]
     },
     "spacing": {
-      "blockGap": null
+      "blockGap": null,
+      "spacingSizes": [
+        {
+          "name": "Small",
+          "slug": "small",
+          "size": "10px"
+        },
+        {
+          "name": "Medium",
+          "slug": "medium",
+          "size": "20px"
+        },
+        {
+          "name": "Big",
+          "slug": "big",
+          "size": "30px"
+        }
+      ]
     },
     "layout": {
       "contentSize": "840px",
@@ -71,7 +88,33 @@
       "customFontSize": false,
       "dropCap": false,
       "fontFamilies": [],
-      "fontSizes": [],
+      "fontSizes": [
+        {
+          "name": "micro-2",
+          "slug": "micro-2",
+          "size": "10px"
+        },
+        {
+          "name": "micro-1",
+          "slug": "micro-1",
+          "size": "14px"
+        },
+        {
+          "name": "text-3",
+          "slug": "text-3",
+          "size": "20px"
+        },
+        {
+          "name": "text-2",
+          "slug": "text-2",
+          "size": "28px"
+        },
+        {
+          "name": "text-1",
+          "slug": "text-1",
+          "size": "40px"
+        }
+      ],
       "fontStyle": false,
       "fontWeight": false,
       "letterSpacing": false,

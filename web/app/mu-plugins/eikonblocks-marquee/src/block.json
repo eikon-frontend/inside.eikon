@@ -19,14 +19,6 @@
       "type": "string",
       "source": "html",
       "selector": "p.content"
-    },
-    "backgroundColor": {
-      "type": "string",
-      "default": "white"
-    },
-    "textColor": {
-      "type": "string",
-      "default": "blue"
     }
   }
 }

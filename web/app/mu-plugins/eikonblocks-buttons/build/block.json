@@ -29,7 +29,7 @@
             "type": "string",
             "default": ""
           },
-          "openInNewTab": {
+          "opensInNewTab": {
             "type": "boolean",
             "default": false
           },
@@ -39,14 +39,6 @@
           }
         }
       }
-    },
-    "backgroundColor": {
-      "type": "string",
-      "default": "white"
-    },
-    "textColor": {
-      "type": "string",
-      "default": "blue"
     }
   }
 }

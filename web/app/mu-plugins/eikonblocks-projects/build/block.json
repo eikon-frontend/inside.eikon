@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "title": "Projects",
   "category": "widgets",
-  "icon": "welcome-widgets-menus",
-  "description": "Project block scaffolded with Create Block tool.",
+  "icon": "editor-textcolor",
+  "description": "Projects block scaffolded with Create Block tool.",
   "example": {},
   "supports": {
     "html": false
@@ -15,21 +15,13 @@
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "attributes": {
-    "selectedPosts": {
-      "type": "array",
-      "default": []
-    },
-    "selectedOptions": {
-      "type": "array",
-      "default": []
-    },
-    "backgroundColor": {
+    "selectedYear": {
       "type": "string",
-      "default": "white"
+      "default": ""
     },
-    "textColor": {
+    "selectedSection": {
       "type": "string",
-      "default": "blue"
+      "default": ""
     }
   }
 }

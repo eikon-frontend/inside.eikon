@@ -4,13 +4,7 @@ import './editor.scss';
 
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
-  const { items, backgroundColor, textColor } = attributes;
-
-  const handleItemChange = (index, value) => {
-    const newItems = [...items];
-    newItems[index] = { ...newItems[index], ...value };
-    setAttributes({ items: newItems });
-  };
+  const { items } = attributes;
 
   const handleTitleChange = (index, title) => {
     const newItems = [...items];
@@ -28,27 +22,14 @@ export default function Edit(props) {
     setAttributes({ items: [...items, { title: '', text: '' }] });
   };
 
+  const handleRemoveItem = (index) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setAttributes({ items: newItems });
+  };
+
   return (
     <>
-      <InspectorControls>
-        <PanelColorSettings
-          title={__('Color Settings', 'eikonblocks')}
-          initialOpen={true}
-          colorSettings={[
-            {
-              value: backgroundColor,
-              onChange: (value) => setAttributes({ backgroundColor: value }),
-              label: __('Background Color', 'eikonblocks'),
-            },
-            {
-              value: textColor,
-              onChange: (value) => setAttributes({ textColor: value }),
-              label: __('Text Color', 'eikonblocks'),
-            },
-          ]}
-        />
-      </InspectorControls>
-      <div {...useBlockProps()} style={{ backgroundColor: backgroundColor, color: textColor, padding: '20px', borderRadius: '5px' }}>
+      <div {...useBlockProps()}>
         <div className='eikonblock-title'>eikonblock // accordion</div>
         {items.map((item, index) => (
           <div key={index} style={{ marginBottom: '20px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
@@ -74,20 +55,35 @@ export default function Edit(props) {
                 allowedFormats={['core/italic', 'core/link']}
               />
             </label>
+            <button
+              onClick={() => handleRemoveItem(index)}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#d9534f',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+              }}
+            >
+              {__('Supprimer', 'eikonblocks')}
+            </button>
           </div>
         ))}
         <button
           onClick={addItem}
           style={{
-            padding: '10px 20px',
-            backgroundColor: '#007cba',
+            marginTop: '10px',
+            padding: '8px 16px',
+            backgroundColor: '#333',
             color: '#fff',
             border: 'none',
-            borderRadius: '10px',
+            borderRadius: '5px',
             cursor: 'pointer',
           }}
         >
-          {__('Add Accordion Item', 'eikonblocks')}
+          {__('Ajouter un élément', 'eikonblocks')}
         </button>
       </div>
     </>

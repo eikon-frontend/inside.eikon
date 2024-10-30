@@ -1,15 +1,11 @@
 import { useBlockProps, RichText } from '@wordpress/block-editor';
-import { colorMap } from './colorUtils';
 
 const SaveComponent = (props) => {
   const { attributes } = props;
-  const { items, backgroundColor, textColor } = attributes
-
-  const bgColorSlug = colorMap[backgroundColor] || 'white';
-  const textColorSlug = colorMap[textColor] || 'blue';
+  const { items } = attributes
 
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-accordion bg-${bgColorSlug} text-${textColorSlug}`}>
+    <div {...useBlockProps.save()} className="wp-block-eikonblocks-accordion">
       <div className="accordion-container">
         {items.map((item, index) => (
           <div key={index} className="accordion-item">
