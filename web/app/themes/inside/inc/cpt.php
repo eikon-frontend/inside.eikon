@@ -48,7 +48,7 @@ function project_post_type()
     'show_in_graphql'       => true,
     'graphql_single_name'   => 'project',
     'graphql_plural_name'   => 'projects',
-    'public'                => false,
+    'public'                => true,
     'show_ui'               => true,
     'show_in_rest'          => true,
     'show_in_menu'          => true,
@@ -65,7 +65,7 @@ function project_post_type()
   );
   register_post_type('project', $args);
 }
-add_action('init', 'project_post_type', 0);
+add_action('init', 'project_post_type', 5);
 
 
 register_taxonomy('year', array('project'), array(
