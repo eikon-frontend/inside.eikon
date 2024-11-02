@@ -1,0 +1,23 @@
+.wp-block-eikonblocks-card {
+  .eikonblock-content {
+    display: flex;
+    border: 1px solid #f0f0f0;
+  }
+
+  .eikonblock-left {
+    flex: 1;
+    border: 1px solid #f0f0f0;
+    padding: 1.5rem;
+  }
+
+  .eikonblock-right {
+    flex: 1;
+    border: 1px solid #f0f0f0;
+    padding: 1.5rem;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}

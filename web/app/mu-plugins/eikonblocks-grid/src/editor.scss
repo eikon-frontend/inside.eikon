@@ -1,9 +1,20 @@
 .wp-block-eikonblocks-grid .block-editor-inner-blocks > div {
   display: grid;
-  grid-gap: 30px;
+  grid-gap: 0;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
 
   > * {
-    padding: 0;
+    display: block;
+    border: 1px solid #f0f0f0;
+    padding: 1.5rem;
+    margin: 0;
+  }
+
+  .wp-block-list {
+    padding-left: 2.5rem !important;
   }
 }

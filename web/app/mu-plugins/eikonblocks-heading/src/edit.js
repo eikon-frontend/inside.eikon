@@ -28,7 +28,7 @@ export default function Edit(props) {
         />
       </BlockControls>
       <div {...useBlockProps()}>
-        <div className='eikonblock-title'>eikonblock // headings</div>
+        <div className='eikonblock-title'>eikonblock // titre</div>
         <RichText
           tagName={`h${level}`}
           value={content}

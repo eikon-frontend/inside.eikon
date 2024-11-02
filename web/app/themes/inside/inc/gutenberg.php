@@ -15,6 +15,7 @@ function eikon_allowed_block_types($allowed_blocks, $editor_context)
     'eikonblocks/buttons',
     'eikonblocks/mixedposts',
     'eikonblocks/section',
+    'eikonblocks/card',
     'eikonblocks/grid',
     'core/image',
     'core/paragraph',

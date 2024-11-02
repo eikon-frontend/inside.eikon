@@ -17,31 +17,37 @@ function Edit(props) {
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // projects</div>
-      <div>
-        <label>
-          Select Year:
-          <select value={selectedYear} onChange={handleYearChange}>
-            <option value="">Select Year</option>
-            {years && years.map((year) => (
-              <option key={year.id} value={year.slug}>
-                {year.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Select Section:
-          <select value={selectedSection} onChange={handleSectionChange}>
-            <option value="">Select Section</option>
-            {sections && sections.map((section) => (
-              <option key={section.id} value={section.slug}>
-                {section.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <div className="wp-block-eikonblocks-projects" data-year={selectedYear} data-section={selectedYear}></div>
+      <table>
+        <tbody>
+          <tr>
+            <td><label>Sélectionnez l'année:</label></td>
+            <td>
+              <select value={selectedYear} onChange={handleYearChange}>
+                <option value="">Select Year</option>
+                {years && years.map((year) => (
+                  <option key={year.id} value={year.slug}>
+                    {year.name}
+                  </option>
+                ))}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Sélectionnez la section:</label></td>
+            <td>
+              <select value={selectedSection} onChange={handleSectionChange}>
+                <option value="">Select Section</option>
+                {sections && sections.map((section) => (
+                  <option key={section.id} value={section.slug}>
+                    {section.name}
+                  </option>
+                ))}
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="wp-block-eikonblocks-projects" data-year={selectedYear} data-section={selectedSection}></div>
     </div>
   );
 }
