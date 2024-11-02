@@ -6,7 +6,6 @@ export default function Save({ attributes }) {
 
   return (
     <div {...useBlockProps.save()} className="wp-block-eikonblocks-mixed" data-cpt={dataCPT}>
-      {dataCPT}
     </div>
   );
 }

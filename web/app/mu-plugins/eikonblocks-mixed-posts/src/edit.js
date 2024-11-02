@@ -1,6 +1,6 @@
 import { withSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
-import { SelectControl } from '@wordpress/components';
+import { SelectControl, Card, CardBody, CardHeader } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 
 function Edit(props) {
@@ -39,41 +39,63 @@ function Edit(props) {
         />
       </div>
       {Object.entries(selectedCPTsData).map(([cptName, cptData]) => (
-        <Fragment key={cptName}>
-          <h4>{cptName}</h4>
-          <SelectControl
-            multiple
-            label="Select Taxonomies:"
-            value={Object.keys(cptData.taxonomies)}
-            options={(availableTaxonomies[cptName] || []).map((taxonomy) => ({
-              label: taxonomy.name,
-              value: taxonomy.slug,
-            }))}
-            onChange={(selectedTaxonomies) => {
-              const updatedCPTsData = { ...selectedCPTsData };
-              updatedCPTsData[cptName].taxonomies = {};
-              selectedTaxonomies.forEach((taxonomy) => {
-                updatedCPTsData[cptName].taxonomies[taxonomy] = cptData.taxonomies[taxonomy] || [];
-              });
-              setAttributes({ selectedCPTsData: updatedCPTsData });
-            }}
-          />
-          {Object.entries(cptData.taxonomies).map(([taxonomyName, terms]) => (
-            <Fragment key={taxonomyName}>
-              <h5>{taxonomyName}</h5>
-              <SelectControl
-                multiple
-                label={`Select Terms for ${taxonomyName}:`}
-                value={terms}
-                options={(availableTerms[cptName][taxonomyName] || []).map((term) => ({
-                  label: term.name,
-                  value: term.slug,
-                }))}
-                onChange={(selectedTerms) => handleTaxonomyTermChange(cptName, taxonomyName, selectedTerms)}
-              />
-            </Fragment>
-          ))}
-        </Fragment>
+        <Card key={cptName} style={{ marginBottom: '16px' }}>
+          <CardHeader>
+            {availableCPTs.find((cpt) => cpt.slug === cptName)?.name}
+          </CardHeader>
+          <CardBody>
+            <SelectControl
+              multiple
+              label="Select Taxonomies:"
+              value={Object.keys(cptData.taxonomies)}
+              options={(availableTaxonomies[cptName] || []).map((taxonomy) => ({
+                label: taxonomy.name,
+                value: taxonomy.slug,
+              }))}
+              onChange={(selectedTaxonomies) => {
+                const updatedCPTsData = { ...selectedCPTsData };
+                updatedCPTsData[cptName].taxonomies = {};
+                selectedTaxonomies.forEach((taxonomy) => {
+                  updatedCPTsData[cptName].taxonomies[taxonomy] =
+                    cptData.taxonomies[taxonomy] || [];
+                });
+                setAttributes({ selectedCPTsData: updatedCPTsData });
+              }}
+            />
+            {Object.entries(cptData.taxonomies).map(([taxonomyName, terms]) => (
+              <Card key={taxonomyName} style={{ marginBottom: '16px' }}>
+                <CardHeader>
+                  {availableTaxonomies[cptName]
+                    ?.find((tax) => tax.slug === taxonomyName)
+                    ?.name}
+                </CardHeader>
+                <CardBody>
+                  <SelectControl
+                    multiple
+                    label={`Select Terms for ${availableTaxonomies[cptName]
+                      ?.find((tax) => tax.slug === taxonomyName)
+                      ?.name
+                      }:`}
+                    value={terms}
+                    options={(
+                      availableTerms[cptName][taxonomyName] || []
+                    ).map((term) => ({
+                      label: term.name,
+                      value: term.slug,
+                    }))}
+                    onChange={(selectedTerms) =>
+                      handleTaxonomyTermChange(
+                        cptName,
+                        taxonomyName,
+                        selectedTerms
+                      )
+                    }
+                  />
+                </CardBody>
+              </Card>
+            ))}
+          </CardBody>
+        </Card>
       ))}
       <div className="mixed-posts" data-cpt={JSON.stringify(selectedCPTsData)}></div>
     </div>
@@ -83,7 +105,7 @@ function Edit(props) {
 export default withSelect((select) => {
   // Define a static array of post types
   const availableCPTs = [
-    { slug: 'post', name: 'Post' },
+    { slug: 'post', name: 'Article' },
     { slug: 'project', name: 'Project' },
   ];
 
