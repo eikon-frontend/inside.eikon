@@ -39,7 +39,7 @@
           },
           "icon": {
             "type": "string",
-            "default": "arrow"
+            "default": "none"
           }
         }
       }
