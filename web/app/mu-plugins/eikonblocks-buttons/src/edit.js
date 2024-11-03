@@ -1,10 +1,10 @@
-import { useBlockProps, __experimentalLinkControl as LinkControl } from '@wordpress/block-editor';
+import { useBlockProps, __experimentalLinkControl as LinkControl, BlockControls, AlignmentToolbar } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
-  const { items } = attributes;
+  const { items, alignment } = attributes;
 
   const handleItemChange = (index, value) => {
     const newItems = [...items];
@@ -24,11 +24,16 @@ export default function Edit(props) {
     setAttributes({ items: newItems });
   };
 
-  const addItem = () => {
-    setAttributes({ items: [...items, { url: '', opensInNewTab: false, title: '', style: 'plain' }] });
+  const handleIconChange = (index, icon) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], icon };
+    setAttributes({ items: newItems });
   };
 
-  // Add the removeItem function
+  const addItem = () => {
+    setAttributes({ items: [...items, { url: '', opensInNewTab: false, title: '', style: 'plain', icon: 'arrow' }] });
+  };
+
   const removeItem = (index) => {
     const newItems = [...items];
     newItems.splice(index, 1);
@@ -37,6 +42,12 @@ export default function Edit(props) {
 
   return (
     <>
+      <BlockControls>
+        <AlignmentToolbar
+          value={alignment}
+          onChange={(newAlignment) => setAttributes({ alignment: newAlignment || 'left' })}
+        />
+      </BlockControls>
       <div {...useBlockProps()}>
         <div className='eikonblock-title'>eikonblock // buttons</div>
         {items.map((item, index) => (
@@ -44,8 +55,8 @@ export default function Edit(props) {
             <table style={{ width: '100%' }}>
               <tbody>
                 <tr>
-                  <td style={{ width: '30%', verticalAlign: 'top', paddingRight: '10px' }}>
-                    <label>{__('Titre du bouton', 'eikonblocks')}</label>
+                  <td style={{ width: '30%', verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
+                    <label>{__('Label', 'eikonblocks')}</label>
                   </td>
                   <td>
                     <input
@@ -58,7 +69,7 @@ export default function Edit(props) {
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: '10px' }}>
+                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
                     <label>{__('Lien', 'eikonblocks')}</label>
                   </td>
                   <td>
@@ -76,7 +87,7 @@ export default function Edit(props) {
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: '10px' }}>
+                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
                     <label>{__('Style', 'eikonblocks')}</label>
                   </td>
                   <td>
@@ -87,6 +98,22 @@ export default function Edit(props) {
                     >
                       <option value="plain">{__('Plain', 'eikonblocks')}</option>
                       <option value="outline">{__('Outline', 'eikonblocks')}</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
+                    <label>{__('Icon', 'eikonblocks')}</label>
+                  </td>
+                  <td>
+                    <select
+                      value={item.icon}
+                      onChange={(e) => handleIconChange(index, e.target.value)}
+                      style={{ width: '100%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+                    >
+                      <option value="arrow">{__('Arrow', 'eikonblocks')}</option>
+                      <option value="download">{__('Download', 'eikonblocks')}</option>
+                      <option value="external">{__('External', 'eikonblocks')}</option>
                     </select>
                   </td>
                 </tr>

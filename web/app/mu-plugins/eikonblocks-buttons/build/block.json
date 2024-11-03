@@ -36,9 +36,17 @@
           "style": {
             "type": "string",
             "default": "plain"
+          },
+          "icon": {
+            "type": "string",
+            "default": "arrow"
           }
         }
       }
+    },
+    "alignment": {
+      "type": "string",
+      "default": "left"
     }
   }
 }
