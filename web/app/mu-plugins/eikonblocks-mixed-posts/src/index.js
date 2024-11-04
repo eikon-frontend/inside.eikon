@@ -5,7 +5,7 @@ import metadata from './block.json';
 
 const el = wp.element.createElement;
 const icon = el('svg', { width: 24, height: 24 },
-  el('path', { d: "M9 11H4V5h5v6Zm0 7H4v-6h5v6Zm1 0h5v-6h-5v6Zm11 0h-5v-6h5v6Zm-11-7h5V5h-5v6Zm6 0V5h5v6h-5Z" })
+  el('path', { d: "M11 13H3V3h8v10Zm0 8H3v-6h8v6Zm2 0h8V11h-8v10Zm0-12V3h8v6h-8Z" })
 );
 
 registerBlockType(metadata.name, {
