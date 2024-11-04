@@ -13,7 +13,6 @@ web/app/uploads/*
 
 # Custom blocks plugins
 !web/app/mu-plugins/eikonblocks-*
-web/app/mu-plugins/eikonblocks-*/build/
 
 # WordPress
 web/wp

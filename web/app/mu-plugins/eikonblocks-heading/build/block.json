@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "eikonblocks/heading",
+  "version": "0.1.0",
+  "title": "Titre",
+  "category": "common",
+  "icon": "heading",
+  "description": "Heading block scaffolded with Create Block tool.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "eikonblocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "attributes": {
+    "content": {
+      "type": "string",
+      "source": "html",
+      "selector": "h2,h3,h4"
+    },
+    "level": {
+      "type": "number",
+      "default": 2
+    }
+  }
+}

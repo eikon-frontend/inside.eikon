@@ -1,9 +1,10 @@
 import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { SelectControl, PanelBody } from '@wordpress/components'; // Update imports
 
 const Edit = ({ attributes, setAttributes }) => {
-  const { backgroundColor, textColor } = attributes;
+  const { backgroundColor, textColor, paddingSize } = attributes;
 
   return (
     <>
@@ -24,8 +25,26 @@ const Edit = ({ attributes, setAttributes }) => {
             },
           ]}
         />
+        <PanelBody title={__('Padding Settings', 'eikonblocks')} initialOpen={true}>
+          <SelectControl
+            label={__('Padding Size', 'eikonblocks')}
+            value={paddingSize}
+            options={[
+              { label: 'None', value: 'none' },
+              { label: 'Small', value: 'small' },
+              { label: 'Medium', value: 'medium' },
+              { label: 'Big', value: 'big' },
+            ]}
+            onChange={(size) => setAttributes({ paddingSize: size })}
+          />
+        </PanelBody>
       </InspectorControls>
-      <div {...useBlockProps()} style={{ backgroundColor, color: textColor }}>
+      <div
+        {...useBlockProps({
+          className: `padding-${paddingSize}`, // Apply the class
+          style: { backgroundColor, color: textColor },
+        })}
+      >
         <div className='eikonblock-title'>eikonblock // section</div>
         <InnerBlocks />
       </div>
