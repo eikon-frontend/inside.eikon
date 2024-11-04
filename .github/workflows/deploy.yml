@@ -48,9 +48,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16" # Adjust the Node.js version as needed
+          node-version: "18" # Adjust the Node.js version as needed
+          cache: "npm" # Enable caching
 
-      - name: Install NPM dependencies for blocks
+      - name: Build gutenberg blocks
         run: |
           cd web/app/mu-plugins
           for dir in eikonblocks-*; do
