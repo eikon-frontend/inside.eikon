@@ -17,7 +17,7 @@ export default function Edit(props) {
 
   return (
     <div {...useBlockProps()}>
-      <div className='eikonblock-title'>eikonblock // card</div>
+      <div className='eikonblock-title'>eikonblock // grid</div>
       <div className="eikonblock-content">
         <div className="eikonblock-left">
           <InnerBlocks />

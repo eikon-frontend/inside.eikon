@@ -12,11 +12,9 @@ export default function Save(props) {
           return (
             <a className={`button ${buttonClass}`} key={index} href={item.url} target={item.opensInNewTab ? '_blank' : '_self'} rel="noopener noreferrer">
               {item.title}
-              {item.icon !== 'none' && (
-                <svg className="icon">
-                  <use href={`/img/icons.svg#${item.icon}`}></use>
-                </svg>
-              )}
+              <svg className="icon">
+                <use href={`/img/icons.svg#${item.icon}`}></use>
+              </svg>
             </a>
           );
         })}

@@ -111,7 +111,6 @@ export default function Edit(props) {
                       onChange={(e) => handleIconChange(index, e.target.value)}
                       style={{ width: '100%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
                     >
-                      <option value="none">{__('None', 'eikonblocks')}</option>
                       <option value="arrow">{__('Arrow', 'eikonblocks')}</option>
                       <option value="download">{__('Download', 'eikonblocks')}</option>
                       <option value="external">{__('External', 'eikonblocks')}</option>
@@ -132,7 +131,7 @@ export default function Edit(props) {
                 cursor: 'pointer',
               }}
             >
-              {__('Supprimer le bouton', 'eikonblocks')}
+              {__('Supprimer le boutton', 'eikonblocks')}
             </button>
           </div>
         ))}
