@@ -51,7 +51,7 @@ export default function Edit(props) {
               style={{ padding: '8px', boxSizing: 'border-box' }}
             />
           </div>
-          <div>
+          <div style={{ flexGrow: '1' }}>
             <label htmlFor={`text-${index}`} style={{ display: 'block', marginBottom: '5px' }}>
               {__('Texte', 'eikonblocks')}
             </label>
