@@ -5,9 +5,8 @@
   grid-template-rows: auto;
   grid-auto-rows: 1fr;
   border: 1px solid #f0f0f0;
-  border-radius: 5px;
 
-  > * {
+  > *:not(.block-list-appender) {
     display: block;
     border: 1px solid #f0f0f0;
     padding: 1.5rem;
