@@ -2,9 +2,10 @@ import {
   useBlockProps,
   MediaUpload,
   MediaUploadCheck,
-  InnerBlocks
+  InnerBlocks,
+  BlockControls
 } from '@wordpress/block-editor';
-import { Button } from '@wordpress/components';
+import { Button, Placeholder, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import './editor.scss';
 
 export default function Edit(props) {
@@ -18,6 +19,27 @@ export default function Edit(props) {
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // card</div>
+      {imageUrl && (
+        <BlockControls>
+          <ToolbarGroup>
+            <MediaUpload
+              onSelect={onSelectImage}
+              allowedTypes={['image']}
+              render={({ open }) => (
+                <ToolbarButton onClick={open}>
+                  Replace Image
+                </ToolbarButton>
+              )}
+            />
+            <ToolbarButton
+              onClick={() => setAttributes({ imageUrl: '' })}
+              isDestructive
+            >
+              Remove Image
+            </ToolbarButton>
+          </ToolbarGroup>
+        </BlockControls>
+      )}
       <div className="eikonblock-content">
         <div className="eikonblock-left">
           <InnerBlocks />
@@ -26,15 +48,20 @@ export default function Edit(props) {
           {imageUrl ? (
             <img src={imageUrl} alt="Card Image" />
           ) : (
-            <MediaUploadCheck>
+            <Placeholder
+              label="Card Image"
+              instructions="Select an image for the card."
+            >
               <MediaUpload
                 onSelect={onSelectImage}
                 allowedTypes={['image']}
                 render={({ open }) => (
-                  <Button onClick={open}>Select Image</Button>
+                  <Button onClick={open} isPrimary>
+                    Select Image
+                  </Button>
                 )}
               />
-            </MediaUploadCheck>
+            </Placeholder>
           )}
         </div>
       </div>
