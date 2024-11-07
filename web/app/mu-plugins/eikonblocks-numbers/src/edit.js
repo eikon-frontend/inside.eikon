@@ -20,6 +20,11 @@ export default function Edit(props) {
     setAttributes({ items: [...items, { number: '', text: '' }] });
   };
 
+  const removeItem = (index) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setAttributes({ items: newItems });
+  };
+
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // numbers</div>
@@ -37,8 +42,8 @@ export default function Edit(props) {
         />
       </div>
       {items.map((item, index) => (
-        <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <div style={{ marginRight: '10px' }}>
+        <div key={index} style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '10px' }}>
+          <div style={{ marginRight: '10px', flex: '1' }}>
             <label htmlFor={`number-${index}`} style={{ display: 'block', marginBottom: '5px' }}>
               {__('Nombre', 'eikonblocks')}
             </label>
@@ -48,10 +53,10 @@ export default function Edit(props) {
               value={item.number}
               onChange={(event) => handleItemChange(index, 'number', event.target.value)}
               placeholder={__('Number', 'eikonblocks')}
-              style={{ padding: '8px', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
             />
           </div>
-          <div style={{ flexGrow: '1' }}>
+          <div style={{ flex: '1' }}>
             <label htmlFor={`text-${index}`} style={{ display: 'block', marginBottom: '5px' }}>
               {__('Texte', 'eikonblocks')}
             </label>
@@ -61,9 +66,15 @@ export default function Edit(props) {
               value={item.text}
               onChange={(event) => handleItemChange(index, 'text', event.target.value)}
               placeholder={__('Text', 'eikonblocks')}
-              style={{ padding: '8px', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
             />
           </div>
+          <button
+            onClick={() => removeItem(index)}
+            style={{ marginLeft: '10px', padding: '8px', height: '40px' }}
+          >
+            {__('Remove', 'eikonblocks')}
+          </button>
         </div>
       ))}
       <button onClick={addItem}>{__('Add Item', 'eikonblocks')}</button>
