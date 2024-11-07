@@ -1,10 +1,15 @@
 import { useBlockProps } from '@wordpress/block-editor';
 
 export default function Save({ attributes }) {
-  const { selectedYear, selectedSection } = attributes;
+  const { selectedYears = [], selectedSections = [] } = attributes;
 
   return (
-    <div {...useBlockProps.save()} className={`wp-block-eikonblocks-projects`} data-year={selectedYear} data-section={selectedSection}></div>
+    <div
+      {...useBlockProps.save()}
+      className="wp-block-eikonblocks-projects"
+      data-year={selectedYears.join(',')}
+      data-section={selectedSections.join(',')}
+    ></div>
   );
 }
 

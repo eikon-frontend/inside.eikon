@@ -15,13 +15,19 @@
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "attributes": {
-    "selectedYear": {
-      "type": "string",
-      "default": ""
+    "selectedYears": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
-    "selectedSection": {
-      "type": "string",
-      "default": ""
+    "selectedSections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   }
 }

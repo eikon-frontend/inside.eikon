@@ -109,3 +109,7 @@
   margin: 0;
   padding: 0;
 }
+
+.components-form-token-field__remove-token {
+  padding: 0 !important;
+}

@@ -1,53 +1,40 @@
 import { withSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { FormTokenField } from '@wordpress/components'; // Ajouté pour les champs à tags
 
 function Edit(props) {
   const { attributes, setAttributes, years, sections } = props;
-  const { selectedYear, selectedSection } = attributes;
+  const { selectedYears = [], selectedSections = [] } = attributes; // Modifié pour des tableaux
 
-  const handleYearChange = (event) => {
-    setAttributes({ selectedYear: event.target.value });
+  const handleYearsChange = (values) => {
+    setAttributes({ selectedYears: values });
   };
 
-  const handleSectionChange = (event) => {
-    setAttributes({ selectedSection: event.target.value });
+  const handleSectionsChange = (values) => {
+    setAttributes({ selectedSections: values });
   };
 
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // projects</div>
-      <table>
-        <tbody>
-          <tr>
-            <td><label>Sélectionnez l'année:</label></td>
-            <td>
-              <select value={selectedYear} onChange={handleYearChange}>
-                <option value="">Select Year</option>
-                {years && years.map((year) => (
-                  <option key={year.id} value={year.slug}>
-                    {year.name}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Sélectionnez la section:</label></td>
-            <td>
-              <select value={selectedSection} onChange={handleSectionChange}>
-                <option value="">Select Section</option>
-                {sections && sections.map((section) => (
-                  <option key={section.id} value={section.slug}>
-                    {section.name}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div className="wp-block-eikonblocks-projects" data-year={selectedYear} data-section={selectedSection}></div>
+      <FormTokenField
+        label="Sélectionnez l'année:"
+        value={selectedYears}
+        suggestions={years ? years.map((year) => year.name) : []}
+        onChange={handleYearsChange}
+      />
+      <FormTokenField
+        label="Sélectionnez la section:"
+        value={selectedSections}
+        suggestions={sections ? sections.map((section) => section.name) : []}
+        onChange={handleSectionsChange}
+      />
+      <div
+        className="wp-block-eikonblocks-projects"
+        data-year={selectedYears.join(',')}
+        data-section={selectedSections.join(',')}
+      ></div>
     </div>
   );
 }
