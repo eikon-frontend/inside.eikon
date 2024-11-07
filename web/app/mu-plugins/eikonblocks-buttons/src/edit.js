@@ -51,7 +51,7 @@ export default function Edit(props) {
       <div {...useBlockProps()}>
         <div className='eikonblock-title'>eikonblock // buttons</div>
         {items.map((item, index) => (
-          <div key={index} style={{ marginBottom: '20px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
+          <div key={index} style={{ marginBottom: '5px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
             <table style={{ width: '100%' }}>
               <tbody>
                 <tr>
