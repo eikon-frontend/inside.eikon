@@ -1,28 +1,54 @@
 import { withSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
-import { SelectControl, Card, CardBody, CardHeader } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
+import { FormTokenField } from '@wordpress/components';
+import { Fragment, useState, useEffect } from '@wordpress/element';
 
 function Edit(props) {
   const { attributes, setAttributes, availableCPTs, availableTaxonomies, availableTerms } = props;
   const { selectedCPTsData = {} } = attributes;
 
+  const [cptSuggestions, setCptSuggestions] = useState([]);
+  const [taxonomySuggestions, setTaxonomySuggestions] = useState({});
+  const [termSuggestions, setTermSuggestions] = useState({});
+
+  useEffect(() => {
+    setCptSuggestions(availableCPTs.map((cpt) => cpt.slug));
+  }, [availableCPTs]);
+
+  useEffect(() => {
+    const newTaxonomySuggestions = {};
+    Object.keys(selectedCPTsData).forEach((cptName) => {
+      newTaxonomySuggestions[cptName] = (availableTaxonomies[cptName] || []).map((taxonomy) => taxonomy.slug);
+    });
+    setTaxonomySuggestions(newTaxonomySuggestions);
+  }, [availableTaxonomies, selectedCPTsData]);
+
+  useEffect(() => {
+    const newTermSuggestions = {};
+    Object.entries(selectedCPTsData).forEach(([cptName, cptData]) => {
+      Object.keys(cptData.taxonomies).forEach((taxonomyName) => {
+        newTermSuggestions[`${cptName}-${taxonomyName}`] = (availableTerms[cptName][taxonomyName] || []).map((term) => term.slug);
+      });
+    });
+    setTermSuggestions(newTermSuggestions);
+  }, [availableTerms, selectedCPTsData]);
+
   // Handler for selecting CPTs
-  const handleCPTChange = (selectedCPTs) => {
+  const handleCPTChange = (tokens) => {
     const updatedCPTsData = {};
-    selectedCPTs.forEach((cpt) => {
+    tokens.forEach((cpt) => {
       updatedCPTsData[cpt] = selectedCPTsData[cpt] || { taxonomies: {} };
     });
     setAttributes({ selectedCPTsData: updatedCPTsData });
   };
 
   // Handler for selecting taxonomies and terms for each CPT
-  const handleTaxonomyTermChange = (cptName, taxonomyName, selectedTerms) => {
+  const handleTaxonomyTermChange = (cptName, taxonomyName, tokens) => {
     const updatedCPTsData = { ...selectedCPTsData };
     if (!updatedCPTsData[cptName].taxonomies) {
       updatedCPTsData[cptName].taxonomies = {};
     }
-    updatedCPTsData[cptName].taxonomies[taxonomyName] = selectedTerms;
+    updatedCPTsData[cptName].taxonomies[taxonomyName] = tokens;
     setAttributes({ selectedCPTsData: updatedCPTsData });
   };
 
@@ -30,32 +56,27 @@ function Edit(props) {
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // mixed posts</div>
       <div>
-        <SelectControl
-          multiple
+        <FormTokenField
           label="Select Post Types:"
           value={Object.keys(selectedCPTsData)}
-          options={availableCPTs.map((cpt) => ({ label: cpt.name, value: cpt.slug }))}
+          suggestions={cptSuggestions}
           onChange={handleCPTChange}
         />
       </div>
       {Object.entries(selectedCPTsData).map(([cptName, cptData]) => (
-        <Card key={cptName} style={{ marginBottom: '16px' }}>
-          <CardHeader>
-            {availableCPTs.find((cpt) => cpt.slug === cptName)?.name}
-          </CardHeader>
-          <CardBody>
-            <SelectControl
-              multiple
+        <div className="cpt-card" key={cptName} style={{ backgroundColor: "white", borderRadius: "8px", padding: "16px", marginBottom: "16px" }}>
+          <Fragment>
+            <div>
+              <strong>{availableCPTs.find((cpt) => cpt.slug === cptName)?.name}</strong>
+            </div>
+            <FormTokenField
               label="Select Taxonomies:"
               value={Object.keys(cptData.taxonomies)}
-              options={(availableTaxonomies[cptName] || []).map((taxonomy) => ({
-                label: taxonomy.name,
-                value: taxonomy.slug,
-              }))}
-              onChange={(selectedTaxonomies) => {
+              suggestions={taxonomySuggestions[cptName] || []}
+              onChange={(tokens) => {
                 const updatedCPTsData = { ...selectedCPTsData };
                 updatedCPTsData[cptName].taxonomies = {};
-                selectedTaxonomies.forEach((taxonomy) => {
+                tokens.forEach((taxonomy) => {
                   updatedCPTsData[cptName].taxonomies[taxonomy] =
                     cptData.taxonomies[taxonomy] || [];
                 });
@@ -63,39 +84,31 @@ function Edit(props) {
               }}
             />
             {Object.entries(cptData.taxonomies).map(([taxonomyName, terms]) => (
-              <Card key={taxonomyName} style={{ marginBottom: '16px' }}>
-                <CardHeader>
-                  {availableTaxonomies[cptName]
+              <Fragment key={taxonomyName}>
+                <div>
+                  <strong>{availableTaxonomies[cptName]
                     ?.find((tax) => tax.slug === taxonomyName)
-                    ?.name}
-                </CardHeader>
-                <CardBody>
-                  <SelectControl
-                    multiple
-                    label={`Select Terms for ${availableTaxonomies[cptName]
-                      ?.find((tax) => tax.slug === taxonomyName)
-                      ?.name
-                      }:`}
-                    value={terms}
-                    options={(
-                      availableTerms[cptName][taxonomyName] || []
-                    ).map((term) => ({
-                      label: term.name,
-                      value: term.slug,
-                    }))}
-                    onChange={(selectedTerms) =>
-                      handleTaxonomyTermChange(
-                        cptName,
-                        taxonomyName,
-                        selectedTerms
-                      )
-                    }
-                  />
-                </CardBody>
-              </Card>
+                    ?.name}</strong>
+                </div>
+                <FormTokenField
+                  label={`Select Terms for ${availableTaxonomies[cptName]
+                    ?.find((tax) => tax.slug === taxonomyName)
+                    ?.name
+                    }:`}
+                  value={terms}
+                  suggestions={termSuggestions[`${cptName}-${taxonomyName}`] || []}
+                  onChange={(tokens) =>
+                    handleTaxonomyTermChange(
+                      cptName,
+                      taxonomyName,
+                      tokens
+                    )
+                  }
+                />
+              </Fragment>
             ))}
-          </CardBody>
-        </Card>
+          </Fragment>
+        </div>
       ))}
       <div className="mixed-posts" data-cpt={JSON.stringify(selectedCPTsData)}></div>
     </div>
