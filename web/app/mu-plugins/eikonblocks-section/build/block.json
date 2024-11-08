@@ -23,9 +23,17 @@
       "type": "string",
       "default": "blue"
     },
-    "paddingSize": {
+    "paddingTop": {
       "type": "string",
       "default": "medium"
+    },
+    "paddingBottom": {
+      "type": "string",
+      "default": "medium"
+    },
+    "isPaddingSymmetrical": {
+      "type": "boolean",
+      "default": true
     }
   }
 }
