@@ -5,7 +5,6 @@
   "version": "0.1.0",
   "title": "Card",
   "category": "common",
-  "icon": "heading",
   "description": "Card block with an image and inner blocks.",
   "example": {},
   "supports": {

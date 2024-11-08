@@ -1,4 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { createBlock } from '@wordpress/blocks';
 
 import edit from './edit';
 import save from './save';
@@ -12,5 +13,25 @@ const icon = el('svg', { width: 24, height: 24 },
 registerBlockType(metadata.name, {
   edit,
   save,
-  icon
+  icon,
+  transforms: {
+    from: [
+      {
+        type: 'block',
+        blocks: ['core/paragraph'],
+        transform: ({ content }) => {
+          return createBlock(metadata.name, { content });
+        },
+      },
+    ],
+    to: [
+      {
+        type: 'block',
+        blocks: ['core/paragraph'],
+        transform: ({ content }) => {
+          return createBlock('core/paragraph', { content });
+        },
+      },
+    ],
+  },
 });
