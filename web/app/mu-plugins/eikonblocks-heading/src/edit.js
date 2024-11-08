@@ -1,4 +1,4 @@
-import { ToolbarGroup } from '@wordpress/components';
+import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import {
   BlockControls,
   RichText,
@@ -10,7 +10,7 @@ import './editor.scss';
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
 
-  const { content, level } = attributes;
+  const { content, level, fullWidth } = attributes;
 
   return (
     <>
@@ -25,6 +25,12 @@ export default function Edit(props) {
             isActive: level === parseInt(index),
             onClick: () => setAttributes({ level: parseInt(index) }),
           }))}
+        />
+        <ToolbarButton
+          icon="align-full-width"
+          label={__('Pleine largeur', 'eikonblocks')}
+          isPressed={fullWidth}
+          onClick={() => setAttributes({ fullWidth: !fullWidth })}
         />
       </BlockControls>
       <div {...useBlockProps()}>
