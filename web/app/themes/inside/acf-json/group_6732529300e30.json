@@ -1,0 +1,92 @@
+{
+    "key": "group_6732529300e30",
+    "title": "Page",
+    "fields": [
+        {
+            "key": "field_67325293053e2",
+            "label": "Sous-titre",
+            "name": "subtitle",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "subtitle",
+            "graphql_non_null": 0
+        },
+        {
+            "key": "field_67325293053ef",
+            "label": "Couleur",
+            "name": "color",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "blue": "Bleu",
+                "black": "Noir",
+                "white": "Blanc",
+                "red": "Rouge",
+                "orange": "Orange",
+                "fuchsia": "Fuchsia",
+                "pink": "Rose",
+                "violet": "Violet"
+            },
+            "default_value": "blue",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 1,
+            "ui": 0,
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "color",
+            "graphql_non_null": 0,
+            "ajax": 0,
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "show_in_graphql": 1,
+    "graphql_field_name": "pageFields",
+    "map_graphql_types_from_location_rules": 1,
+    "graphql_types": [
+        "Page"
+    ],
+    "modified": 1731351290
+}
