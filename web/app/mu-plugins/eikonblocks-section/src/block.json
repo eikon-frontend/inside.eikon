@@ -14,6 +14,22 @@
   "textdomain": "eikonblocks",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
+  "allowedBlocks": [
+    "eikonblocks/accordion",
+    "eikonblocks/projects",
+    "eikonblocks/departments-teaser",
+    "eikonblocks/heading",
+    "eikonblocks/marquee",
+    "eikonblocks/numbers",
+    "eikonblocks/buttons",
+    "eikonblocks/mixedposts",
+    "eikonblocks/card",
+    "eikonblocks/grid",
+    "core/image",
+    "core/paragraph",
+    "core/list",
+    "core/list-item"
+  ],
   "attributes": {
     "backgroundColor": {
       "type": "string",

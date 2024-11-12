@@ -4,16 +4,24 @@
     border: 1px solid #f0f0f0;
   }
 
-  .eikonblock-left {
+  .card-content {
     flex: 1;
     border: 1px solid #f0f0f0;
     padding: 1.5rem;
   }
 
-  .eikonblock-right {
+  .card-image {
     flex: 1;
     border: 1px solid #f0f0f0;
     padding: 1.5rem;
+  }
+
+  .card-image-left {
+    order: -1;
+  }
+
+  .card-image-right {
+    order: 1;
   }
 
   img {

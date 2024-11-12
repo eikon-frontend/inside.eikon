@@ -3,14 +3,15 @@ import {
   MediaUpload,
   MediaUploadCheck,
   InnerBlocks,
-  BlockControls
+  BlockControls,
+  InspectorControls
 } from '@wordpress/block-editor';
-import { Button, Placeholder, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { Button, Placeholder, ToolbarGroup, ToolbarButton, PanelBody, SelectControl } from '@wordpress/components';
 import './editor.scss';
 
 export default function Edit(props) {
   const { attributes, setAttributes } = props;
-  const { imageUrl } = attributes;
+  const { imageUrl, imagePosition } = attributes;
 
   const onSelectImage = (media) => {
     setAttributes({ imageUrl: media.url });
@@ -40,11 +41,24 @@ export default function Edit(props) {
           </ToolbarGroup>
         </BlockControls>
       )}
+      <InspectorControls>
+        <PanelBody title="Image Position">
+          <SelectControl
+            label="Select Image Position"
+            value={imagePosition}
+            options={[
+              { label: 'Left', value: 'left' },
+              { label: 'Right', value: 'right' }
+            ]}
+            onChange={(value) => setAttributes({ imagePosition: value })}
+          />
+        </PanelBody>
+      </InspectorControls>
       <div className="eikonblock-content">
-        <div className="eikonblock-left">
+        <div className="card-content">
           <InnerBlocks />
         </div>
-        <div className="eikonblock-right">
+        <div className={`card-image card-image-${imagePosition}`}>
           {imageUrl ? (
             <img src={imageUrl} alt="Card Image" />
           ) : (

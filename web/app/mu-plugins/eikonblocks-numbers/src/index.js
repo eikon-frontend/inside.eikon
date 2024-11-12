@@ -15,4 +15,5 @@ registerBlockType(metadata.name, {
   edit,
   save,
   icon,
+  allowedBlocks: metadata.allowedBlocks
 });

@@ -7,4 +7,5 @@ import metadata from './block.json';
 registerBlockType(metadata.name, {
   edit,
   save,
+  allowedBlocks: metadata.allowedBlocks
 });

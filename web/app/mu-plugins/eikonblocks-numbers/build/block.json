@@ -13,6 +13,9 @@
   "textdomain": "eikonblocks",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
+  "parent": [
+    "eikonblocks/section"
+  ],
   "attributes": {
     "title": {
       "type": "string",

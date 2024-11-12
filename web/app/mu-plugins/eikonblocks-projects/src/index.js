@@ -11,5 +11,6 @@ const icon = el('svg', { width: 24, height: 24 },
 registerBlockType(metadata.name, {
   edit: Edit,
   save,
-  icon
+  icon,
+  allowedBlocks: metadata.allowedBlocks
 });

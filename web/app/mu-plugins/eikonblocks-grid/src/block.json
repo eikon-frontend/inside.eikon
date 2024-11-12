@@ -13,5 +13,14 @@
   },
   "textdomain": "eikonblocks",
   "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css"
+  "editorStyle": "file:./index.css",
+  "parent": ["eikonblocks/section"],
+  "allowedBlocks": [
+    "eikonblocks/heading",
+    "eikonblocks/buttons",
+    "core/image",
+    "core/paragraph",
+    "core/list",
+    "core/list-item"
+  ]
 }

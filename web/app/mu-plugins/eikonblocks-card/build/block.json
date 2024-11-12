@@ -13,10 +13,25 @@
   "textdomain": "eikonblocks",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
+  "parent": [
+    "eikonblocks/section"
+  ],
+  "allowedBlocks": [
+    "eikonblocks/heading",
+    "eikonblocks/buttons",
+    "core/image",
+    "core/paragraph",
+    "core/list",
+    "core/list-item"
+  ],
   "attributes": {
     "imageUrl": {
       "type": "string",
       "default": ""
+    },
+    "imagePosition": {
+      "type": "string",
+      "default": "right"
     }
   }
 }
