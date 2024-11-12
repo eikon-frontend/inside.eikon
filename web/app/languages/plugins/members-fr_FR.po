@@ -2,18 +2,96 @@
 # This file is distributed under the same license as the Plugins - Members &#8211; Membership &amp; User Role Editor Plugin - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-11-10 12:26:56+0000\n"
+"PO-Revision-Date: 2024-09-26 15:13:05+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: GlotPress/4.0.0-alpha.4\n"
+"X-Generator: GlotPress/4.0.1\n"
 "Language: fr\n"
 "Project-Id-Version: Plugins - Members &#8211; Membership &amp; User Role Editor Plugin - Stable (latest release)\n"
+
+#: admin/class-settings.php:158 admin/functions-admin.php:285
+msgid "You are not allowed to make these changes."
+msgstr "Vous n’êtes pas autorisé autorisé·e à réaliser ces modifications."
+
+#: admin/class-notifications.php:537
+msgid "You're all caught up!"
+msgstr "Plus rien à afficher !"
+
+#: admin/class-notifications.php:513 admin/class-notifications.php:578
+msgid "%s year ago"
+msgid_plural "%s years ago"
+msgstr[0] "Il y a %s an"
+msgstr[1] "Il y a %s ans"
+
+#: admin/class-notifications.php:511 admin/class-notifications.php:576
+msgid "%s month ago"
+msgid_plural "%s months ago"
+msgstr[0] "Il y a %s mois"
+msgstr[1] "Il y a %s mois"
+
+#: admin/class-notifications.php:509 admin/class-notifications.php:574
+msgid "%s week ago"
+msgid_plural "%s weeks ago"
+msgstr[0] "Il y a %s semaine"
+msgstr[1] "Il y a %s semaines"
+
+#: admin/class-notifications.php:507 admin/class-notifications.php:572
+msgid "%s day ago"
+msgid_plural "%s days ago"
+msgstr[0] "Il y a %s jour"
+msgstr[1] "Il y a %s jours"
+
+#: admin/class-notifications.php:505 admin/class-notifications.php:570
+msgid "%s hour ago"
+msgid_plural "%s hours ago"
+msgstr[0] "Il y a %s heure"
+msgstr[1] "Il y a %s heures"
+
+#: admin/class-notifications.php:503 admin/class-notifications.php:568
+msgid "%s minute ago"
+msgid_plural "%s minutes ago"
+msgstr[0] "Il y a %s minute"
+msgstr[1] "Il y a %s minutes"
+
+#: admin/class-notifications.php:501 admin/class-notifications.php:566
+msgid "%s second ago"
+msgid_plural "%s seconds ago"
+msgstr[0] "Il y a %s seconde"
+msgstr[1] "Il y a %s secondes"
+
+#: admin/class-notifications.php:494 admin/class-notifications.php:559
+msgid "Dismiss"
+msgstr "Ignorer"
+
+#. Translators: Readable time to display
+#: admin/class-notifications.php:290
+msgid "%1$s ago"
+msgstr "Il y a %1$s"
+
+#: admin/class-notifications.php:423
+msgid "%s unread message"
+msgid_plural "%s unread messages"
+msgstr[0] "%s message non lu"
+msgstr[1] "%s messages non lus"
+
+#: admin/class-meta-box-content-permissions.php:243
+#: admin/class-meta-box-content-permissions.php:364
+msgid "Add MemberPress"
+msgstr "Ajouter MemberPress"
 
 #: admin/views/class-view-general.php:65
 msgid "Miscellaneous"
 msgstr "Divers"
+
+#: admin/views/class-view-general.php:302
+msgid "Permanently remove Members review prompt."
+msgstr "Supprimer définitivement le prompt d’avis des membres"
+
+#: admin/views/class-view-general.php:85
+msgid "Disable Review Prompt"
+msgstr "Désactiver le prompt d’avis"
 
 #: admin/class-meta-box-content-permissions.php:196
 #: admin/class-meta-box-content-permissions.php:315
@@ -37,10 +115,6 @@ msgstr "Non, peut-être ultérieurement"
 msgid "Are you enjoying using Members?"
 msgstr "Aimez-vous utiliser Members ?"
 
-#: admin/class-meta-box-content-permissions.php:115
-msgid "<svg width=\"15px\" aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fas\" data-icon=\"users-cog\" class=\"svg-inline--fa fa-users-cog fa-w-20\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 512\"><path fill=\"currentColor\" d=\"M610.5 341.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 368.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm224 32c1.9 0 3.7-.5 5.6-.6 8.3-21.7 20.5-42.1 36.3-59.2 7.4-8 17.9-12.6 28.9-12.6 6.9 0 13.7 1.8 19.6 5.3l7.9 4.6c.8-.5 1.6-.9 2.4-1.4 7-14.6 11.2-30.8 11.2-48 0-61.9-50.1-112-112-112S208 82.1 208 144c0 61.9 50.1 112 112 112zm105.2 194.5c-2.3-1.2-4.6-2.6-6.8-3.9-8.2 4.8-15.3 9.8-27.5 9.8-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-10.7-34.5 24.9-49.7 25.8-50.3-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-3.8-2.2-7-5-9.8-8.1-3.3.2-6.5.6-9.8.6-24.6 0-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h255.4c-3.7-6-6.2-12.8-6.2-20.3v-9.2zM173.1 274.6C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z\"></path></svg> "
-msgstr "<svg width=\"15px\" aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fas\" data-icon=\"users-cog\" class=\"svg-inline--fa fa-users-cog fa-w-20\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 512\"><path fill=\"currentColor\" d=\"M610.5 341.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 368.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm224 32c1.9 0 3.7-.5 5.6-.6 8.3-21.7 20.5-42.1 36.3-59.2 7.4-8 17.9-12.6 28.9-12.6 6.9 0 13.7 1.8 19.6 5.3l7.9 4.6c.8-.5 1.6-.9 2.4-1.4 7-14.6 11.2-30.8 11.2-48 0-61.9-50.1-112-112-112S208 82.1 208 144c0 61.9 50.1 112 112 112zm105.2 194.5c-2.3-1.2-4.6-2.6-6.8-3.9-8.2 4.8-15.3 9.8-27.5 9.8-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-10.7-34.5 24.9-49.7 25.8-50.3-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-3.8-2.2-7-5-9.8-8.1-3.3.2-6.5.6-9.8.6-24.6 0-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h255.4c-3.7-6-6.2-12.8-6.2-20.3v-9.2zM173.1 274.6C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z\"></path></svg> "
-
 #: admin/class-review-prompt.php:88
 msgid "Okay, you deserve it"
 msgstr "OK, vous le méritez"
@@ -48,6 +122,23 @@ msgstr "OK, vous le méritez"
 #: admin/class-review-prompt.php:96
 msgid "Give Feedback"
 msgstr "Faire un retour"
+
+#: admin/functions-admin.php:201
+msgid "You're using Members. To unlock more features, consider <a href=\"https://memberpress.com/plans/pricing/?utm_source=members&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features\">adding MemberPress.</a>"
+msgstr "Vous utilisez Members. Pour débloquer plus de fonctionnalités, envisagez d’ajouter <a href=\"https://memberpress.com/plans/pricing/?utm_source=members&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features\">MemberPress.</a>"
+
+#: admin/class-meta-box-content-permissions.php:242
+#: admin/class-meta-box-content-permissions.php:363
+msgid "To protect this block by paid membership or centrally with <br> a content protection rule, add MemberPress."
+msgstr "Pour protéger ce bloc par une adhésion payante ou de manière centralisée avec une règle de protection de contenu <br>, ajoutez MemberPress"
+
+#: admin/class-review-prompt.php:94
+msgid "We're sorry to hear you aren't enjoying Members. We would love a chance to improve. Could you take a minute and let us know what we can do better?"
+msgstr "Nous sommes navrés d’apprendre que vous n’appréciez pas Members. Nous aimerions nous améliorer. Pouvez-vous prendre une minute et nous dire ce que nous pouvons faire de mieux."
+
+#: admin/class-review-prompt.php:85
+msgid "That's awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?"
+msgstr "C'est génial! Pourriez-vous s'il vous plaît nous faire une GRANDE faveur et nous donner une note de 5 étoiles sur WordPress pour nous aider à faire passer le mot et à booster notre motivation ?"
 
 #: addons/members-core-create-caps/addon.php:30
 msgid "Create Pages"
@@ -109,6 +200,94 @@ msgstr[1] "WooCommerce %s"
 msgid "WooCommerce"
 msgstr "WooCommerce"
 
+#: addons/members-woocommerce-integration/src/functions-caps.php:264
+msgid "Coupons: Delete Taxonomy Terms"
+msgstr "Codes promo : Supprimer des termes de taxonomie"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:265
+msgid "Allows users to delete coupon taxonomy terms."
+msgstr "Autoriser les utilisateurs·rices à supprimer un terme de taxonomie code promo."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:255
+msgid "Allows users to assign taxonomy terms to coupons."
+msgstr "Autoriser les utilisateurs·rices à assigner les termes de taxonomie code promo."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:249
+msgid "Allows users to delete published coupons."
+msgstr "Autoriser les utilisateurs·rices à supprimer les codes promo publiés."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:259
+msgid "Coupons: Edit Taxonomy Terms"
+msgstr "Code promo : Modifier les termes de taxonomie"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:254
+msgid "Coupons: Assign Taxonomy Terms"
+msgstr "Code promo : assigner les termes de taxonomie"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:260
+msgid "Allows users to edit coupon taxonomy terms."
+msgstr "Autoriser les utilisateurs·rices à modifier un terme de taxonomie code promo."
+
+#: addons/members-role-hierarchy/admin/functions-settings.php:70
+msgid "Should users manage users/roles that are \"lower\" or \"lower or equal\" to their own role?"
+msgstr "Les utilisateurs doivent-ils gérer des utilisateurs/rôles qui sont « inférieurs » ou « inférieurs ou égaux » à leur propre rôle ?"
+
+#: addons/members-admin-access/app/class-view-settings.php:172
+msgid "Disable toolbar on the front end for users without admin access."
+msgstr "Désactiver la barre d’outils sur l’interface publique pour les utilisateurs·rices sans accès administrateurs·rices."
+
+#: addons/members-admin-access/app/class-view-settings.php:152
+msgid "Redirect users without access to:"
+msgstr "Rediriger les utilisateurs.rices sans accès vers :"
+
+#: addons/members-admin-access/app/class-view-settings.php:109
+msgid "Select which roles should have admin access."
+msgstr "Sélectionner quels rôles doivent avoir un accès administrateur."
+
+#: addons/members-admin-access/app/class-view-settings.php:95
+msgid "Control admin access by user role."
+msgstr "Contrôler l’accès administrateur par rôle du compte."
+
+#: addons/members-category-and-tag-caps/uninstall.php:15
+msgid "%s should only be called when uninstalling the plugin."
+msgstr "%s doit uniquement être appelé lorsque l’extension est désinstallée."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:270
+msgid "Allows access to coupon taxonomy management screens."
+msgstr "Autoriser l’accès aux écrans de gestion de taxonomie code promo."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:269
+msgid "Coupons: Manage Taxonomy Terms"
+msgstr "Codes promo : gérer les termes de taxonomie"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:248
+msgid "Coupons: Delete Published"
+msgstr "Codes promo : supprimer les publiés"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:244
+msgid "Allows users to delete other users' coupons."
+msgstr "Autoriser les utilisateurs·rices à supprimer les codes promo des autres utilisateurs·rices."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:239
+msgid "Allows users to delete private coupons."
+msgstr "Autoriser les utilisateurs·rices à supprimer les codes promo privés."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:243
+msgid "Coupons: Delete Others'"
+msgstr "Codes promo : supprimer les autres"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:230
+msgid "Coupons: Delete"
+msgstr "Codes promo : supprimer"
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:226
+msgid "Allows users to read private coupons."
+msgstr "Autoriser les utilisaterus·rices à lire les codes promo privés."
+
+#: addons/members-woocommerce-integration/src/functions-caps.php:225
+msgid "Coupons: Read Private"
+msgstr "Codes promo : Lire privé"
+
 #: addons/members-woocommerce-integration/src/functions-caps.php:29
 msgid "Manage WooCommerce"
 msgstr "Gérer WooCommerce"
@@ -121,17 +300,17 @@ msgstr "Téléchargements"
 msgid "Shop"
 msgstr "Boutique"
 
-#: addons/members-acf-integration/src/Plugin.php:365
+#: addons/members-acf-integration/src/Plugin.php:371
 msgid "Custom Fields"
 msgstr "Champs personnalisés"
 
-#: addons/members-acf-integration/src/Plugin.php:334
+#: addons/members-acf-integration/src/Plugin.php:340
 msgid "Advanced Custom Fields %s"
 msgid_plural "Advanced Custom Fields %s"
 msgstr[0] "Advanced Custom Fields %s"
 msgstr[1] "Advanced Custom Fields %s"
 
-#: addons/members-acf-integration/src/Plugin.php:333
+#: addons/members-acf-integration/src/Plugin.php:339
 msgid "Advanced Custom Fields"
 msgstr "Advanced Custom Fields"
 
@@ -192,12 +371,12 @@ msgstr "Niveau 1"
 msgid "Level 0"
 msgstr "Niveau 0"
 
-#: admin/class-settings.php:148 admin/views/class-view-addons.php:153
+#: admin/class-settings.php:188 admin/views/class-view-addons.php:153
 #: admin/views/class-view-addons.php:159
 msgid "Activate"
 msgstr "Activer"
 
-#: admin/class-settings.php:136 admin/views/class-view-addons.php:159
+#: admin/class-settings.php:176 admin/views/class-view-addons.php:159
 msgid "Active"
 msgstr "Activé"
 
@@ -206,29 +385,29 @@ msgctxt "admin screen"
 msgid "Add New Role"
 msgstr "Ajouter un nouveau rôle"
 
-#: admin/class-settings.php:125
+#: admin/class-settings.php:165
 msgid "No add-on provided."
 msgstr "Aucun module fourni."
 
-#: admin/class-settings.php:137
+#: admin/class-settings.php:177
 msgid "Add-on activated"
 msgstr "Module activé."
 
-#: admin/class-settings.php:149
+#: admin/class-settings.php:189
 msgid "Add-on deactivated"
 msgstr "Module désactivé."
 
-#: admin/class-settings.php:223
+#: admin/class-settings.php:263
 msgctxt "admin screen"
 msgid "Settings"
 msgstr "Réglages"
 
-#: admin/class-settings.php:225
+#: admin/class-settings.php:265
 msgctxt "admin screen"
 msgid "Add-Ons"
 msgstr "Modules"
 
-#: admin/class-settings.php:225
+#: admin/class-settings.php:265
 msgctxt "admin screen"
 msgid "<span style=\"color: #8CBD5A;\">Add-Ons</span>"
 msgstr "<span style=\"color: #8CBD5A;\">Modules</span>"
@@ -245,14 +424,17 @@ msgstr[0] "GiveWP %s"
 msgstr[1] "GiveWP %s"
 
 #. Author URI of the plugin
+#: members.php
 msgid "https://memberpress.com"
 msgstr "https://memberpress.com"
 
 #. Author of the plugin
+#: members.php
 msgid "MemberPress"
 msgstr "MemberPress"
 
 #. Plugin URI of the plugin
+#: members.php
 msgid "https://memberpress.com/plugins/members"
 msgstr "https://memberpress.com/plugins/members"
 
@@ -262,15 +444,15 @@ msgid_plural "%s Users"
 msgstr[0] "%s compte"
 msgstr[1] "%s comptes"
 
-#: members.php:351
+#: members.php:352
 msgid "Members requires PHP version %1$s. You are running version %2$s. Please upgrade and try again."
 msgstr "Members nécessite la version PHP %1$s. Vous utilisez la versiion %2$s. Mettez à jour et essayez à nouveau."
 
-#: inc/functions-private-site.php:191
+#: inc/functions-private-site.php:193
 msgid "You do not currently have access to the \"%s\" site. If you believe you should have access, please contact your network administrator."
 msgstr "Vous n'avez actuellement pas accès au site \"%s\". Si vous croyez que vous devriez y avoir accès, contactez s'il vous plait l'administrateur de votre réseau."
 
-#: inc/functions-private-site.php:167
+#: inc/functions-private-site.php:169
 msgid "You are not currently logged in."
 msgstr "Vous n'êtes pas connecté."
 
@@ -544,7 +726,7 @@ msgstr "Role supprimer depuis des utilisateurs sélectionnés."
 msgid "Remove"
 msgstr "Retirer"
 
-#: inc/functions-private-site.php:198
+#: inc/functions-private-site.php:200
 msgid "If you reached this page by accident and meant to visit one of your own sites, try one of the following links."
 msgstr "Si vous êtes arrivés sur cette page par accident et que vous vouliez visiter l'un de vos propres sites, essayez l'un des liens suivants."
 
@@ -629,6 +811,7 @@ msgid "Exclude:"
 msgstr "Exclure&nbsp;:"
 
 #. Plugin Name of the plugin
+#: members.php
 msgid "Members"
 msgstr "Members"
 
@@ -664,7 +847,7 @@ msgstr "Valeur méta&nbsp;:"
 msgid "You must be logged into the site to view this content."
 msgstr "Vous devez être connecté pour voir ce contenu."
 
-#: members.php:151
+#: members.php:152
 msgid "Method does not exist."
 msgstr "La méthode n’existe pas."
 
@@ -689,6 +872,7 @@ msgid "Sorry, but you do not have permission to view this content."
 msgstr "Désolé, vous n'êtes pas autorisé à voir ce contenu."
 
 #. Description of the plugin
+#: members.php
 msgid "A user and role management plugin that puts you in full control of your site's permissions. This plugin allows you to edit your roles and their capabilities, clone existing roles, assign multiple roles per user, block post content, or even make your site completely private."
 msgstr "Une extension de gestion de rôles et de comptes qui vous donne un contrôle total des autorisations sur votre site. Cette extension vous permet de créer, cloner, modifier les rôles et les droits, d‘assigner plusieurs rôles à un utilisateur ou une utilisatrice, de bloquer l‘accès à vos contenus et même de rendre votre site totalement privé."
 
@@ -737,7 +921,7 @@ msgstr "Se souvenir de moi"
 msgid "Log In"
 msgstr "Se connecter"
 
-#: admin/class-manage-roles.php:87 admin/class-manage-roles.php:93
+#: admin/class-manage-roles.php:88 admin/class-manage-roles.php:94
 #: admin/class-manage-users.php:360
 #: admin/class-meta-box-content-permissions.php:189
 #: admin/class-meta-box-content-permissions.php:308
@@ -767,7 +951,7 @@ msgstr "Activer le gestionnaire de rôles."
 msgid "Content Permissions"
 msgstr "Droits d'accès au contenu"
 
-#: admin/class-manage-roles.php:90 admin/class-role-edit.php:298
+#: admin/class-manage-roles.php:91 admin/class-role-edit.php:298
 msgid "Edit Role"
 msgstr "Modifier le rôle"
 
@@ -864,7 +1048,7 @@ msgstr "Afficher"
 msgid "Clone"
 msgstr "Cloner"
 
-#: admin/class-settings.php:330
+#: admin/class-settings.php:370
 msgctxt "admin screen"
 msgid "Members"
 msgstr "Members"
@@ -1032,7 +1216,7 @@ msgid "Overview"
 msgstr "Vue d'ensemble"
 
 #: admin/class-manage-users.php:161 admin/class-manage-users.php:236
-#: admin/class-role-edit.php:92 members.php:129 members.php:140
+#: admin/class-role-edit.php:92 members.php:130 members.php:141
 msgid "Whoah, partner!"
 msgstr "Oui, mon ami&nbsp;!"
 
