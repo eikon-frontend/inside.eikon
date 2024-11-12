@@ -16,7 +16,7 @@ jobs:
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4" # Adjust the PHP version as needed
+          php-version: "8.3" # Adjust the PHP version as needed
 
       - name: Add HTTP basic auth credentials for ACF
         run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
