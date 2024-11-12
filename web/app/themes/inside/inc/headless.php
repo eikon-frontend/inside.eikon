@@ -23,7 +23,7 @@ function info_box($post)
     echo '<h3>URL Externe & QR Code</h3>';
     echo '<a href="' . $post_external_url . '" target="_blank">' . $post_external_url . '</a><hr />';
     $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
-    echo '<img src="' . $base64_data . '" />';
+    echo '<img style="width:100%" src="' . $base64_data . '" />';
   } else {
     echo "Enregistrez d'abord le projet pour obtenir l'URL externe et le QR Code.";
   }
