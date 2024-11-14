@@ -41,11 +41,11 @@
     },
     "paddingTop": {
       "type": "string",
-      "default": "medium"
+      "default": "big"
     },
     "paddingBottom": {
       "type": "string",
-      "default": "medium"
+      "default": "big"
     },
     "isPaddingSymmetrical": {
       "type": "boolean",
