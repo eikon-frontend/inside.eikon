@@ -1,6 +1,6 @@
 {
     "key": "group_6732529300e30",
-    "title": "Page",
+    "title": "Pages",
     "fields": [
         {
             "key": "field_67325293053e2",
@@ -88,5 +88,5 @@
     "graphql_types": [
         "Page"
     ],
-    "modified": 1731351290
+    "modified": 1731939008
 }

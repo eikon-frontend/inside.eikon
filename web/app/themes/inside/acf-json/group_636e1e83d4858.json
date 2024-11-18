@@ -1,6 +1,6 @@
 {
     "key": "group_636e1e83d4858",
-    "title": "Département",
+    "title": "Départements",
     "fields": [
         {
             "key": "field_66f7fd8c7f7e2",
@@ -128,5 +128,5 @@
     "graphql_field_name": "departmentFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1730050394
+    "modified": 1731938999
 }

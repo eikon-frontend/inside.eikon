@@ -1,6 +1,6 @@
 {
     "key": "group_66ff14e47f5fc",
-    "title": "Posts",
+    "title": "Articles",
     "fields": [
         {
             "key": "field_66ff14e4a7ebf",
@@ -51,6 +51,31 @@
                     "parent_repeater": "field_66ff14e4a7ebf"
                 }
             ]
+        },
+        {
+            "key": "field_673b46fc30205",
+            "label": "Important",
+            "name": "important",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Ce projet sera affiché en grand dans la grille des projets.",
+            "default_value": 0,
+            "allow_in_bindings": 0,
+            "ui": 0,
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "important",
+            "graphql_non_null": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
         }
     ],
     "location": [
@@ -63,7 +88,7 @@
         ]
     ],
     "menu_order": 0,
-    "position": "normal",
+    "position": "side",
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
@@ -77,5 +102,5 @@
     "graphql_types": [
         "Post"
     ],
-    "modified": 1727994601
+    "modified": 1731939016
 }

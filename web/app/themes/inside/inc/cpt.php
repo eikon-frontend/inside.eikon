@@ -140,6 +140,14 @@ register_taxonomy('subjects', array('project'), array(
   'graphql_plural_name'   => 'subjects',
 ));
 
+function remove_project_taxonomies_metabox()
+{
+  remove_meta_box('tagsdiv-year', 'project', 'side');
+  remove_meta_box('tagsdiv-section', 'project', 'side');
+  remove_meta_box('tagsdiv-subjects', 'project', 'side');
+}
+add_action('admin_menu', 'remove_project_taxonomies_metabox');
+
 add_post_type_support("page", "excerpt");
 
 remove_filter('the_excerpt', 'wpautop');
@@ -277,3 +285,10 @@ function modify_page_post_type_args($args, $post_type)
   return $args;
 }
 add_filter('register_post_type_args', 'modify_page_post_type_args', 10, 2);
+
+// Remove tags support from posts
+function eikon_unregister_tags()
+{
+  unregister_taxonomy_for_object_type('post_tag', 'post');
+}
+add_action('init', 'eikon_unregister_tags');

@@ -1,25 +1,7 @@
 {
     "key": "group_6188f620ce1ee",
-    "title": "Projets",
+    "title": "Galerie du projet",
     "fields": [
-        {
-            "key": "field_636b79013b933",
-            "label": "Lien externe",
-            "name": "external_link",
-            "aria-label": "",
-            "type": "url",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "show_in_graphql": 1,
-            "default_value": "",
-            "placeholder": ""
-        },
         {
             "key": "field_6188f62ec37cc",
             "label": "Galerie",
@@ -190,13 +172,17 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": "",
+    "hide_on_screen": [
+        "page_attributes",
+        "categories",
+        "tags"
+    ],
     "active": true,
     "description": "",
     "show_in_rest": 1,
     "show_in_graphql": 1,
-    "graphql_field_name": "projets",
+    "graphql_field_name": "portfolio",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1700065971
+    "modified": 1731938459
 }
