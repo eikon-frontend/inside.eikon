@@ -104,6 +104,56 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_673cbe848a954",
+            "label": "Teaser text",
+            "name": "teaser_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "teaserText",
+            "graphql_non_null": 0
+        },
+        {
+            "key": "field_673cbeb48a955",
+            "label": "Teaser button label",
+            "name": "teaser_button_label",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "teaserButtonLabel",
+            "graphql_non_null": 0
         }
     ],
     "location": [
@@ -128,5 +178,5 @@
     "graphql_field_name": "departmentFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1731938999
+    "modified": 1732034274
 }
