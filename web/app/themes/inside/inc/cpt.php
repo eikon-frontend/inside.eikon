@@ -292,3 +292,14 @@ function eikon_unregister_tags()
   unregister_taxonomy_for_object_type('post_tag', 'post');
 }
 add_action('init', 'eikon_unregister_tags');
+
+function set_default_page_order($query)
+{
+  if (is_admin() && $query->is_main_query() && $query->get('post_type') == 'page') {
+    if (!isset($_GET['orderby'])) {
+      $query->set('orderby', 'title');
+      $query->set('order', 'ASC');
+    }
+  }
+}
+add_action('pre_get_posts', 'set_default_page_order');
