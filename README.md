@@ -1,13 +1,8 @@
 # Inside eikon
 
-Website for the eikon 2021 open house. Using Wordpress / Bedrock / ACF and Webpack.
-
-More info:
-
-- https://wordpress.org/
-- https://roots.io/bedrock/
-- https://www.advancedcustomfields.com/
-- https://webpack.js.org/
+Website for the [eikon](https://eikon.ch) website.
+Using Wordpress / Bedrock / ACF and Webpack.
+Currently only headless, the front is served through GraphQL with NuxtJS, see [eikon.ch](https://github.com/eikon-frontend/eikon.ch)
 
 ## Pre-requist
 
@@ -32,42 +27,18 @@ You must then install all php dependencies using composer:
   composer install
 ```
 
-## Dev
+# Gutenberg blocks
 
-Most of the work will be done in the theme located `at web/app/themes/inside`.
+The blocks are located in the `/web/app/mu-plugins` folder. Each dir begining with `eikonblocks-` is a folder containing the block's code and assets.
 
-To edit and compile the frontend (css/js) go there:
-
-```
-  cd web/app/themes/inside
-```
-
-Before you can compile the assets, you need to install the depenencies with yarn:
+### Build all the block
 
 ```
-  yarn
-```
-
-then you can use the following commands to build or watch the assets
-
-### Build
-
-```
-  yarn build
-```
-
-### Watch
-
-```
-  yarn watch
+  node build-all-blocks.js
 ```
 
 ### Deployment
 
 Deploys are automatically launched using github actions when commit are pushed on the branch `main`
 
-You can manually deploy the project using:
-
-```
-cap production deploy
-```
+See more info at the deploy.yml file.
