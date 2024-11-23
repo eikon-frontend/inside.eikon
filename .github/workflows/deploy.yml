@@ -31,7 +31,7 @@ jobs:
           name: github-actions
           known_hosts: ${{ secrets.HOST_KEY }}
           config: |
-            host ssh-eikon.alwaysdata.net
+            host ${{ vars.SSH_HOST }}
             IdentityFile ~/.ssh/github-actions
             IdentitiesOnly yes
             ForwardAgent yes
@@ -46,21 +46,21 @@ jobs:
         run: chmod 600 ~/.ssh/github-actions
 
       - name: Sync files to server
-        run: rsync -avz --delete --exclude '.env' --exclude 'web/.htaccess' -e "ssh -o BatchMode=yes" ./ eikon@ssh-eikon.alwaysdata.net:/home/eikon/www/inside-2024.eikon.ch/current
+        run: rsync -avz --delete --exclude '.env' --exclude 'web/.htaccess' -e "ssh -o BatchMode=yes" ./ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.DEPLOY_PATH }}/current
         env:
           RSYNC_RSH: "ssh -o BatchMode=yes -o StrictHostKeyChecking=no"
 
       - name: Set up environment
         run: |
-          ssh eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/.env ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/.env; fi"
-          ssh eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/shared/.env /home/eikon/www/inside-2024.eikon.ch/current/.env"
-          ssh eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess; fi"
-          ssh eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside-2024.eikon.ch/shared/web/.htaccess /home/eikon/www/inside-2024.eikon.ch/current/web/.htaccess"
-          ssh eikon@ssh-eikon.alwaysdata.net "if [ -L /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads ]; then rm /home/eikon/www/inside-2024.eikon.ch/current/web/app/uploads; fi"
-          ssh eikon@ssh-eikon.alwaysdata.net "ln -s /home/eikon/www/inside.eikon.ch/shared/web/app/uploads /home/eikon/www/inside-2024.eikon.ch/current/web/app"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "if [ -L ${{ vars.DEPLOY_PATH }}/current/.env ]; then rm ${{ vars.DEPLOY_PATH }}/current/.env; fi"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "ln -s ${{ vars.DEPLOY_PATH }}/shared/.env ${{ vars.DEPLOY_PATH }}/current/.env"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "if [ -L ${{ vars.DEPLOY_PATH }}/current/web/.htaccess ]; then rm ${{ vars.DEPLOY_PATH }}/current/web/.htaccess; fi"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "ln -s ${{ vars.DEPLOY_PATH }}/shared/web/.htaccess ${{ vars.DEPLOY_PATH }}/current/web/.htaccess"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "if [ -L ${{ vars.DEPLOY_PATH }}/current/web/app/uploads ]; then rm ${{ vars.DEPLOY_PATH }}/current/web/app/uploads; fi"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "ln -s ${{ vars.DEPLOY_PATH }}/shared/web/app/uploads ${{ vars.DEPLOY_PATH }}/current/web/app"
 
       - name: Clear opcache
         run: |
-          ssh eikon@ssh-eikon.alwaysdata.net "echo '<?php opcache_reset(); ?>' > /home/eikon/www/inside-2024.eikon.ch/current/web/opcache_clear.php"
-          ssh eikon@ssh-eikon.alwaysdata.net "curl -s https://inside-2024.eikon.ch/opcache_clear.php"
-          ssh eikon@ssh-eikon.alwaysdata.net "rm -rf /home/eikon/www/inside-2024.eikon.ch/current/web/opcache_clear.php"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "echo '<?php opcache_reset(); ?>' > ${{ vars.DEPLOY_PATH }}/current/web/opcache_clear.php"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "curl -s https://inside-2024.eikon.ch/opcache_clear.php"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "rm -rf ${{ vars.DEPLOY_PATH }}/current/web/opcache_clear.php"
