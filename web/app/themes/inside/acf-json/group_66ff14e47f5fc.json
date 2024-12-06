@@ -76,6 +76,43 @@
             "graphql_non_null": 0,
             "ui_on_text": "",
             "ui_off_text": ""
+        },
+        {
+            "key": "field_675303fedebdc",
+            "label": "Couleur",
+            "name": "color",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "blue": "Bleu",
+                "black": "Noir",
+                "white": "Blanc",
+                "red": "Rouge",
+                "orange": "Orange",
+                "fuchsia": "Fuchsia",
+                "pink": "Rose",
+                "violet": "Violet"
+            },
+            "default_value": "blue",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 1,
+            "ui": 0,
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "color",
+            "graphql_non_null": 0,
+            "ajax": 0,
+            "placeholder": ""
         }
     ],
     "location": [
@@ -102,5 +139,5 @@
     "graphql_types": [
         "Post"
     ],
-    "modified": 1731939016
+    "modified": 1733493784
 }
