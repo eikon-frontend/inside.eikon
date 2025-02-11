@@ -65,10 +65,10 @@
         },
         {
             "key": "field_67ab51cc7e088",
-            "label": "Vimeo ID",
-            "name": "vimeo_id",
+            "label": "Video Background",
+            "name": "video_background",
             "aria-label": "",
-            "type": "text",
+            "type": "file",
             "instructions": "ID de la vidéo viméo à utiliser comme vidéo pour le background.",
             "required": 0,
             "conditional_logic": 0,
@@ -77,16 +77,15 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": 885686068,
-            "prepend": "",
-            "append": "",
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": 40,
+            "mime_types": "mp4",
+            "allow_in_bindings": 1,
             "show_in_graphql": 1,
             "graphql_description": "",
-            "graphql_field_name": "vimeoId",
-            "graphql_non_null": 0
+            "graphql_field_name": "videoBackground"
         },
         {
             "key": "field_638a243095896",
@@ -203,5 +202,5 @@
     "graphql_field_name": "departmentFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1739280883
+    "modified": 1739287383
 }

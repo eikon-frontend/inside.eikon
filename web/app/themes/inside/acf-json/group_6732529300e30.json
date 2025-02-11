@@ -64,11 +64,11 @@
             "placeholder": ""
         },
         {
-            "key": "field_67ab3049d683c",
-            "label": "Vimeo ID",
-            "name": "vimeo_id",
+            "key": "field_67ab6b33119ae",
+            "label": "Video Background",
+            "name": "video_background",
             "aria-label": "",
-            "type": "text",
+            "type": "file",
             "instructions": "ID de la vidéo viméo à utiliser comme vidéo pour le background.",
             "required": 0,
             "conditional_logic": 0,
@@ -77,16 +77,15 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": 885686068,
-            "prepend": "",
-            "append": "",
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": 40,
+            "mime_types": "mp4",
+            "allow_in_bindings": 1,
             "show_in_graphql": 1,
             "graphql_description": "",
-            "graphql_field_name": "vimeoId",
-            "graphql_non_null": 0
+            "graphql_field_name": "videoBackground"
         }
     ],
     "location": [
@@ -113,5 +112,5 @@
     "graphql_types": [
         "Page"
     ],
-    "modified": 1739280856
+    "modified": 1739287378
 }
