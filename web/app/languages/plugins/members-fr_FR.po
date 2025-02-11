@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Members &#8211; Membership &amp; User Role Editor Plugin - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-09-26 15:13:05+0000\n"
+"PO-Revision-Date: 2025-01-11 22:55:36+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -11,9 +11,17 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: Plugins - Members &#8211; Membership &amp; User Role Editor Plugin - Stable (latest release)\n"
 
+#: vendor-prefixed/caseproof/growth-tools/src/Helper/AddonHelper.php:28
+msgid "Addon activated."
+msgstr "Module activé."
+
 #: admin/class-settings.php:158 admin/functions-admin.php:285
 msgid "You are not allowed to make these changes."
 msgstr "Vous n’êtes pas autorisé autorisé·e à réaliser ces modifications."
+
+#: admin/functions-admin.php:261
+msgid "About Us"
+msgstr "À propos"
 
 #: admin/class-notifications.php:537
 msgid "You're all caught up!"
@@ -76,8 +84,8 @@ msgid_plural "%s unread messages"
 msgstr[0] "%s message non lu"
 msgstr[1] "%s messages non lus"
 
-#: admin/class-meta-box-content-permissions.php:243
-#: admin/class-meta-box-content-permissions.php:364
+#: admin/class-meta-box-content-permissions.php:242
+#: admin/class-meta-box-content-permissions.php:363
 msgid "Add MemberPress"
 msgstr "Ajouter MemberPress"
 
@@ -85,17 +93,17 @@ msgstr "Ajouter MemberPress"
 msgid "Miscellaneous"
 msgstr "Divers"
 
-#: admin/views/class-view-general.php:302
+#: admin/views/class-view-general.php:319
 msgid "Permanently remove Members review prompt."
 msgstr "Supprimer définitivement le prompt d’avis des membres"
 
-#: admin/views/class-view-general.php:85
+#: admin/views/class-view-general.php:86
 msgid "Disable Review Prompt"
 msgstr "Désactiver le prompt d’avis"
 
-#: admin/class-meta-box-content-permissions.php:196
-#: admin/class-meta-box-content-permissions.php:315
-#: admin/class-meta-box-content-permissions.php:360
+#: admin/class-meta-box-content-permissions.php:195
+#: admin/class-meta-box-content-permissions.php:314
+#: admin/class-meta-box-content-permissions.php:359
 msgid "Paid Memberships"
 msgstr "Adhésions payées"
 
@@ -123,12 +131,8 @@ msgstr "OK, vous le méritez"
 msgid "Give Feedback"
 msgstr "Faire un retour"
 
-#: admin/functions-admin.php:201
-msgid "You're using Members. To unlock more features, consider <a href=\"https://memberpress.com/plans/pricing/?utm_source=members&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features\">adding MemberPress.</a>"
-msgstr "Vous utilisez Members. Pour débloquer plus de fonctionnalités, envisagez d’ajouter <a href=\"https://memberpress.com/plans/pricing/?utm_source=members&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features\">MemberPress.</a>"
-
-#: admin/class-meta-box-content-permissions.php:242
-#: admin/class-meta-box-content-permissions.php:363
+#: admin/class-meta-box-content-permissions.php:241
+#: admin/class-meta-box-content-permissions.php:362
 msgid "To protect this block by paid membership or centrally with <br> a content protection rule, add MemberPress."
 msgstr "Pour protéger ce bloc par une adhésion payante ou de manière centralisée avec une règle de protection de contenu <br>, ajoutez MemberPress"
 
@@ -300,17 +304,17 @@ msgstr "Téléchargements"
 msgid "Shop"
 msgstr "Boutique"
 
-#: addons/members-acf-integration/src/Plugin.php:371
+#: addons/members-acf-integration/src/Plugin.php:352
 msgid "Custom Fields"
 msgstr "Champs personnalisés"
 
-#: addons/members-acf-integration/src/Plugin.php:340
+#: addons/members-acf-integration/src/Plugin.php:321
 msgid "Advanced Custom Fields %s"
 msgid_plural "Advanced Custom Fields %s"
 msgstr[0] "Advanced Custom Fields %s"
 msgstr[1] "Advanced Custom Fields %s"
 
-#: addons/members-acf-integration/src/Plugin.php:339
+#: addons/members-acf-integration/src/Plugin.php:320
 msgid "Advanced Custom Fields"
 msgstr "Advanced Custom Fields"
 
@@ -373,10 +377,12 @@ msgstr "Niveau 0"
 
 #: admin/class-settings.php:188 admin/views/class-view-addons.php:153
 #: admin/views/class-view-addons.php:159
+#: vendor-prefixed/caseproof/growth-tools/src/App.php:85
 msgid "Activate"
 msgstr "Activer"
 
 #: admin/class-settings.php:176 admin/views/class-view-addons.php:159
+#: vendor-prefixed/caseproof/growth-tools/src/App.php:84
 msgid "Active"
 msgstr "Activé"
 
@@ -423,6 +429,11 @@ msgid_plural "GiveWP %s"
 msgstr[0] "GiveWP %s"
 msgstr[1] "GiveWP %s"
 
+#: admin/class-settings.php:271 admin/class-settings.php:649
+msgctxt "admin screen"
+msgid "About Us"
+msgstr "À propos"
+
 #. Author URI of the plugin
 #: members.php
 msgid "https://memberpress.com"
@@ -433,26 +444,21 @@ msgstr "https://memberpress.com"
 msgid "MemberPress"
 msgstr "MemberPress"
 
-#. Plugin URI of the plugin
-#: members.php
-msgid "https://memberpress.com/plugins/members"
-msgstr "https://memberpress.com/plugins/members"
-
 #: admin/class-meta-box-publish-role.php:104
 msgid "%s User"
 msgid_plural "%s Users"
 msgstr[0] "%s compte"
 msgstr[1] "%s comptes"
 
-#: members.php:352
+#: members.php:340
 msgid "Members requires PHP version %1$s. You are running version %2$s. Please upgrade and try again."
 msgstr "Members nécessite la version PHP %1$s. Vous utilisez la versiion %2$s. Mettez à jour et essayez à nouveau."
 
-#: inc/functions-private-site.php:193
+#: inc/functions-private-site.php:196
 msgid "You do not currently have access to the \"%s\" site. If you believe you should have access, please contact your network administrator."
 msgstr "Vous n'avez actuellement pas accès au site \"%s\". Si vous croyez que vous devriez y avoir accès, contactez s'il vous plait l'administrateur de votre réseau."
 
-#: inc/functions-private-site.php:169
+#: inc/functions-private-site.php:172
 msgid "You are not currently logged in."
 msgstr "Vous n'êtes pas connecté."
 
@@ -496,10 +502,6 @@ msgstr "Lister les Roles"
 msgid "Edit Roles"
 msgstr "Editer les Roles"
 
-#: inc/functions-capabilities.php:116
-msgid "Delete Roles"
-msgstr "Supprimrer des Roles"
-
 #: inc/functions-capabilities.php:114
 msgid "Create Roles"
 msgstr "Créer des Roles"
@@ -531,10 +533,6 @@ msgstr "Changer de Thèmes"
 #: inc/functions-capabilities.php:102
 msgid "Install Themes"
 msgstr "Installer des Thèmes"
-
-#: inc/functions-capabilities.php:101
-msgid "Edit Themes"
-msgstr "Editere des thèmes"
 
 #: inc/functions-capabilities.php:100
 msgid "Edit Theme Options"
@@ -652,19 +650,19 @@ msgstr "Editer les Fichiers"
 msgid "Edit Dashboard"
 msgstr "Editer le Tableau de Bord"
 
-#: admin/views/class-view-general.php:398
+#: admin/views/class-view-general.php:415
 msgid "Tick the checkbox to show human-readable capabilities when possible. Note that custom capabilities and capabilities from third-party plugins will show the machine-readable capability name unless they are registered."
 msgstr "Cochez la case pour afficher les droits en mode interprétable par l'homme lorsque cela est possible. Notez que les droits et droits personnalisées provenant de plugins tiers afficheront le nom de le droit lisible par le système à moins qu'ils ne soient enregistrés."
 
-#: admin/views/class-view-general.php:251
+#: admin/views/class-view-general.php:268
 msgid "Require authentication for access to the REST API."
 msgstr "Nécessite une authentification  pour accéder à l API REST."
 
-#: admin/views/class-view-general.php:168
+#: admin/views/class-view-general.php:170
 msgid "Show human-readable capabilities when possible."
 msgstr "Montrer les droits lisible par l'homme quand c'est possible."
 
-#: admin/views/class-view-general.php:80
+#: admin/views/class-view-general.php:81
 msgid "REST API"
 msgstr "REST API"
 
@@ -726,7 +724,7 @@ msgstr "Role supprimer depuis des utilisateurs sélectionnés."
 msgid "Remove"
 msgstr "Retirer"
 
-#: inc/functions-private-site.php:200
+#: inc/functions-private-site.php:203
 msgid "If you reached this page by accident and meant to visit one of your own sites, try one of the following links."
 msgstr "Si vous êtes arrivés sur cette page par accident et que vous vouliez visiter l'un de vos propres sites, essayez l'un des liens suivants."
 
@@ -802,6 +800,14 @@ msgstr "Supprimer des comptes"
 msgid "Role added to selected users."
 msgstr "Rôle ajouter aux comptes sélectionnés."
 
+#: inc/functions-capabilities.php:101
+msgid "Edit Themes"
+msgstr "Modifier les thèmes"
+
+#: inc/functions-capabilities.php:116
+msgid "Delete Roles"
+msgstr "Supprimer des rôles"
+
 #: inc/class-widget-users.php:203
 msgid "URL"
 msgstr "URL"
@@ -843,11 +849,7 @@ msgstr "Méta clé&nbsp;:"
 msgid "Meta Value:"
 msgstr "Valeur méta&nbsp;:"
 
-#: inc/functions-options.php:133
-msgid "You must be logged into the site to view this content."
-msgstr "Vous devez être connecté pour voir ce contenu."
-
-#: members.php:152
+#: members.php:156
 msgid "Method does not exist."
 msgstr "La méthode n’existe pas."
 
@@ -866,10 +868,6 @@ msgstr "Se connecter"
 #: inc/class-widget-users.php:227
 msgid "Order:"
 msgstr "Ordre :"
-
-#: inc/functions-options.php:132
-msgid "Sorry, but you do not have permission to view this content."
-msgstr "Désolé, vous n'êtes pas autorisé à voir ce contenu."
 
 #. Description of the plugin
 #: members.php
@@ -905,7 +903,7 @@ msgstr "Mot de passe"
 msgid "Edit"
 msgstr "Modifier"
 
-#: admin/views/class-view-general.php:64 admin/views/class-view-general.php:367
+#: admin/views/class-view-general.php:64 admin/views/class-view-general.php:384
 msgid "Private Site"
 msgstr "Site privé"
 
@@ -923,9 +921,9 @@ msgstr "Se connecter"
 
 #: admin/class-manage-roles.php:88 admin/class-manage-roles.php:94
 #: admin/class-manage-users.php:360
-#: admin/class-meta-box-content-permissions.php:189
-#: admin/class-meta-box-content-permissions.php:308
-#: admin/class-meta-box-content-permissions.php:330 admin/class-roles.php:170
+#: admin/class-meta-box-content-permissions.php:188
+#: admin/class-meta-box-content-permissions.php:307
+#: admin/class-meta-box-content-permissions.php:329 admin/class-roles.php:170
 #: admin/class-user-edit.php:93
 msgid "Roles"
 msgstr "Rôles"
@@ -942,12 +940,11 @@ msgstr "Pour plus d'informations :"
 msgid "Selected roles deleted."
 msgstr "Rôles sélectionnés supprimés."
 
-#: admin/views/class-view-general.php:143
+#: admin/views/class-view-general.php:145
 msgid "Enable the role manager."
 msgstr "Activer le gestionnaire de rôles."
 
-#: admin/class-meta-box-content-permissions.php:115
-#: admin/views/class-view-general.php:63 admin/views/class-view-general.php:349
+#: admin/views/class-view-general.php:63 admin/views/class-view-general.php:366
 msgid "Content Permissions"
 msgstr "Droits d'accès au contenu"
 
@@ -1058,10 +1055,10 @@ msgid "Role Manager"
 msgstr "Gestionnaire de rôles"
 
 #: addons/members-block-permissions/src/Editor.php:103
-#: admin/class-meta-box-content-permissions.php:203
-#: admin/class-meta-box-content-permissions.php:322
-#: admin/class-meta-box-content-permissions.php:371
-#: admin/views/class-view-general.php:76
+#: admin/class-meta-box-content-permissions.php:202
+#: admin/class-meta-box-content-permissions.php:321
+#: admin/class-meta-box-content-permissions.php:370
+#: admin/views/class-view-general.php:77
 msgid "Error Message"
 msgstr "Message d'erreur"
 
@@ -1085,36 +1082,28 @@ msgstr "Autorisé&nbsp;:"
 msgid "Enable Permissions"
 msgstr "Activer les autorisations"
 
-#: admin/views/class-view-general.php:79
+#: admin/views/class-view-general.php:80
 msgid "Enable Private Site"
 msgstr "Activer site privé"
 
-#: admin/views/class-view-general.php:81
+#: admin/views/class-view-general.php:82
 msgid "Disable Feed"
 msgstr "Désactiver le flux"
 
-#: admin/views/class-view-general.php:82
+#: admin/views/class-view-general.php:83
 msgid "Feed Error Message"
 msgstr "Message d'erreur du flux"
 
 #: addons/members-block-permissions/src/Editor.php:108
-#: admin/class-user-edit.php:98 admin/class-user-new.php:109
+#: admin/class-user-edit.php:98 admin/class-user-new.php:108
 msgid "User Roles"
 msgstr "Rôles utilisateur"
 
 #: addons/members-block-permissions/src/Editor.php:90
 #: addons/members-block-permissions/src/Editor.php:116
-#: admin/tmpl/cap-section.php:19 admin/tmpl/cap-section.php:27
+#: admin/tmpl/cap-section.php:19 admin/tmpl/cap-section.php:33
 msgid "Capability"
 msgstr "Capacité"
-
-#: admin/tmpl/cap-section.php:20 admin/tmpl/cap-section.php:28
-msgid "Grant"
-msgstr "Autoriser"
-
-#: admin/tmpl/cap-section.php:21 admin/tmpl/cap-section.php:29
-msgid "Deny"
-msgstr "Refuser"
 
 #: inc/class-widget-login.php:55
 msgid "Members: Login Form"
@@ -1216,21 +1205,17 @@ msgid "Overview"
 msgstr "Vue d'ensemble"
 
 #: admin/class-manage-users.php:161 admin/class-manage-users.php:236
-#: admin/class-role-edit.php:92 members.php:130 members.php:141
+#: admin/class-role-edit.php:92 members.php:134 members.php:145
 msgid "Whoah, partner!"
 msgstr "Oui, mon ami&nbsp;!"
 
-#: admin/views/class-view-general.php:358
+#: admin/views/class-view-general.php:375
 msgid "Sidebar Widgets"
 msgstr "Widgets de barre latérale"
 
 #: admin/views/class-view-general.php:71
 msgid "Multiple User Roles"
 msgstr "Rôles utilisateur multiples"
-
-#: admin/views/class-view-general.php:186
-msgid "Allow users to be assigned more than a single role."
-msgstr "Autoriser l'attribution de plusieurs rôles aux utilisateurs."
 
 #: inc/functions-role-groups.php:43
 msgid "WordPress %s"
@@ -1296,15 +1281,15 @@ msgstr[1] "Non modifiables %s"
 msgid "The machine-readable version of the role appears below the name field, which you can edit. This can only have lowercase letters, numbers, or underscores."
 msgstr "La version lisible-par-une-machine du rôle est visible sous le champs du nom, que vous pouvez modifier. Vous ne pouvez utiliser que des lettres minuscules, des chiffres ou des underscores."
 
-#: admin/views/class-view-general.php:390
+#: admin/views/class-view-general.php:407
 msgid "The multiple user roles feature allows you to assign more than one role to each user from the edit user screen."
 msgstr "La fonction rôles utilisateurs multiples vous permet d'assigner plus d'un rôle à chaque utilisateur sur la page de modification de l&rsquo;utilisateur."
 
-#: admin/views/class-view-general.php:426
+#: admin/views/class-view-general.php:443
 msgid "The sidebar widgets feature adds additional widgets for use in your theme's sidebars."
 msgstr "La fonction widgets de la barre latérale vous permet d'ajouter des widgets dans la barre latérale de votre thème."
 
-#: admin/views/class-view-general.php:386
+#: admin/views/class-view-general.php:403
 msgid "The role manager allows you to manage roles on your site by giving you the ability to create, edit, and delete any role. Note that changes to roles do not change settings for the Members plugin. You are literally changing data in your WordPress database. This plugin feature merely provides an interface for you to make these changes."
 msgstr "Le gestionnaire de rôles vous permet de créer, modifier et effacer n'importe quel rôle sur votre site. Notez que les modifications apportées aux rôles n'impactent pas les réglages de l'extension Members. Vous modifiez directement les données de votre base. Cette extension est une interface pour vous permettant d'effectuer ces modifications."
 
@@ -1320,7 +1305,7 @@ msgstr "<strong>Modifier</strong> vous dirige vers l’écran de modification du
 msgid "<strong>Users</strong> takes you to the users screen and lists the users that have that role."
 msgstr "<strong>Utilisateurs</strong> vous dirige vers l’écran listant les utilisateurs ayant ce rôle."
 
-#: admin/views/class-view-general.php:201
+#: admin/views/class-view-general.php:203
 msgid "Enable the content permissions feature."
 msgstr "Activer la fonctionnalité de droits d’accès au contenu."
 
@@ -1340,19 +1325,15 @@ msgstr "Afficher l’avatar&nbsp;?"
 msgid "Logged out text:"
 msgstr "Texte de déconnexion :"
 
-#: admin/views/class-view-general.php:266
+#: admin/views/class-view-general.php:283
 msgid "Show error message for feed items."
 msgstr "Afficher le message d’erreur pour les éléments du flux."
 
-#: admin/views/class-view-general.php:440
+#: admin/views/class-view-general.php:457
 msgid "The private site feature redirects all users who are not logged into the site to the login page, creating an entirely private site. You may also replace your feed content with a custom error message."
 msgstr "La fonction Site privé redirige tous les utilisateurs non-connectés vers la page de connexion du site, rendant celui-ci totalement privé. Vous pouvez également remplacer votre flux par un message d’erreur."
 
-#: admin/functions-admin.php:50
-msgid "Are you sure you want to delete this role? This is a permanent action and cannot be undone."
-msgstr "Confirmez-vous la suppression de ce rôle ? Cette action est irréversible."
-
-#: admin/views/class-view-general.php:236
+#: admin/views/class-view-general.php:238
 msgid "Redirect all logged-out users to the login page before allowing them to view the site."
 msgstr "Rediriger tous les utilisateurs déconnectés vers la page de connexion avant de leur permettre d'accéder au site."
 
@@ -1404,8 +1385,8 @@ msgstr "Mise à jour"
 msgid "Default Role"
 msgstr "Rôle par défaut"
 
-#: admin/class-meta-box-content-permissions.php:213
-#: admin/class-meta-box-content-permissions.php:333
+#: admin/class-meta-box-content-permissions.php:212
+#: admin/class-meta-box-content-permissions.php:332
 msgid "Limit access to the content to users of the selected roles."
 msgstr "Limiter l’accès au contenu aux utilisateurs des rôles sélectionnés."
 
@@ -1441,28 +1422,28 @@ msgstr "Cet écran vous permet de modifier un rôle et ses droits."
 msgid "Edit Capabilities"
 msgstr "Modifier les droits"
 
-#: admin/views/class-view-general.php:412
+#: admin/views/class-view-general.php:429
 msgid "The content permissions features adds a meta box to the edit post screen that allows you to grant permissions for who can read the post content based on the user's role. Only users of roles with the %s capability will be able to use this component."
 msgstr "La fonction d'autorisation du contenu ajoute une liste de cases à cocher sur la page Modifier l'article qui vous permet de définir qui peut lire le contenu en fonction de son rôle utilisateur. Seuls les utilisateur avec le droit de %s peuvent utiliser cette fonction."
 
-#: admin/views/class-view-general.php:394
+#: admin/views/class-view-general.php:411
 msgid "Tick the checkbox for denied capabilities to always take precedence over granted capabilities when there is a conflict. This is only relevant when using multiple roles per user."
 msgstr "Cocher la case afin que les droits refusées soient toujours prioritaires sur les droits autorisées en cas de conflit. Ceci n'est valable que dans le cas où l'utilisateur a des rôles multiples."
 
-#: admin/views/class-view-general.php:340
+#: admin/views/class-view-general.php:357
 msgid "Role and Capabilities"
 msgstr "Rôle et droits"
 
 #: addons/members-admin-access/app/class-view-settings.php:189
-#: admin/views/class-view-general.php:319
+#: admin/views/class-view-general.php:336
 msgid "Update Settings"
 msgstr "Mettre à jour les réglages"
 
-#: admin/views/class-view-general.php:161
+#: admin/views/class-view-general.php:163
 msgid "Denied capabilities should always overrule granted capabilities."
 msgstr "Les droits refusées devraient toujours outrepasser les droits accordées."
 
-#: admin/views/class-view-general.php:128
+#: admin/views/class-view-general.php:130
 msgid "Your roles and capabilities will not revert back to their previous settings after deactivating or uninstalling this plugin, so use this feature wisely."
 msgstr "Vos rôles et droits ne reviendront pas à leurs réglages précédents après la désactivation ou la désinstallation de l'extension, utilisez donc cette fonctionnalité avec prudence."
 
@@ -1478,8 +1459,8 @@ msgstr "<strong>Cloner</strong> duplique le rôle et vous dirige vers l’écran
 msgid "This screen provides access to all of your user roles. Roles are a method of grouping users. They are made up of capabilities (caps), which give permission to users to perform specific actions on the site."
 msgstr "Cet écran permet l’accès à tous vos rôles d’utilisateurs. Les rôles sont un méthode de regroupement des utilisateurs. Ils sont constitués de droits (caps), qui autorisent les utilisateurs à effectuer des actions spécifiques sur le site."
 
-#: admin/class-meta-box-content-permissions.php:233
-#: admin/class-meta-box-content-permissions.php:353
+#: admin/class-meta-box-content-permissions.php:232
+#: admin/class-meta-box-content-permissions.php:352
 msgid "If no roles are selected, everyone can view the content. The author, any users who can edit the content, and users with the %s capability can view the content regardless of role."
 msgstr "Si aucun rôle n’est sélectionné, tout le monde peut voir le contenu. L’auteur, les utilisateurs qui peuvent modifier le contenu, et les utilisateurs avec des droits %s peuvent afficher le contenu indépendamment du rôle."
 
@@ -1502,3 +1483,11 @@ msgstr "Modifier les droits : %s"
 #: inc/class-widget-login.php:260
 msgid "\"Remember me\" checkbox?"
 msgstr "Case à cocher « Se souvenir de moi » ?"
+
+#: admin/views/class-view-general.php:188
+msgid "Allow users to be assigned more than a single role."
+msgstr "Autoriser l’attribution de plusieurs rôles aux utilisateurs."
+
+#: admin/functions-admin.php:50
+msgid "Are you sure you want to delete this role? This is a permanent action and cannot be undone."
+msgstr "Confirmez-vous la suppression de ce rôle ? Cette action est irréversible."
