@@ -62,6 +62,31 @@
             "graphql_non_null": 0,
             "ajax": 0,
             "placeholder": ""
+        },
+        {
+            "key": "field_67ab3049d683c",
+            "label": "Vimeo ID",
+            "name": "vimeo_id",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "ID de la vidéo viméo à utiliser comme vidéo pour le background.\r\nPar exemple: https:\/\/vimeo.com\/885686068 -> ID = 885686068",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "vimeoId",
+            "graphql_non_null": 0
         }
     ],
     "location": [
@@ -88,5 +113,5 @@
     "graphql_types": [
         "Page"
     ],
-    "modified": 1733493774
+    "modified": 1739272325
 }
