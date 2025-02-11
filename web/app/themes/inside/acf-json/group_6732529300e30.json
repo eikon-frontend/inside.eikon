@@ -69,7 +69,7 @@
             "name": "vimeo_id",
             "aria-label": "",
             "type": "text",
-            "instructions": "ID de la vidéo viméo à utiliser comme vidéo pour le background.\r\nPar exemple: https:\/\/vimeo.com\/885686068 -> ID = 885686068",
+            "instructions": "ID de la vidéo viméo à utiliser comme vidéo pour le background.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -80,7 +80,7 @@
             "default_value": "",
             "maxlength": "",
             "allow_in_bindings": 0,
-            "placeholder": "",
+            "placeholder": 885686068,
             "prepend": "",
             "append": "",
             "show_in_graphql": 1,
@@ -113,5 +113,5 @@
     "graphql_types": [
         "Page"
     ],
-    "modified": 1739272325
+    "modified": 1739280856
 }
