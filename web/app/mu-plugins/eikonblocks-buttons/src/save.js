@@ -4,6 +4,10 @@ export default function Save(props) {
   const { attributes } = props;
   const { items, alignment } = attributes;
 
+  if (!items || !Array.isArray(items)) {
+    return null;
+  }
+
   return (
     <div {...useBlockProps.save()} className={`wp-block-eikonblocks-buttons alignment-${alignment}`}>
       <div className="buttons-container">

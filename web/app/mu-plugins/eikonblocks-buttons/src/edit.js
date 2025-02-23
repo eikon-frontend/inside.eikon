@@ -1,4 +1,4 @@
-import { useBlockProps, __experimentalLinkControl as LinkControl, BlockControls, AlignmentToolbar } from '@wordpress/block-editor';
+import { useBlockProps, BlockControls, AlignmentToolbar } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
@@ -30,6 +30,18 @@ export default function Edit(props) {
     setAttributes({ items: newItems });
   };
 
+  const handleUrlChange = (index, url) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], url };
+    setAttributes({ items: newItems });
+  };
+
+  const handleOpenInNewTabChange = (index, opensInNewTab) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], opensInNewTab };
+    setAttributes({ items: newItems });
+  };
+
   const addItem = () => {
     setAttributes({ items: [...items, { url: '', opensInNewTab: false, title: '', style: 'plain', icon: 'arrow' }] });
   };
@@ -52,7 +64,7 @@ export default function Edit(props) {
         <div className='eikonblock-title'>eikonblock // buttons</div>
         {items.map((item, index) => (
           <div key={index} style={{ marginBottom: '5px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
-            <table style={{ width: '100%' }}>
+            <table style={{ width: '90%' }}>
               <tbody>
                 <tr>
                   <td style={{ width: '30%', verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
@@ -64,7 +76,7 @@ export default function Edit(props) {
                       value={item.title || ''}
                       onChange={(e) => handleTitleChange(index, e.target.value)}
                       placeholder={__('Enter title', 'eikonblocks')}
-                      style={{ width: '100%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
                     />
                   </td>
                 </tr>
@@ -73,16 +85,24 @@ export default function Edit(props) {
                     <label>{__('Lien', 'eikonblocks')}</label>
                   </td>
                   <td>
-                    <LinkControl
-                      value={item}
-                      onChange={(value) => handleItemChange(index, value)}
-                      settings={[
-                        {
-                          id: 'opensInNewTab',
-                          title: __('Open in new tab', 'eikonblocks'),
-                        },
-                      ]}
-                      style={{ width: '100%', padding: '0' }}
+                    <input
+                      type="text"
+                      value={item.url || ''}
+                      onChange={(e) => handleUrlChange(index, e.target.value)}
+                      placeholder={__('Enter URL', 'eikonblocks')}
+                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
+                    <label>{__('Open in new tab', 'eikonblocks')}</label>
+                  </td>
+                  <td style={{ textAlign: 'left' }}>
+                    <input
+                      type="checkbox"
+                      checked={item.opensInNewTab}
+                      onChange={(e) => handleOpenInNewTabChange(index, e.target.checked)}
                     />
                   </td>
                 </tr>
@@ -94,7 +114,7 @@ export default function Edit(props) {
                     <select
                       value={item.style}
                       onChange={(e) => handleStyleChange(index, e.target.value)}
-                      style={{ width: '100%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
                     >
                       <option value="plain">{__('Plain', 'eikonblocks')}</option>
                       <option value="outline">{__('Outline', 'eikonblocks')}</option>
@@ -109,7 +129,7 @@ export default function Edit(props) {
                     <select
                       value={item.icon}
                       onChange={(e) => handleIconChange(index, e.target.value)}
-                      style={{ width: '100%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
                     >
                       <option value="none">{__('None', 'eikonblocks')}</option>
                       <option value="arrow">{__('Arrow', 'eikonblocks')}</option>
