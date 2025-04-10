@@ -10,6 +10,7 @@ web/app/uploads/*
 
 # Custom query, not available on composer
 !web/app/plugins/wp-graphql-tax-query
+!web/app/plugins/vod-video-field
 
 # Custom blocks plugins
 !web/app/mu-plugins/eikonblocks-*

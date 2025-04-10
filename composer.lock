@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d340ea7495f252f7834d172f7894e41",
+    "content-hash": "92eefd55699b9f511f4e0ce5b27c9edf",
     "packages": [
         {
             "name": "composer/installers",
@@ -1157,6 +1157,24 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/members/"
+        },
+        {
+            "name": "wpackagist-plugin/vod-infomaniak",
+            "version": "1.5.10",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/vod-infomaniak/",
+                "reference": "tags/1.5.10"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/vod-infomaniak.1.5.10.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/vod-infomaniak/"
         },
         {
             "name": "wpackagist-plugin/wp-graphql",

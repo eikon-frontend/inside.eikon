@@ -64,30 +64,6 @@
             "placeholder": ""
         },
         {
-            "key": "field_67ab51cc7e088",
-            "label": "Video Background",
-            "name": "video_background",
-            "aria-label": "",
-            "type": "file",
-            "instructions": "ID de la vidéo viméo à utiliser comme vidéo pour le background.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "array",
-            "library": "all",
-            "min_size": "",
-            "max_size": 40,
-            "mime_types": "mp4",
-            "allow_in_bindings": 1,
-            "show_in_graphql": 1,
-            "graphql_description": "",
-            "graphql_field_name": "videoBackground"
-        },
-        {
             "key": "field_638a243095896",
             "label": "Titre raccourci",
             "name": "titre_raccourci",
@@ -107,6 +83,24 @@
             "prepend": "",
             "append": "",
             "maxlength": ""
+        },
+        {
+            "key": "field_67f80915d987b",
+            "label": "Video",
+            "name": "video",
+            "aria-label": "",
+            "type": "vod_video",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "graphql_field_name": "videoCopier",
+            "return_format": "array",
+            "allow_in_bindings": 1
         },
         {
             "key": "field_654d6891a629e",
@@ -202,5 +196,5 @@
     "graphql_field_name": "departmentFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1739287383
+    "modified": 1744308561
 }

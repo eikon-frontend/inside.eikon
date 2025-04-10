@@ -57,7 +57,8 @@
     "wpackagist-plugin/wpgraphql-acf": "^2.2",
     "wpackagist-plugin/members": "^3.2",
     "wpackagist-plugin/wp-mail-smtp": "^4.0",
-    "jysperu/php-qr-code": "^2"
+    "jysperu/php-qr-code": "^2",
+    "wpackagist-plugin/vod-infomaniak": "^1.5"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.6.0",
