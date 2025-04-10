@@ -85,36 +85,38 @@ add_action('graphql_register_types', function () {
       ],
     ]);
 
-    // Register the video field with the custom object type
-    register_graphql_field('PageFields', 'video', [
-      'type' => 'VODVideo',
-      'description' => __('The VOD Video field, returning video details.', 'vod-video-field'),
-      'resolve' => function ($root, $args, $context, $info) {
-        // Attempt to fetch the ID from the root object or fallback to global post ID
-        $field_value = get_fields(get_the_ID());
+    // Register the video field with the custom object type for multiple type names
+    foreach (['PageFields', 'DepartmentFields'] as $type_name) {
+      register_graphql_field($type_name, 'video', [
+        'type' => 'VODVideo',
+        'description' => __('The VOD Video field, returning video details.', 'vod-video-field'),
+        'resolve' => function ($root, $args, $context, $info) {
+          // Attempt to fetch the ID from the root object or fallback to global post ID
+          $field_value = get_fields(get_the_ID());
 
-        // Dynamically use the ACF field name set in the configuration
-        $field_name = $info->fieldName;
+          // Dynamically use the ACF field name set in the configuration
+          $field_name = $info->fieldName;
 
-        // Ensure the field returns the required subfields or null if not set
-        if (isset($field_value[$field_name])) {
-          $field_data = is_string($field_value[$field_name])
-            ? json_decode($field_value[$field_name], true)
-            : $field_value[$field_name];
+          // Ensure the field returns the required subfields or null if not set
+          if (isset($field_value[$field_name])) {
+            $field_data = is_string($field_value[$field_name])
+              ? json_decode($field_value[$field_name], true)
+              : $field_value[$field_name];
 
-          // Extract specific subfields
-          return [
-            'id' => $field_data['id']['id'] ?? null,
-            'title' => $field_data['title'] ?? null,
-            'thumbnail' => $field_data['id']['thumbnail'] ?? null,
-            'media' => $field_data['id']['media'] ?? null,
-            'url' => $field_data['id']['url'] ?? null,
-            'folder' => $field_data['id']['folder'] ?? null, // Add folder attribute
-          ];
-        }
+            // Extract specific subfields
+            return [
+              'id' => $field_data['id']['id'] ?? null,
+              'title' => $field_data['title'] ?? null,
+              'thumbnail' => $field_data['id']['thumbnail'] ?? null,
+              'media' => $field_data['id']['media'] ?? null,
+              'url' => $field_data['id']['url'] ?? null,
+              'folder' => $field_data['id']['folder'] ?? null, // Add folder attribute
+            ];
+          }
 
-        return null;
-      },
-    ]);
+          return null;
+        },
+      ]);
+    }
   }
 });
