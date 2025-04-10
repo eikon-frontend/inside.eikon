@@ -121,7 +121,7 @@ class acf_field_vod_video extends acf_field
       global $wpdb;
       $table_name = $wpdb->prefix . 'vod_video';
       $video = $wpdb->get_row($wpdb->prepare(
-        "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url
+        "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url, sFolderCode AS folder
            FROM $table_name
            WHERE MD5(sVideoUrlV2) = %s",
         $value
@@ -134,6 +134,7 @@ class acf_field_vod_video extends acf_field
           'thumbnail' => $video->thumbnail,
           'media' => $video->id,
           'url' => $video->url,
+          'folder' => $video->folder, // Add folder attribute
         );
       } else {
         // Fallback for when video isn't found - keep the value for consistency
@@ -338,6 +339,7 @@ class acf_field_vod_video extends acf_field
       'embed_url' => '',
       'description' => '',
       'duration' => '',
+      'folder' => '', // Add folder attribute
     );
 
     // Return URL only
@@ -395,7 +397,7 @@ class acf_field_vod_video extends acf_field
 
     // Fetch video details from the database
     $video = $wpdb->get_row($wpdb->prepare(
-      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url
+      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url, sFolderCode AS folder
        FROM $table_name
        WHERE MD5(sVideoUrlV2) = %s",
       $sanitized_value
@@ -409,6 +411,7 @@ class acf_field_vod_video extends acf_field
         'thumbnail' => $video->thumbnail,
         'media' => $video->id,
         'url' => $video->url,
+        'folder' => $video->folder, // Add folder attribute
       ));
 
       // Save the JSON object in post meta

@@ -78,6 +78,10 @@ add_action('graphql_register_types', function () {
           'type' => 'String',
           'description' => __('The URL of the video.', 'vod-video-field'),
         ],
+        'folder' => [
+          'type' => 'String',
+          'description' => __('The folder code of the video.', 'vod-video-field'),
+        ],
       ],
     ]);
 
@@ -105,6 +109,7 @@ add_action('graphql_register_types', function () {
             'thumbnail' => $field_data['id']['thumbnail'] ?? null,
             'media' => $field_data['id']['media'] ?? null,
             'url' => $field_data['id']['url'] ?? null,
+            'folder' => $field_data['id']['folder'] ?? null, // Add folder attribute
           ];
         }
 

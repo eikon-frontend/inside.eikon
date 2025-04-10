@@ -126,7 +126,8 @@
           title: $(this).data('title'),
           thumbnail: $(this).data('thumbnail'),
           url: $(this).data('url'),
-          media: $(this).data('media')
+          media: $(this).data('media'),
+          folder: $(this).data('folder')
         };
 
         selectVideo(videoData);
@@ -209,7 +210,8 @@
           'data-title="' + video.title + '" ' +
           'data-thumbnail="' + video.thumbnail + '" ' +
           'data-media="' + video.media + '" ' +
-          'data-url="' + video.url + '">';
+          'data-url="' + video.url + '" ' +
+          'data-folder="' + video.folder + '">'; // Add folder attribute
         html += '<div class="vod-video-thumbnail">';
         if (video.thumbnail) {
           html += '<img src="' + video.thumbnail + '" alt="' + video.title + '">';
@@ -282,6 +284,7 @@
         html += '</div>';
         html += '<div class="vod-video-details">';
         html += '<h4>' + videoData.title + '</h4>';
+        html += '<p>' + acf_vod_video_field.i18n.folder + ': ' + (videoData.folder || '-') + '</p>'; // Display folder attribute
         html += '<div class="vod-video-actions">';
         html += '<a href="#" class="vod-video-remove button">' + acf_vod_video_field.i18n.remove_video + '</a>';
         html += '</div>';
