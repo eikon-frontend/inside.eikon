@@ -103,6 +103,13 @@ class acf_field_vod_video extends acf_field
     $value = isset($field['value']) ? $field['value'] : '';
     error_log('ACF VOD Video render_field - Initial value: ' . print_r($value, true));
 
+    // Ensure $value is a string to avoid array-to-string conversion warnings
+    if (is_array($value)) {
+      $value = isset($value['id']) ? $value['id'] : '';
+    }
+    $value = (string) $value;
+    error_log('ACF VOD Video render_field - Sanitized value: ' . $value);
+
     // If no value in field array, try getting it from post meta using field key
     if (empty($value) && !empty($field['key']) && isset($GLOBALS['post']) && !empty($GLOBALS['post']->ID)) {
       $value = get_post_meta($GLOBALS['post']->ID, $field['key'], true);
@@ -215,19 +222,19 @@ class acf_field_vod_video extends acf_field
       echo '<div class="vod-video-details">';
       echo '<h4>' . esc_html($selected_video['title']) . '</h4>';
       echo '<div class="vod-video-actions">';
-      echo '<a href="#" class="vod-video-remove button">' . __('Remove Video', 'vod-video-field') . '</a>';
+      echo '<a href="#" class="vod-video-remove button">' . __('Supprimer la vidéo', 'vod-video-field') . '</a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';
     } else {
       echo '<div class="vod-video-empty">';
-      echo '<p>' . __('No video selected', 'vod-video-field') . '</p>';
+      echo '<p>' . __('Aucune vidéo', 'vod-video-field') . '</p>';
       echo '</div>';
     }
 
     // Video selection button
     echo '<div class="vod-video-select">';
-    echo '<a href="#" class="vod-video-button button">' . __('Select Video', 'vod-video-field') . '</a>';
+    echo '<a href="#" class="vod-video-button button">' . __('Selectionner une vidéo', 'vod-video-field') . '</a>';
     echo '</div>';
 
     // Video search modal (hidden by default)
@@ -241,7 +248,6 @@ class acf_field_vod_video extends acf_field
     echo '<input type="text" class="vod-video-search-input" placeholder="' . esc_attr__('Search videos...', 'vod-video-field') . '">';
     echo '</div>';
     echo '<div class="vod-video-modal-results">';
-    echo '<div class="vod-video-loading">' . __('Loading videos...', 'vod-video-field') . '</div>';
     echo '<div class="vod-video-results"></div>';
     echo '</div>';
     echo '</div>';
