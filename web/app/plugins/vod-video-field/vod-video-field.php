@@ -70,6 +70,10 @@ add_action('graphql_register_types', function () {
           'type' => 'String',
           'description' => __('The thumbnail URL of the video.', 'vod-video-field'),
         ],
+        'media' => [
+          'type' => 'String',
+          'description' => __('The media id URL of the video.', 'vod-video-field'),
+        ],
         'url' => [
           'type' => 'String',
           'description' => __('The URL of the video.', 'vod-video-field'),
@@ -99,6 +103,7 @@ add_action('graphql_register_types', function () {
             'id' => $field_data['id']['id'] ?? null,
             'title' => $field_data['title'] ?? null,
             'thumbnail' => $field_data['id']['thumbnail'] ?? null,
+            'media' => $field_data['id']['media'] ?? null,
             'url' => $field_data['id']['url'] ?? null,
           ];
         }

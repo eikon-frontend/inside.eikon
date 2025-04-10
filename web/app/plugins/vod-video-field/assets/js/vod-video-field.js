@@ -125,7 +125,8 @@
           id: $(this).data('id'),
           title: $(this).data('title'),
           thumbnail: $(this).data('thumbnail'),
-          url: $(this).data('url')
+          url: $(this).data('url'),
+          media: $(this).data('media')
         };
 
         selectVideo(videoData);
@@ -207,6 +208,7 @@
           'data-id="' + video.id + '" ' +
           'data-title="' + video.title + '" ' +
           'data-thumbnail="' + video.thumbnail + '" ' +
+          'data-media="' + video.media + '" ' +
           'data-url="' + video.url + '">';
         html += '<div class="vod-video-thumbnail">';
         if (video.thumbnail) {

@@ -93,32 +93,22 @@ class acf_field_vod_video extends acf_field
    */
   public function render_field($field)
   {
-    // Enhanced debugging
-    error_log('ACF VOD Video render_field - =================== START RENDERING FIELD ===================');
-    error_log('ACF VOD Video render_field - Field key: ' . $field['key']);
-    error_log('ACF VOD Video render_field - Field name: ' . $field['name']);
-    error_log('ACF VOD Video render_field - Raw field value: ' . print_r(isset($field['value']) ? $field['value'] : '', true));
-
     // Get the value from the field array, ensuring consistent handling
     $value = isset($field['value']) ? $field['value'] : '';
-    error_log('ACF VOD Video render_field - Initial value: ' . print_r($value, true));
 
     // Ensure $value is a string to avoid array-to-string conversion warnings
     if (is_array($value)) {
       $value = isset($value['id']) ? $value['id'] : '';
     }
     $value = (string) $value;
-    error_log('ACF VOD Video render_field - Sanitized value: ' . $value);
 
     // If no value in field array, try getting it from post meta using field key
     if (empty($value) && !empty($field['key']) && isset($GLOBALS['post']) && !empty($GLOBALS['post']->ID)) {
       $value = get_post_meta($GLOBALS['post']->ID, $field['key'], true);
-      error_log('ACF VOD Video render_field - Value from post meta by key: ' . print_r($value, true));
 
       // If still no value, try field name as fallback
       if (empty($value) && !empty($field['name'])) {
         $value = get_post_meta($GLOBALS['post']->ID, $field['name'], true);
-        error_log('ACF VOD Video render_field - Value from post meta by name: ' . print_r($value, true));
       }
     }
 
@@ -131,7 +121,7 @@ class acf_field_vod_video extends acf_field
       global $wpdb;
       $table_name = $wpdb->prefix . 'vod_video';
       $video = $wpdb->get_row($wpdb->prepare(
-        "SELECT sname AS title, sImageUrlV2 AS thumbnail, sVideoUrlV2 AS url
+        "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url
            FROM $table_name
            WHERE MD5(sVideoUrlV2) = %s",
         $value
@@ -142,18 +132,18 @@ class acf_field_vod_video extends acf_field
           'id' => $value,
           'title' => $video->title,
           'thumbnail' => $video->thumbnail,
+          'media' => $video->id,
           'url' => $video->url,
         );
-        error_log('ACF VOD Video render_field - Found selected video: ' . print_r($selected_video, true));
       } else {
         // Fallback for when video isn't found - keep the value for consistency
         $selected_video = array(
           'id' => $value,
           'title' => 'Video ID: ' . $value,
           'thumbnail' => '',
+          'media' => '',
           'url' => '',
         );
-        error_log('ACF VOD Video render_field - Video not found in database: ' . $value);
       }
     }
 
@@ -165,27 +155,11 @@ class acf_field_vod_video extends acf_field
     $raw_field_name = $field['name'];
     if (preg_match('/^acf\[(.+?)\]$/', $raw_field_name, $matches)) {
       $field_name = esc_attr($matches[1]); // Extract the name inside acf[]
-      error_log('ACF VOD Video render_field - Extracted base name from array format: ' . $field_name);
     } else {
       $field_name = esc_attr($raw_field_name); // Already a base name
     }
 
     $js_safe_field_id = str_replace('-', '_', $field_id);
-
-    // Debug field identifiers
-    error_log('ACF VOD Video Field - ID: ' . $field_id);
-    error_log('ACF VOD Video Field - Key: ' . $field_key);
-    error_log('ACF VOD Video Field - Raw name: ' . $raw_field_name);
-    error_log('ACF VOD Video Field - Base name: ' . $field_name);
-    error_log('ACF VOD Video Field - JS Safe ID: ' . $js_safe_field_id);
-
-    // Debug field identifiers for troubleshooting
-    error_log('ACF VOD Video render_field - Field identifiers:');
-    error_log('ACF VOD Video render_field - ID: ' . $field_id);
-    error_log('ACF VOD Video render_field - Key: ' . $field_key);
-    error_log('ACF VOD Video render_field - Base name: ' . $field_name);
-    error_log('ACF VOD Video render_field - Input name format: acf[' . $field_key . ']');
-    error_log('ACF VOD Video render_field - Value: ' . esc_attr($value));
 
     // Start ACF standard input wrapper
     echo '<div class="acf-input">';
@@ -310,7 +284,7 @@ class acf_field_vod_video extends acf_field
 
     // Query the database for videos
     $query = $wpdb->prepare(
-      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sVideoUrlV2 AS url
+      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url
              FROM $table_name
              WHERE sname LIKE %s",
       '%' . $wpdb->esc_like($search_term) . '%'
@@ -323,6 +297,7 @@ class acf_field_vod_video extends acf_field
         'id' => md5($row->url), // Generate a unique ID based on the URL
         'title' => $row->title,
         'thumbnail' => $row->thumbnail,
+        'media' => $row->id,
         'url' => $row->url,
       );
     }, $results);
@@ -384,68 +359,35 @@ class acf_field_vod_video extends acf_field
    */
   public function update_value($value, $post_id, $field)
   {
-    // Debug raw POST data to see exactly what's being submitted
-    error_log('ACF VOD Video update_value - =================== START UPDATE ===================');
-    error_log('ACF VOD Video update_value - Raw POST data: ' . print_r($_POST, true));
-    error_log('ACF VOD Video update_value - Complete field array: ' . print_r($field, true));
-    error_log('ACF VOD Video update_value - Initial value passed: ' . print_r($value, true));
-
-    // Debug field identifiers
-    error_log('ACF VOD Video update_value - Field key: ' . $field['key']);
-    error_log('ACF VOD Video update_value - Field name: ' . $field['name']);
-    error_log('ACF VOD Video update_value - Post ID: ' . $post_id);
-
-    // Ensure we have valid field data
-    if (empty($field['key'])) {
-      error_log('ACF VOD Video update_value - Error: Missing field key');
-      return false;
-    }
-
     // Check if value exists in POST data using field key (primary method)
     if (isset($_POST['acf'])) {
-      error_log('ACF VOD Video update_value - Found acf array in POST');
-
       // Primary approach: Look for field key in acf array
-      // This matches our input name="acf[field_key]" format
       if (isset($_POST['acf'][$field['key']])) {
         $value = $_POST['acf'][$field['key']];
-        error_log('ACF VOD Video update_value - Found value in POST[acf] by key: ' . print_r($value, true));
       }
       // Fallback approach: Look for field name (for backward compatibility)
       elseif (isset($_POST['acf'][$field['name']])) {
         $value = $_POST['acf'][$field['name']];
-        error_log('ACF VOD Video update_value - Found value in POST[acf] by name: ' . print_r($value, true));
       }
       // Less likely, but check direct POST field as last resort
       elseif (isset($_POST[$field['name']])) {
         $value = $_POST[$field['name']];
-        error_log('ACF VOD Video update_value - Found value directly in POST by name: ' . print_r($value, true));
-      } else {
-        error_log('ACF VOD Video update_value - Could not find value in POST data under known keys');
-        error_log('ACF VOD Video update_value - Available acf keys: ' . print_r(array_keys($_POST['acf']), true));
       }
-    } else {
-      error_log('ACF VOD Video update_value - No acf array in POST data');
     }
 
     // Handle empty values
     if (empty($value)) {
-      error_log('ACF VOD Video update_value - Empty value detected, cleaning up meta');
-
       // Delete all possible meta keys
       delete_post_meta($post_id, $field['key']);
       delete_post_meta($post_id, '_' . $field['key']);
       delete_post_meta($post_id, $field['name']);
       delete_post_meta($post_id, '_' . $field['name']);
-
-      error_log('ACF VOD Video update_value - Cleaned up meta keys');
       return '';
     }
 
     // Ensure the value is a string and sanitize
     $value = is_string($value) ? $value : strval($value);
     $sanitized_value = sanitize_text_field($value);
-    error_log('ACF VOD Video update_value - Sanitized value: ' . $sanitized_value);
 
     // Verify video exists in database
     global $wpdb;
@@ -453,7 +395,7 @@ class acf_field_vod_video extends acf_field
 
     // Fetch video details from the database
     $video = $wpdb->get_row($wpdb->prepare(
-      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sVideoUrlV2 AS url
+      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url
        FROM $table_name
        WHERE MD5(sVideoUrlV2) = %s",
       $sanitized_value
@@ -465,6 +407,7 @@ class acf_field_vod_video extends acf_field
         'id' => $sanitized_value,
         'title' => $video->title,
         'thumbnail' => $video->thumbnail,
+        'media' => $video->id,
         'url' => $video->url,
       ));
 
@@ -473,11 +416,8 @@ class acf_field_vod_video extends acf_field
       update_post_meta($post_id, '_' . $field['key'], $field['key']);
       update_post_meta($post_id, $field['name'], $video_data);
       update_post_meta($post_id, '_' . $field['name'], $field['key']);
-
-      error_log('ACF VOD Video update_value - Saved JSON: ' . $video_data);
       return $video_data;
     } else {
-      error_log('ACF VOD Video update_value - Video not found in database');
       return '';
     }
   }
@@ -492,42 +432,24 @@ class acf_field_vod_video extends acf_field
    */
   public function load_value($value, $post_id, $field)
   {
-    error_log('ACF VOD Video load_value - =================== START LOADING VALUE ===================');
-    error_log('ACF VOD Video load_value - Post ID: ' . $post_id);
-    error_log('ACF VOD Video load_value - Field key: ' . $field['key']);
-    error_log('ACF VOD Video load_value - Field name: ' . $field['name']);
-    error_log('ACF VOD Video load_value - Initial value: ' . print_r($value, true));
-
-    // Ensure we have valid field data
-    if (empty($field['key'])) {
-      error_log('ACF VOD Video load_value - Error: Missing field key');
-      return false;
-    }
-
     // First try to load using field key (our primary storage method)
     $final_value = get_post_meta($post_id, $field['key'], true);
-    error_log('ACF VOD Video load_value - Value from field key: ' . print_r($final_value, true));
 
     // If no value found by key, try field name as fallback
     if (empty($final_value) && !empty($field['name'])) {
       $final_value = get_post_meta($post_id, $field['name'], true);
-      error_log('ACF VOD Video load_value - Value from field name fallback: ' . print_r($final_value, true));
     }
 
     // If still empty, return the original value
     if (empty($final_value) && !empty($value)) {
       $final_value = $value;
-      error_log('ACF VOD Video load_value - Using original passed value: ' . print_r($final_value, true));
     }
 
     // Decode JSON if the value is stored as JSON
     if (!empty($final_value)) {
       $decoded_value = json_decode($final_value, true);
       if (json_last_error() === JSON_ERROR_NONE) {
-        error_log('ACF VOD Video load_value - Decoded JSON: ' . print_r($decoded_value, true));
         return $decoded_value;
-      } else {
-        error_log('ACF VOD Video load_value - Failed to decode JSON, returning raw value');
       }
     }
 
@@ -539,16 +461,7 @@ class acf_field_vod_video extends acf_field
         "SELECT COUNT(*) FROM $table_name WHERE MD5(sVideoUrlV2) = %s",
         $final_value
       ));
-
-      error_log('ACF VOD Video load_value - Video exists in DB: ' . ($video_exists ? 'yes' : 'no'));
-
-      if (!$video_exists) {
-        error_log('ACF VOD Video load_value - Warning: Value exists in postmeta but not in videos table');
-      }
     }
-
-    error_log('ACF VOD Video load_value - Final value: ' . print_r($final_value, true));
-    error_log('ACF VOD Video load_value - =================== END LOADING VALUE ===================');
 
     return $final_value;
   }
