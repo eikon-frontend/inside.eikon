@@ -49,6 +49,49 @@ function acf_vod_video_field_load_textdomain()
 add_action('plugins_loaded', 'acf_vod_video_field_load_textdomain');
 
 /**
+ * Fetch video details from the Infomaniak VOD API.
+ *
+ * @param string $channel_id The channel ID.
+ * @param string $video_id The video ID.
+ * @return string|null The generated DASH stream URL or null if unavailable.
+ */
+function fetch_vod_video_url($channel_id, $video_id)
+{
+  $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$video_id}";
+  $headers = [
+    'Authorization' => 'Bearer Miv6ZxSnxfWUzJTHmFG5ZUZ2SV8Rl6i6fRLrOh9koWOvnuLshrB5RHNPAihlCOIGDFIUYiXqpHStubMB', // Replace with a valid token
+    'Content-Type' => 'application/json',
+  ];
+
+  $client = new \GuzzleHttp\Client();
+  try {
+    $response = $client->get($api_url, ['headers' => $headers]);
+    $response_data = json_decode($response->getBody(), true);
+
+    // Extract the IDs from the encoded_medias array
+    if (!empty($response_data['data']['encoded_medias'])) {
+      $encoded_medias = $response_data['data']['encoded_medias'];
+      $media_ids = array_map(function ($media) {
+        return $media['id'];
+      }, $encoded_medias);
+
+      // Construct the DASH URL
+      $base_url = "https://play.vod2.infomaniak.com/dash/{$video_id}/{$response_data['data']['folder']['id']}";
+      $media_ids_string = implode(',', $media_ids);
+      return "{$base_url}/,{$media_ids_string},.urlset/manifest.mpd";
+    }
+  } catch (\GuzzleHttp\Exception\ClientException $e) {
+    error_log('Client error: ' . $e->getResponse()->getBody()->getContents());
+  } catch (\GuzzleHttp\Exception\ServerException $e) {
+    error_log('Server error: ' . $e->getResponse()->getBody()->getContents());
+  } catch (\Exception $e) {
+    error_log('Unexpected error: ' . $e->getMessage());
+  }
+
+  return null;
+}
+
+/**
  * Register GraphQL field type using register_graphql_acf_field_type
  */
 add_action('graphql_register_types', function () {
@@ -104,13 +147,22 @@ add_action('graphql_register_types', function () {
               : $field_value[$field_name];
 
             // Extract specific subfields
+            $video_id = $field_data['id']['media'] ?? null;
+            $channel_id = "14234";
+
+            // Fetch better quality stream URL using the refactored function
+            $better_quality_url = null;
+            if ($video_id && $channel_id) {
+              $better_quality_url = fetch_vod_video_url($channel_id, $video_id);
+            }
+
             return [
-              'id' => $field_data['id']['id'] ?? null,
+              'id' => $video_id,
               'title' => $field_data['title'] ?? null,
               'thumbnail' => $field_data['id']['thumbnail'] ?? null,
               'media' => $field_data['id']['media'] ?? null,
-              'url' => $field_data['id']['url'] ?? null,
-              'folder' => $field_data['id']['folder'] ?? null, // Add folder attribute
+              'url' => $better_quality_url ?: __('Access denied or unavailable', 'vod-video-field'), // Fallback value
+              'folder' => $field_data['id']['folder'] ?? null,
             ];
           }
 
