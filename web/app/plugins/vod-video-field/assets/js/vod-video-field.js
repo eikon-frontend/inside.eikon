@@ -284,7 +284,6 @@
         html += '</div>';
         html += '<div class="vod-video-details">';
         html += '<h4>' + videoData.title + '</h4>';
-        html += '<p>' + acf_vod_video_field.i18n.folder + ': ' + (videoData.folder || '-') + '</p>'; // Display folder attribute
         html += '<div class="vod-video-actions">';
         html += '<a href="#" class="vod-video-remove button">' + acf_vod_video_field.i18n.remove_video + '</a>';
         html += '</div>';

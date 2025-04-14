@@ -3,6 +3,11 @@
  */
 
 /* Field Container */
+.field-type-icon.field-type-icon-vod-video:before {
+    -webkit-mask-image: url(../images/icon.svg);
+    mask-image: url(../images/icon.svg);
+}
+
 .acf-field-vod-video .vod-video-container {
     position: relative;
     background: #fff;
@@ -55,10 +60,11 @@
     font-size: 14px;
     color: #23282d;
     font-weight: 600;
-    display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
 }
 
 /* Empty State */

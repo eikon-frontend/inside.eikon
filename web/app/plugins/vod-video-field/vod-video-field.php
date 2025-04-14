@@ -59,7 +59,7 @@ function fetch_vod_video_url($channel_id, $video_id)
 {
   $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$video_id}";
   $headers = [
-    'Authorization' => 'Bearer Miv6ZxSnxfWUzJTHmFG5ZUZ2SV8Rl6i6fRLrOh9koWOvnuLshrB5RHNPAihlCOIGDFIUYiXqpHStubMB', // Replace with a valid token
+    'Authorization' => 'Bearer ' . getenv('INFOMANIAK_VOD_API_TOKEN'),
     'Content-Type' => 'application/json',
   ];
 
@@ -161,7 +161,7 @@ add_action('graphql_register_types', function () {
               'title' => $field_data['title'] ?? null,
               'thumbnail' => $field_data['id']['thumbnail'] ?? null,
               'media' => $field_data['id']['media'] ?? null,
-              'url' => $better_quality_url ?: __('Access denied or unavailable', 'vod-video-field'), // Fallback value
+              'url' => $better_quality_url ?? null,
               'folder' => $field_data['id']['folder'] ?? null,
             ];
           }

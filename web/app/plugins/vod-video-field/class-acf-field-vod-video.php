@@ -24,6 +24,13 @@ class acf_field_vod_video extends acf_field
   public $show_in_rest = true;
 
   /**
+   * Icon for the field type.
+   *
+   * @var string
+   */
+  public $icon;
+
+  /**
    * Constructor
    */
   public function __construct()
@@ -32,7 +39,7 @@ class acf_field_vod_video extends acf_field
     $this->name = 'vod_video';
 
     // Field label (for public-facing UI)
-    $this->label = __('VOD Video', 'vod-video-field');
+    $this->label = __('Vidéo', 'vod-video-field');
 
     // Field category
     $this->category = 'content';
@@ -53,8 +60,10 @@ class acf_field_vod_video extends acf_field
       'loading' => __('Loading...', 'vod-video-field'),
       'error' => __('Error loading videos', 'vod-video-field'),
       'no_video_selected' => __('No video selected', 'vod-video-field'),
-      'remove_video' => __('Remove Video', 'vod-video-field'),
+      'remove_video' => __('Retirer la vidéo', 'vod-video-field'),
     );
+
+    $this->icon = 'text';
 
     parent::__construct();
 
@@ -197,7 +206,7 @@ class acf_field_vod_video extends acf_field
       echo '<div class="vod-video-details">';
       echo '<h4>' . esc_html($selected_video['title']) . '</h4>';
       echo '<div class="vod-video-actions">';
-      echo '<a href="#" class="vod-video-remove button">' . __('Supprimer la vidéo', 'vod-video-field') . '</a>';
+      echo '<a href="#" class="vod-video-remove button">' . __('Retirer la vidéo', 'vod-video-field') . '</a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';
