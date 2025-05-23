@@ -58,7 +58,6 @@
     "wpackagist-plugin/members": "^3.2",
     "wpackagist-plugin/wp-mail-smtp": "^4.0",
     "jysperu/php-qr-code": "^2",
-    "wpackagist-plugin/vod-infomaniak": "^1.5",
     "guzzlehttp/guzzle": "^7.9"
   },
   "require-dev": {

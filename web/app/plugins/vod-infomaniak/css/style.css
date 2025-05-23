@@ -1,0 +1,28 @@
+#vodEncodeLoader ul {
+  list-style-type:square;
+  padding-left: 30px;
+  margin-left:30px;
+}
+#direct_vod_upload, #vodUploadLoader, #vod-up{
+	margin-left:30px;
+}
+
+#vodEncodeLoader li {
+	
+}
+
+.vodencode{
+	color: #dddddd;
+}
+
+.stepEncodeOK{
+	color: #000000;	
+}
+
+#notaDispo {
+	font-size: 10px;
+}
+
+.hidden {
+	display: none;
+}
