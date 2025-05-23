@@ -16,12 +16,11 @@
                 "class": "",
                 "id": ""
             },
-            "show_in_graphql": 1,
             "layouts": {
                 "layout_6188f63633823": {
                     "key": "layout_6188f63633823",
-                    "name": "video",
-                    "label": "Video",
+                    "name": "video-embed",
+                    "label": "Video (externe)",
                     "display": "block",
                     "sub_fields": [
                         {
@@ -62,6 +61,59 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": ""
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_683003b21de02": {
+                    "key": "layout_683003b21de02",
+                    "name": "video",
+                    "label": "Video",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_683003b21de03",
+                            "label": "Video",
+                            "name": "video",
+                            "aria-label": "",
+                            "type": "vod_video",
+                            "instructions": "Sélectionnez une vidéo qui a été uploadé au préalable sur la plateforme inside.eikon (sous Vidéos → Importation).",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "graphql_field_name": "video",
+                            "return_format": "array",
+                            "allow_in_bindings": 0
+                        },
+                        {
+                            "key": "field_683003b21de04",
+                            "label": "Légende",
+                            "name": "caption",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 1,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "",
+                            "graphql_field_name": "",
+                            "graphql_non_null": 0
                         }
                     ],
                     "min": "",
@@ -155,7 +207,11 @@
             },
             "min": "",
             "max": "",
-            "button_label": "Ajouter un élément"
+            "button_label": "Ajouter un élément",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "galerie",
+            "graphql_non_null": 0
         }
     ],
     "location": [
@@ -184,5 +240,5 @@
     "graphql_field_name": "portfolio",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1731938459
+    "modified": 1747988074
 }
