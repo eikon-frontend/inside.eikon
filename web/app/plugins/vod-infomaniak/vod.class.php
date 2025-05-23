@@ -118,47 +118,21 @@ class EasyVod
 
   function isCurrentUserCan($page)
   {
-    $user = wp_get_current_user(); // pour l'utilisateur courant
-    $iUserValue = $this->getRightValue($user->roles);
-
     switch ($page) {
       case 'plugin':
-        $value = $this->options['vod_right_integration'] <= $iUserValue ||
-          $this->options['vod_right_upload'] <= $iUserValue ||
-          $this->options['vod_right_player'] <= $iUserValue ||
-          $this->options['vod_right_playlist'] <= $iUserValue;
-        return $value;
+        return current_user_can('vod_admin') || current_user_can('vod_import');
       case 'importation':
-        return $this->options['vod_right_upload'] <= $iUserValue;
+        return current_user_can('vod_import');
       case 'player':
-        return $this->options['vod_right_player'] <= $iUserValue;
+        return current_user_can('vod_admin');
       case 'playlist':
-        return $this->options['vod_right_playlist'] <= $iUserValue;
+        return current_user_can('vod_admin');
       case 'gestion':
-        return $this->options['vod_right_integration'] <= $iUserValue;
+        return current_user_can('vod_admin') || current_user_can('vod_import');
       case 'configuration':
-        return current_user_can('manage_options'); // Change from iUserValue == VOD_RIGHT_ADMIN
+        return current_user_can('manage_options');
       default:
         return true;
-    }
-  }
-
-  function getRightValue($sValue)
-  {
-    if (is_array($sValue)) {
-      $sValue = reset($sValue);
-    }
-    switch ($sValue) {
-      case 'contributor':
-        return VOD_RIGHT_CONTRIBUTOR;
-      case 'author':
-        return VOD_RIGHT_AUTHOR;
-      case 'editor':
-        return VOD_RIGHT_EDITOR;
-      case 'administrator':
-        return VOD_RIGHT_ADMIN;
-      default:
-        return VOD_RIGHT_CONTRIBUTOR;
     }
   }
 
@@ -1486,7 +1460,7 @@ class EasyVod_db
     dbDelta($sql_playlist);
 
     $sql_upload = "CREATE TABLE " . $this->db_table_upload . " (
-		 `iUpload` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+		 `i
 		 `sToken` VARCHAR( 255 ) NOT NULL,
 		 `iPost` INT UNSIGNED NOT NULL,
 		 `iVideo` VARCHAR( 25 ) NOT NULL,
