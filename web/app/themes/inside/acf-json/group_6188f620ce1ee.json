@@ -1,244 +1,240 @@
 {
-    "key": "group_6188f620ce1ee",
-    "title": "Galerie du projet",
-    "fields": [
-        {
-            "key": "field_6188f62ec37cc",
-            "label": "Galerie",
-            "name": "galerie",
-            "aria-label": "",
-            "type": "flexible_content",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
+  "key": "group_6188f620ce1ee",
+  "title": "Galerie du projet",
+  "fields": [
+    {
+      "key": "field_6188f62ec37cc",
+      "label": "Galerie",
+      "name": "galerie",
+      "aria-label": "",
+      "type": "flexible_content",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "layouts": {
+        "layout_6188f66fc37cf": {
+          "key": "layout_6188f66fc37cf",
+          "name": "image",
+          "label": "Image",
+          "display": "block",
+          "sub_fields": [
+            {
+              "key": "field_6188f66fc37d0",
+              "label": "Image",
+              "name": "image",
+              "aria-label": "",
+              "type": "image",
+              "instructions": "Format libre, mais ne pas dépasser un ratio longueur/largeur de 16/9 ou 9/16\r\n(3000px de large, au maximum)",
+              "required": 1,
+              "conditional_logic": 0,
+              "wrapper": {
                 "width": "",
                 "class": "",
                 "id": ""
-            },
-            "layouts": {
-                "layout_6188f66fc37cf": {
-                    "key": "layout_6188f66fc37cf",
-                    "name": "image",
-                    "label": "Image",
-                    "display": "block",
-                    "sub_fields": [
-                        {
-                            "key": "field_6188f66fc37d0",
-                            "label": "Image",
-                            "name": "image",
-                            "aria-label": "",
-                            "type": "image",
-                            "instructions": "Format libre, mais ne pas dépasser un ratio longueur\/largeur de 16\/9 ou 9\/16\r\n(3000px de large, au maximum)",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "show_in_graphql": 1,
-                            "return_format": "array",
-                            "preview_size": "medium",
-                            "library": "all",
-                            "min_width": "",
-                            "min_height": "",
-                            "min_size": "",
-                            "max_width": 3000,
-                            "max_height": 3000,
-                            "max_size": "",
-                            "mime_types": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_683003b21de02": {
-                    "key": "layout_683003b21de02",
-                    "name": "video",
-                    "label": "Video",
-                    "display": "block",
-                    "sub_fields": [
-                        {
-                            "key": "field_683003b21de03",
-                            "label": "Video",
-                            "name": "video",
-                            "aria-label": "",
-                            "type": "vod_video",
-                            "instructions": "Sélectionnez une vidéo qui a été uploadé au préalable sur la plateforme inside.eikon (sous Vidéos → Importation).",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "graphql_field_name": "video",
-                            "return_format": "array",
-                            "allow_in_bindings": 0
-                        },
-                        {
-                            "key": "field_683003b21de04",
-                            "label": "Légende",
-                            "name": "caption",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "allow_in_bindings": 1,
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "show_in_graphql": 1,
-                            "graphql_description": "",
-                            "graphql_field_name": "",
-                            "graphql_non_null": 0
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_6188f63633823": {
-                    "key": "layout_6188f63633823",
-                    "name": "video-embed",
-                    "label": "Video (obsolete)",
-                    "display": "block",
-                    "sub_fields": [
-                        {
-                            "key": "field_6188f63ac37cd",
-                            "label": "Video",
-                            "name": "video",
-                            "aria-label": "",
-                            "type": "oembed",
-                            "instructions": "Uploadez la vidéo sur un service externe (par exemple: YouTube ou Vimeo) puis insérez l'url de la vidéo ici.",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "show_in_graphql": 1,
-                            "width": "",
-                            "height": ""
-                        },
-                        {
-                            "key": "field_6554f28a0c3ad",
-                            "label": "Légende",
-                            "name": "caption",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "show_in_graphql": 1,
-                            "default_value": "",
-                            "maxlength": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_65419e5206c4c": {
-                    "key": "layout_65419e5206c4c",
-                    "name": "twitch",
-                    "label": "Twitch (obsolete)",
-                    "display": "block",
-                    "sub_fields": [
-                        {
-                            "key": "field_65419e5a06c4e",
-                            "label": "Twitch",
-                            "name": "twitch",
-                            "aria-label": "",
-                            "type": "url",
-                            "instructions": "URL du replay ou du live twitch",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "show_in_graphql": 1,
-                            "default_value": "",
-                            "placeholder": ""
-                        },
-                        {
-                            "key": "field_6554f2a00c3ae",
-                            "label": "Légende",
-                            "name": "caption",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "show_in_graphql": 1,
-                            "default_value": "",
-                            "maxlength": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                }
-            },
-            "min": "",
-            "max": "",
-            "button_label": "Ajouter un élément",
-            "show_in_graphql": 1,
-            "graphql_description": "",
-            "graphql_field_name": "galerie",
-            "graphql_non_null": 0
-        }
-    ],
-    "location": [
-        [
-            {
-                "param": "post_type",
-                "operator": "==",
-                "value": "project"
+              },
+              "show_in_graphql": 1,
+              "return_format": "array",
+              "preview_size": "medium",
+              "library": "all",
+              "min_width": "",
+              "min_height": "",
+              "min_size": "",
+              "max_width": 3000,
+              "max_height": 3000,
+              "max_size": "",
+              "mime_types": ""
             }
-        ]
-    ],
-    "menu_order": 0,
-    "position": "normal",
-    "style": "default",
-    "label_placement": "top",
-    "instruction_placement": "label",
-    "hide_on_screen": [
-        "page_attributes",
-        "categories",
-        "tags"
-    ],
-    "active": true,
-    "description": "",
-    "show_in_rest": 1,
-    "show_in_graphql": 1,
-    "graphql_field_name": "portfolio",
-    "map_graphql_types_from_location_rules": 0,
-    "graphql_types": "",
-    "modified": 1748083992
+          ],
+          "min": "",
+          "max": ""
+        },
+        "layout_683003b21de02": {
+          "key": "layout_683003b21de02",
+          "name": "video",
+          "label": "Video",
+          "display": "block",
+          "sub_fields": [
+            {
+              "key": "field_683003b21de03",
+              "label": "Video",
+              "name": "video",
+              "aria-label": "",
+              "type": "vod_video",
+              "instructions": "Sélectionnez une vidéo qui a été uploadé au préalable sur la plateforme inside.eikon (sous Vidéos → Importation).",
+              "required": 0,
+              "conditional_logic": 0,
+              "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+              },
+              "graphql_field_name": "video",
+              "return_format": "array",
+              "allow_in_bindings": 0
+            },
+            {
+              "key": "field_683003b21de04",
+              "label": "Légende",
+              "name": "caption",
+              "aria-label": "",
+              "type": "text",
+              "instructions": "",
+              "required": 0,
+              "conditional_logic": 0,
+              "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+              },
+              "default_value": "",
+              "maxlength": "",
+              "allow_in_bindings": 1,
+              "placeholder": "",
+              "prepend": "",
+              "append": "",
+              "show_in_graphql": 1,
+              "graphql_description": "",
+              "graphql_field_name": "",
+              "graphql_non_null": 0
+            }
+          ],
+          "min": "",
+          "max": ""
+        },
+        "layout_6188f63633823": {
+          "key": "layout_6188f63633823",
+          "name": "video-embed",
+          "label": "Video (obsolete)",
+          "display": "block",
+          "sub_fields": [
+            {
+              "key": "field_6188f63ac37cd",
+              "label": "Video",
+              "name": "video-embed",
+              "aria-label": "",
+              "type": "oembed",
+              "instructions": "Uploadez la vidéo sur un service externe (par exemple: YouTube ou Vimeo) puis insérez l'url de la vidéo ici.",
+              "required": 1,
+              "conditional_logic": 0,
+              "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+              },
+              "show_in_graphql": 1,
+              "width": "",
+              "height": ""
+            },
+            {
+              "key": "field_6554f28a0c3ad",
+              "label": "Légende",
+              "name": "caption",
+              "aria-label": "",
+              "type": "text",
+              "instructions": "",
+              "required": 0,
+              "conditional_logic": 0,
+              "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+              },
+              "show_in_graphql": 1,
+              "default_value": "",
+              "maxlength": "",
+              "placeholder": "",
+              "prepend": "",
+              "append": ""
+            }
+          ],
+          "min": "",
+          "max": ""
+        },
+        "layout_65419e5206c4c": {
+          "key": "layout_65419e5206c4c",
+          "name": "twitch",
+          "label": "Twitch (obsolete)",
+          "display": "block",
+          "sub_fields": [
+            {
+              "key": "field_65419e5a06c4e",
+              "label": "Twitch",
+              "name": "twitch",
+              "aria-label": "",
+              "type": "url",
+              "instructions": "URL du replay ou du live twitch",
+              "required": 0,
+              "conditional_logic": 0,
+              "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+              },
+              "show_in_graphql": 1,
+              "default_value": "",
+              "placeholder": ""
+            },
+            {
+              "key": "field_6554f2a00c3ae",
+              "label": "Légende",
+              "name": "caption",
+              "aria-label": "",
+              "type": "text",
+              "instructions": "",
+              "required": 0,
+              "conditional_logic": 0,
+              "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+              },
+              "show_in_graphql": 1,
+              "default_value": "",
+              "maxlength": "",
+              "placeholder": "",
+              "prepend": "",
+              "append": ""
+            }
+          ],
+          "min": "",
+          "max": ""
+        }
+      },
+      "min": "",
+      "max": "",
+      "button_label": "Ajouter un élément",
+      "show_in_graphql": 1,
+      "graphql_description": "",
+      "graphql_field_name": "galerie",
+      "graphql_non_null": 0
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "project"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": ["page_attributes", "categories", "tags"],
+  "active": true,
+  "description": "",
+  "show_in_rest": 1,
+  "show_in_graphql": 1,
+  "graphql_field_name": "portfolio",
+  "map_graphql_types_from_location_rules": 0,
+  "graphql_types": "",
+  "modified": 1748083995
 }
