@@ -102,27 +102,36 @@ class acf_field_vod_video extends acf_field
    */
   public function render_field($field)
   {
-    // Get the value from the field array, ensuring consistent handling
+    // Get the value from the field array
     $value = isset($field['value']) ? $field['value'] : '';
 
-    // Ensure $value is a string to avoid array-to-string conversion warnings
-    if (is_array($value)) {
-      $value = isset($value['id']) ? $value['id'] : '';
-    }
-    $value = (string) $value;
-
-    // If no value in field array, try getting it from post meta using field key
-    if (empty($value) && !empty($field['key']) && isset($GLOBALS['post']) && !empty($GLOBALS['post']->ID)) {
-      $value = get_post_meta($GLOBALS['post']->ID, $field['key'], true);
-
-      // If still no value, try field name as fallback
-      if (empty($value) && !empty($field['name'])) {
-        $value = get_post_meta($GLOBALS['post']->ID, $field['name'], true);
+    // Clean up the value - handle both JSON strings and arrays
+    if (!empty($value)) {
+      if (is_string($value) && strpos($value, '{') === 0) {
+        $decoded = json_decode($value, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+          // If it's our expected format with nested id
+          if (isset($decoded['id']) && is_array($decoded['id'])) {
+            $value = md5($decoded['id']['url']); // Generate ID from URL
+          } elseif (isset($decoded['id']) && is_string($decoded['id'])) {
+            $value = $decoded['id'];
+          } else {
+            $value = ''; // Invalid format, clear the value
+          }
+        }
+      } elseif (is_array($value)) {
+        if (isset($value['id']) && is_array($value['id'])) {
+          $value = md5($value['id']['url']); // Generate ID from URL
+        } elseif (isset($value['id'])) {
+          $value = $value['id'];
+        } else {
+          $value = ''; // Invalid format, clear the value
+        }
       }
     }
 
-    // Merge with defaults
-    $field = array_merge($this->defaults, $field);
+    // Ensure final value is either empty or a clean string
+    $value = (is_string($value) && !empty($value)) ? $value : '';
 
     // Get the selected video data if available
     $selected_video = array();
@@ -143,17 +152,12 @@ class acf_field_vod_video extends acf_field
           'thumbnail' => $video->thumbnail,
           'media' => $video->id,
           'url' => $video->url,
-          'folder' => $video->folder, // Add folder attribute
+          'folder' => $video->folder
         );
       } else {
-        // Fallback for when video isn't found - keep the value for consistency
-        $selected_video = array(
-          'id' => $value,
-          'title' => 'Video ID: ' . $value,
-          'thumbnail' => '',
-          'media' => '',
-          'url' => '',
-        );
+        // If no video found, clear the value
+        $value = '';
+        $selected_video = array();
       }
     }
 
@@ -376,40 +380,21 @@ class acf_field_vod_video extends acf_field
       return '';
     }
 
-    // Ensure the value is a string and sanitize
-    $value = is_string($value) ? $value : strval($value);
-    $sanitized_value = sanitize_text_field($value);
-
-    // Verify video exists in database
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'vod_video';
-
-    // Fetch video details from the database
-    $video = $wpdb->get_row($wpdb->prepare(
-      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url, sFolderCode AS folder
-       FROM $table_name
-       WHERE MD5(sVideoUrlV2) = %s",
-      $sanitized_value
-    ));
-
-    if ($video) {
-      // Create a JSON object with video details
-      $video_data = json_encode(array(
-        'id' => array(
-          'media' => $video->id,
-          'thumbnail' => $video->thumbnail,
-          'url' => $video->url,
-          'folder' => $video->folder
-        ),
-        'title' => $video->title
-      ));
-
-      // Save directly using the provided field name
-      update_post_meta($post_id, $field['name'], $video_data);
-      return $video_data;
+    // If value is JSON string, extract just the ID
+    if (strpos($value, '{') === 0) {
+      $decoded = json_decode($value, true);
+      if (json_last_error() === JSON_ERROR_NONE && isset($decoded['id'])) {
+        $value = $decoded['id'];
+      }
     }
 
-    return '';
+    // Ensure the value is a string and sanitize
+    $value = sanitize_text_field($value);
+
+    // Store the value
+    update_post_meta($post_id, $field['name'], $value);
+
+    return $value;
   }
 
   /**
@@ -422,37 +407,21 @@ class acf_field_vod_video extends acf_field
    */
   public function load_value($value, $post_id, $field)
   {
-    // First try to load using field key (our primary storage method)
-    $final_value = get_post_meta($post_id, $field['key'], true);
+    // Get the stored value
+    $stored_value = get_post_meta($post_id, $field['name'], true);
 
-    // If no value found by key, try field name as fallback
-    if (empty($final_value) && !empty($field['name'])) {
-      $final_value = get_post_meta($post_id, $field['name'], true);
-    }
-
-    // If still empty, return the original value
-    if (empty($final_value) && !empty($value)) {
-      $final_value = $value;
-    }
-
-    // Decode JSON if the value is stored as JSON
-    if (!empty($final_value)) {
-      $decoded_value = json_decode($final_value, true);
-      if (json_last_error() === JSON_ERROR_NONE) {
-        return $decoded_value;
+    // If the stored value is JSON, parse it and extract the ID
+    if (!empty($stored_value) && strpos($stored_value, '{') === 0) {
+      $decoded = json_decode($stored_value, true);
+      if (json_last_error() === JSON_ERROR_NONE && isset($decoded['id'])) {
+        $stored_value = $decoded['id'];
       }
     }
 
-    // If we have a value, verify it exists in the videos table
-    if (!empty($final_value)) {
-      global $wpdb;
-      $table_name = $wpdb->prefix . 'vod_video';
-      $video_exists = $wpdb->get_var($wpdb->prepare(
-        "SELECT COUNT(*) FROM $table_name WHERE MD5(sVideoUrlV2) = %s",
-        $final_value
-      ));
+    if (!empty($stored_value)) {
+      return $stored_value;
     }
 
-    return $final_value;
+    return '';
   }
 }

@@ -236,11 +236,11 @@
         return;
       }
 
-      // Update hidden input
+      // Store just the video ID
       $fieldInput.val(videoData.id);
 
-      // Trigger change event for ACF - CRITICAL for saving
-      $fieldInput.trigger('change');
+      // Important: Trigger both events
+      $fieldInput.trigger('input').trigger('change');
 
       // Update preview
       updatePreview(videoData);
@@ -253,16 +253,21 @@
      * Remove the selected video
      */
     function removeSelectedVideo() {
-      // Use the helper function to find the input element
       const $fieldInput = findInputElement($field);
       if (!$fieldInput) {
         return;
       }
 
-      // Clear input and trigger change
-      $fieldInput.val('').trigger('change');
+      // Clear the input value completely
+      $fieldInput.val('').attr('value', '');
 
-      // Update preview
+      // Trigger all possible events for thorough update
+      $fieldInput
+        .trigger('input')
+        .trigger('change')
+        .trigger('blur');
+
+      // Force update preview to empty state
       updatePreview(null);
     }
 
