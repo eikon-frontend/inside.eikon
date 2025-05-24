@@ -370,29 +370,9 @@ class acf_field_vod_video extends acf_field
    */
   public function update_value($value, $post_id, $field)
   {
-    // Check if value exists in POST data using field key (primary method)
-    if (isset($_POST['acf'])) {
-      // Primary approach: Look for field key in acf array
-      if (isset($_POST['acf'][$field['key']])) {
-        $value = $_POST['acf'][$field['key']];
-      }
-      // Fallback approach: Look for field name (for backward compatibility)
-      elseif (isset($_POST['acf'][$field['name']])) {
-        $value = $_POST['acf'][$field['name']];
-      }
-      // Less likely, but check direct POST field as last resort
-      elseif (isset($_POST[$field['name']])) {
-        $value = $_POST[$field['name']];
-      }
-    }
-
     // Handle empty values
     if (empty($value)) {
-      // Delete all possible meta keys
-      delete_post_meta($post_id, $field['key']);
-      delete_post_meta($post_id, '_' . $field['key']);
       delete_post_meta($post_id, $field['name']);
-      delete_post_meta($post_id, '_' . $field['name']);
       return '';
     }
 
@@ -415,23 +395,21 @@ class acf_field_vod_video extends acf_field
     if ($video) {
       // Create a JSON object with video details
       $video_data = json_encode(array(
-        'id' => $sanitized_value,
-        'title' => $video->title,
-        'thumbnail' => $video->thumbnail,
-        'media' => $video->id,
-        'url' => $video->url,
-        'folder' => $video->folder, // Add folder attribute
+        'id' => array(
+          'media' => $video->id,
+          'thumbnail' => $video->thumbnail,
+          'url' => $video->url,
+          'folder' => $video->folder
+        ),
+        'title' => $video->title
       ));
 
-      // Save the JSON object in post meta
-      update_post_meta($post_id, $field['key'], $video_data);
-      update_post_meta($post_id, '_' . $field['key'], $field['key']);
+      // Save directly using the provided field name
       update_post_meta($post_id, $field['name'], $video_data);
-      update_post_meta($post_id, '_' . $field['name'], $field['key']);
       return $video_data;
-    } else {
-      return '';
     }
+
+    return '';
   }
 
   /**
