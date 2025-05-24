@@ -130,7 +130,7 @@ add_action('graphql_register_types', function () {
 
     // Register the video field with the custom object type for multiple type names
     foreach (['PageFields', 'DepartmentFields', 'PortfolioGalerieVodLayout'] as $type_name) {
-      register_graphql_field($type_name, 'video', [
+      register_graphql_field($type_name, 'vod', [
         'type' => 'VODVideo',
         'description' => __('The VOD Video field, returning video details.', 'vod-video-field'),
         'resolve' => function ($root, $args, $context, $info) {
