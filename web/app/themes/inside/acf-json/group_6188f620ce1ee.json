@@ -55,7 +55,7 @@
         },
         "layout_683003b21de02": {
           "key": "layout_683003b21de02",
-          "name": "video",
+          "name": "vod",
           "label": "Video",
           "display": "block",
           "sub_fields": [
@@ -108,14 +108,14 @@
         },
         "layout_6188f63633823": {
           "key": "layout_6188f63633823",
-          "name": "video-embed",
+          "name": "video",
           "label": "Video (obsolete)",
           "display": "block",
           "sub_fields": [
             {
               "key": "field_6188f63ac37cd",
               "label": "Video",
-              "name": "video-embed",
+              "name": "video",
               "aria-label": "",
               "type": "oembed",
               "instructions": "Uploadez la vidéo sur un service externe (par exemple: YouTube ou Vimeo) puis insérez l'url de la vidéo ici.",
