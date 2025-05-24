@@ -97,166 +97,133 @@ class acf_field_vod_video extends acf_field
   /**
    * Render the field input
    *
-   * @param array $field The field settings array
+   * @param array $field The field array
    * @return void
    */
   public function render_field($field)
   {
-    // Get the value from the field array
+    // Get the value
     $value = isset($field['value']) ? $field['value'] : '';
 
-    // Clean up the value - handle both JSON strings and arrays
-    if (!empty($value)) {
-      if (is_string($value) && strpos($value, '{') === 0) {
-        $decoded = json_decode($value, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-          // If it's our expected format with nested id
-          if (isset($decoded['id']) && is_array($decoded['id'])) {
-            $value = md5($decoded['id']['url']); // Generate ID from URL
-          } elseif (isset($decoded['id']) && is_string($decoded['id'])) {
-            $value = $decoded['id'];
-          } else {
-            $value = ''; // Invalid format, clear the value
-          }
-        }
-      } elseif (is_array($value)) {
-        if (isset($value['id']) && is_array($value['id'])) {
-          $value = md5($value['id']['url']); // Generate ID from URL
-        } elseif (isset($value['id'])) {
-          $value = $value['id'];
-        } else {
-          $value = ''; // Invalid format, clear the value
-        }
-      }
+    // Get field name
+    $input_name = $field['name'];
+
+    // If the name doesn't start with acf, wrap it
+    if (strpos($input_name, 'acf[') !== 0) {
+      $input_name = 'acf[' . $input_name . ']';
     }
 
-    // Ensure final value is either empty or a clean string
-    $value = (is_string($value) && !empty($value)) ? $value : '';
-
-    // Get the selected video data if available
-    $selected_video = array();
-    if (!empty($value)) {
-      global $wpdb;
-      $table_name = $wpdb->prefix . 'vod_video';
-      $video = $wpdb->get_row($wpdb->prepare(
-        "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url, sFolderCode AS folder
-           FROM $table_name
-           WHERE MD5(sVideoUrlV2) = %s",
-        $value
-      ));
-
-      if ($video) {
-        $selected_video = array(
-          'id' => $value,
-          'title' => $video->title,
-          'thumbnail' => $video->thumbnail,
-          'media' => $video->id,
-          'url' => $video->url,
-          'folder' => $video->folder
-        );
-      } else {
-        // If no video found, clear the value
-        $value = '';
-        $selected_video = array();
-      }
-    }
-
-    // Unique field identifier
-    $field_id = esc_attr($field['id']);
-    $field_key = esc_attr($field['key']);
-
-    // Extract the base field name (without ACF array format if present)
-    $raw_field_name = $field['name'];
-    if (preg_match('/^acf\[(.+?)\]$/', $raw_field_name, $matches)) {
-      $field_name = esc_attr($matches[1]); // Extract the name inside acf[]
-    } else {
-      $field_name = esc_attr($raw_field_name); // Already a base name
-    }
-
-    $js_safe_field_id = str_replace('-', '_', $field_id);
-
-    // Start ACF standard input wrapper
+    // Start field wrapper
     echo '<div class="acf-input">';
 
-    // Hidden input with correct ACF naming format
-    // IMPORTANT: ACF expects name="acf[field_key]" format in form submissions
+    // Parse the value if it exists
+    $video_data = null;
+    if (!empty($value)) {
+      if (is_string($value)) {
+        $decoded = json_decode($value, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+          $video_data = $decoded;
+        }
+      } elseif (is_array($value)) {
+        $video_data = $value;
+      }
+    }
+
+    // Hidden input - store the original structure
+    $input_value = '';
+    if (!empty($value)) {
+      if (is_string($value) && $value[0] === '{') {
+        // If it's already a JSON string, use it as is
+        $input_value = $value;
+      } else if (is_array($value)) {
+        // Check if we need to reconstruct the original structure
+        if (isset($value['id']) && !is_array($value['id']) && isset($value['url'])) {
+          // Convert from flat structure back to nested
+          $nested_value = array(
+            'id' => array(
+              'media' => $value['id'],
+              'thumbnail' => $value['thumbnail'],
+              'url' => $value['url'],
+              'folder' => $value['folder'],
+            ),
+            'title' => $value['title'],
+          );
+          $input_value = wp_json_encode($nested_value);
+        } else {
+          // Already in the correct structure
+          $input_value = wp_json_encode($value);
+        }
+      }
+    }
     printf(
-      '<input type="hidden" id="%s" name="acf[%s]" value="%s" class="vod-video-input" data-key="%s" data-name="%s">',
-      $field_id,
-      $field_key, // Use field key for ACF's array format
-      esc_attr($value),
-      $field_key,
-      $field_name
+      '<input type="hidden" id="%s" class="vod-video-input" name="%s" value="%s" data-key="%s">',
+      esc_attr($field['id']),
+      esc_attr($input_name),
+      esc_attr($input_value),
+      esc_attr($field['key'])
     );
 
-    // Video preview container with field identifiers
-    printf(
-      '<div class="vod-video-container" data-field-id="%s" data-field-key="%s" data-field-name="%s">',
-      esc_attr($js_safe_field_id),
-      $field_key,
-      $field_name
-    );
+    // Video preview container
+    echo '<div class="vod-video-container">';
 
-    // Display selected video if available
-    if (!empty($selected_video)) {
+    // Display selected video preview if available
+    if ($video_data && isset($video_data['id'])) {
       echo '<div class="vod-video-preview">';
       echo '<div class="vod-video-thumbnail">';
-      if (!empty($selected_video['thumbnail'])) {
-        echo '<img src="' . esc_url($selected_video['thumbnail']) . '" alt="' . esc_attr($selected_video['title']) . '">';
+
+      $thumbnail = isset($video_data['id']['thumbnail']) ? $video_data['id']['thumbnail'] : '';
+      if ($thumbnail) {
+        printf(
+          '<img src="%s" alt="%s">',
+          esc_url($thumbnail),
+          esc_attr($video_data['title'] ?? '')
+        );
       } else {
         echo '<div class="vod-video-placeholder"></div>';
       }
+
       echo '</div>';
       echo '<div class="vod-video-details">';
-      echo '<h4>' . esc_html($selected_video['title']) . '</h4>';
+      echo '<h4>' . esc_html($video_data['title'] ?? '') . '</h4>';
       echo '<div class="vod-video-actions">';
-      echo '<a href="#" class="vod-video-remove button">' . __('Retirer la vidéo', 'vod-video-field') . '</a>';
+      echo '<a href="#" class="vod-video-remove button">' . esc_html__('Retirer la vidéo', 'vod-video-field') . '</a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';
     } else {
       echo '<div class="vod-video-empty">';
-      echo '<p>' . __('Aucune vidéo', 'vod-video-field') . '</p>';
+      echo '<p>' . esc_html__('Aucune vidéo', 'vod-video-field') . '</p>';
       echo '</div>';
     }
 
-    // Video selection button
+    // Selection button
     echo '<div class="vod-video-select">';
-    echo '<a href="#" class="vod-video-button button">' . __('Selectionner une vidéo', 'vod-video-field') . '</a>';
+    echo '<a href="#" class="vod-video-button button">' . esc_html__('Selectionner une vidéo', 'vod-video-field') . '</a>';
     echo '</div>';
 
-    // Video search modal (hidden by default)
-    echo '<div class="vod-video-modal" style="display:none;">';
+    // Modal
+    echo '<div class="vod-video-modal">';
     echo '<div class="vod-video-modal-content">';
     echo '<div class="vod-video-modal-header">';
-    echo '<h3>' . __('Select a Video', 'vod-video-field') . '</h3>';
+    echo '<h3>' . esc_html__('Sélectionner une vidéo', 'vod-video-field') . '</h3>';
     echo '<a href="#" class="vod-video-modal-close">&times;</a>';
     echo '</div>';
+
     echo '<div class="vod-video-modal-search">';
-    echo '<input type="text" class="vod-video-search-input" placeholder="' . esc_attr__('Search videos...', 'vod-video-field') . '">';
+    echo '<input type="text" class="vod-video-search-input" placeholder="' . esc_attr__('Rechercher des vidéos...', 'vod-video-field') . '">';
     echo '</div>';
+
     echo '<div class="vod-video-modal-results">';
     echo '<div class="vod-video-results"></div>';
     echo '</div>';
-    echo '</div>';
-    echo '</div>';
+
+    echo '</div>'; // Close modal-content
+    echo '</div>'; // Close modal
 
     echo '</div>'; // Close vod-video-container
-    echo '</div>'; // Close acf-input wrapper
-
-    // Add field settings for JavaScript
-    printf(
-      '<script type="text/javascript">var vodVideoFieldSettings_%s = %s;</script>',
-      esc_js($js_safe_field_id),
-      wp_json_encode(array(
-        'field_id' => $field_id,
-        'field_key' => $field_key,
-        'field_name' => $field_name,
-        'selected_video' => $selected_video,
-        'i18n' => $this->l10n,
-      ))
-    );
+    echo '</div>'; // Close acf-input
   }
+
   /**
    * Load required assets for the field
    */
@@ -296,23 +263,33 @@ class acf_field_vod_video extends acf_field
     global $wpdb;
     $table_name = $wpdb->prefix . 'vod_video';
 
-    // Query the database for videos
+    // Query the database for videos with non-null URLs
     $query = $wpdb->prepare(
-      "SELECT sname AS title, sImageUrlV2 AS thumbnail, sServerCode AS id, sVideoUrlV2 AS url
-             FROM $table_name
-             WHERE sname LIKE %s",
+      "SELECT
+        sname AS title,
+        sImageUrlV2 AS thumbnail,
+        sServerCode AS id,
+        sVideoUrlV2 AS url,
+        sFolderCode AS folder
+      FROM $table_name
+      WHERE sname LIKE %s
+        AND sImageUrlV2 IS NOT NULL
+        AND sVideoUrlV2 IS NOT NULL
+      ORDER BY sname ASC",
       '%' . $wpdb->esc_like($search_term) . '%'
     );
+
     $results = $wpdb->get_results($query);
 
-    // Format the results
+    // Format the results and ensure all values are present
     $videos = array_map(function ($row) {
       return array(
-        'id' => md5($row->url), // Generate a unique ID based on the URL
+        'id' => $row->id,
         'title' => $row->title,
-        'thumbnail' => $row->thumbnail,
+        'thumbnail' => esc_url($row->thumbnail),
+        'url' => esc_url($row->url),
         'media' => $row->id,
-        'url' => $row->url,
+        'folder' => $row->folder
       );
     }, $results);
 
@@ -339,89 +316,92 @@ class acf_field_vod_video extends acf_field
       return $value;
     }
 
-    // Get the video data
-    $video_id = $value;
-
-    // Here we would normally retrieve the complete video details
-    // This is a placeholder for the actual implementation
-    $video = array(
-      'id' => $video_id,
-      'title' => 'Video Title',
-      'thumbnail' => '',
-      'url' => '',
-      'embed_url' => '',
-      'description' => '',
-      'duration' => '',
-      'folder' => '', // Add folder attribute
-    );
-
-    // Return URL only
-    if ($field['return_format'] === 'url') {
-      return $video['url'];
-    }
-
-    // Return the full video array
-    return $video;
-  }
-
-  /**
-   * Update the field value in the database
-   *
-   * @param mixed $value The value to save
-   * @param int $post_id The post ID
-   * @param array $field The field array
-   * @return mixed The value to save
-   */
-  public function update_value($value, $post_id, $field)
-  {
-    // Handle empty values
-    if (empty($value)) {
-      delete_post_meta($post_id, $field['name']);
-      return '';
-    }
-
-    // If value is JSON string, extract just the ID
-    if (strpos($value, '{') === 0) {
+    // Parse the stored JSON data if needed
+    $video_data = null;
+    if (is_string($value)) {
       $decoded = json_decode($value, true);
-      if (json_last_error() === JSON_ERROR_NONE && isset($decoded['id'])) {
-        $value = $decoded['id'];
+      if (json_last_error() === JSON_ERROR_NONE) {
+        $video_data = $decoded;
+      } else {
+        return $value;
       }
+    } elseif (is_array($value)) {
+      $video_data = $value;
+    } else {
+      return $value;
     }
 
-    // Ensure the value is a string and sanitize
-    $value = sanitize_text_field($value);
+    // Keep the original structure
+    if (isset($video_data['id']) && is_array($video_data['id'])) {
+      // Return URL only if that's the format requested
+      if ($field['return_format'] === 'url') {
+        return $video_data['id']['url'] ?? '';
+      }
 
-    // Store the value
-    update_post_meta($post_id, $field['name'], $value);
+      // Return the full data structure
+      return $video_data;
+    }
 
     return $value;
   }
 
   /**
-   * Load the field value from the database
+   * Update the value before it is saved to the database
    *
-   * @param mixed $value The value from the database
-   * @param int $post_id The post ID
-   * @param array $field The field array
-   * @return mixed The value to load
+   * @param mixed $value The value to update
+   * @param int $post_id The post ID where the value is saved
+   * @param array $field The field array holding all the field options
+   * @return mixed The modified value
    */
-  public function load_value($value, $post_id, $field)
+  public function update_value($value, $post_id, $field)
   {
-    // Get the stored value
-    $stored_value = get_post_meta($post_id, $field['name'], true);
+    // Handle incoming value
+    if (empty($value)) {
+      return null;
+    }
 
-    // If the stored value is JSON, parse it and extract the ID
-    if (!empty($stored_value) && strpos($stored_value, '{') === 0) {
-      $decoded = json_decode($stored_value, true);
-      if (json_last_error() === JSON_ERROR_NONE && isset($decoded['id'])) {
-        $stored_value = $decoded['id'];
+    // If it's a string, try to decode it, handling both escaped and unescaped JSON
+    if (is_string($value)) {
+      // First try direct decode
+      $decoded = json_decode($value, true);
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        // If that fails, try with stripslashes
+        $decoded = json_decode(stripslashes($value), true);
+      }
+
+      if (json_last_error() === JSON_ERROR_NONE) {
+        $value = $decoded;
       }
     }
 
-    if (!empty($stored_value)) {
-      return $stored_value;
+    // Validate the structure
+    if (!is_array($value)) {
+      return null;
     }
 
-    return '';
+    if (!isset($value['id']) || !isset($value['id']['media'])) {
+      return null;
+    }
+
+    return $value;
+  }
+
+  /**
+   * Load the value from the database
+   *
+   * @param mixed $value The value to load
+   * @param int $post_id The post ID where the value is saved
+   * @param array $field The field array holding all the field options
+   * @return mixed The modified value
+   */
+  public function load_value($value, $post_id, $field)
+  {
+    if (empty($value)) {
+      return null;
+    }
+
+    // Format value based on return format
+    $formatted_value = $this->format_value($value, $post_id, $field);
+    return $formatted_value;
   }
 }

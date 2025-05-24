@@ -597,9 +597,8 @@ class vod_api
   private function debug($sFunction, $oException)
   {
     if (WP_DEBUG) {
-      echo "<h4 style='color:red'>Debug :: vod_api -> " . $sFunction . "()</h4><code>";
-      var_dump($oException);
-      echo "</code>";
+      error_log("VOD API Debug :: " . $sFunction . "() :: " . $oException->getMessage());
+      error_log("Stack trace: " . $oException->getTraceAsString());
     }
   }
 

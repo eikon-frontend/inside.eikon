@@ -14,46 +14,18 @@
    * @return {jQuery|null} The found input element or null
    */
   function findInputElement($field) {
-    // Try selectors in order of specificity
-    const selectors = [
-      '> .acf-input > input.vod-video-input',               // Standard ACF structure
-      '> input.vod-video-input',                            // Direct child
-      '.acf-input > input.vod-video-input',                 // Non-direct ACF structure
-      '.acf-input input.vod-video-input',                   // Nested in ACF input
-      'input.vod-video-input[name^="acf["]',                // By ACF name format
-      'input.vod-video-input',                              // Any descendant (last resort)
-      'input[name^="acf["][data-key]',                      // Any ACF input with data-key
-      'input[type="hidden"][name^="acf["]'                  // Any hidden ACF input
-    ];
+    // First try to find input within the direct field container
+    let $input = $field.find('> .acf-input > input.vod-video-input');
 
-    let $input = null;
-    for (const selector of selectors) {
-      const $result = $field.find(selector);
-      if ($result.length) {
-        $input = $result;
-        break;
+    if (!$input.length) {
+      // If not found, check if we're in a repeater/flexible content
+      const $parent = $field.closest('.acf-fields, .acf-field');
+      if ($parent.length) {
+        $input = $parent.find('input.vod-video-input[name^="acf"]').first();
       }
     }
 
-    // If still not found, try searching in parent container (for flexible content fields)
-    if (!$input || !$input.length) {
-      const $parent = $field.closest('.acf-field, .acf-fields, .acf-row');
-      if ($parent.length && !$parent.is($field)) {
-        for (const selector of selectors) {
-          const $result = $parent.find(selector);
-          if ($result.length) {
-            $input = $result;
-            break;
-          }
-        }
-      }
-    }
-
-    if (!$input || !$input.length) {
-      return null;
-    }
-
-    return $input;
+    return $input.length ? $input : null;
   }
 
   /**
@@ -101,10 +73,17 @@
       });
 
       // Click outside modal to close
-      $modal.on('click', function (e) {
-        if ($(e.target).is($modal)) {
+      $(document).on('click', function (e) {
+        if ($(e.target).closest('.vod-video-modal-content').length === 0 &&
+          $(e.target).closest('.vod-video-button').length === 0 &&
+          $modal.is(':visible')) {
           closeModal();
         }
+      });
+
+      // Prevent modal content clicks from bubbling
+      $modal.find('.vod-video-modal-content').on('click', function (e) {
+        e.stopPropagation();
       });
 
       // Search input handling
@@ -156,7 +135,8 @@
      * Open the video selection modal
      */
     function openModal() {
-      $modal.show();
+      $modal.addClass('is-open').show();
+      $('body').css('overflow', 'hidden');  // Prevent body scrolling
       $searchInput.val('').focus();
       searchVideos('');
     }
@@ -165,7 +145,8 @@
      * Close the video selection modal
      */
     function closeModal() {
-      $modal.hide();
+      $modal.removeClass('is-open').hide();
+      $('body').css('overflow', '');  // Restore body scrolling
       $results.empty();
     }
 
@@ -203,47 +184,90 @@
         return;
       }
 
-      let html = '';
+      let html = '<div class="vod-video-grid">';
       videos.forEach(function (video) {
-        html += '<div class="vod-video-result" ' +
+        html += '<div class="vod-video-item" ' +
           'data-id="' + video.id + '" ' +
           'data-title="' + video.title + '" ' +
           'data-thumbnail="' + video.thumbnail + '" ' +
-          'data-media="' + video.media + '" ' +
           'data-url="' + video.url + '" ' +
-          'data-folder="' + video.folder + '">'; // Add folder attribute
-        html += '<div class="vod-video-thumbnail">';
+          'data-media="' + video.id + '" ' +
+          'data-folder="' + video.folder + '">';
+        html += '<div class="vod-video-item-thumbnail">';
         if (video.thumbnail) {
           html += '<img src="' + video.thumbnail + '" alt="' + video.title + '">';
         } else {
           html += '<div class="vod-video-placeholder"></div>';
         }
         html += '</div>';
-        html += '<div class="vod-video-title">' + video.title + '</div>';
+        html += '<div class="vod-video-item-title">' + video.title + '</div>';
         html += '</div>';
       });
+      html += '</div>';
 
       $results.html(html);
+
+      // Add click handler for video selection
+      $results.find('.vod-video-item').on('click', function (e) {
+        e.preventDefault();
+        const $item = $(this);
+        const videoData = {
+          id: $item.data('id'),
+          title: $item.data('title'),
+          thumbnail: $item.data('thumbnail'),
+          url: $item.data('url'),
+          media: $item.data('media'),
+          folder: $item.data('folder')
+        };
+        selectVideo(videoData);
+      });
     }
 
     /**
      * Select a video and update the field
      */
     function selectVideo(videoData) {
-      // Use helper function to find input consistently
       const $fieldInput = findInputElement($field);
       if (!$fieldInput) {
+        console.error('Could not find input element');
         return;
       }
 
-      // Store just the video ID
-      $fieldInput.val(videoData.id);
+      // Ensure all required data is present
+      if (!videoData.id || !videoData.title) {
+        console.error('Missing required video data');
+        return;
+      }
 
-      // Important: Trigger both events
-      $fieldInput.trigger('input').trigger('change');
+      // Structure the video data
+      const valueToStore = {
+        id: {
+          media: videoData.media || videoData.id,
+          thumbnail: videoData.thumbnail || '',
+          url: videoData.url || '',
+          folder: videoData.folder || ''
+        },
+        title: videoData.title
+      };
 
-      // Update preview
-      updatePreview(videoData);
+      // Store as JSON string
+      const jsonValue = JSON.stringify(valueToStore);
+
+      // Set the input value and trigger events
+      $fieldInput
+        .val(jsonValue)
+        .attr('value', jsonValue);
+
+      // Trigger both the input change and ACF's own change event
+      $fieldInput.trigger('change');
+      acf.doAction('change', $field);
+
+      // Update the preview immediately
+      updatePreview({
+        title: videoData.title,
+        thumbnail: videoData.thumbnail,
+        url: videoData.url
+      });
 
       // Close modal
       closeModal();
@@ -278,7 +302,7 @@
       const $currentPreview = $container.find('.vod-video-preview, .vod-video-empty');
       $currentPreview.remove();
 
-      if (videoData) {
+      if (videoData && videoData.title) {
         let html = '<div class="vod-video-preview">';
         html += '<div class="vod-video-thumbnail">';
         if (videoData.thumbnail) {
