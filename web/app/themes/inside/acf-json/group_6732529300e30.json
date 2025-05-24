@@ -61,12 +61,14 @@
             "graphql_field_name": "color",
             "graphql_non_null": 0,
             "ajax": 0,
-            "placeholder": ""
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
         },
         {
             "key": "field_67f6af862b902",
             "label": "Video",
-            "name": "video",
+            "name": "vod",
             "aria-label": "",
             "type": "vod_video",
             "instructions": "",
@@ -77,7 +79,7 @@
                 "class": "",
                 "id": ""
             },
-            "graphql_field_name": "video",
+            "graphql_field_name": "vod",
             "return_format": "array",
             "allow_in_bindings": 1
         }
@@ -106,5 +108,5 @@
     "graphql_types": [
         "Page"
     ],
-    "modified": 1744308514
+    "modified": 1748127270
 }

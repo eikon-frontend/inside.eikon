@@ -61,7 +61,9 @@
             "graphql_field_name": "color",
             "graphql_non_null": 0,
             "ajax": 0,
-            "placeholder": ""
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
         },
         {
             "key": "field_638a243095896",
@@ -87,7 +89,7 @@
         {
             "key": "field_67f80915d987b",
             "label": "Video",
-            "name": "video",
+            "name": "vod",
             "aria-label": "",
             "type": "vod_video",
             "instructions": "",
@@ -98,7 +100,7 @@
                 "class": "",
                 "id": ""
             },
-            "graphql_field_name": "videoCopier",
+            "graphql_field_name": "vod",
             "return_format": "array",
             "allow_in_bindings": 1
         },
@@ -196,5 +198,5 @@
     "graphql_field_name": "departmentFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1744328693
+    "modified": 1748127257
 }
