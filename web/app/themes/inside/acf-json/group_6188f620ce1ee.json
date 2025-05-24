@@ -62,7 +62,7 @@
                         {
                             "key": "field_683003b21de03",
                             "label": "Video",
-                            "name": "video",
+                            "name": "vod",
                             "aria-label": "",
                             "type": "vod_video",
                             "instructions": "Sélectionnez une vidéo qui a été uploadé au préalable sur la plateforme inside.eikon (sous Vidéos → Importation).",
@@ -73,7 +73,7 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "graphql_field_name": "video",
+                            "graphql_field_name": "vod",
                             "return_format": "array",
                             "allow_in_bindings": 0
                         },
@@ -240,5 +240,5 @@
     "graphql_field_name": "portfolio",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1748115869
+    "modified": 1748116424
 }
