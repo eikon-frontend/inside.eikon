@@ -159,7 +159,7 @@ add_action('graphql_register_types', function () {
               // If still no post ID, try to get it from the info object
               if (!$post_id && isset($info->parentType) && isset($info->parentType->name)) {
                 $parent_type = $info->parentType->name;
-                if ($parent_type === 'PageFields') {
+                if ($parent_type === 'PageFields' || $parent_type === 'DepartmentFields') {
                   $post_id = get_queried_object_id();
                 }
               }
