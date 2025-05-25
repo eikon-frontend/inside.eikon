@@ -1823,9 +1823,6 @@ class EasyVod_db
   {
     global $wpdb;
 
-    $this->log_debug("Starting insert_video for video: " . $sName);
-    $this->log_debug("Initial dash URL:", $sDashURL);
-
     // Ensure we have defaults for backward compatibility
     $sVideoURL = isset($sVideoURL) ? $sVideoURL : '';
     $sImageURL = isset($sImageURL) ? $sImageURL : '';
@@ -1834,14 +1831,10 @@ class EasyVod_db
 
     // If dash URL is not provided but we have folder UUID and encoded media info, construct it
     if (empty($sDashURL) && !empty($sFolderCode) && !empty($sServerCode)) {
-      $this->log_debug("Attempting to construct dash URL with folderCode: $sFolderCode and serverCode: $sServerCode");
-
       // Get video info to construct dash URL
       $oApi = $this->getAPI();
       if ($oApi) {
-        $this->log_debug("API instance obtained successfully");
         $oVideo = $oApi->getVideoInformation($iFolder, $sServerCode);
-        $this->log_debug("Video information retrieved:", $oVideo);
         if (!empty($oVideo) && isset($oVideo['aEncodes'])) {
           $media_streams = array();
           // Extract the video IDs from the URLs
@@ -1856,15 +1849,8 @@ class EasyVod_db
           }
           if (!empty($media_streams)) {
             $sDashURL = "https://play.vod2.infomaniak.com/dash/{$sFolderCode}/{$sServerCode}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
-            $this->log_debug("Generated dash URL:", $sDashURL);
-          } else {
-            $this->log_debug("No media streams found in video information");
           }
-        } else {
-          $this->log_debug("Video information is empty or missing aEncodes");
         }
-      } else {
-        $this->log_debug("Failed to get API instance");
       }
     }
 
@@ -1884,13 +1870,7 @@ class EasyVod_db
       'sVideoDashUrlV2' => $sDashURL
     );
 
-    $this->log_debug("Inserting video with data:", $insert_data);
-    $result = $wpdb->insert($this->db_table_video, $insert_data);
-    $this->log_debug("Insert result:", $result);
-
-    if ($result === false) {
-      $this->log_debug("Database error:", $wpdb->last_error);
-    }
+    $wpdb->insert($this->db_table_video, $insert_data);
   }
 
   function count_video($sFilter = "")
