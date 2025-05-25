@@ -594,13 +594,7 @@ class vod_api
     return "";
   }
 
-  private function debug($sFunction, $oException)
-  {
-    if (WP_DEBUG) {
-      error_log("VOD API Debug :: " . $sFunction . "() :: " . $oException->getMessage());
-      error_log("Stack trace: " . $oException->getTraceAsString());
-    }
-  }
+
 
 
   private function getSoapAdmin()

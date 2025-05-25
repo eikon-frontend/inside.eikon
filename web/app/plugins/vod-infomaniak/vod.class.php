@@ -6,7 +6,7 @@
  *
  * @author Infomaniak vod team
  * @link http://infomaniak.com
- * @version 1.5.11
+ * @version 1.6.0
  * @copyright infomaniak.com
  */
 define('VOD_RIGHT_CONTRIBUTOR', 1);
@@ -16,7 +16,7 @@ define('VOD_RIGHT_ADMIN', 4);
 
 class EasyVod
 {
-  public $version = "1.5.11";
+  public $version = "1.5.12";
   private $local_version;
   private $plugin_url;
   private $options;
@@ -31,7 +31,7 @@ class EasyVod
     $this->key = 'vod_infomaniak';
     $this->options = $this->get_options();
     $this->add_filters_and_hooks();
-    $this->db = new EasyVod_db();
+    $this->db = new EasyVod_db($this);
     $this->auto_sync = true;
     $this->auto_sync_delay = 3600;
     define("VOD_IK_SALT", "2saLsNw4s4MCG9BVjXCKxvZA");
@@ -209,15 +209,26 @@ class EasyVod
       $iNumberByLot = 1000;
     }
 
+    // Make sure we're using API v2 and force it if not set
+    if (!get_option('vod_api_version', false)) {
+      update_option('vod_api_version', 2);
+    }
+    if (!get_option('vod_api_version', false)) {
+      update_option('vod_api_version', 2);
+    }
+
     $aVideos = $oApi->getLastVideo($iNumberByLot, intval($_REQUEST['iPage']) * $iNumberByLot);
 
     if (!empty($aVideos)) {
       foreach ($aVideos as $oVideo) {
         if (get_option('vod_api_version', false) == 2) {
           try {
-            //$sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'],1);		//la generation des share n'est pas obligatoire a l'import car genere a la demande si besoin
+            $sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'], 1);
           } catch (\Exception $oException) {
+            $sShareURL = '';
           }
+
+          // Get video path and extension
           if (is_null($oVideo['aEncodes'][0]['sPath'])) {
             $sPath = 'undefined';
           } else {
@@ -228,7 +239,39 @@ class EasyVod
           } else {
             $sExtension = $oVideo['aEncodes'][0]['eConteneur'];
           }
-          $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $sPath, $sExtension, $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'], $sShareURL);
+
+          // Construct dash URL
+          $media_streams = array();
+          if (isset($oVideo['aEncodes'])) {
+            foreach ($oVideo['aEncodes'] as $encode) {
+              if (isset($encode['sFileId'])) {
+                $media_streams[] = $encode['sFileId'];
+              }
+            }
+          }
+          $dash_url = '';
+          if (!empty($media_streams)) {
+            $dash_url = "https://play.vod2.infomaniak.com/dash/{$oVideo['folderUuid']}/{$oVideo['sFileServerCode']}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
+          }
+
+          // Construct MPD URL
+          $media_streams = array();
+          if (isset($oVideo['aEncodes'])) {
+            foreach ($oVideo['aEncodes'] as $encode) {
+              if (isset($encode['sFileId'])) {
+                $media_streams[] = $encode['sFileId'];
+              }
+            }
+          }
+          $dash_url = '';
+          if (!empty($media_streams)) {
+            $dash_url = "https://play.vod2.infomaniak.com/dash/{$oVideo['folderUuid']}/{$oVideo['sFileServerCode']}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
+          }
+
+          // Get share URL for the video
+          $sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'], 1);
+
+          $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $sPath, $sExtension, $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'], $sShareURL, $dash_url);
         } else {
           $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload']);
         }
@@ -255,14 +298,33 @@ class EasyVod
       array_push($enco_progress, $enco["progress"]);
     }
 
-    $iProgress = max($enco_progress);  //sur les n encodages, on prend celui qui est le plus avancé
+    $iProgress = max($enco_progress);  // Get highest progress from all encodes
 
     if ($iProgress == 100) {
-
+      // Get complete video information once encoding is done
       $oVideo = $oApi->getVideoInformation($_REQUEST['iFolder'], $_REQUEST['file']);
       $sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'], 1);
 
-      $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'], $sShareURL);
+      // Construct MPD URL
+      $media_streams = array();
+      if (isset($oVideo['aEncodes'])) {
+        foreach ($oVideo['aEncodes'] as $encode) {
+          if (isset($encode['sFileId'])) {
+            $media_streams[] = $encode['sFileId'];
+          }
+        }
+      }
+      $dash_url = '';
+      if (!empty($media_streams)) {
+        $dash_url = "https://play.vod2.infomaniak.com/dash/{$oVideo['folderUuid']}/{$oVideo['sFileServerCode']}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
+      }
+
+      // Insert or update the video with dash URL
+      if (get_option('vod_api_version', false) == 2) {
+        $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'], $sShareURL, $dash_url);
+      } else {
+        $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload']);
+      }
 
       $aUpload->sState = 'OK';
       $sServerCode = $oVideo['sFileServerCode'];
@@ -271,9 +333,7 @@ class EasyVod
 
       $this->db->update_upload_status($oVideo['sFileServerCode'], "OK");
     }
-    if (isset($oProgress["deleted"])) {
-      $aUpload->sState = "DELETED";
-    }
+
     header('Content-Type: application/json');
     die(json_encode(array('state' => $aUpload->sState, 'video' => $aUpload->iVideo, 'uploadProgress' => $oProgress["uploadProgress"], 'progress' => $iProgress, 'sServerCode' => $sServerCode, 'cpt' => $_REQUEST['iCounter'])));
   }
@@ -320,7 +380,21 @@ class EasyVod
       $oVideo = $oApi->getVideoInformation($_REQUEST['iFolder'], $_REQUEST['file']);
       $sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'], 1);
 
-      $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'], $sShareURL);
+      // Construct MPD URL
+      $media_streams = array();
+      if (isset($oVideo['aEncodes'])) {
+        foreach ($oVideo['aEncodes'] as $encode) {
+          if (isset($encode['sFileId'])) {
+            $media_streams[] = $encode['sFileId'];
+          }
+        }
+      }
+      $dash_url = '';
+      if (!empty($media_streams)) {
+        $dash_url = "https://play.vod2.infomaniak.com/dash/{$oVideo['folderUuid']}/{$oVideo['sFileServerCode']}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
+      }
+
+      $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'], $sShareURL, $dash_url);
 
       $aUpload->sState = 'OK';
       $sServerCode = $oVideo['sFileServerCode'];
@@ -711,27 +785,27 @@ class EasyVod
 
   function fastSynchro($updateVideo = true, $bForceAllSynchro = false)
   {
-
     if (!isset($this->options['vod_api_connected']) || $this->options['vod_api_connected'] != 'on') {
       return false;
     }
-    $this->getCmsInfo();
-    $this->update_db();
+
     $oApi = $this->getAPI();
+
+    // Ensure we're using API v2
+    if (!get_option('vod_api_version', false)) {
+      update_option('vod_api_version', 2);
+    }
+
+    // Update players and folders first
     if ($oApi->playerModifiedSince($this->options['vod_api_lastUpdate']) || $bForceAllSynchro) {
       $this->db->clean_players();
       $aListPlayer = $oApi->getPlayers();
       if (!empty($aListPlayer)) {
         foreach ($aListPlayer as $oPlayer) {
-          if (empty($this->options['player'])) {
-            $this->options['player'] = $oPlayer['iPlayerCode'];
-          } else {
-            if ($this->options['player'] == $oPlayer['iPlayerCode']) {
-              $this->options['player'] = $oPlayer['iPlayerCode'];
-              $this->options['width'] = $oPlayer['iWidth'];
-              $this->options['height'] = $oPlayer['iHeight'];
-              update_option($this->key, $this->options);
-            }
+          if ($oPlayer['iPlayerCode'] == $this->options['player']) {
+            $this->options['width'] = $oPlayer['iWidth'];
+            $this->options['height'] = $oPlayer['iHeight'];
+            update_option($this->key, $this->options);
           }
           if (get_option('vod_api_version', false) == 1) {
             $iPlayerVersion = 1;
@@ -743,7 +817,7 @@ class EasyVod
       }
     }
 
-    //Update des folders
+    // Update folders
     if ($oApi->folderModifiedSince($this->options['vod_api_lastUpdate']) || $bForceAllSynchro) {
       $this->db->clean_folders();
       $aListFolder = $oApi->getFolders();
@@ -754,71 +828,68 @@ class EasyVod
       }
     }
 
-    //Update des playlist
-    if ($oApi->playlistModifiedSince($this->options['vod_api_lastUpdate']) || $bForceAllSynchro) {
-      $this->db->clean_playlists();
-      $aListPlaylist = $oApi->getPlaylists();
-      if (!empty($aListPlaylist)) {
-        foreach ($aListPlaylist as $oPlaylist) {
-          if (!is_null($oPlaylist['sPlaylistDescription'])) {
-            $sDescription = $oPlaylist['sPlaylistDescription'];
-          } else {
-            $sDescription = "";
-          }
-          $this->db->insert_playlist($oPlaylist['iPlaylistCode'], $oPlaylist['sPlaylistName'], $sDescription, $oPlaylist['iTotal'], $oPlaylist['sMode'], $oPlaylist['dCreated'], $oPlaylist['iTotalDuration'], (get_option('vod_api_version', false) == 2) ? $oPlaylist['sPlaylistUuid'] : "");
-        }
-      }
-    }
-    /*			if ($updateVideo) {
-				echo ("<br/>UPDATE VIDEO from FAST SYNCHRO");
-				$lastVideo = $this->db->getLastVideo();
-				if (!empty($lastVideo)) {
-					$lastDateImport = strtotime($lastVideo->dUpload);
-					$isSynchro = false;
-					$iPage = 0;
+    // Synchronize videos if needed
+    if ($updateVideo) {
+      $iNumberVideoApi = 200;
+      $this->db->clean_videos();
+      $iVideo = $oApi->countVideo();
+      $iPageTotal = floor(($iVideo - 1) / $iNumberVideoApi);
 
-					while (!$isSynchro) {
-						$aVideos = $oApi->getLastVideo(10, $iPage * 10);
-						$iVideo = 0;
+      for ($iPage = 0; $iPage <= $iPageTotal; $iPage++) {
+        $aVideos = $oApi->getLastVideo($iNumberVideoApi, $iPage * $iNumberVideoApi);
+        if (!empty($aVideos)) {
+          foreach ($aVideos as $oVideo) {
+            if (get_option('vod_api_version', false) == 2) {
+              // Get share URL for the video
+              $sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'], 1);
 
-						if (is_array($aVideos)){
-							while (!$isSynchro && $iVideo < count($aVideos)) {
-								$oVideo = $aVideos[$iVideo];
+              // Construct MPD URL
+              $media_streams = array();
+              if (isset($oVideo['aEncodes'])) {
+                foreach ($oVideo['aEncodes'] as $encode) {
+                  if (isset($encode['sFileId'])) {
+                    $media_streams[] = $encode['sFileId'];
+                  }
+                }
+              }
+              $dash_url = '';
+              if (!empty($media_streams)) {
+                $dash_url = "https://play.vod2.infomaniak.com/dash/{$oVideo['folderUuid']}/{$oVideo['sFileServerCode']}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
+              }
 
-								if ($lastDateImport < strtotime($oVideo['dFileUpload'])) {
-										$sShareURL = $this->getOrSetShare($oVideo['sFileServerCode'],1);
-										$this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $oVideo['aEncodes'][0]['sImageURL'],$sShareURL);
-									$iVideo++;
-								} else {
-									$isSynchro = true;
-								}
-							}
-						}else{
-							$isSynchro = true;
-						}
-						$iPage++;
-					}
-				}
-			}*/
-
-    //Verification s'il y a des upload en attente
-    $aProcessing = $this->db->get_upload_process();
-    if (!empty($aProcessing)) {
-      $aLastImportation = $oApi->getLastImportation(50);
-      foreach ($aLastImportation as $oImport) {
-        if ($oImport['sProcessState'] == "OK" && !empty($oImport['iVideo']) && strpos($oImport['sInfo'], "wp_upload_post_") !== false) {
-          //On le connait peut etre celui la
-          foreach ($aProcessing as $oProcess) {
-            if ("wp_upload_post_" . $oProcess->sToken == $oImport['sInfo']) {
-              //On a trouvé un des upload
-              $this->db->update_upload($oProcess->sToken, $oImport['iVideo']);
+              $this->db->insert_video(
+                $oVideo['iFileCode'],
+                $oVideo['iFolder'],
+                $oVideo['sFileName'],
+                $oVideo['sFileServerCode'],
+                $oVideo['aEncodes'][0]['sPath'],
+                $oVideo['aEncodes'][0]['eConteneur'],
+                $oVideo['fFileDuration'],
+                $oVideo['dFileUpload'],
+                $oVideo['folderUuid'],
+                $oVideo['aEncodes'][0]['sVideoURL'],
+                $oVideo['aEncodes'][0]['sImageURL'],
+                $sShareURL,
+                $dash_url
+              );
+            } else {
+              $this->db->insert_video(
+                $oVideo['iFileCode'],
+                $oVideo['iFolder'],
+                $oVideo['sFileName'],
+                $oVideo['sFileServerCode'],
+                $oVideo['aEncodes'][0]['sPath'],
+                $oVideo['aEncodes'][0]['eConteneur'],
+                $oVideo['fFileDuration'],
+                $oVideo['dFileUpload']
+              );
             }
           }
         }
       }
     }
 
-    //Update de la synchro
+    // Update server time and synchro timestamp
     $serveurTime = $oApi->time();
     $localTime = time();
     $diff = ($serveurTime - $localTime);
@@ -1086,7 +1157,7 @@ class EasyVod
           $oVideo = $this->db->getVideo(intval($_POST['dialog-modal-id']));
           if ($oVideo != false) {
             $oApi = $this->getAPI();
-            $oApi->renameVideo($oVideo->iFolder, $oVideo->sServerCode, $_POST['dialog-modal-name']);
+            $oApi->renameVideo($oVideo->iFolder, $oVideo->sFileServerCode, $_POST['dialog-modal-name']);
             $this->db->rename_video(intval($_POST['dialog-modal-id']), $_POST['dialog-modal-name']);
 
 
@@ -1102,7 +1173,7 @@ class EasyVod
 
             if ($oVideo != false) {
               $oApi = $this->getAPI();
-              $oApi->deleteVideo($oVideo->iFolder, $oVideo->sServerCode);
+              $oApi->deleteVideo($oVideo->iFolder, $oVideo->sFileServerCode);
               $this->db->delete_video(intval($_POST['dialog-confirm-id']));
             }
           } else {
@@ -1367,16 +1438,18 @@ class EasyVod_db
   var $db_table_upload;
   var $db_table_share;
   var $db_version = "1.0.34";
+  private $vod;
 
-  function __construct()
+  function __construct($vodInstance = null)
   {
     global $wpdb;
-    $this->db_table_player = $wpdb->prefix . "vod_player";
-    $this->db_table_folder = $wpdb->prefix . "vod_folder";
-    $this->db_table_video = $wpdb->prefix . "vod_video";
-    $this->db_table_playlist = $wpdb->prefix . "vod_playlist";
-    $this->db_table_upload = $wpdb->prefix . "vod_upload";
-    $this->db_table_share = $wpdb->prefix . "vod_share";
+    $this->db_table_player = $wpdb->prefix . 'vod_player';
+    $this->db_table_folder = $wpdb->prefix . 'vod_folder';
+    $this->db_table_video = $wpdb->prefix . 'vod_video';
+    $this->db_table_playlist = $wpdb->prefix . 'vod_playlist';
+    $this->db_table_upload = $wpdb->prefix . 'vod_upload';
+    $this->db_table_share = $wpdb->prefix . 'vod_share';
+    $this->vod = $vodInstance;
   }
 
 
@@ -1420,7 +1493,7 @@ class EasyVod_db
 		 `sName` VARCHAR( 255 ) NOT NULL ,
 		 `sAccess` VARCHAR( 255 ) NOT NULL ,
 		 `sToken` VARCHAR( 255 ) NOT NULL,
-		 PRIMARY KEY  (`iFolder`),
+				 PRIMARY KEY  (`iFolder`),
 		 KEY `sName` (`sName`)
 		) CHARACTER SET utf8;";
     dbDelta($sql_folder);
@@ -1437,6 +1510,7 @@ class EasyVod_db
 		 `dUpload` DATETIME NOT NULL,
 		 `sImageUrlV2` VARCHAR( 255 ) NULL,
 		 `sVideoUrlV2` VARCHAR( 255 ) NOT NULL,
+		 `sVideoDashUrlV2` VARCHAR( 255 ) NULL,
 		 PRIMARY KEY  (`iVideo`),
 		 KEY `iFolder` (`iFolder`),
 		 KEY `sName` (`sName`),
@@ -1460,7 +1534,7 @@ class EasyVod_db
     dbDelta($sql_playlist);
 
     $sql_upload = "CREATE TABLE " . $this->db_table_upload . " (
-		 `i
+		 `iUpload` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 		 `sToken` VARCHAR( 255 ) NOT NULL,
 		 `iPost` INT UNSIGNED NOT NULL,
 		 `iVideo` VARCHAR( 25 ) NOT NULL,
@@ -1745,13 +1819,78 @@ class EasyVod_db
     $wpdb->query($sql);
   }
 
-  function insert_video($iVideo, $iFolder, $sName, $sServerCode, $sPath, $sExtension, $iDuration, $dUpload, $sFolderCode = "", $sVideoURL = "", $sImageURL = "", $sShareURL = "")
+  function insert_video($iVideo, $iFolder, $sName, $sServerCode, $sPath, $sExtension, $iDuration, $dUpload, $sFolderCode = "", $sVideoURL = "", $sImageURL = "", $sShareURL = "", $sDashURL = "")
   {
     global $wpdb;
-    $sVideoURL = isset($sVideoURL) ? $sVideoURL : '';  //compat old php version
-    $wpdb->insert($this->db_table_video, array('iVideo' => $iVideo, 'iFolder' => $iFolder, 'sName' => $sName, 'sServerCode' => $sServerCode, 'sFolderCode' => $sFolderCode, 'sPath' => $sPath, 'sExtension' => $sExtension, 'iDuration' => $iDuration, 'dUpload' => $dUpload, 'sVideoUrlV2' => $sVideoURL, 'sImageUrlV2' => $sImageURL));
 
-    //$this->setShare($sServerCode,1,$sShareURL);	//util a ce moment la ?	//todo
+    $this->log_debug("Starting insert_video for video: " . $sName);
+    $this->log_debug("Initial dash URL:", $sDashURL);
+
+    // Ensure we have defaults for backward compatibility
+    $sVideoURL = isset($sVideoURL) ? $sVideoURL : '';
+    $sImageURL = isset($sImageURL) ? $sImageURL : '';
+    $sFolderCode = isset($sFolderCode) ? $sFolderCode : '';
+    $sDashURL = isset($sDashURL) ? $sDashURL : '';
+
+    // If dash URL is not provided but we have folder UUID and encoded media info, construct it
+    if (empty($sDashURL) && !empty($sFolderCode) && !empty($sServerCode)) {
+      $this->log_debug("Attempting to construct dash URL with folderCode: $sFolderCode and serverCode: $sServerCode");
+
+      // Get video info to construct dash URL
+      $oApi = $this->getAPI();
+      if ($oApi) {
+        $this->log_debug("API instance obtained successfully");
+        $oVideo = $oApi->getVideoInformation($iFolder, $sServerCode);
+        $this->log_debug("Video information retrieved:", $oVideo);
+        if (!empty($oVideo) && isset($oVideo['aEncodes'])) {
+          $media_streams = array();
+          // Extract the video IDs from the URLs
+          foreach ($oVideo['aEncodes'] as $encode) {
+            if (isset($encode['sVideoURL'])) {
+              $parts = explode('/', $encode['sVideoURL']);
+              $videoId = end($parts); // Get the last part of the URL which is the video ID
+              if ($videoId) {
+                $media_streams[] = $videoId;
+              }
+            }
+          }
+          if (!empty($media_streams)) {
+            $sDashURL = "https://play.vod2.infomaniak.com/dash/{$sFolderCode}/{$sServerCode}/," . implode(',', $media_streams) . ",.urlset/manifest.mpd";
+            $this->log_debug("Generated dash URL:", $sDashURL);
+          } else {
+            $this->log_debug("No media streams found in video information");
+          }
+        } else {
+          $this->log_debug("Video information is empty or missing aEncodes");
+        }
+      } else {
+        $this->log_debug("Failed to get API instance");
+      }
+    }
+
+    $insert_data = array(
+      'iVideo' => $iVideo,
+      'iFolder' => $iFolder,
+      'sName' => $sName,
+      'sServerCode' => $sServerCode,
+      'sFolderCode' => $sFolderCode,
+      'sPath' => $sPath,
+      'sExtension' => $sExtension,
+      'iDuration' => $iDuration,
+      'dUpload' => $dUpload,
+      'sVideoUrlV2' => $sVideoURL,
+      'sImageUrlV2' => $sImageURL,
+      'sShareUrlV2' => $sShareURL,
+      'sVideoDashUrlV2' => $sDashURL
+    );
+
+    $this->log_debug("Inserting video with data:", $insert_data);
+    $result = $wpdb->insert($this->db_table_video, $insert_data);
+    $this->log_debug("Insert result:", $result);
+
+    if ($result === false) {
+      $this->log_debug("Database error:", $wpdb->last_error);
+    }
   }
 
   function count_video($sFilter = "")
@@ -1811,8 +1950,15 @@ class EasyVod_db
     global $wpdb;
     return $wpdb->get_results("SELECT * FROM " . $this->db_table_upload . " WHERE iVideo=0");
   }
-}
 
+  function getAPI()
+  {
+    if ($this->vod) {
+      return $this->vod->getAPI();
+    }
+    return null;
+  }
+}
 function vod_query_vars($qvars)
 {
   $qvars[] = 'vod_page';

@@ -49,53 +49,9 @@ function acf_vod_video_field_load_textdomain()
 add_action('plugins_loaded', 'acf_vod_video_field_load_textdomain');
 
 /**
- * Fetch video details from the Infomaniak VOD API.
- *
- * @param string $channel_id The channel ID.
- * @param string $video_id The video ID.
- * @return string|null The generated DASH stream URL or null if unavailable.
- */
-function fetch_vod_video_url($channel_id, $video_id)
-{
-  $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$video_id}";
-  $headers = [
-    'Authorization' => 'Bearer ' . getenv('INFOMANIAK_VOD_API_TOKEN'),
-    'Content-Type' => 'application/json',
-  ];
-
-  $client = new \GuzzleHttp\Client();
-  try {
-    $response = $client->get($api_url, ['headers' => $headers]);
-    $response_data = json_decode($response->getBody(), true);
-
-    // Extract the IDs from the encoded_medias array
-    if (!empty($response_data['data']['encoded_medias'])) {
-      $encoded_medias = $response_data['data']['encoded_medias'];
-      $media_ids = array_map(function ($media) {
-        return $media['id'];
-      }, $encoded_medias);
-
-      // Construct the DASH URL
-      $base_url = "https://play.vod2.infomaniak.com/dash/{$video_id}/{$response_data['data']['folder']['id']}";
-      $media_ids_string = implode(',', $media_ids);
-      return "{$base_url}/,{$media_ids_string},.urlset/manifest.mpd";
-    }
-  } catch (\GuzzleHttp\Exception\ClientException $e) {
-    error_log('Client error: ' . $e->getResponse()->getBody()->getContents());
-  } catch (\GuzzleHttp\Exception\ServerException $e) {
-    error_log('Server error: ' . $e->getResponse()->getBody()->getContents());
-  } catch (\Exception $e) {
-    error_log('Unexpected error: ' . $e->getMessage());
-  }
-
-  return null;
-}
-
-/**
  * Register GraphQL field type using register_graphql_acf_field_type
  */
 add_action('graphql_register_types', function () {
-
   if (function_exists('register_graphql_object_type') && function_exists('register_graphql_field')) {
     // Define a custom GraphQL object type for the video field
     register_graphql_object_type('VODVideo', [
@@ -113,13 +69,13 @@ add_action('graphql_register_types', function () {
           'type' => 'String',
           'description' => __('The thumbnail URL of the video.', 'vod-video-field'),
         ],
-        'media' => [
-          'type' => 'String',
-          'description' => __('The media id URL of the video.', 'vod-video-field'),
-        ],
         'url' => [
           'type' => 'String',
           'description' => __('The URL of the video.', 'vod-video-field'),
+        ],
+        'dashUrl' => [
+          'type' => 'String',
+          'description' => __('The DASH URL of the video.', 'vod-video-field'),
         ],
         'folder' => [
           'type' => 'String',
@@ -134,14 +90,14 @@ add_action('graphql_register_types', function () {
         'type' => 'VODVideo',
         'description' => __('The VOD Video field, returning video details.', 'vod-video-field'),
         'resolve' => function ($root, $args, $context, $info) {
-          // Get the field value from either direct field or flexible content layout
           $field_value = null;
           $post_id = null;
 
+          // Get the field value from either direct field or flexible content layout
           if (isset($root['vod'])) {
             $field_value = $root['vod'];
           } else {
-            // Extract post ID from root
+            // Extract post ID from root using various methods
             if (is_array($root) && isset($root['databaseId'])) {
               $post_id = $root['databaseId'];
             } elseif (is_array($root) && isset($root['ID'])) {
@@ -153,37 +109,15 @@ add_action('graphql_register_types', function () {
             } elseif (is_object($root) && property_exists($root, 'databaseId')) {
               $post_id = $root->databaseId;
             } else {
-              // Try to get ID from context
-              $post_id = $context->nodeid ?? null;
-
-              // If still no post ID, try to get it from the info object
-              if (!$post_id && isset($info->parentType) && isset($info->parentType->name)) {
-                $parent_type = $info->parentType->name;
-                if ($parent_type === 'PageFields' || $parent_type === 'DepartmentFields') {
-                  $post_id = get_queried_object_id();
-                }
-              }
+              $post_id = $context->nodeid ?? get_queried_object_id();
             }
 
             if ($post_id) {
               // Try getting the field value using multiple methods
-
-              // 1. Try ACF get_field first
-              $field_value = get_field('vod', $post_id);
-
-              // 2. If that's empty, try get_post_meta
-              if (empty($field_value)) {
-                $field_value = get_post_meta($post_id, 'vod', true);
-              }
-
-              // 3. If still empty, try ACF get_field with 'field_' prefix
-              if (empty($field_value)) {
-                $field_value = get_field('field_vod', $post_id);
-              }
+              $field_value = get_field('vod', $post_id) ?: get_post_meta($post_id, 'vod', true) ?: get_field('field_vod', $post_id);
             }
           }
 
-          // Ensure we have a value to work with
           if (empty($field_value)) {
             return null;
           }
@@ -191,34 +125,56 @@ add_action('graphql_register_types', function () {
           // Handle both string (JSON) and array values
           $field_data = is_string($field_value) ? json_decode($field_value, true) : $field_value;
 
-          // Extract video details from the field data
-          $video_data = is_array($field_data['id']) ? $field_data['id'] : null;
+          // Get the video details from the database
+          global $wpdb;
+          $table_name = $wpdb->prefix . 'vod_video';
 
-          if (!$video_data) {
-            return null;
+          if (isset($field_data['id']['media'])) {
+            $video_id = $field_data['id']['media'];
+
+            $video = $wpdb->get_row($wpdb->prepare(
+              "SELECT
+                sname AS title,
+                sImageUrlV2 AS thumbnail,
+                sServerCode AS id,
+                sVideoUrlV2 AS url,
+                sVideoDashUrlV2 AS dashUrl,
+                sFolderCode AS folder
+              FROM $table_name
+              WHERE sServerCode = %s",
+              $video_id
+            ));
+
+            if ($video) {
+              return array(
+                'id' => $video->id,
+                'title' => $video->title,
+                'thumbnail' => esc_url($video->thumbnail),
+                'url' => esc_url($video->url),
+                'dashUrl' => esc_url($video->dashUrl),
+                'folder' => $video->folder
+              );
+            }
           }
 
-          $video_id = $video_data['media'] ?? null;
-          $folder_id = $video_data['folder'] ?? null;
-
-          if (!$video_id || !$folder_id) {
-            return null;
-          }
-
-          // Construct the DASH URL with common qualities
-          $qualities = ['1jijk03u27zjq', '1jijk03u27zjo', '1jijk03u27zjm', '1jijk03u27zjk'];
-          $dash_url = "https://play.vod2.infomaniak.com/dash/{$video_id}/{$folder_id}/," . implode(',', $qualities) . ",.urlset/manifest.mpd";
-
-          return [
-            'id' => $video_id,
-            'title' => $field_data['title'] ?? null,
-            'thumbnail' => $video_data['thumbnail'] ?? $field_data['thumbnail'] ?? null,
-            'media' => $video_id,
-            'url' => $dash_url,
-            'folder' => $folder_id
-          ];
+          return null;
         },
       ]);
     }
   }
 });
+
+/**
+ * Format ACF value for VOD Video field
+ */
+add_filter('acf/format_value/type=vod_video', function ($value, $post_id, $field) {
+  if (empty($value)) {
+    return null;
+  }
+
+  // Handle both string (JSON) and array values
+  $field_data = is_string($value) ? json_decode($value, true) : $value;
+
+  // Return the full field data structure
+  return $field_data;
+}, 10, 3);

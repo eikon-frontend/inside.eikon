@@ -270,11 +270,12 @@ class acf_field_vod_video extends acf_field
         sImageUrlV2 AS thumbnail,
         sServerCode AS id,
         sVideoUrlV2 AS url,
+        sVideoDashUrlV2 AS dashUrl,
         sFolderCode AS folder
       FROM $table_name
       WHERE sname LIKE %s
         AND sImageUrlV2 IS NOT NULL
-        AND sVideoUrlV2 IS NOT NULL
+        AND sVideoDashUrlV2 IS NOT NULL
       ORDER BY sname ASC",
       '%' . $wpdb->esc_like($search_term) . '%'
     );
@@ -284,12 +285,14 @@ class acf_field_vod_video extends acf_field
     // Format the results and ensure all values are present
     $videos = array_map(function ($row) {
       return array(
-        'id' => $row->id,
-        'title' => $row->title,
-        'thumbnail' => esc_url($row->thumbnail),
-        'url' => esc_url($row->url),
-        'media' => $row->id,
-        'folder' => $row->folder
+        'id' => array(
+          'media' => $row->id,
+          'thumbnail' => esc_url($row->thumbnail),
+          'url' => esc_url($row->url),
+          'dashUrl' => esc_url($row->dashUrl),
+          'folder' => $row->folder
+        ),
+        'title' => $row->title
       );
     }, $results);
 

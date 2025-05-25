@@ -5,7 +5,7 @@ Plugin Name: Vod Infomaniak
 Tags: video, manage, infomaniak, vod
 Requires at least: 2.8.6
 Tested up to: 6.8.1
-Stable tag: 1.5.11
+Stable tag: 1.6.0
 
 
 
@@ -85,8 +85,11 @@ Si vous ne trouvez pas de solution à votre question, vous pouvez aussi nous con
 
 == Changelog ==
 
+= 1.6,9 (26/05/2025) =
+* JM: Better implementation of the dashjs
+
 = 1.5.11 (13/05/2025) =
-* Fix an error with old php version 
+* Fix an error with old php version
 
 = 1.5.10 (11/12/2024) =
 * various security patches
@@ -113,7 +116,7 @@ Si vous ne trouvez pas de solution à votre question, vous pouvez aussi nous con
 * fix warning
 
 = 1.5.2 (30/01/2023) =
-* fix if not configured accound and problem with share generation 
+* fix if not configured accound and problem with share generation
 
 = 1.5.1 (30/01/2023) =
 * micro fix
