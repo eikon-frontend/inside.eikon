@@ -134,39 +134,83 @@ add_action('graphql_register_types', function () {
         'type' => 'VODVideo',
         'description' => __('The VOD Video field, returning video details.', 'vod-video-field'),
         'resolve' => function ($root, $args, $context, $info) {
-          // Attempt to fetch the ID from the root object or fallback to global post ID
-          $field_value = get_fields(get_the_ID());
+          // Get the field value from either direct field or flexible content layout
+          $field_value = null;
+          $post_id = null;
 
-          // Dynamically use the ACF field name set in the configuration
-          $field_name = $info->fieldName;
+          if (isset($root['vod'])) {
+            $field_value = $root['vod'];
+          } else {
+            // Extract post ID from root
+            if (is_array($root) && isset($root['databaseId'])) {
+              $post_id = $root['databaseId'];
+            } elseif (is_array($root) && isset($root['ID'])) {
+              $post_id = $root['ID'];
+            } elseif (is_array($root) && isset($root['postId'])) {
+              $post_id = $root['postId'];
+            } elseif (is_object($root) && method_exists($root, 'ID')) {
+              $post_id = $root->ID;
+            } elseif (is_object($root) && property_exists($root, 'databaseId')) {
+              $post_id = $root->databaseId;
+            } else {
+              // Try to get ID from context
+              $post_id = $context->nodeid ?? null;
 
-          // Ensure the field returns the required subfields or null if not set
-          if (isset($field_value[$field_name])) {
-            $field_data = is_string($field_value[$field_name])
-              ? json_decode($field_value[$field_name], true)
-              : $field_value[$field_name];
-
-            // Extract specific subfields
-            $video_id = $field_data['id']['media'] ?? null;
-            $channel_id = "14234";
-
-            // Fetch better quality stream URL using the refactored function
-            $better_quality_url = null;
-            if ($video_id && $channel_id) {
-              $better_quality_url = fetch_vod_video_url($channel_id, $video_id);
+              // If still no post ID, try to get it from the info object
+              if (!$post_id && isset($info->parentType) && isset($info->parentType->name)) {
+                $parent_type = $info->parentType->name;
+                if ($parent_type === 'PageFields') {
+                  $post_id = get_queried_object_id();
+                }
+              }
             }
 
-            return [
-              'id' => $video_id,
-              'title' => $field_data['title'] ?? null,
-              'thumbnail' => $field_data['id']['thumbnail'] ?? null,
-              'media' => $field_data['id']['media'] ?? null,
-              'url' => $better_quality_url ?? null,
-              'folder' => $field_data['id']['folder'] ?? null,
-            ];
+            if ($post_id) {
+              // Try getting the field value using multiple methods
+
+              // 1. Try ACF get_field first
+              $field_value = get_field('vod', $post_id);
+
+              // 2. If that's empty, try get_post_meta
+              if (empty($field_value)) {
+                $field_value = get_post_meta($post_id, 'vod', true);
+              }
+
+              // 3. If still empty, try ACF get_field with 'field_' prefix
+              if (empty($field_value)) {
+                $field_value = get_field('field_vod', $post_id);
+              }
+            }
           }
 
-          return null;
+          // Ensure we have a value to work with
+          if (empty($field_value)) {
+            return null;
+          }
+
+          // Handle both string (JSON) and array values
+          $field_data = is_string($field_value) ? json_decode($field_value, true) : $field_value;
+
+          // For both direct fields and flexible content fields, get the video ID
+          $video_id = null;
+          if (isset($field_data['id']) && isset($field_data['id']['media'])) {
+            $video_id = $field_data['id']['media'];
+          } elseif (isset($field_data['media'])) {
+            $video_id = $field_data['media'];
+          }
+
+          if (!$video_id) {
+            return null;
+          }
+
+          // Build the return array based on the available data
+          return [
+            'id' => $video_id,
+            'title' => $field_data['title'] ?? null,
+            'thumbnail' => isset($field_data['id']['thumbnail']) ? $field_data['id']['thumbnail'] : (isset($field_data['thumbnail']) ? $field_data['thumbnail'] : null),
+            'media' => $video_id,
+            'url' => isset($field_data['id']['url']) ? $field_data['id']['url'] : (isset($field_data['url']) ? $field_data['url'] : null),
+          ];
         },
       ]);
     }
