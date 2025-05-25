@@ -191,25 +191,31 @@ add_action('graphql_register_types', function () {
           // Handle both string (JSON) and array values
           $field_data = is_string($field_value) ? json_decode($field_value, true) : $field_value;
 
-          // For both direct fields and flexible content fields, get the video ID
-          $video_id = null;
-          if (isset($field_data['id']) && isset($field_data['id']['media'])) {
-            $video_id = $field_data['id']['media'];
-          } elseif (isset($field_data['media'])) {
-            $video_id = $field_data['media'];
-          }
+          // Extract video details from the field data
+          $video_data = is_array($field_data['id']) ? $field_data['id'] : null;
 
-          if (!$video_id) {
+          if (!$video_data) {
             return null;
           }
 
-          // Build the return array based on the available data
+          $video_id = $video_data['media'] ?? null;
+          $folder_id = $video_data['folder'] ?? null;
+
+          if (!$video_id || !$folder_id) {
+            return null;
+          }
+
+          // Construct the DASH URL with common qualities
+          $qualities = ['1jijk03u27zjq', '1jijk03u27zjo', '1jijk03u27zjm', '1jijk03u27zjk'];
+          $dash_url = "https://play.vod2.infomaniak.com/dash/{$video_id}/{$folder_id}/," . implode(',', $qualities) . ",.urlset/manifest.mpd";
+
           return [
             'id' => $video_id,
             'title' => $field_data['title'] ?? null,
-            'thumbnail' => isset($field_data['id']['thumbnail']) ? $field_data['id']['thumbnail'] : (isset($field_data['thumbnail']) ? $field_data['thumbnail'] : null),
+            'thumbnail' => $video_data['thumbnail'] ?? $field_data['thumbnail'] ?? null,
             'media' => $video_id,
-            'url' => isset($field_data['id']['url']) ? $field_data['id']['url'] : (isset($field_data['url']) ? $field_data['url'] : null),
+            'url' => $dash_url,
+            'folder' => $folder_id
           ];
         },
       ]);
