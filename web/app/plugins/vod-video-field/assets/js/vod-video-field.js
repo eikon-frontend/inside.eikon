@@ -187,15 +187,15 @@
       let html = '<div class="vod-video-grid">';
       videos.forEach(function (video) {
         html += '<div class="vod-video-item" ' +
-          'data-id="' + video.id + '" ' +
+          'data-id="' + video.id.media + '" ' +
           'data-title="' + video.title + '" ' +
-          'data-thumbnail="' + video.thumbnail + '" ' +
-          'data-url="' + video.url + '" ' +
-          'data-media="' + video.id + '" ' +
-          'data-folder="' + video.folder + '">';
+          'data-thumbnail="' + video.id.thumbnail + '" ' +
+          'data-url="' + video.id.url + '" ' +
+          'data-media="' + video.id.media + '" ' +
+          'data-folder="' + video.id.folder + '">';
         html += '<div class="vod-video-item-thumbnail">';
-        if (video.thumbnail) {
-          html += '<img src="' + video.thumbnail + '" alt="' + video.title + '">';
+        if (video.id.thumbnail) {
+          html += '<img src="' + video.id.thumbnail + '" alt="' + video.title + '">';
         } else {
           html += '<div class="vod-video-placeholder"></div>';
         }
@@ -264,9 +264,9 @@
 
       // Update the preview immediately
       updatePreview({
-        title: videoData.title,
-        thumbnail: videoData.thumbnail,
-        url: videoData.url
+        title: valueToStore.title,
+        thumbnail: valueToStore.id.thumbnail,
+        url: valueToStore.id.url
       });
 
       // Close modal
