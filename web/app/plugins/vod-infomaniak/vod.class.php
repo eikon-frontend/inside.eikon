@@ -93,6 +93,21 @@ class EasyVod
       add_action('edit_page_form', array(&$this, 'buildForm'));
       add_action('dialog-vod-form', array(&$this, 'buildForm'));
 
+      /**
+       * Delegate buildForm to EasyVod_Display
+       */
+      function buildForm()
+      {
+        if ($this->plugin_ready()) {
+          require_once("vod.template.php");
+          $aPlayers = $this->db->get_players();
+          $aVideos = $this->db->get_videos();
+          $aPlaylists = $this->db->get_playlists();
+          $aFolders = $this->db->get_folders();
+          $bCanUpload = $this->isCurrentUserCan('upload');
+          EasyVod_Display::buildForm($this->options, $aPlayers, $aVideos, $aPlaylists, $aFolders, $bCanUpload);
+        }
+      }
 
 
       add_action('wp_ajax_importvod', array(&$this, 'printLastImport'));
@@ -137,9 +152,23 @@ class EasyVod
   function init_mce_video()
   {
     if ($this->isCurrentUserCan('gestion')) {
-      add_filter('mce_external_plugins', array(&$this, 'mce_register'));
-      add_filter('mce_buttons', array(&$this, 'mce_add_button'), 0);
+      add_filter('mce_external_plugins', array($this, 'mce_register'));
+      add_filter('mce_buttons', array($this, 'mce_add_button'), 0);
     }
+  }
+
+  // Add the TinyMCE button
+  function mce_add_button($buttons)
+  {
+    array_push($buttons, "vodplugin");
+    return $buttons;
+  }
+
+  // Register the plugin path
+  function mce_register($plugins)
+  {
+    $plugins['vodplugin'] = plugins_url('vod-infomaniak/js/editor_plugin.js');
+    return $plugins;
   }
 
   function isCurrentUserCan($page)
@@ -1357,6 +1386,22 @@ class EasyVod
     if ($vod_page == 'callback') {
       include(plugin_dir_path(__FILE__) . "vod_callback.php");
       exit;
+    }
+  }
+
+  /**
+   * Delegate buildForm to EasyVod_Display
+   */
+  function buildForm()
+  {
+    if ($this->plugin_ready()) {
+      require_once("vod.template.php");
+      $aPlayers = $this->db->get_players();
+      $aVideos = $this->db->get_videos();
+      $aPlaylists = $this->db->get_playlists();
+      $aFolders = $this->db->get_folders();
+      $bCanUpload = $this->isCurrentUserCan('upload');
+      EasyVod_Display::buildForm($this->options, $aPlayers, $aVideos, $aPlaylists, $aFolders, $bCanUpload);
     }
   }
 }
