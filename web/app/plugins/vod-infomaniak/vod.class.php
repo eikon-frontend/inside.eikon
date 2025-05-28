@@ -346,6 +346,8 @@ class EasyVod
   {
     $oApi = $this->getAPI();
 
+    error_log("Starting video synchronization...");
+
     if ($_REQUEST['iTotalCounter'] == 0) {
       $this->db->clean_videos();
       $iTotalVideo = $oApi->countVideo();
@@ -359,10 +361,6 @@ class EasyVod
       $iNumberByLot = 1000;
     }
 
-    // Make sure we're using API v2 and force it if not set
-    if (!get_option('vod_api_version', false)) {
-      update_option('vod_api_version', 2);
-    }
     if (!get_option('vod_api_version', false)) {
       update_option('vod_api_version', 2);
     }
@@ -431,6 +429,7 @@ class EasyVod
     }
 
     header('Content-Type: application/json');
+    error_log("Video synchronization completed. Total videos: " . $iTotalVideo . ", Page: " . intval($_REQUEST['iPage']) . ", Videos per lot: " . $iNumberByLot);
     die(json_encode(array('iTotalCounter' => $iTotalVideo, 'iPage' => intval($_REQUEST['iPage']), 'iLot' => $iNumberByLot)));
   }
 

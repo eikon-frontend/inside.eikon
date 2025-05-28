@@ -69,11 +69,11 @@ class EasyVod_Display
                 } else {
                   foreach ($aVideos as $oVideo) {
                     if (get_option('vod_api_version', false) == 1) {
-                      echo ("<tr class=\"vod_element_select\" onclick=\"Vod_selectVideo(this, '" . $oVideo->sPath . $oVideo->sServerCode . "." . strtolower($oVideo->sExtension) . "','" . $oVideo->sToken . "','" . $oVideo->iFolder . "');\"><td>;");
+                      echo ("<tr class=\"vod_element_select\" onclick=\"Vod_selectVideo(this, '" . $oVideo->sPath . $oVideo->sServerCode . "." . strtolower($oVideo->sExtension) . "','" . (isset($oVideo->sToken) ? $oVideo->sToken : '') . "','" . $oVideo->iFolder . "');\"><td>;");
 
                       echo ("<img width='100' src='https://vod.infomaniak.com/redirect/" . $options['vod_api_id'] . $oVideo->sPath . $oVideo->sServerCode . ".mini.jpg' />");
                     } else {
-                      echo ("<tr class=\"vod_element_select\" onclick=\"Vod_selectVideo(this, '" . $oVideo->sServerCode . "','" . $oVideo->sToken . "','" . $oVideo->iFolder . "');\"><td>");
+                      echo ("<tr class=\"vod_element_select\" onclick=\"Vod_selectVideo(this, '" . $oVideo->sServerCode . "','" . (isset($oVideo->sToken) ? $oVideo->sToken : '') . "','" . $oVideo->iFolder . "');\"><td>");
 
                       echo ("<img width='100' src='" . $oVideo->sImageUrlV2 . "'/>");
                     }
