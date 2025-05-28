@@ -216,17 +216,19 @@ class EasyVod
   function fastSynchro($force = false, $full = false)
   {
     $oApi = $this->getAPI();
-    if (!$oApi) return false;
+    if (!$oApi) {
+      return false;
+    }
 
     if ($full || $force || $oApi->folderModifiedSince($this->options['vod_api_lastUpdate'])) {
       $this->db->clean_folders();
       $aFolders = $oApi->getFolders();
       if (is_array($aFolders) && !empty($aFolders)) {
         foreach ($aFolders as $oFolder) {
-          if (isset($oFolder['iFolder']) && isset($oFolder['sPath']) && isset($oFolder['sName'])) {
+          if (isset($oFolder['iFolderCode']) && isset($oFolder['sFolderPath']) && isset($oFolder['sFolderName'])) {
             $sAccess = isset($oFolder['sAccess']) ? $oFolder['sAccess'] : 'ALL';
             $sToken = isset($oFolder['sToken']) ? $oFolder['sToken'] : '';
-            $this->db->insert_folder($oFolder['iFolder'], $oFolder['sPath'], $oFolder['sName'], $sAccess, $sToken);
+            $this->db->insert_folder($oFolder['iFolderCode'], $oFolder['sFolderPath'], $oFolder['sFolderName'], $sAccess, $sToken);
           }
         }
       }
@@ -346,8 +348,6 @@ class EasyVod
   {
     $oApi = $this->getAPI();
 
-    error_log("Starting video synchronization...");
-
     if ($_REQUEST['iTotalCounter'] == 0) {
       $this->db->clean_videos();
       $iTotalVideo = $oApi->countVideo();
@@ -429,7 +429,6 @@ class EasyVod
     }
 
     header('Content-Type: application/json');
-    error_log("Video synchronization completed. Total videos: " . $iTotalVideo . ", Page: " . intval($_REQUEST['iPage']) . ", Videos per lot: " . $iNumberByLot);
     die(json_encode(array('iTotalCounter' => $iTotalVideo, 'iPage' => intval($_REQUEST['iPage']), 'iLot' => $iNumberByLot)));
   }
 
@@ -870,6 +869,14 @@ class EasyVod
    * @param string $channelId The VOD channel ID
    * @param string $mediaId The unique media identifier
    * @return string|null The poster URL or null if not found
+   */
+  /**
+   * Get a video's poster URL from the REST API with fallback to thumbnail URL
+   *
+   * @param string $channelId The VOD channel ID
+   * @param string $mediaId The unique media identifier
+   * @param string $fallbackThumbnailUrl Fallback thumbnail URL if poster not available
+   * @return string The poster URL if available, otherwise the fallback thumbnail URL
    */
   function fetchPosterUrlFromRestAPI($channelId, $mediaId)
   {
@@ -1502,6 +1509,8 @@ class EasyVod_db
 		) CHARACTER SET utf8;";
     dbDelta($sql_folder);
 
+
+
     $sql_video = "CREATE TABLE " . $this->db_table_video . " (
 		 `iVideo` INT UNSIGNED NOT NULL ,
 		 `iFolder` INT UNSIGNED NOT NULL ,
@@ -1834,7 +1843,6 @@ class EasyVod_db
     $sImageURL = isset($sImageURL) ? $sImageURL : '';
     $sFolderCode = isset($sFolderCode) ? $sFolderCode : '';
     $sDashURL = isset($sDashURL) ? $sDashURL : '';
-    $sShareURL = isset($sShareURL) ? $sShareURL : '';
 
     // If dash URL is not provided but we have folder UUID and encoded media info, construct it
     if (empty($sDashURL) && !empty($sFolderCode) && !empty($sServerCode)) {
