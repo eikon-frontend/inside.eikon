@@ -221,9 +221,13 @@ class EasyVod
     if ($full || $force || $oApi->folderModifiedSince($this->options['vod_api_lastUpdate'])) {
       $this->db->clean_folders();
       $aFolders = $oApi->getFolders();
-      if (!empty($aFolders)) {
+      if (is_array($aFolders) && !empty($aFolders)) {
         foreach ($aFolders as $oFolder) {
-          $this->db->insert_folder($oFolder['iFolder'], $oFolder['sPath'], $oFolder['sName'], $oFolder['sAccess'], $oFolder['sToken']);
+          if (isset($oFolder['iFolder']) && isset($oFolder['sPath']) && isset($oFolder['sName'])) {
+            $sAccess = isset($oFolder['sAccess']) ? $oFolder['sAccess'] : 'ALL';
+            $sToken = isset($oFolder['sToken']) ? $oFolder['sToken'] : '';
+            $this->db->insert_folder($oFolder['iFolder'], $oFolder['sPath'], $oFolder['sName'], $sAccess, $sToken);
+          }
         }
       }
     }
@@ -231,9 +235,17 @@ class EasyVod
     if ($full || $force || $oApi->playerModifiedSince($this->options['vod_api_lastUpdate'])) {
       $this->db->clean_players();
       $aPlayers = $oApi->getPlayers();
-      if (!empty($aPlayers)) {
+      if (is_array($aPlayers) && !empty($aPlayers)) {
         foreach ($aPlayers as $oPlayer) {
-          $this->db->insert_player($oPlayer['iPlayer'], $oPlayer['sName'], $oPlayer['iWidth'], $oPlayer['iHeight'], $oPlayer['bStart'], $oPlayer['bLoop'], $oPlayer['dEdit'], $oPlayer['bSwitchQuality'], 2);
+          if (isset($oPlayer['iPlayer']) && isset($oPlayer['sName'])) {
+            $iWidth = isset($oPlayer['iWidth']) ? $oPlayer['iWidth'] : 720;
+            $iHeight = isset($oPlayer['iHeight']) ? $oPlayer['iHeight'] : 360;
+            $bStart = isset($oPlayer['bStart']) ? $oPlayer['bStart'] : false;
+            $bLoop = isset($oPlayer['bLoop']) ? $oPlayer['bLoop'] : '';
+            $dEdit = isset($oPlayer['dEdit']) ? $oPlayer['dEdit'] : date('Y-m-d H:i:s');
+            $bSwitchQuality = isset($oPlayer['bSwitchQuality']) ? $oPlayer['bSwitchQuality'] : 1;
+            $this->db->insert_player($oPlayer['iPlayer'], $oPlayer['sName'], $iWidth, $iHeight, $bStart, $bLoop, $dEdit, $bSwitchQuality, 2);
+          }
         }
       }
     }
@@ -257,12 +269,16 @@ class EasyVod
     if (empty($sVideo) || empty($iPlayer)) return '';
 
     $oShare = $this->db->getShare($sVideo, $iPlayer);
-    if (!empty($oShare)) return $oShare->sURL;
+    if (!empty($oShare) && isset($oShare->sURL)) return $oShare->sURL;
 
     $oApi = $this->getAPI();
     if (!$oApi) return '';
 
-    $sURL = $oApi->publishShare($sVideo, $iPlayer, $this->options['width'], $this->options['height']);
+    $shareResponse = $oApi->publishShare($sVideo, $iPlayer, $this->options['width'], $this->options['height']);
+    if (empty($shareResponse)) return '';
+
+    // Handle both object and array responses
+    $sURL = is_array($shareResponse) ? ($shareResponse['sURL'] ?? '') : (is_object($shareResponse) ? ($shareResponse->sURL ?? '') : $shareResponse);
     if (empty($sURL)) return '';
 
     $this->db->setShare($sVideo, $iPlayer, $sURL);
@@ -1819,6 +1835,7 @@ class EasyVod_db
     $sImageURL = isset($sImageURL) ? $sImageURL : '';
     $sFolderCode = isset($sFolderCode) ? $sFolderCode : '';
     $sDashURL = isset($sDashURL) ? $sDashURL : '';
+    $sShareURL = isset($sShareURL) ? $sShareURL : '';
 
     // If dash URL is not provided but we have folder UUID and encoded media info, construct it
     if (empty($sDashURL) && !empty($sFolderCode) && !empty($sServerCode)) {
