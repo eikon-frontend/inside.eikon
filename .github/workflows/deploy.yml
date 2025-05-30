@@ -52,12 +52,12 @@ jobs:
 
       - name: Set up environment
         run: |
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "if [ -L ${{ vars.DEPLOY_PATH }}/current/.env ]; then rm ${{ vars.DEPLOY_PATH }}/current/.env; fi"
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "ln -s ${{ vars.DEPLOY_PATH }}/shared/.env ${{ vars.DEPLOY_PATH }}/current/.env"
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "if [ -L ${{ vars.DEPLOY_PATH }}/current/web/.htaccess ]; then rm ${{ vars.DEPLOY_PATH }}/current/web/.htaccess; fi"
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "ln -s ${{ vars.DEPLOY_PATH }}/shared/web/.htaccess ${{ vars.DEPLOY_PATH }}/current/web/.htaccess"
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "if [ -L ${{ vars.DEPLOY_PATH }}/current/web/app/uploads ]; then rm ${{ vars.DEPLOY_PATH }}/current/web/app/uploads; fi"
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "ln -s ${{ vars.DEPLOY_PATH }}/shared/web/app/uploads ${{ vars.DEPLOY_PATH }}/current/web/app"
+          # Remove existing target and create symlink for .env
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "rm -f ${{ vars.DEPLOY_PATH }}/current/.env && ln -s ${{ vars.DEPLOY_PATH }}/shared/.env ${{ vars.DEPLOY_PATH }}/current/.env"
+          # Remove existing target and create symlink for web/.htaccess
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "rm -f ${{ vars.DEPLOY_PATH }}/current/web/.htaccess && ln -s ${{ vars.DEPLOY_PATH }}/shared/web/.htaccess ${{ vars.DEPLOY_PATH }}/current/web/.htaccess"
+          # Remove existing target and create symlink for web/app/uploads
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "rm -rf ${{ vars.DEPLOY_PATH }}/current/web/app/uploads && ln -s ${{ vars.DEPLOY_PATH }}/shared/web/app/uploads ${{ vars.DEPLOY_PATH }}/current/web/app/uploads"
 
       - name: Clear opcache
         run: |
