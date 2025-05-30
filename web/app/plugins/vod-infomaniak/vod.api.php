@@ -597,6 +597,11 @@ class vod_api
 
 
 
+  private function debug($functionName, $exception)
+  {
+    error_log("Error in function " . $functionName . ": " . $exception->getMessage());
+  }
+
   private function getSoapAdmin()
   {
 
@@ -610,27 +615,35 @@ class vod_api
       $old_version = get_option('vod_api_version', false);
 
 
-
-      if ($api_response['bMigrated'] === "0") {
-        $version = 1;
-        $sSoap = "http://statslive.infomaniak.com/vod/api/vod_soap.wsdl";
-      } else {
-        $version = 2;
-        if (intval($api_response['item']) < 10000) {
-          $sSoap = "https://api.vod2.infomaniak.com/v1soap/soap/wsdl";
+      // Ensure $api_response is not null and contains the expected keys
+      if (is_array($api_response) && isset($api_response['bMigrated'])) {
+        if ($api_response['bMigrated'] === "0") {
+          $version = 1;
+          $sSoap = "http://statslive.infomaniak.com/vod/api/vod_soap.wsdl";
         } else {
-          $sSoap = "https://api.vod2.infomaniak.com/v1soap/soap/wsdl2";
+          $version = 2;
+          // Ensure 'item' key exists before accessing it
+          if (isset($api_response['item']) && intval($api_response['item']) < 10000) {
+            $sSoap = "https://api.vod2.infomaniak.com/v1soap/soap/wsdl";
+          } else {
+            $sSoap = "https://api.vod2.infomaniak.com/v1soap/soap/wsdl2";
+          }
         }
-      }
-      if (empty(get_option('vod_api_version', false))) {
-        add_option("vod_api_version", $version);
+        if (empty(get_option('vod_api_version', false))) {
+          add_option("vod_api_version", $version);
+        } else {
+          update_option("vod_api_version", $version);
+        }
+
+        if ($old_version != $version) {
+          $this->bForceUpdate = true;
+        }
       } else {
-        update_option("vod_api_version", $version);
+        // Handle the case where $api_response is not as expected
+        error_log("VOD API Error: Invalid response from status.php");
+        return false;
       }
 
-      if ($old_version != $version) {
-        $this->bForceUpdate = true;
-      }
 
       $ctx = stream_context_create(array("ssl" => array("verify_peer" => false, "verify_peer_name" => false,)));
 

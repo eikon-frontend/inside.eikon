@@ -573,6 +573,7 @@ class EasyVod
 
   function importPostVideo()
   {
+    $sServerCode = '';
     if (!empty($_REQUEST['upload']) && $_REQUEST['upload'] == "finish") {
       echo $this->db->insert_upload($_REQUEST['sToken'], $_REQUEST['file']);
     } else {
@@ -1511,6 +1512,8 @@ class EasyVod_db
 
 
 
+
+
     $sql_video = "CREATE TABLE " . $this->db_table_video . " (
 		 `iVideo` INT UNSIGNED NOT NULL ,
 		 `iFolder` INT UNSIGNED NOT NULL ,
@@ -1836,6 +1839,8 @@ class EasyVod_db
 
   function insert_video($iVideo, $iFolder, $sName, $sServerCode, $sPath, $sExtension, $iDuration, $dUpload, $sFolderCode = "", $sVideoURL = "", $sImageURL = "", $sShareURL = "", $sDashURL = "")
   {
+    error_log("Attempting to insert video: ID=" . $iVideo . ", Name=" . $sName . ", ServerCode=" . $sServerCode . ", FolderCode=" . $sFolderCode);
+
     global $wpdb;
 
     // Ensure we have defaults for backward compatibility
