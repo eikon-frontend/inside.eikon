@@ -1180,8 +1180,39 @@ class EasyVod
 
             if ($oVideo != false) {
               $oApi = $this->getAPI();
-              $oApi->deleteVideo($oVideo->iFolder, $oVideo->sFileServerCode);
-              $this->db->delete_video(intval($_POST['dialog-confirm-id']));
+              // Attempt to delete the video from the VOD service
+              $apiCallSuccessful = $oApi->deleteVideo($oVideo->iFolder, $oVideo->sFileServerCode);
+
+              if ($apiCallSuccessful) {
+                // If VOD service deletion was successful, delete from local database
+                $this->db->delete_video(intval($_POST['dialog-confirm-id']));
+                if (is_admin() && function_exists('add_settings_error')) {
+                  add_settings_error(
+                    'vod_infomaniak_notices',
+                    'vod_api_delete_success',
+                    sprintf(
+                      __('La vidéo "%s" a été supprimée avec succès du service VOD et de votre site.', 'vod_infomaniak'),
+                      esc_html($oVideo->sName)
+                    ),
+                    'updated'
+                  );
+                }
+              } else {
+                // If VOD service deletion failed, do not delete locally and notify the user
+                if (is_admin() && function_exists('add_settings_error')) {
+                  add_settings_error(
+                    'vod_infomaniak_notices',
+                    'vod_api_delete_failed',
+                    sprintf(
+                      __('La suppression de la vidéo "%s" sur le service VOD Infomaniak a échoué. La vidéo n\'a pas été retirée de votre site.', 'vod_infomaniak'),
+                      esc_html($oVideo->sName)
+                    ),
+                    'error'
+                  );
+                }
+                // Optionally, log the error for debugging purposes
+                // error_log('VOD Infomaniak Plugin: Failed to delete video ' . esc_html($oVideo->sFileServerCode) . ' from folder ' . esc_html($oVideo->iFolder) . ' on the VOD service.');
+              }
             }
           } else {
             if ($_REQUEST['sAction'] == "post") {
