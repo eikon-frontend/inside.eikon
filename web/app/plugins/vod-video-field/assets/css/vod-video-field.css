@@ -101,7 +101,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 50;
+    z-index: 100000; /* Increased z-index */
     display: none;
 }
 
@@ -232,13 +232,6 @@
     text-overflow: ellipsis;
 }
 
-.vod-video-results {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-}
-
-
 /* Responsive Adjustments */
 @media screen and (max-width: 782px) {
     .vod-video-thumbnail {
@@ -249,7 +242,26 @@
     }
 
     .vod-video-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjusted for smaller screens */
+    }
+
+    /* Adjust modal position to avoid overlapping with WordPress admin menu on small screens */
+    body.admin-bar.auto-fold .vod-video-modal.is-open {
+        padding-left: 36px; /* Width of folded admin menu */
+        box-sizing: border-box;
+    }
+
+    body.admin-bar:not(.auto-fold) .vod-video-modal.is-open {
+        /* Covers expanded admin menu on small screens (e.g., < 782px) */
+        padding-left: 160px; /* Width of expanded admin menu */
+        box-sizing: border-box;
+    }
+
+    .vod-video-modal-content {
+        /* Ensure modal content width recalculates based on new padded space */
+        width: auto; /* Allow it to shrink if needed, max-width will still apply */
+        margin-left: 20px; /* Maintain left margin within the new space */
+        margin-right: 20px; /* Maintain right margin */
     }
 }
 
