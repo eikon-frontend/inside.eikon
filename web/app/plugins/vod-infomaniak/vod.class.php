@@ -545,7 +545,18 @@ class EasyVod
       }
 
       // Try to get poster URL from REST API, fallback to SOAP image URL
-      $fallbackImageUrl = $oVideo['aEncodes'][0]['sImageURL'];
+      $fallbackImageUrl = ''; // Initialize to empty string
+      if (isset($oVideo['aEncodes'][0]['sImageURL']) && !empty($oVideo['aEncodes'][0]['sImageURL'])) {
+        $fallbackImageUrl = $oVideo['aEncodes'][0]['sImageURL'];
+
+        // Also try to access the fallbackImageUrl when the media is ready.
+        // This is a lightweight attempt by fetching headers.
+        // The primary logic for using the fallback is still within getPosterOrThumbnailUrl.
+        @get_headers($fallbackImageUrl);
+      }
+      // If $fallbackImageUrl remains empty (e.g. not set in $oVideo or empty),
+      // it will be passed as such to getPosterOrThumbnailUrl, which should handle it.
+
       $finalImageUrl = $this->getPosterOrThumbnailUrl($this->options['vod_api_id'], $oVideo['sFileServerCode'], $fallbackImageUrl);
 
       $this->db->insert_video($oVideo['iFileCode'], $oVideo['iFolder'], $oVideo['sFileName'], $oVideo['sFileServerCode'], $oVideo['aEncodes'][0]['sPath'], $oVideo['aEncodes'][0]['eConteneur'], $oVideo['fFileDuration'], $oVideo['dFileUpload'], $oVideo['folderUuid'], $oVideo['aEncodes'][0]['sVideoURL'], $finalImageUrl, $sShareURL, $dash_url);
