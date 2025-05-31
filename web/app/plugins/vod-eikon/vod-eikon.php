@@ -239,24 +239,6 @@ class VOD_Eikon
                       <p class="description">Select a video file to upload. Maximum file size: 2GB</p>
                     </td>
                   </tr>
-                  <tr>
-                    <th scope="row">
-                      <label for="video-title">Video Title</label>
-                    </th>
-                    <td>
-                      <input type="text" id="video-title" name="video_title" class="regular-text" required>
-                      <p class="description">Enter a title for your video</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <label for="video-description">Description (Optional)</label>
-                    </th>
-                    <td>
-                      <textarea id="video-description" name="video_description" class="large-text" rows="4"></textarea>
-                      <p class="description">Enter a description for your video</p>
-                    </td>
-                  </tr>
                 </table>
 
                 <div class="vod-upload-actions">
@@ -741,18 +723,8 @@ class VOD_Eikon
     }
 
     // Validate inputs
-    $title = sanitize_text_field($_POST['video_title'] ?? '');
-    $description = sanitize_textarea_field($_POST['video_description'] ?? '');
-
-    error_log('VOD Eikon: Title: ' . $title);
-    error_log('VOD Eikon: Description: ' . $description);
-
-    if (empty($title)) {
-      error_log('VOD Eikon: Empty title provided');
-      wp_send_json_error(array(
-        'message' => 'Video title is required.'
-      ));
-    }
+    $title = '';
+    $description = '';
 
     // Check if file was uploaded
     if (!isset($_FILES['video_file']) || $_FILES['video_file']['error'] !== UPLOAD_ERR_OK) {
@@ -763,6 +735,15 @@ class VOD_Eikon
     }
 
     $file = $_FILES['video_file'];
+
+    // Generate title from filename if not provided
+    if (empty($title)) {
+      $title = pathinfo($file['name'], PATHINFO_FILENAME);
+      $title = sanitize_text_field($title);
+    }
+
+    error_log('VOD Eikon: Generated title: ' . $title);
+    error_log('VOD Eikon: Description: ' . $description);
 
     error_log('VOD Eikon: File details - Name: ' . $file['name'] . ', Size: ' . $file['size'] . ', Type: ' . $file['type'] . ', Tmp: ' . $file['tmp_name']);
 

@@ -45,17 +45,9 @@ jQuery(document).ready(function ($) {
     $status.empty();
 
     // Validate required fields
-    var title = $('#video-title').val().trim();
     var fileInput = $('#video-file')[0];
 
-    console.log('VOD Eikon: Validating form - Title: ' + title);
     console.log('VOD Eikon: File input files count: ' + fileInput.files.length);
-
-    if (!title) {
-      console.log('VOD Eikon: Validation failed - no title');
-      $status.html('<div class="notice notice-error inline"><p>Please enter a video title.</p></div>');
-      return;
-    }
 
     if (!fileInput.files.length) {
       console.log('VOD Eikon: Validation failed - no file selected');
