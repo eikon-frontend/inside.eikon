@@ -105,7 +105,8 @@ jQuery(document).ready(function ($) {
 
     xhr.addEventListener('load', function () {
       console.log('VOD Eikon: Upload request completed with status: ' + xhr.status);
-      console.log('VOD Eikon: Response text: ' + xhr.responseText);
+      console.log('VOD Eikon: Response text length: ' + xhr.responseText.length);
+      console.log('VOD Eikon: Response text (first 500 chars): ' + xhr.responseText.substring(0, 500));
 
       if (xhr.status === 200) {
         try {
@@ -128,11 +129,26 @@ jQuery(document).ready(function ($) {
           }
         } catch (e) {
           console.error('VOD Eikon: Failed to parse response JSON: ', e);
-          $status.html('<div class="notice notice-error inline"><p>Invalid response from server. Please try again.</p></div>');
+          console.log('VOD Eikon: Raw response: ', xhr.responseText);
+          // Check if response contains PHP error about POST size limit
+          if (xhr.responseText.includes('POST Content-Length') && xhr.responseText.includes('exceeds the limit')) {
+            $status.html('<div class="notice notice-error inline"><p>File too large for server configuration. Please contact your administrator.</p></div>');
+          } else if (xhr.responseText.includes('Fatal error') || xhr.responseText.includes('PHP Fatal error')) {
+            $status.html('<div class="notice notice-error inline"><p>Server error during upload. Please check server logs and try again.</p></div>');
+          } else {
+            $status.html('<div class="notice notice-error inline"><p>Invalid response from server. Please try again.</p></div>');
+          }
+        }
+      } else if (xhr.status === 400) {
+        // Check if it's a PHP POST size limit error
+        if (xhr.responseText.includes('POST Content-Length') && xhr.responseText.includes('exceeds the limit')) {
+          $status.html('<div class="notice notice-error inline"><p>Server configuration has been updated. Please try uploading again.</p></div>');
+        } else {
+          $status.html('<div class="notice notice-error inline"><p>Bad request. Please check your file and try again.</p></div>');
         }
       } else {
         console.log('VOD Eikon: Upload failed with HTTP status: ' + xhr.status);
-        $status.html('<div class="notice notice-error inline"><p>Upload failed. Please try again.</p></div>');
+        $status.html('<div class="notice notice-error inline"><p>Upload failed (HTTP ' + xhr.status + '). Please try again.</p></div>');
       }
 
       // Reset form state
@@ -157,8 +173,22 @@ jQuery(document).ready(function ($) {
       $('.progress-text').text('Uploading... 0%');
     });
 
+    xhr.addEventListener('timeout', function () {
+      console.error('VOD Eikon: XMLHttpRequest timeout occurred');
+      $status.html('<div class="notice notice-error inline"><p>Upload timed out. Please try again or contact support if the issue persists.</p></div>');
+
+      // Reset form state
+      $progress.hide();
+      $uploadBtn.show();
+      $cancelBtn.hide();
+      $form.find('input, textarea').prop('disabled', false);
+      $('.progress-fill').css('width', '0%');
+      $('.progress-text').text('Uploading... 0%');
+    });
+
     // Send the request
     console.log('VOD Eikon: Sending request to: ' + vodEikon.ajax_url);
+    xhr.timeout = 600000; // 10 minutes timeout
     xhr.open('POST', vodEikon.ajax_url);
     xhr.send(formData);
 

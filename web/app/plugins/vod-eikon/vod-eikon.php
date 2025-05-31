@@ -689,6 +689,13 @@ class VOD_Eikon
    */
   public function ajax_upload_video()
   {
+    // Increase execution time and memory limits for video upload
+    set_time_limit(0); // No time limit
+    ini_set('memory_limit', '512M');
+
+    // Simple file logging test
+    file_put_contents('/Users/jminguely/Sites/inside.eikon/web/app/debug.log', '[' . date('Y-m-d H:i:s') . '] VOD Eikon: ajax_upload_video method called!' . PHP_EOL, FILE_APPEND);
+
     error_log('VOD Eikon: ajax_upload_video started');
     error_log('VOD Eikon: $_POST data: ' . print_r($_POST, true));
     error_log('VOD Eikon: $_FILES data: ' . print_r($_FILES, true));
@@ -834,11 +841,24 @@ class VOD_Eikon
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_HTTPHEADER => array(
         'Authorization: Bearer ' . $api_token,
-        'Accept: application/json'
+        'Accept: application/json',
+        'User-Agent: WordPress VOD Eikon Plugin/1.0'
       ),
-      CURLOPT_TIMEOUT => 300, // 5 minutes timeout
+      CURLOPT_TIMEOUT => 600, // 10 minutes timeout
+      CURLOPT_CONNECTTIMEOUT => 30, // 30 seconds connection timeout
       CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_SSL_VERIFYPEER => false
+      CURLOPT_SSL_VERIFYPEER => false,
+      CURLOPT_VERBOSE => true, // Enable verbose logging
+      CURLOPT_NOPROGRESS => false, // Enable progress function
+      CURLOPT_PROGRESSFUNCTION => function ($resource, $download_total, $downloaded, $upload_total, $uploaded) {
+        if ($upload_total > 0) {
+          $percent = round(($uploaded / $upload_total) * 100, 1);
+          if ($percent % 10 == 0) { // Log every 10%
+            error_log("VOD Eikon: Upload progress: {$percent}% ({$uploaded}/{$upload_total} bytes)");
+          }
+        }
+        return 0; // Return 0 to continue
+      }
     ));
 
     error_log('VOD Eikon: Executing cURL request...');
@@ -847,10 +867,11 @@ class VOD_Eikon
     $curl_error = curl_error($ch);
     $curl_info = curl_getinfo($ch);
 
+    error_log('VOD Eikon: cURL execution completed');
     error_log('VOD Eikon: cURL response - HTTP Code: ' . $http_code);
     error_log('VOD Eikon: cURL error: ' . ($curl_error ?: 'None'));
-    error_log('VOD Eikon: cURL info: ' . print_r($curl_info, true));
-    error_log('VOD Eikon: API Response: ' . $response);
+    error_log('VOD Eikon: Response length: ' . strlen($response));
+    error_log('VOD Eikon: API Response: ' . substr($response, 0, 1000)); // Log first 1000 chars
 
     curl_close($ch);
 
@@ -868,7 +889,11 @@ class VOD_Eikon
       if ($response) {
         $response_data = json_decode($response, true);
         if (isset($response_data['error'])) {
-          $error_message .= ' - ' . $response_data['error'];
+          if (is_array($response_data['error'])) {
+            $error_message .= ' - ' . json_encode($response_data['error']);
+          } else {
+            $error_message .= ' - ' . $response_data['error'];
+          }
         }
         if (isset($response_data['message'])) {
           $error_message .= ' - ' . $response_data['message'];
