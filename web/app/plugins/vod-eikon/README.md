@@ -228,8 +228,27 @@ The plugin automatically synchronizes videos daily using WordPress cron. You can
    - Verify video is accessible from your domain
 
 3. **Missing videos**
+
    - Run manual synchronization from admin interface
    - Check API response format matches expected structure
+
+4. **Videos missing poster images or playback URLs**
+   - This is normal for newly uploaded videos that are still processing
+   - Processing typically takes 5-30 minutes depending on video size and quality
+   - The plugin automatically checks for updates at regular intervals
+   - Use the "Update Incomplete Videos" button to manually check for processing completion
+   - Videos still processing will show a clock icon and "Processing" label in the admin table
+
+### Video Processing Flow
+
+When a video is uploaded:
+
+1. **Upload**: Video is uploaded to Infomaniak's servers
+2. **Initial Sync**: Video is added to WordPress database (may be missing poster/MPD URL)
+3. **Processing**: Infomaniak processes the video (encoding, thumbnail generation)
+4. **Automatic Updates**: Plugin checks for completion at 2, 5, 10, and 30 minutes after upload
+5. **Hourly Checks**: Plugin runs hourly to update any remaining incomplete videos
+6. **Manual Updates**: Use "Update Incomplete Videos" button for immediate checks
 
 ### Debug Mode
 

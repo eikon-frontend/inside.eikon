@@ -334,3 +334,58 @@
 .vod-eikon-videos .wp-list-table tbody tr:hover {
     background-color: #f5f5f5;
 }
+
+/* Incomplete video styling */
+.vod-eikon-videos .incomplete-video {
+    background-color: #fff3cd !important;
+    border-left: 4px solid #ffc107;
+}
+
+.vod-eikon-videos .incomplete-video:hover {
+    background-color: #ffeaa7 !important;
+}
+
+.processing-indicator {
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.processing-indicator .dashicons {
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+.processing-indicator small {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+/* Animation for processing indicator */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.processing-indicator .dashicons-clock {
+    animation: pulse 2s infinite;
+}
+
+/* Incomplete count badge styling */
+.incomplete-count {
+    background: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 5px;
+    vertical-align: super;
+}
+
+.button-secondary .incomplete-count {
+    background: #6c757d;
+}

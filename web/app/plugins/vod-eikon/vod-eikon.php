@@ -41,6 +41,7 @@ class VOD_Eikon
     add_action('admin_menu', array($this, 'add_admin_menu'));
     add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     add_action('wp_ajax_sync_vod_videos', array($this, 'ajax_sync_videos'));
+    add_action('wp_ajax_update_incomplete_videos', array($this, 'ajax_update_incomplete_videos'));
     add_action('wp_ajax_delete_vod_video', array($this, 'ajax_delete_video'));
     add_action('wp_ajax_get_vod_player', array($this, 'ajax_get_vod_player'));
     add_action('wp_ajax_nopriv_get_vod_player', array($this, 'ajax_get_vod_player'));
@@ -55,11 +56,23 @@ class VOD_Eikon
     // Add debug endpoint for upload limits
     add_action('wp_ajax_debug_upload_limits', array($this, 'debug_upload_limits'));
 
+    // Add test endpoint for incomplete video processing
+    add_action('wp_ajax_test_incomplete_video_processing', array($this, 'test_incomplete_video_processing'));
+
     // Schedule daily sync if not already scheduled
     if (!wp_next_scheduled('vod_eikon_daily_sync')) {
       wp_schedule_event(time(), 'daily', 'vod_eikon_daily_sync');
     }
     add_action('vod_eikon_daily_sync', array($this, 'sync_videos_from_api'));
+
+    // Schedule hourly update for incomplete videos if not already scheduled
+    if (!wp_next_scheduled('vod_eikon_update_incomplete_videos')) {
+      wp_schedule_event(time(), 'hourly', 'vod_eikon_update_incomplete_videos');
+    }
+    add_action('vod_eikon_update_incomplete_videos', array($this, 'update_incomplete_videos'));
+
+    // Add hook for checking individual video processing status
+    add_action('vod_eikon_check_video_processing', array($this, 'check_video_processing_status'));
   }
 
   public function activate()
@@ -71,6 +84,7 @@ class VOD_Eikon
   public function deactivate()
   {
     wp_clear_scheduled_hook('vod_eikon_daily_sync');
+    wp_clear_scheduled_hook('vod_eikon_update_incomplete_videos');
   }
 
   private function create_database_table()
@@ -170,6 +184,22 @@ class VOD_Eikon
                 <span class="dashicons dashicons-update"></span>
                 Synchronize Videos
               </button>
+              <?php
+              // Get count of incomplete videos for the button label
+              global $wpdb;
+              $incomplete_count = $wpdb->get_var(
+                "SELECT COUNT(*) FROM {$this->table_name}
+                 WHERE (poster = '' OR poster IS NULL)
+                 OR (mpd_url = '' OR mpd_url IS NULL)"
+              );
+              ?>
+              <button id="update-incomplete-videos" class="button button-primary<?php echo $incomplete_count > 0 ? ' button-primary' : ' button-secondary'; ?>">
+                <span class="dashicons dashicons-update-alt"></span>
+                Update Incomplete Videos
+                <?php if ($incomplete_count > 0): ?>
+                  <span class="incomplete-count">(<?php echo $incomplete_count; ?>)</span>
+                <?php endif; ?>
+              </button>
               <button id="debug-api" class="button button-secondary">
                 <span class="dashicons dashicons-search"></span>
                 Debug API Response
@@ -181,6 +211,10 @@ class VOD_Eikon
               <button id="test-ajax" class="button button-secondary">
                 <span class="dashicons dashicons-admin-tools"></span>
                 Test AJAX
+              </button>
+              <button id="test-processing" class="button button-secondary">
+                <span class="dashicons dashicons-analytics"></span>
+                Processing Stats
               </button>
               <span id="sync-status"></span>
             </div>
@@ -200,22 +234,33 @@ class VOD_Eikon
                     </tr>
                   </thead>
                   <tbody>
-                    <?php foreach ($videos as $video): ?>
-                      <tr data-video-id="<?php echo esc_attr($video->id); ?>">
+                    <?php foreach ($videos as $video):
+                      $is_incomplete = empty($video->poster) || empty($video->mpd_url);
+                      $row_class = $is_incomplete ? 'incomplete-video' : '';
+                    ?>
+                      <tr data-video-id="<?php echo esc_attr($video->id); ?>" class="<?php echo $row_class; ?>">
                         <td>
                           <?php if ($video->poster): ?>
                             <img src="<?php echo esc_url($video->poster); ?>" alt="<?php echo esc_attr($video->name); ?>" style="max-width: 80px; height: auto;">
                           <?php else: ?>
-                            <span class="dashicons dashicons-format-video"></span>
+                            <span class="dashicons dashicons-format-video" style="color: #dc3545;" title="Poster missing - video may still be processing"></span>
                           <?php endif; ?>
                         </td>
-                        <td><?php echo esc_html($video->name); ?></td>
+                        <td>
+                          <?php echo esc_html($video->name); ?>
+                          <?php if ($is_incomplete): ?>
+                            <span class="processing-indicator" title="Video is still processing">
+                              <span class="dashicons dashicons-clock" style="color: #ffc107; font-size: 14px;"></span>
+                              <small style="color: #ffc107;">Processing</small>
+                            </span>
+                          <?php endif; ?>
+                        </td>
                         <td><?php echo esc_html($video->vod_id); ?></td>
                         <td>
                           <?php if ($video->mpd_url): ?>
                             <code><?php echo esc_html($video->mpd_url); ?></code>
                           <?php else: ?>
-                            <em>No MPD URL available</em>
+                            <em style="color: #dc3545;">No MPD URL available</em>
                           <?php endif; ?>
                         </td>
                         <td>
@@ -236,6 +281,15 @@ class VOD_Eikon
             <div class="vod-upload-section">
               <h2>Upload Video to Infomaniak VOD</h2>
               <p>Upload a video file to your Infomaniak VOD channel. Supported formats: MP4, MOV, AVI, MKV.</p>
+
+              <div class="notice notice-info">
+                <p>
+                  <span class="dashicons dashicons-info"></span>
+                  <strong>Processing Time:</strong> After upload, videos need time to process on Infomaniak's servers.
+                  The poster image and playback URL will be available once processing is complete (usually within 5-30 minutes).
+                  The system will automatically check for updates at regular intervals.
+                </p>
+              </div>
 
               <form id="vod-upload-form" enctype="multipart/form-data">
                 <table class="form-table">
@@ -785,8 +839,18 @@ class VOD_Eikon
       // Sync videos to update the database with the new upload
       $this->sync_videos_from_api();
 
+      // Schedule a delayed update to check for processing completion
+      $video_id = $upload_result['video_id'];
+      if (!empty($video_id)) {
+        // Schedule checks at 2 minutes, 5 minutes, 10 minutes, and 30 minutes
+        wp_schedule_single_event(time() + 120, 'vod_eikon_check_video_processing', array($video_id)); // 2 minutes
+        wp_schedule_single_event(time() + 300, 'vod_eikon_check_video_processing', array($video_id)); // 5 minutes
+        wp_schedule_single_event(time() + 600, 'vod_eikon_check_video_processing', array($video_id)); // 10 minutes
+        wp_schedule_single_event(time() + 1800, 'vod_eikon_check_video_processing', array($video_id)); // 30 minutes
+      }
+
       wp_send_json_success(array(
-        'message' => 'Video uploaded successfully!',
+        'message' => 'Video uploaded successfully! The video may take a few minutes to process. Poster image and playback URL will be available once processing is complete.',
         'video_id' => $upload_result['video_id']
       ));
     } else {
@@ -1025,6 +1089,346 @@ class VOD_Eikon
         'formatted' => $this->format_bytes($effective_limit)
       )
     );
+  }
+
+  /**
+   * Update incomplete videos in the database
+   */
+  public function update_incomplete_videos()
+  {
+    error_log('VOD Eikon: Starting update of incomplete videos');
+
+    global $wpdb;
+
+    // Find videos that are missing poster OR mpd_url (indicating they may still be processing)
+    $incomplete_videos = $wpdb->get_results(
+      "SELECT vod_id FROM {$this->table_name}
+       WHERE (poster = '' OR poster IS NULL)
+       OR (mpd_url = '' OR mpd_url IS NULL)
+       ORDER BY created_at DESC
+       LIMIT 10"
+    );
+
+    if (empty($incomplete_videos)) {
+      error_log('VOD Eikon: No incomplete videos found');
+      return;
+    }
+
+    error_log('VOD Eikon: Found ' . count($incomplete_videos) . ' incomplete videos to update');
+
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+
+    if (!$channel_id || !$api_token) {
+      error_log('VOD Eikon: Missing API credentials for updating incomplete videos');
+      return;
+    }
+
+    $updated_count = 0;
+
+    foreach ($incomplete_videos as $video) {
+      $vod_id = $video->vod_id;
+
+      // Get individual video data from API
+      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster";
+
+      $response = wp_remote_get($api_url, array(
+        'headers' => array(
+          'Authorization' => 'Bearer ' . $api_token,
+          'Accept' => 'application/json'
+        ),
+        'timeout' => 30
+      ));
+
+      if (is_wp_error($response)) {
+        error_log('VOD Eikon: Error fetching video ' . $vod_id . ': ' . $response->get_error_message());
+        continue;
+      }
+
+      $body = wp_remote_retrieve_body($response);
+      $data = json_decode($body, true);
+
+      if (!$data || !isset($data['data'])) {
+        error_log('VOD Eikon: Invalid API response for video ' . $vod_id);
+        continue;
+      }
+
+      $video_data = $data['data'];
+
+      // Check if video is still processing (no encoded_medias or empty poster)
+      $has_encoded_medias = !empty($video_data['encoded_medias']) && is_array($video_data['encoded_medias']);
+      $has_poster = !empty($video_data['poster']);
+
+      if (!$has_encoded_medias && !$has_poster) {
+        error_log('VOD Eikon: Video ' . $vod_id . ' is still processing, skipping');
+        continue;
+      }
+
+      // Extract poster URL
+      $poster = '';
+      if (!empty($video_data['poster'])) {
+        if (is_string($video_data['poster'])) {
+          $poster = esc_url_raw($video_data['poster']);
+        } elseif (is_array($video_data['poster'])) {
+          // Check common poster URL fields in the array
+          foreach (['url', 'src', 'href', 'link'] as $field) {
+            if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
+              $poster = esc_url_raw($video_data['poster'][$field]);
+              break;
+            }
+          }
+          // If no standard field found, try the first string value in the array
+          if (empty($poster)) {
+            foreach ($video_data['poster'] as $value) {
+              if (is_string($value) && filter_var($value, FILTER_VALIDATE_URL)) {
+                $poster = esc_url_raw($value);
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // Construct MPD URL from encoded_medias data
+      $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
+
+      // Only update if we have new data
+      if (!empty($poster) || !empty($mpd_url)) {
+        $update_data = array();
+        $update_format = array();
+
+        if (!empty($poster)) {
+          $update_data['poster'] = $poster;
+          $update_format[] = '%s';
+        }
+
+        if (!empty($mpd_url)) {
+          $update_data['mpd_url'] = $mpd_url;
+          $update_format[] = '%s';
+        }
+
+        $result = $wpdb->update(
+          $this->table_name,
+          $update_data,
+          array('vod_id' => $vod_id),
+          $update_format,
+          array('%s')
+        );
+
+        if ($result !== false) {
+          $updated_count++;
+          error_log('VOD Eikon: Updated video ' . $vod_id . ' with ' . implode(', ', array_keys($update_data)));
+        } else {
+          error_log('VOD Eikon: Failed to update video ' . $vod_id);
+        }
+      } else {
+        error_log('VOD Eikon: No new data available for video ' . $vod_id);
+      }
+
+      // Add small delay to avoid hitting API rate limits
+      usleep(500000); // 0.5 seconds
+    }
+
+    error_log('VOD Eikon: Updated ' . $updated_count . ' incomplete videos');
+  }
+
+  public function ajax_update_incomplete_videos()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_die(json_encode(array(
+        'success' => false,
+        'data' => array('message' => 'Invalid security token.')
+      )));
+    }
+
+    $this->update_incomplete_videos();
+
+    // Get count of remaining incomplete videos
+    global $wpdb;
+    $remaining_incomplete = $wpdb->get_var(
+      "SELECT COUNT(*) FROM {$this->table_name}
+       WHERE (poster = '' OR poster IS NULL)
+       OR (mpd_url = '' OR mpd_url IS NULL)"
+    );
+
+    if ($remaining_incomplete > 0) {
+      wp_send_json_success(array(
+        'message' => sprintf('Update completed. %d videos still have missing data (may still be processing).', $remaining_incomplete)
+      ));
+    } else {
+      wp_send_json_success(array(
+        'message' => 'All videos have been updated successfully!'
+      ));
+    }
+  }
+
+  /**
+   * Test endpoint for incomplete video processing
+   */
+  public function test_incomplete_video_processing()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_send_json_error(array(
+        'message' => 'Invalid security token.'
+      ));
+    }
+
+    global $wpdb;
+
+    // Get some statistics about video processing
+    $total_videos = $wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name}");
+    $complete_videos = $wpdb->get_var(
+      "SELECT COUNT(*) FROM {$this->table_name}
+       WHERE poster != '' AND poster IS NOT NULL
+       AND mpd_url != '' AND mpd_url IS NOT NULL"
+    );
+    $incomplete_videos = $total_videos - $complete_videos;
+
+    // Get a sample of incomplete videos
+    $sample_incomplete = $wpdb->get_results(
+      "SELECT vod_id, name, poster, mpd_url, created_at FROM {$this->table_name}
+       WHERE (poster = '' OR poster IS NULL)
+       OR (mpd_url = '' OR mpd_url IS NULL)
+       ORDER BY created_at DESC
+       LIMIT 5",
+      ARRAY_A
+    );
+
+    wp_send_json_success(array(
+      'message' => 'Video processing statistics retrieved successfully.',
+      'statistics' => array(
+        'total_videos' => $total_videos,
+        'complete_videos' => $complete_videos,
+        'incomplete_videos' => $incomplete_videos,
+        'completion_rate' => $total_videos > 0 ? round(($complete_videos / $total_videos) * 100, 1) : 0
+      ),
+      'sample_incomplete' => $sample_incomplete
+    ));
+  }
+
+  /**
+   * Check processing status for a specific video by VOD ID
+   * This is called by scheduled events after video upload
+   */
+  public function check_video_processing_status($vod_id)
+  {
+    error_log('VOD Eikon: Checking processing status for video: ' . $vod_id);
+
+    global $wpdb;
+
+    // Get current video data from database
+    $current_video = $wpdb->get_row($wpdb->prepare(
+      "SELECT * FROM {$this->table_name} WHERE vod_id = %s",
+      $vod_id
+    ));
+
+    if (!$current_video) {
+      error_log('VOD Eikon: Video not found in database: ' . $vod_id);
+      return;
+    }
+
+    // If video already has both poster and MPD URL, no need to check
+    if (!empty($current_video->poster) && !empty($current_video->mpd_url)) {
+      error_log('VOD Eikon: Video already complete: ' . $vod_id);
+      return;
+    }
+
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+
+    if (!$channel_id || !$api_token) {
+      error_log('VOD Eikon: Missing API credentials for checking video: ' . $vod_id);
+      return;
+    }
+
+    // Get video data from API
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster";
+
+    $response = wp_remote_get($api_url, array(
+      'headers' => array(
+        'Authorization' => 'Bearer ' . $api_token,
+        'Accept' => 'application/json'
+      ),
+      'timeout' => 30
+    ));
+
+    if (is_wp_error($response)) {
+      error_log('VOD Eikon: Error fetching video ' . $vod_id . ': ' . $response->get_error_message());
+      return;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if (!$data || !isset($data['data'])) {
+      error_log('VOD Eikon: Invalid API response for video ' . $vod_id);
+      return;
+    }
+
+    $video_data = $data['data'];
+
+    // Extract poster URL
+    $poster = '';
+    if (!empty($video_data['poster'])) {
+      if (is_string($video_data['poster'])) {
+        $poster = esc_url_raw($video_data['poster']);
+      } elseif (is_array($video_data['poster'])) {
+        foreach (['url', 'src', 'href', 'link'] as $field) {
+          if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
+            $poster = esc_url_raw($video_data['poster'][$field]);
+            break;
+          }
+        }
+        if (empty($poster)) {
+          foreach ($video_data['poster'] as $value) {
+            if (is_string($value) && filter_var($value, FILTER_VALIDATE_URL)) {
+              $poster = esc_url_raw($value);
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Construct MPD URL from encoded_medias data
+    $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
+
+    // Check if we have new data to update
+    $has_new_data = false;
+    $update_data = array();
+    $update_format = array();
+
+    if (!empty($poster) && empty($current_video->poster)) {
+      $update_data['poster'] = $poster;
+      $update_format[] = '%s';
+      $has_new_data = true;
+    }
+
+    if (!empty($mpd_url) && empty($current_video->mpd_url)) {
+      $update_data['mpd_url'] = $mpd_url;
+      $update_format[] = '%s';
+      $has_new_data = true;
+    }
+
+    if ($has_new_data) {
+      $result = $wpdb->update(
+        $this->table_name,
+        $update_data,
+        array('vod_id' => $vod_id),
+        $update_format,
+        array('%s')
+      );
+
+      if ($result !== false) {
+        error_log('VOD Eikon: Updated video ' . $vod_id . ' with ' . implode(', ', array_keys($update_data)));
+      } else {
+        error_log('VOD Eikon: Failed to update video ' . $vod_id);
+      }
+    } else {
+      error_log('VOD Eikon: No new data available for video ' . $vod_id . ' - still processing');
+    }
   }
 }
 

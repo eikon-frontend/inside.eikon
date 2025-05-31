@@ -437,4 +437,95 @@ jQuery(document).ready(function ($) {
       }
     });
   });
+
+  // Update incomplete videos functionality
+  $('#update-incomplete-videos').on('click', function () {
+    var $button = $(this);
+    var $status = $('#sync-status');
+
+    $button.prop('disabled', true).find('.dashicons').addClass('spin');
+    $status.html('<span class="spinner is-active"></span> Updating incomplete videos...');
+
+    $.ajax({
+      url: vodEikon.ajax_url,
+      type: 'POST',
+      data: {
+        action: 'update_incomplete_videos',
+        nonce: vodEikon.nonce
+      },
+      success: function (response) {
+        if (response.success) {
+          $status.html('<span class="notice notice-success inline"><p>' + response.data.message + '</p></span>');
+
+          // Reload the page to show updated videos after a short delay
+          setTimeout(function () {
+            location.reload();
+          }, 2000);
+        } else {
+          $status.html('<span class="notice notice-error inline"><p>' + response.data.message + '</p></span>');
+        }
+      },
+      error: function () {
+        $status.html('<span class="notice notice-error inline"><p>An error occurred while updating incomplete videos.</p></span>');
+      },
+      complete: function () {
+        $button.prop('disabled', false).find('.dashicons').removeClass('spin');
+
+        // Clear status message after 5 seconds
+        setTimeout(function () {
+          $status.empty();
+        }, 5000);
+      }
+    });
+  });
+
+  // Test processing stats functionality
+  $('#test-processing').on('click', function () {
+    var $button = $(this);
+    var $status = $('#sync-status');
+
+    $button.prop('disabled', true).find('.dashicons').addClass('spin');
+    $status.html('<span class="spinner is-active"></span> Getting processing statistics...');
+
+    $.ajax({
+      url: vodEikon.ajax_url,
+      type: 'POST',
+      data: {
+        action: 'test_incomplete_video_processing',
+        nonce: vodEikon.nonce
+      },
+      success: function (response) {
+        if (response.success) {
+          var stats = response.data.statistics;
+          var message = 'Processing Statistics:<br>' +
+            '• Total Videos: ' + stats.total_videos + '<br>' +
+            '• Complete Videos: ' + stats.complete_videos + '<br>' +
+            '• Incomplete Videos: ' + stats.incomplete_videos + '<br>' +
+            '• Completion Rate: ' + stats.completion_rate + '%';
+
+          if (response.data.sample_incomplete && response.data.sample_incomplete.length > 0) {
+            message += '<br><br>Sample Incomplete Videos:<br>';
+            response.data.sample_incomplete.forEach(function (video) {
+              message += '• ' + video.name + ' (ID: ' + video.vod_id + ')<br>';
+            });
+          }
+
+          $status.html('<span class="notice notice-info inline"><p>' + message + '</p></span>');
+        } else {
+          $status.html('<span class="notice notice-error inline"><p>' + response.data.message + '</p></span>');
+        }
+      },
+      error: function () {
+        $status.html('<span class="notice notice-error inline"><p>An error occurred while getting processing statistics.</p></span>');
+      },
+      complete: function () {
+        $button.prop('disabled', false).find('.dashicons').removeClass('spin');
+
+        // Clear status message after 10 seconds
+        setTimeout(function () {
+          $status.empty();
+        }, 10000);
+      }
+    });
+  });
 });
