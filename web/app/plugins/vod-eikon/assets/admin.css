@@ -1,0 +1,148 @@
+/* VOD Eikon Admin Styles */
+.vod-eikon-actions {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.vod-eikon-actions .button {
+    margin-right: 10px;
+}
+
+.vod-eikon-actions .dashicons {
+    margin-right: 5px;
+}
+
+.vod-eikon-actions .dashicons.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#sync-status {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#sync-status .spinner {
+    float: none;
+    margin: 0 5px;
+}
+
+.vod-eikon-videos {
+    margin-top: 20px;
+}
+
+.vod-eikon-videos table {
+    margin-top: 0;
+}
+
+.vod-eikon-videos td {
+    vertical-align: middle;
+}
+
+.vod-eikon-videos img {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.vod-eikon-videos code {
+    background: #f1f1f1;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    max-width: 300px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vod-eikon-videos code:hover {
+    background: #e0e0e0;
+}
+
+.vod-copy-tooltip {
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-left: 10px;
+    position: relative;
+}
+
+.vod-copy-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: #333;
+}
+
+.delete-video {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.delete-video:hover {
+    background: #c82333;
+    border-color: #c82333;
+    color: white;
+}
+
+.delete-video:disabled {
+    background: #6c757d;
+    border-color: #6c757d;
+    opacity: 0.65;
+}
+
+/* Responsive adjustments */
+@media (max-width: 782px) {
+    .vod-eikon-videos .wp-list-table td {
+        padding: 8px 5px;
+    }
+
+    .vod-eikon-videos img {
+        max-width: 60px;
+    }
+
+    .vod-eikon-videos code {
+        max-width: 150px;
+    }
+}
+
+/* Notice styling improvements */
+.notice.inline {
+    margin: 5px 0;
+    padding: 8px 12px;
+}
+
+.notice.inline p {
+    margin: 0;
+}
+
+/* Loading state improvements */
+.vod-eikon-actions .button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Table improvements */
+.vod-eikon-videos .wp-list-table th {
+    font-weight: 600;
+}
+
+.vod-eikon-videos .wp-list-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
