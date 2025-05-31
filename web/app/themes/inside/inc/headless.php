@@ -45,8 +45,7 @@ function display_documentation_notice()
 
 ?>
   <div class="notice notice-info is-dismissible">
-    <span class="dashicons dashicons-welcome-learn-more"></span>
-    <p><strong>Documentation Inside.eikon.ch</strong></p>
+    <p><span class="dashicons dashicons-welcome-learn-more"></span><strong>Documentation Inside.eikon.ch</strong></p>
     <p>Pour savoir comment éditer le site et ajouter des projets au portfolio, consultez la documentation sur le
       <a href="https://www.notion.so/eikon-imd/e071042b616246b68f3e811758305160?v=a8ccb994f5454e968d8b8d0e060978a6&pvs=4#1fc709599a81802fb975e14ace44b1c3"
         target="_blank">notion de l'école
