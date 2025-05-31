@@ -47,18 +47,6 @@ class VOD_Eikon
     add_action('wp_ajax_nopriv_get_vod_player', array($this, 'ajax_get_vod_player'));
     add_action('wp_ajax_upload_vod_video', array($this, 'ajax_upload_video'));
 
-    // Debug endpoint for testing API response
-    add_action('wp_ajax_debug_vod_api', array($this, 'debug_api_response'));
-
-    // Test endpoint to verify AJAX is working
-    add_action('wp_ajax_test_vod_ajax', array($this, 'test_ajax_endpoint'));
-
-    // Add debug endpoint for upload limits
-    add_action('wp_ajax_debug_upload_limits', array($this, 'debug_upload_limits'));
-
-    // Add test endpoint for incomplete video processing
-    add_action('wp_ajax_test_incomplete_video_processing', array($this, 'test_incomplete_video_processing'));
-
     // Schedule daily sync if not already scheduled
     if (!wp_next_scheduled('vod_eikon_daily_sync')) {
       wp_schedule_event(time(), 'daily', 'vod_eikon_daily_sync');
@@ -184,37 +172,9 @@ class VOD_Eikon
                 <span class="dashicons dashicons-update"></span>
                 Synchronize Videos
               </button>
-              <?php
-              // Get count of incomplete videos for the button label
-              global $wpdb;
-              $incomplete_count = $wpdb->get_var(
-                "SELECT COUNT(*) FROM {$this->table_name}
-                 WHERE (poster = '' OR poster IS NULL)
-                 OR (mpd_url = '' OR mpd_url IS NULL)"
-              );
-              ?>
-              <button id="update-incomplete-videos" class="button button-primary<?php echo $incomplete_count > 0 ? ' button-primary' : ' button-secondary'; ?>">
+              <button id="update-incomplete-videos" class="button button-primary">
                 <span class="dashicons dashicons-update-alt"></span>
                 Update Incomplete Videos
-                <?php if ($incomplete_count > 0): ?>
-                  <span class="incomplete-count">(<?php echo $incomplete_count; ?>)</span>
-                <?php endif; ?>
-              </button>
-              <button id="debug-api" class="button button-secondary">
-                <span class="dashicons dashicons-search"></span>
-                Debug API Response
-              </button>
-              <button id="debug-upload-limits" class="button button-secondary">
-                <span class="dashicons dashicons-info"></span>
-                Upload Limits Info
-              </button>
-              <button id="test-ajax" class="button button-secondary">
-                <span class="dashicons dashicons-admin-tools"></span>
-                Test AJAX
-              </button>
-              <button id="test-processing" class="button button-secondary">
-                <span class="dashicons dashicons-analytics"></span>
-                Processing Stats
               </button>
               <span id="sync-status"></span>
             </div>
@@ -364,6 +324,17 @@ class VOD_Eikon
 
     global $wpdb;
     $synced_count = 0;
+    $removed_count = 0;
+
+    // Get all existing videos from database to track which ones should be removed
+    $existing_videos = $wpdb->get_results("SELECT id, vod_id FROM {$this->table_name}");
+    $existing_vod_ids = array();
+    foreach ($existing_videos as $video) {
+      $existing_vod_ids[$video->vod_id] = $video->id;
+    }
+
+    // Track which videos are still active on the server
+    $active_vod_ids = array();
 
     foreach ($data['data'] as $video_data) {
       $vod_id = sanitize_text_field($video_data['id'] ?? '');
@@ -383,8 +354,12 @@ class VOD_Eikon
       // Filter out videos that are in the trash (have a discarded_at timestamp)
       $discarded_at = $video_data['discarded_at'] ?? null;
       if (!empty($discarded_at)) {
+        error_log('VOD Eikon: Video ' . $vod_id . ' has been discarded, skipping');
         continue;
       }
+
+      // Mark this video as active
+      $active_vod_ids[] = $vod_id;
 
       // Handle poster field - it might be a string URL or an array containing URLs
       $poster = '';
@@ -449,7 +424,30 @@ class VOD_Eikon
       }
     }
 
-    return $synced_count;
+    // Remove videos from database that are no longer on the server or have been discarded
+    foreach ($existing_vod_ids as $vod_id => $db_id) {
+      if (!in_array($vod_id, $active_vod_ids)) {
+        $result = $wpdb->delete(
+          $this->table_name,
+          array('id' => $db_id),
+          array('%d')
+        );
+
+        if ($result !== false) {
+          $removed_count++;
+          error_log('VOD Eikon: Removed video ' . $vod_id . ' from database (no longer exists on server or was discarded)');
+        }
+      }
+    }
+
+    if ($removed_count > 0) {
+      error_log('VOD Eikon: Sync completed - added/updated: ' . $synced_count . ', removed: ' . $removed_count);
+    }
+
+    return array(
+      'synced' => $synced_count,
+      'removed' => $removed_count
+    );
   }
 
   /**
@@ -552,11 +550,20 @@ class VOD_Eikon
       )));
     }
 
-    $synced_count = $this->sync_videos_from_api();
+    $sync_result = $this->sync_videos_from_api();
 
-    if ($synced_count !== false) {
+    if ($sync_result !== false) {
+      $synced_count = $sync_result['synced'];
+      $removed_count = $sync_result['removed'];
+
+      $message = sprintf('Successfully synchronized %d videos.', $synced_count);
+
+      if ($removed_count > 0) {
+        $message .= sprintf(' Removed %d videos that were discarded or no longer exist on the server.', $removed_count);
+      }
+
       wp_send_json_success(array(
-        'message' => sprintf('Successfully synchronized %d videos.', $synced_count)
+        'message' => $message
       ));
     } else {
       wp_send_json_error(array(
@@ -622,66 +629,6 @@ class VOD_Eikon
         'message' => 'Video was deleted from Infomaniak VOD service but failed to delete from local database.'
       ));
     }
-  }
-
-  public function debug_api_response()
-  {
-    // Verify nonce for security
-    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
-      wp_die(json_encode(array(
-        'success' => false,
-        'data' => array('message' => 'Invalid security token.')
-      )));
-    }
-
-    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
-    $api_token = getenv('INFOMANIAK_TOKEN_API');
-
-    if (!$channel_id || !$api_token) {
-      wp_send_json_error(array(
-        'message' => 'Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API.'
-      ));
-    }
-
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster";
-
-    $response = wp_remote_get($api_url, array(
-      'headers' => array(
-        'Authorization' => 'Bearer ' . $api_token,
-        'Accept' => 'application/json'
-      ),
-      'timeout' => 30
-    ));
-
-    if (is_wp_error($response)) {
-      wp_send_json_error(array(
-        'message' => 'API Error: ' . $response->get_error_message()
-      ));
-    }
-
-    $response_code = wp_remote_retrieve_response_code($response);
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-
-    if ($response_code !== 200) {
-      wp_send_json_error(array(
-        'message' => "API returned status code {$response_code}. Response: " . substr($body, 0, 500)
-      ));
-    }
-
-    if (!$data || !isset($data['data'])) {
-      wp_send_json_error(array(
-        'message' => 'Invalid API response structure. Response: ' . substr($body, 0, 500)
-      ));
-    }
-
-    wp_send_json_success(array(
-      'message' => sprintf(
-        'API response successful. Found %d videos. Response code: %d',
-        count($data['data']),
-        $response_code
-      )
-    ));
   }
 
   public function ajax_get_vod_player()
@@ -1029,69 +976,6 @@ class VOD_Eikon
   }
 
   /**
-   * Test AJAX endpoint to verify basic functionality
-   */
-  public function test_ajax_endpoint()
-  {
-    error_log('VOD Eikon: Test AJAX endpoint reached successfully');
-    wp_send_json_success(array(
-      'message' => 'AJAX is working correctly!'
-    ));
-  }
-
-  /**
-   * Debugging endpoint to check upload limits
-   */
-  public function debug_upload_limits()
-  {
-    // Verify nonce for security
-    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
-      wp_send_json_error(array(
-        'message' => 'Invalid security token.'
-      ));
-    }
-
-    $limit_info = $this->get_upload_limit_info();
-
-    wp_send_json_success(array(
-      'message' => 'Upload limits retrieved successfully.',
-      'limits' => $limit_info
-    ));
-  }
-
-  /**
-   * Get detailed upload limit information for debugging
-   */
-  public function get_upload_limit_info()
-  {
-    $upload_max = $this->parse_size(ini_get('upload_max_filesize'));
-    $post_max = $this->parse_size(ini_get('post_max_size'));
-    $wp_max = wp_max_upload_size();
-    $effective_limit = min($upload_max, $post_max, $wp_max);
-
-    return array(
-      'upload_max_filesize' => array(
-        'raw' => ini_get('upload_max_filesize'),
-        'bytes' => $upload_max,
-        'formatted' => $this->format_bytes($upload_max)
-      ),
-      'post_max_size' => array(
-        'raw' => ini_get('post_max_size'),
-        'bytes' => $post_max,
-        'formatted' => $this->format_bytes($post_max)
-      ),
-      'wp_max_upload_size' => array(
-        'bytes' => $wp_max,
-        'formatted' => $this->format_bytes($wp_max)
-      ),
-      'effective_limit' => array(
-        'bytes' => $effective_limit,
-        'formatted' => $this->format_bytes($effective_limit)
-      )
-    );
-  }
-
-  /**
    * Update incomplete videos in the database
    */
   public function update_incomplete_videos()
@@ -1261,51 +1145,6 @@ class VOD_Eikon
         'message' => 'All videos have been updated successfully!'
       ));
     }
-  }
-
-  /**
-   * Test endpoint for incomplete video processing
-   */
-  public function test_incomplete_video_processing()
-  {
-    // Verify nonce for security
-    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
-      wp_send_json_error(array(
-        'message' => 'Invalid security token.'
-      ));
-    }
-
-    global $wpdb;
-
-    // Get some statistics about video processing
-    $total_videos = $wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name}");
-    $complete_videos = $wpdb->get_var(
-      "SELECT COUNT(*) FROM {$this->table_name}
-       WHERE poster != '' AND poster IS NOT NULL
-       AND mpd_url != '' AND mpd_url IS NOT NULL"
-    );
-    $incomplete_videos = $total_videos - $complete_videos;
-
-    // Get a sample of incomplete videos
-    $sample_incomplete = $wpdb->get_results(
-      "SELECT vod_id, name, poster, mpd_url, created_at FROM {$this->table_name}
-       WHERE (poster = '' OR poster IS NULL)
-       OR (mpd_url = '' OR mpd_url IS NULL)
-       ORDER BY created_at DESC
-       LIMIT 5",
-      ARRAY_A
-    );
-
-    wp_send_json_success(array(
-      'message' => 'Video processing statistics retrieved successfully.',
-      'statistics' => array(
-        'total_videos' => $total_videos,
-        'complete_videos' => $complete_videos,
-        'incomplete_videos' => $incomplete_videos,
-        'completion_rate' => $total_videos > 0 ? round(($complete_videos / $total_videos) * 100, 1) : 0
-      ),
-      'sample_incomplete' => $sample_incomplete
-    ));
   }
 
   /**
