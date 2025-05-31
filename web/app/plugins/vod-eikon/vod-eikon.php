@@ -301,7 +301,7 @@ class VOD_Eikon
       return false;
     }
 
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster";
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster,streams,encoded_medias";
 
     $response = wp_remote_get($api_url, array(
       'headers' => array(
@@ -361,13 +361,13 @@ class VOD_Eikon
       // Mark this video as active
       $active_vod_ids[] = $vod_id;
 
-      // Handle poster field - it might be a string URL or an array containing URLs
+      // Handle poster field - it can be a string URL, an object with 'url' field, or an array containing URLs
       $poster = '';
       if (!empty($video_data['poster'])) {
         if (is_string($video_data['poster'])) {
           $poster = esc_url_raw($video_data['poster']);
         } elseif (is_array($video_data['poster'])) {
-          // Check common poster URL fields in the array
+          // Check common poster URL fields in the array/object
           foreach (['url', 'src', 'href', 'link'] as $field) {
             if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
               $poster = esc_url_raw($video_data['poster'][$field]);
@@ -456,43 +456,73 @@ class VOD_Eikon
    */
   private function construct_mpd_url($vod_id, $video_data)
   {
+    error_log('VOD Eikon: Attempting to construct MPD URL for video ' . $vod_id);
+
     // Check if we have encoded_medias data
     if (empty($video_data['encoded_medias']) || !is_array($video_data['encoded_medias'])) {
+      error_log('VOD Eikon: No encoded_medias data for video ' . $vod_id . ' - video may still be processing');
       return '';
     }
 
-    // Get the encoding ID from the first encoded media (they should all share the same encoding)
-    $first_media = $video_data['encoded_medias'][0] ?? null;
-    if (!$first_media || empty($first_media['encoding_stream']['encoding']['id'])) {
-      return '';
-    }
+    error_log('VOD Eikon: Found ' . count($video_data['encoded_medias']) . ' encoded medias for video ' . $vod_id);
 
-    $encoding_id = $first_media['encoding_stream']['encoding']['id'];
+    // Check if there are streams data available with direct DASH URLs
+    $streams_data = $video_data['streams'] ?? null;
 
-    // Collect all media IDs from encoded_medias, sorted by quality (highest first)
-    $media_ids = array();
-    $qualities = array();
-
-    foreach ($video_data['encoded_medias'] as $media) {
-      if (!empty($media['id']) && !empty($media['encoding_stream']['video_height'])) {
-        $media_ids[] = $media['id'];
-        $qualities[] = intval($media['encoding_stream']['video_height']);
+    if (!empty($streams_data) && is_array($streams_data)) {
+      // Try to find DASH stream data in streams
+      foreach ($streams_data as $stream) {
+        if (isset($stream['type']) && strtolower($stream['type']) === 'dash') {
+          if (!empty($stream['url'])) {
+            error_log('VOD Eikon: Found DASH stream URL for video ' . $vod_id . ': ' . $stream['url']);
+            return $stream['url'];
+          }
+        }
       }
     }
 
-    // Sort media IDs by quality descending (1080p, 720p, 480p, 360p)
-    if (count($media_ids) > 1) {
-      array_multisort($qualities, SORT_DESC, $media_ids);
+    // Fallback: Construct MPD URL using basic media IDs and file size sorting
+    $media_ids = array();
+
+    foreach ($video_data['encoded_medias'] as $media) {
+      if (!empty($media['id'])) {
+        $media_ids[] = $media['id'];
+      }
     }
 
     if (empty($media_ids)) {
+      error_log('VOD Eikon: No valid media IDs found for video ' . $vod_id);
       return '';
     }
+
+    // Sort media IDs by file size (largest first) as a proxy for quality
+    $sized_medias = array();
+    foreach ($video_data['encoded_medias'] as $media) {
+      if (!empty($media['id']) && !empty($media['size'])) {
+        $sized_medias[] = array(
+          'id' => $media['id'],
+          'size' => intval($media['size'])
+        );
+      }
+    }
+
+    if (!empty($sized_medias)) {
+      // Sort by size descending (larger files likely higher quality)
+      usort($sized_medias, function ($a, $b) {
+        return $b['size'] - $a['size'];
+      });
+      $media_ids = array_column($sized_medias, 'id');
+      error_log('VOD Eikon: Sorted ' . count($media_ids) . ' media IDs by file size for video ' . $vod_id);
+    }
+
+    // Use the video ID as the encoding ID (common pattern for Infomaniak VOD)
+    $encoding_id = $vod_id;
 
     // Construct the MPD URL
     $media_list = ',' . implode(',', $media_ids) . ',';
     $mpd_url = "https://play.vod2.infomaniak.com/dash/{$vod_id}/{$encoding_id}/{$media_list}.urlset/manifest.mpd";
 
+    error_log('VOD Eikon: Successfully constructed MPD URL for video ' . $vod_id);
     return $mpd_url;
   }
 
@@ -1009,9 +1039,10 @@ class VOD_Eikon
 
     foreach ($incomplete_videos as $video) {
       $vod_id = $video->vod_id;
+      error_log('VOD Eikon: Processing incomplete video with VOD ID: ' . $vod_id);
 
-      // Get individual video data from API
-      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster";
+      // Get individual video data from API - try with different parameters
+      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias,thumbnails,images";
 
       $response = wp_remote_get($api_url, array(
         'headers' => array(
@@ -1030,48 +1061,253 @@ class VOD_Eikon
       $data = json_decode($body, true);
 
       if (!$data || !isset($data['data'])) {
-        error_log('VOD Eikon: Invalid API response for video ' . $vod_id);
+        error_log('VOD Eikon: Invalid API response for video ' . $vod_id . ' - response body: ' . substr($body, 0, 500));
         continue;
       }
 
       $video_data = $data['data'];
 
-      // Check if video is still processing (no encoded_medias or empty poster)
-      $has_encoded_medias = !empty($video_data['encoded_medias']) && is_array($video_data['encoded_medias']);
-      $has_poster = !empty($video_data['poster']);
-
-      if (!$has_encoded_medias && !$has_poster) {
-        error_log('VOD Eikon: Video ' . $vod_id . ' is still processing, skipping');
-        continue;
+      // Debug: Check if there are other fields that might contain poster/thumbnail info
+      $potential_poster_fields = ['poster', 'thumbnail', 'thumbnails', 'image', 'images', 'preview'];
+      $found_fields = array();
+      foreach ($potential_poster_fields as $field) {
+        if (isset($video_data[$field])) {
+          $found_fields[] = $field;
+          error_log('VOD Eikon: Found field "' . $field . '" for video ' . $vod_id . ': ' . print_r($video_data[$field], true));
+        }
       }
+      if (empty($found_fields)) {
+        error_log('VOD Eikon: No poster-related fields found for video ' . $vod_id . '. Available fields: ' . implode(', ', array_keys($video_data)));
+      }      // Try to manually trigger poster generation via API if poster is empty
+      if (empty($video_data['poster'])) {
+        // Check if video is sufficiently processed before attempting poster generation
+        $processing_progress = isset($video_data['progress']) ? intval($video_data['progress']) : 0;
 
-      // Extract poster URL
-      $poster = '';
-      if (!empty($video_data['poster'])) {
-        if (is_string($video_data['poster'])) {
-          $poster = esc_url_raw($video_data['poster']);
-        } elseif (is_array($video_data['poster'])) {
-          // Check common poster URL fields in the array
-          foreach (['url', 'src', 'href', 'link'] as $field) {
-            if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
-              $poster = esc_url_raw($video_data['poster'][$field]);
-              break;
+        if ($processing_progress < 80) {
+          error_log('VOD Eikon: Video ' . $vod_id . ' is still processing (' . $processing_progress . '% complete). Skipping poster generation attempts.');
+        } else {
+          error_log('VOD Eikon: Attempting comprehensive poster retrieval for video ' . $vod_id . ' (processing: ' . $processing_progress . '%)');
+
+          // Method 1: Try to generate poster using Infomaniak API with different time values
+          $generate_poster_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}/poster";
+
+          $poster_times = [3, 5, 10]; // Try different timestamp positions
+          $poster_generated = false;
+
+          foreach ($poster_times as $time) {
+            error_log('VOD Eikon: Trying poster generation at ' . $time . ' seconds for video ' . $vod_id);
+
+            $poster_response = wp_remote_post($generate_poster_url, array(
+              'headers' => array(
+                'Authorization' => 'Bearer ' . $api_token,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+              ),
+              'body' => json_encode(array('time' => $time)),
+              'timeout' => 30
+            ));
+
+            if (!is_wp_error($poster_response)) {
+              $poster_code = wp_remote_retrieve_response_code($poster_response);
+              $poster_body = wp_remote_retrieve_body($poster_response);
+              error_log('VOD Eikon: Poster generation response for video ' . $vod_id . ' at ' . $time . 's (HTTP ' . $poster_code . '): ' . substr($poster_body, 0, 500));
+
+              if ($poster_code == 200 || $poster_code == 201) {
+                error_log('VOD Eikon: Poster generation triggered successfully for video ' . $vod_id . ' at ' . $time . ' seconds');
+                $poster_generated = true;
+                break;
+              }
+            } else {
+              error_log('VOD Eikon: Error generating poster for video ' . $vod_id . ' at ' . $time . 's: ' . $poster_response->get_error_message());
             }
           }
-          // If no standard field found, try the first string value in the array
-          if (empty($poster)) {
-            foreach ($video_data['poster'] as $value) {
-              if (is_string($value) && filter_var($value, FILTER_VALIDATE_URL)) {
-                $poster = esc_url_raw($value);
-                break;
+
+          // Method 2: Try alternative thumbnail endpoint
+          $thumbnail_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}/thumbnail";
+
+          $thumbnail_response = wp_remote_post($thumbnail_url, array(
+            'headers' => array(
+              'Authorization' => 'Bearer ' . $api_token,
+              'Accept' => 'application/json',
+              'Content-Type' => 'application/json'
+            ),
+            'body' => json_encode(array('time' => 5)),
+            'timeout' => 30
+          ));
+
+          if (!is_wp_error($thumbnail_response)) {
+            $thumb_code = wp_remote_retrieve_response_code($thumbnail_response);
+            $thumb_body = wp_remote_retrieve_body($thumbnail_response);
+            error_log('VOD Eikon: Thumbnail generation response for video ' . $vod_id . ' (HTTP ' . $thumb_code . '): ' . substr($thumb_body, 0, 500));
+          }
+
+          // Method 3: Check if there's a specific thumbnails endpoint
+          $thumbnails_list_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}/thumbnails";
+
+          $thumbnails_response = wp_remote_get($thumbnails_list_url, array(
+            'headers' => array(
+              'Authorization' => 'Bearer ' . $api_token,
+              'Accept' => 'application/json'
+            ),
+            'timeout' => 30
+          ));
+
+          if (!is_wp_error($thumbnails_response)) {
+            $thumbnails_code = wp_remote_retrieve_response_code($thumbnails_response);
+            $thumbnails_body = wp_remote_retrieve_body($thumbnails_response);
+            error_log('VOD Eikon: Thumbnails list response for video ' . $vod_id . ' (HTTP ' . $thumbnails_code . '): ' . substr($thumbnails_body, 0, 500));
+
+            if ($thumbnails_code == 200) {
+              $thumbnails_data = json_decode($thumbnails_body, true);
+              if (isset($thumbnails_data['data']) && !empty($thumbnails_data['data'])) {
+                error_log('VOD Eikon: Found thumbnails data for video ' . $vod_id . ': ' . print_r($thumbnails_data['data'], true));
+              }
+            }
+          }
+
+          // Wait a moment and re-fetch the video data if any generation was triggered
+          if ($poster_generated) {
+            sleep(3);
+
+            $refetch_response = wp_remote_get($api_url, array(
+              'headers' => array(
+                'Authorization' => 'Bearer ' . $api_token,
+                'Accept' => 'application/json'
+              ),
+              'timeout' => 30
+            ));
+
+            if (!is_wp_error($refetch_response)) {
+              $refetch_body = wp_remote_retrieve_body($refetch_response);
+              $refetch_data = json_decode($refetch_body, true);
+              if ($refetch_data && isset($refetch_data['data'])) {
+                $video_data = $refetch_data['data'];
+                error_log('VOD Eikon: Re-fetched video data after poster generation for video ' . $vod_id);
               }
             }
           }
         }
       }
 
+      // Debug: log the full video data structure to understand what's available
+      error_log('VOD Eikon: Full API response for video ' . $vod_id . ': ' . print_r($video_data, true));
+
+      // Method 4: Try to construct poster URLs using common Infomaniak patterns based on video data
+      if (empty($video_data['poster']) && !empty($video_data['encoded_medias'])) {
+        error_log('VOD Eikon: Attempting to construct poster URL from video metadata for ' . $vod_id);
+
+        // Look for any URL patterns in encoded_medias that might hint at poster locations
+        foreach ($video_data['encoded_medias'] as $media) {
+          if (isset($media['url'])) {
+            $media_url = $media['url'];
+            error_log('VOD Eikon: Found media URL for video ' . $vod_id . ': ' . $media_url);
+
+            // Try to derive poster URL from media URL patterns
+            $url_patterns = [
+              // Replace media file with poster
+              str_replace(['.mp4', '.webm', '.m4v'], '.jpg', $media_url),
+              str_replace(['/media/', '/stream/'], '/poster/', $media_url),
+              str_replace(['/media/', '/stream/'], '/thumbnail/', $media_url),
+              // Try poster subdirectory
+              dirname($media_url) . '/poster.jpg',
+              dirname($media_url) . '/thumbnail.jpg',
+              dirname($media_url) . '/preview.jpg'
+            ];
+
+            foreach ($url_patterns as $test_url) {
+              if (filter_var($test_url, FILTER_VALIDATE_URL)) {
+                $response = wp_remote_head($test_url, array('timeout' => 5));
+                if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) == 200) {
+                  error_log('VOD Eikon: Found working poster URL derived from media URL for video ' . $vod_id . ': ' . $test_url);
+                  $video_data['poster'] = $test_url; // Update the video data
+                  break 2; // Break out of both loops
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Check if video is still processing (no encoded_medias or empty poster)
+      $has_encoded_medias = !empty($video_data['encoded_medias']) && is_array($video_data['encoded_medias']);
+      $has_poster = !empty($video_data['poster']);
+      $processing_progress = isset($video_data['progress']) ? intval($video_data['progress']) : 0;
+      $video_state = isset($video_data['state']) ? intval($video_data['state']) : 0;
+
+      // Log processing status for better debugging
+      error_log('VOD Eikon: Video ' . $vod_id . ' processing status - Progress: ' . $processing_progress . '%, State: ' . $video_state . ', Has poster: ' . ($has_poster ? 'Yes' : 'No') . ', Has encoded medias: ' . ($has_encoded_medias ? 'Yes' : 'No'));
+
+      if (!$has_encoded_medias && !$has_poster) {
+        error_log('VOD Eikon: Video ' . $vod_id . ' is still processing (progress: ' . $processing_progress . '%), skipping');
+        continue;
+      }
+
+      // If video is not fully processed but has some encoded medias, still try to get what we can
+      if ($processing_progress < 100) {
+        error_log('VOD Eikon: Video ' . $vod_id . ' is still processing (progress: ' . $processing_progress . '%) but has some encoded medias. Attempting to get available data.');
+      }      // Extract poster URL
+      $poster = '';
+      error_log('VOD Eikon: Poster data for video ' . $vod_id . ': ' . print_r($video_data['poster'] ?? null, true));
+
+      if (!empty($video_data['poster'])) {
+        if (is_string($video_data['poster'])) {
+          $poster = esc_url_raw($video_data['poster']);
+          error_log('VOD Eikon: Found poster as string for video ' . $vod_id . ': ' . $poster);
+        } elseif (is_array($video_data['poster'])) {
+          error_log('VOD Eikon: Poster is array for video ' . $vod_id . ', searching for URL...');
+          // Check common poster URL fields in the array
+          foreach (['url', 'src', 'href', 'link'] as $field) {
+            if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
+              $poster = esc_url_raw($video_data['poster'][$field]);
+              error_log('VOD Eikon: Found poster URL in field "' . $field . '" for video ' . $vod_id . ': ' . $poster);
+              break;
+            }
+          }
+          // If no standard field found, try the first string value in the array
+          if (empty($poster)) {
+            foreach ($video_data['poster'] as $key => $value) {
+              if (is_string($value) && filter_var($value, FILTER_VALIDATE_URL)) {
+                $poster = esc_url_raw($value);
+                error_log('VOD Eikon: Found poster URL in key "' . $key . '" for video ' . $vod_id . ': ' . $poster);
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        error_log('VOD Eikon: No poster data found for video ' . $vod_id);
+
+        // Try to construct poster URL from video ID (common pattern for VOD services)
+        // Infomaniak might use a predictable poster URL pattern
+        $potential_poster_urls = [
+          "https://vod2.infomaniak.com/thumbnail/{$vod_id}/poster.jpg",
+          "https://vod2.infomaniak.com/poster/{$vod_id}.jpg",
+          "https://img.infomaniak.com/vod/{$vod_id}/poster.jpg",
+          "https://play.vod2.infomaniak.com/thumbnail/{$vod_id}/poster.jpg",
+          "https://vod.infomaniak.com/thumbnail/{$vod_id}/poster.jpg"
+        ];
+
+        foreach ($potential_poster_urls as $test_url) {
+          // Test if poster URL is accessible
+          $response = wp_remote_head($test_url, array('timeout' => 5));
+          if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) == 200) {
+            $poster = $test_url;
+            error_log('VOD Eikon: Found working poster URL by pattern for video ' . $vod_id . ': ' . $poster);
+            break;
+          }
+        }
+
+        if (empty($poster)) {
+          error_log('VOD Eikon: No working poster URL found for video ' . $vod_id);
+        }
+      }
+
       // Construct MPD URL from encoded_medias data
       $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
+
+      if (empty($mpd_url)) {
+        error_log('VOD Eikon: Failed to construct MPD URL for video ' . $vod_id . ' - may still be processing');
+      }
 
       // Only update if we have new data
       if (!empty($poster) || !empty($mpd_url)) {
@@ -1180,7 +1416,7 @@ class VOD_Eikon
     }
 
     // Get video data from API
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster";
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias";
 
     $response = wp_remote_get($api_url, array(
       'headers' => array(
