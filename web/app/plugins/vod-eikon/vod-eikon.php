@@ -685,9 +685,6 @@ class VOD_Eikon
     set_time_limit(0); // No time limit
     ini_set('memory_limit', '512M');
 
-    // Simple file logging test
-    file_put_contents('/Users/jminguely/Sites/inside.eikon/web/app/debug.log', '[' . date('Y-m-d H:i:s') . '] VOD Eikon: ajax_upload_video method called!' . PHP_EOL, FILE_APPEND);
-
     error_log('VOD Eikon: ajax_upload_video started');
     error_log('VOD Eikon: $_POST data: ' . print_r($_POST, true));
     error_log('VOD Eikon: $_FILES data: ' . print_r($_FILES, true));
