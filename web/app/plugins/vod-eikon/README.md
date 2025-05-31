@@ -5,12 +5,14 @@ A WordPress plugin that integrates with the Infomaniak VOD API to manage and dis
 ## Features
 
 - Synchronize videos from Infomaniak VOD API
+- **Upload videos directly to Infomaniak VOD via WordPress admin**
 - Store video metadata in WordPress database
-- Admin interface for managing videos
+- Tabbed admin interface for managing and uploading videos
 - Helper functions for displaying videos in themes
 - DashJS integration for MPD video playback
 - Automatic daily synchronization
 - Video grid display with modal player
+- Real-time upload progress tracking
 
 ## Installation
 
@@ -43,12 +45,23 @@ The plugin creates a table `wp_vod_eikon_videos` with the following fields:
 
 Access the admin interface through **Media > VOD Videos** in your WordPress admin.
 
-### Features:
+### Video Library Tab
 
 - View all synchronized videos in a table
 - Synchronize videos manually with the "Synchronize Videos" button
 - Delete videos from local database
 - Copy MPD URLs to clipboard by clicking on them
+- View video posters/thumbnails
+
+### Upload Video Tab
+
+- Upload video files directly to Infomaniak VOD
+- Supported formats: MP4, MOV, AVI, MKV
+- Maximum file size: 2GB
+- Real-time upload progress tracking
+- Automatic video title and description
+- Cancel upload functionality
+- Automatic sync after successful upload
 - View video posters/thumbnails
 
 ## Helper Functions

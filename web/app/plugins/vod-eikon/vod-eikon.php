@@ -44,9 +44,13 @@ class VOD_Eikon
     add_action('wp_ajax_delete_vod_video', array($this, 'ajax_delete_video'));
     add_action('wp_ajax_get_vod_player', array($this, 'ajax_get_vod_player'));
     add_action('wp_ajax_nopriv_get_vod_player', array($this, 'ajax_get_vod_player'));
+    add_action('wp_ajax_upload_vod_video', array($this, 'ajax_upload_video'));
 
     // Debug endpoint for testing API response
     add_action('wp_ajax_debug_vod_api', array($this, 'debug_api_response'));
+
+    // Test endpoint to verify AJAX is working
+    add_action('wp_ajax_test_vod_ajax', array($this, 'test_ajax_endpoint'));
 
     // Schedule daily sync if not already scheduled
     if (!wp_next_scheduled('vod_eikon_daily_sync')) {
@@ -132,63 +136,152 @@ class VOD_Eikon
     $videos = $this->get_videos_from_db();
 ?>
     <div class="wrap">
-      <h1>Videos</h1>
+      <h1>VOD Videos Manager</h1>
 
-      <div class="vod-eikon-actions">
-        <button id="sync-videos" class="button button-primary">
-          <span class="dashicons dashicons-update"></span>
-          Synchronize Videos
-        </button>
-        <button id="debug-api" class="button button-secondary">
-          <span class="dashicons dashicons-search"></span>
-          Debug API Response
-        </button>
-        <span id="sync-status"></span>
-      </div>
+      <!-- Tabs Navigation -->
+      <div class="vod-tabs-wrapper">
+        <ul class="vod-tabs-nav">
+          <li class="vod-tab-nav active" data-tab="videos">
+            <a href="#videos-tab">
+              <span class="dashicons dashicons-format-video"></span>
+              Video Library
+            </a>
+          </li>
+          <li class="vod-tab-nav" data-tab="upload">
+            <a href="#upload-tab">
+              <span class="dashicons dashicons-upload"></span>
+              Upload Video
+            </a>
+          </li>
+        </ul>
 
-      <div class="vod-eikon-videos">
-        <?php if (empty($videos)): ?>
-          <p>No videos found. Click "Synchronize Videos" to fetch from Infomaniak VOD API.</p>
-        <?php else: ?>
-          <table class="wp-list-table widefat fixed striped">
-            <thead>
-              <tr>
-                <th>Poster</th>
-                <th>Name</th>
-                <th>VOD ID</th>
-                <th>MPD URL</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($videos as $video): ?>
-                <tr data-video-id="<?php echo esc_attr($video->id); ?>">
-                  <td>
-                    <?php if ($video->poster): ?>
-                      <img src="<?php echo esc_url($video->poster); ?>" alt="<?php echo esc_attr($video->name); ?>" style="max-width: 80px; height: auto;">
-                    <?php else: ?>
-                      <span class="dashicons dashicons-format-video"></span>
-                    <?php endif; ?>
-                  </td>
-                  <td><?php echo esc_html($video->name); ?></td>
-                  <td><?php echo esc_html($video->vod_id); ?></td>
-                  <td>
-                    <?php if ($video->mpd_url): ?>
-                      <code><?php echo esc_html($video->mpd_url); ?></code>
-                    <?php else: ?>
-                      <em>No MPD URL available</em>
-                    <?php endif; ?>
-                  </td>
-                  <td>
-                    <button class="button delete-video" data-video-id="<?php echo esc_attr($video->id); ?>">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
-        <?php endif; ?>
+        <!-- Tab Content -->
+        <div class="vod-tab-content">
+
+          <!-- Videos Tab -->
+          <div id="videos-tab" class="vod-tab-panel active">
+            <div class="vod-eikon-actions">
+              <button id="sync-videos" class="button button-primary">
+                <span class="dashicons dashicons-update"></span>
+                Synchronize Videos
+              </button>
+              <button id="debug-api" class="button button-secondary">
+                <span class="dashicons dashicons-search"></span>
+                Debug API Response
+              </button>
+              <button id="test-ajax" class="button button-secondary">
+                <span class="dashicons dashicons-admin-tools"></span>
+                Test AJAX
+              </button>
+              <span id="sync-status"></span>
+            </div>
+
+            <div class="vod-eikon-videos">
+              <?php if (empty($videos)): ?>
+                <p>No videos found. Click "Synchronize Videos" to fetch from Infomaniak VOD API.</p>
+              <?php else: ?>
+                <table class="wp-list-table widefat fixed striped">
+                  <thead>
+                    <tr>
+                      <th>Poster</th>
+                      <th>Name</th>
+                      <th>VOD ID</th>
+                      <th>MPD URL</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($videos as $video): ?>
+                      <tr data-video-id="<?php echo esc_attr($video->id); ?>">
+                        <td>
+                          <?php if ($video->poster): ?>
+                            <img src="<?php echo esc_url($video->poster); ?>" alt="<?php echo esc_attr($video->name); ?>" style="max-width: 80px; height: auto;">
+                          <?php else: ?>
+                            <span class="dashicons dashicons-format-video"></span>
+                          <?php endif; ?>
+                        </td>
+                        <td><?php echo esc_html($video->name); ?></td>
+                        <td><?php echo esc_html($video->vod_id); ?></td>
+                        <td>
+                          <?php if ($video->mpd_url): ?>
+                            <code><?php echo esc_html($video->mpd_url); ?></code>
+                          <?php else: ?>
+                            <em>No MPD URL available</em>
+                          <?php endif; ?>
+                        </td>
+                        <td>
+                          <button class="button delete-video" data-video-id="<?php echo esc_attr($video->id); ?>">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              <?php endif; ?>
+            </div>
+          </div>
+
+          <!-- Upload Tab -->
+          <div id="upload-tab" class="vod-tab-panel">
+            <div class="vod-upload-section">
+              <h2>Upload Video to Infomaniak VOD</h2>
+              <p>Upload a video file to your Infomaniak VOD channel. Supported formats: MP4, MOV, AVI, MKV.</p>
+
+              <form id="vod-upload-form" enctype="multipart/form-data">
+                <table class="form-table">
+                  <tr>
+                    <th scope="row">
+                      <label for="video-file">Video File</label>
+                    </th>
+                    <td>
+                      <input type="file" id="video-file" name="video_file" accept="video/*" required>
+                      <p class="description">Select a video file to upload. Maximum file size: 2GB</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <label for="video-title">Video Title</label>
+                    </th>
+                    <td>
+                      <input type="text" id="video-title" name="video_title" class="regular-text" required>
+                      <p class="description">Enter a title for your video</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <label for="video-description">Description (Optional)</label>
+                    </th>
+                    <td>
+                      <textarea id="video-description" name="video_description" class="large-text" rows="4"></textarea>
+                      <p class="description">Enter a description for your video</p>
+                    </td>
+                  </tr>
+                </table>
+
+                <div class="vod-upload-actions">
+                  <button type="submit" id="upload-video" class="button button-primary">
+                    <span class="dashicons dashicons-upload"></span>
+                    Upload Video
+                  </button>
+                  <button type="button" id="cancel-upload" class="button button-secondary" style="display: none;">
+                    Cancel Upload
+                  </button>
+                </div>
+
+                <div id="upload-progress" class="vod-upload-progress" style="display: none;">
+                  <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                  </div>
+                  <p class="progress-text">Uploading... 0%</p>
+                </div>
+
+                <div id="upload-status" class="vod-upload-status"></div>
+              </form>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 <?php
@@ -588,6 +681,234 @@ class VOD_Eikon
     return $wpdb->get_row($wpdb->prepare(
       "SELECT * FROM {$this->table_name} WHERE id = %d",
       $id
+    ));
+  }
+
+  /**
+   * AJAX handler for video upload
+   */
+  public function ajax_upload_video()
+  {
+    error_log('VOD Eikon: ajax_upload_video started');
+    error_log('VOD Eikon: $_POST data: ' . print_r($_POST, true));
+    error_log('VOD Eikon: $_FILES data: ' . print_r($_FILES, true));
+
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      error_log('VOD Eikon: Nonce verification failed');
+      wp_send_json_error(array(
+        'message' => 'Invalid security token.'
+      ));
+    }
+
+    // Check if user can upload files
+    if (!current_user_can('upload_files')) {
+      error_log('VOD Eikon: User does not have upload_files capability');
+      wp_send_json_error(array(
+        'message' => 'You do not have permission to upload files.'
+      ));
+    }
+
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+
+    error_log('VOD Eikon: Channel ID: ' . ($channel_id ? 'SET (' . substr($channel_id, 0, 5) . '...)' : 'NOT SET'));
+    error_log('VOD Eikon: API Token: ' . ($api_token ? 'SET (' . substr($api_token, 0, 10) . '...)' : 'NOT SET'));
+
+    // Also try $_ENV as fallback
+    if (!$channel_id) {
+      $channel_id = $_ENV['INFOMANIAK_CHANNEL_ID'] ?? '';
+      error_log('VOD Eikon: Fallback Channel ID from $_ENV: ' . ($channel_id ? 'SET' : 'NOT SET'));
+    }
+
+    if (!$api_token) {
+      $api_token = $_ENV['INFOMANIAK_TOKEN_API'] ?? '';
+      error_log('VOD Eikon: Fallback API Token from $_ENV: ' . ($api_token ? 'SET' : 'NOT SET'));
+    }
+
+    if (!$channel_id || !$api_token) {
+      error_log('VOD Eikon: Missing environment variables');
+      wp_send_json_error(array(
+        'message' => 'Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API.'
+      ));
+    }
+
+    // Validate inputs
+    $title = sanitize_text_field($_POST['video_title'] ?? '');
+    $description = sanitize_textarea_field($_POST['video_description'] ?? '');
+
+    error_log('VOD Eikon: Title: ' . $title);
+    error_log('VOD Eikon: Description: ' . $description);
+
+    if (empty($title)) {
+      error_log('VOD Eikon: Empty title provided');
+      wp_send_json_error(array(
+        'message' => 'Video title is required.'
+      ));
+    }
+
+    // Check if file was uploaded
+    if (!isset($_FILES['video_file']) || $_FILES['video_file']['error'] !== UPLOAD_ERR_OK) {
+      error_log('VOD Eikon: File upload error. Error code: ' . ($_FILES['video_file']['error'] ?? 'not set'));
+      wp_send_json_error(array(
+        'message' => 'No file uploaded or upload error occurred.'
+      ));
+    }
+
+    $file = $_FILES['video_file'];
+
+    error_log('VOD Eikon: File details - Name: ' . $file['name'] . ', Size: ' . $file['size'] . ', Type: ' . $file['type'] . ', Tmp: ' . $file['tmp_name']);
+
+    // Validate file type
+    $allowed_types = array('video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska');
+    $file_type = $file['type'];
+
+    if (!in_array($file_type, $allowed_types)) {
+      error_log('VOD Eikon: Invalid file type: ' . $file_type);
+      wp_send_json_error(array(
+        'message' => 'Invalid file type. Please upload MP4, MOV, AVI, or MKV files only.'
+      ));
+    }
+
+    // Check file size (2GB limit)
+    if ($file['size'] > 2 * 1024 * 1024 * 1024) {
+      error_log('VOD Eikon: File too large: ' . $file['size'] . ' bytes');
+      wp_send_json_error(array(
+        'message' => 'File size exceeds 2GB limit.'
+      ));
+    }
+
+    error_log('VOD Eikon: Starting upload to Infomaniak API');
+    // Upload to Infomaniak VOD API
+    $upload_result = $this->upload_to_infomaniak($file, $title, $description, $channel_id, $api_token);
+
+    if ($upload_result['success']) {
+      error_log('VOD Eikon: Upload successful, syncing videos');
+      // Sync videos to update the database with the new upload
+      $this->sync_videos_from_api();
+
+      wp_send_json_success(array(
+        'message' => 'Video uploaded successfully!',
+        'video_id' => $upload_result['video_id']
+      ));
+    } else {
+      error_log('VOD Eikon: Upload failed: ' . $upload_result['message']);
+      wp_send_json_error(array(
+        'message' => $upload_result['message']
+      ));
+    }
+  }
+
+  /**
+   * Upload video file to Infomaniak VOD API
+   */
+  private function upload_to_infomaniak($file, $title, $description, $channel_id, $api_token)
+  {
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/upload";
+
+    error_log('VOD Eikon: API URL: ' . $api_url);
+    error_log('VOD Eikon: File temp path: ' . $file['tmp_name']);
+    error_log('VOD Eikon: File exists: ' . (file_exists($file['tmp_name']) ? 'YES' : 'NO'));
+
+    // Prepare the file for upload
+    $cfile = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
+
+    $post_fields = array(
+      'file' => $cfile,
+      'title' => $title
+    );
+
+    if (!empty($description)) {
+      $post_fields['description'] = $description;
+    }
+
+    error_log('VOD Eikon: Post fields prepared (excluding file): ' . print_r(array_diff_key($post_fields, ['file' => '']), true));
+
+    // Initialize cURL
+    $ch = curl_init();
+
+    curl_setopt_array($ch, array(
+      CURLOPT_URL => $api_url,
+      CURLOPT_POST => true,
+      CURLOPT_POSTFIELDS => $post_fields,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_HTTPHEADER => array(
+        'Authorization: Bearer ' . $api_token,
+        'Accept: application/json'
+      ),
+      CURLOPT_TIMEOUT => 300, // 5 minutes timeout
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_SSL_VERIFYPEER => false
+    ));
+
+    error_log('VOD Eikon: Executing cURL request...');
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    $curl_info = curl_getinfo($ch);
+
+    error_log('VOD Eikon: cURL response - HTTP Code: ' . $http_code);
+    error_log('VOD Eikon: cURL error: ' . ($curl_error ?: 'None'));
+    error_log('VOD Eikon: cURL info: ' . print_r($curl_info, true));
+    error_log('VOD Eikon: API Response: ' . $response);
+
+    curl_close($ch);
+
+    if ($curl_error) {
+      error_log('VOD Eikon: cURL error occurred: ' . $curl_error);
+      return array(
+        'success' => false,
+        'message' => 'Upload failed: ' . $curl_error
+      );
+    }
+
+    if ($http_code !== 200 && $http_code !== 201) {
+      $error_message = 'Upload failed with HTTP code: ' . $http_code;
+
+      if ($response) {
+        $response_data = json_decode($response, true);
+        if (isset($response_data['error'])) {
+          $error_message .= ' - ' . $response_data['error'];
+        }
+        if (isset($response_data['message'])) {
+          $error_message .= ' - ' . $response_data['message'];
+        }
+      }
+
+      error_log('VOD Eikon: HTTP error: ' . $error_message);
+      return array(
+        'success' => false,
+        'message' => $error_message
+      );
+    }
+
+    $response_data = json_decode($response, true);
+    error_log('VOD Eikon: Parsed response data: ' . print_r($response_data, true));
+
+    if (!$response_data || !isset($response_data['data'])) {
+      error_log('VOD Eikon: Invalid response structure');
+      return array(
+        'success' => false,
+        'message' => 'Invalid response from upload API'
+      );
+    }
+
+    error_log('VOD Eikon: Upload completed successfully');
+    return array(
+      'success' => true,
+      'video_id' => $response_data['data']['id'] ?? '',
+      'message' => 'Upload successful'
+    );
+  }
+
+  /**
+   * Test AJAX endpoint to verify basic functionality
+   */
+  public function test_ajax_endpoint()
+  {
+    error_log('VOD Eikon: Test AJAX endpoint reached successfully');
+    wp_send_json_success(array(
+      'message' => 'AJAX is working correctly!'
     ));
   }
 }
