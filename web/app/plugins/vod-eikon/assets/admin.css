@@ -58,15 +58,47 @@
     font-size: 12px;
     cursor: pointer;
     transition: background-color 0.2s;
-    max-width: 300px;
+    max-width: 250px;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-all;
 }
 
 .vod-eikon-videos code:hover {
     background: #e0e0e0;
+}
+
+/* Table column width control */
+.vod-eikon-videos .wp-list-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(1) { /* Poster */
+    width: 100px;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
+    width: 25%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(3) { /* VOD ID */
+    width: 15%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(4) { /* MPD URL */
+    width: 40%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(5) { /* Actions */
+    width: 15%;
+}
+
+.vod-eikon-videos .wp-list-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .vod-copy-tooltip {
@@ -108,6 +140,12 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+    .vod-eikon-videos code {
+        max-width: 200px;
+    }
+}
+
 @media (max-width: 782px) {
     .vod-eikon-videos .wp-list-table td {
         padding: 8px 5px;
@@ -118,7 +156,16 @@
     }
 
     .vod-eikon-videos code {
-        max-width: 150px;
+        max-width: 120px;
+        font-size: 11px;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(4) { /* MPD URL */
+        width: 35%;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
+        width: 30%;
     }
 }
 

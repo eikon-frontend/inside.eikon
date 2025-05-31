@@ -200,7 +200,6 @@ class VOD_Eikon
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
     if (!$channel_id || !$api_token) {
-      error_log('VOD Eikon: Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API');
       return false;
     }
 
@@ -215,7 +214,6 @@ class VOD_Eikon
     ));
 
     if (is_wp_error($response)) {
-      error_log('VOD Eikon API Error: ' . $response->get_error_message());
       return false;
     }
 
@@ -223,19 +221,13 @@ class VOD_Eikon
     $data = json_decode($body, true);
 
     if (!$data || !isset($data['data'])) {
-      error_log('VOD Eikon: Invalid API response');
       return false;
     }
-
-    // Log the full API response for debugging
-    error_log('VOD Eikon - Full API Response: ' . print_r($data, true));
 
     global $wpdb;
     $synced_count = 0;
 
     foreach ($data['data'] as $video_data) {
-      // Log each video data structure
-      error_log('VOD Eikon - Video Data: ' . print_r($video_data, true));
       $vod_id = sanitize_text_field($video_data['id'] ?? '');
       $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
 
@@ -247,14 +239,12 @@ class VOD_Eikon
       // Only sync videos that are in the root folder
       $folder_path = $video_data['folder']['path'] ?? '';
       if ($folder_path !== '/') {
-        error_log('VOD Eikon - Skipping video not in root folder: ' . $vod_id . ' (folder path: ' . $folder_path . ')');
         continue;
       }
 
       // Filter out videos that are in the trash (have a discarded_at timestamp)
       $discarded_at = $video_data['discarded_at'] ?? null;
       if (!empty($discarded_at)) {
-        error_log('VOD Eikon - Skipping trashed video: ' . $vod_id . ' (discarded at: ' . $discarded_at . ')');
         continue;
       }
 
@@ -283,26 +273,8 @@ class VOD_Eikon
         }
       }
 
-      // Log poster field specifically
-      error_log('VOD Eikon - Poster field for video ' . $vod_id . ': ' . var_export($video_data['poster'] ?? 'NOT_SET', true));
-      error_log('VOD Eikon - Processed poster URL for video ' . $vod_id . ': ' . $poster);
-
-      $mpd_url = '';
-
-      // Check for direct MPD URL field
-      if (!empty($video_data['mpd_url'])) {
-        $mpd_url = esc_url_raw($video_data['mpd_url']);
-      }
-
-      // Check for nested URLs object
-      if (empty($mpd_url) && isset($video_data['urls'])) {
-        foreach (['mpd', 'dash', 'manifest'] as $field) {
-          if (!empty($video_data['urls'][$field])) {
-            $mpd_url = esc_url_raw($video_data['urls'][$field]);
-            break;
-          }
-        }
-      }
+      // Construct MPD URL from encoded_medias data
+      $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
 
       // Check if video already exists
       $existing = $wpdb->get_var($wpdb->prepare(
@@ -342,13 +314,58 @@ class VOD_Eikon
     return $synced_count;
   }
 
+  /**
+   * Construct MPD URL from video data
+   * Format: https://play.vod2.infomaniak.com/dash/{video_id}/{encoding_id}/,{media_id1},{media_id2},...,.urlset/manifest.mpd
+   */
+  private function construct_mpd_url($vod_id, $video_data)
+  {
+    // Check if we have encoded_medias data
+    if (empty($video_data['encoded_medias']) || !is_array($video_data['encoded_medias'])) {
+      return '';
+    }
+
+    // Get the encoding ID from the first encoded media (they should all share the same encoding)
+    $first_media = $video_data['encoded_medias'][0] ?? null;
+    if (!$first_media || empty($first_media['encoding_stream']['encoding']['id'])) {
+      return '';
+    }
+
+    $encoding_id = $first_media['encoding_stream']['encoding']['id'];
+
+    // Collect all media IDs from encoded_medias, sorted by quality (highest first)
+    $media_ids = array();
+    $qualities = array();
+
+    foreach ($video_data['encoded_medias'] as $media) {
+      if (!empty($media['id']) && !empty($media['encoding_stream']['video_height'])) {
+        $media_ids[] = $media['id'];
+        $qualities[] = intval($media['encoding_stream']['video_height']);
+      }
+    }
+
+    // Sort media IDs by quality descending (1080p, 720p, 480p, 360p)
+    if (count($media_ids) > 1) {
+      array_multisort($qualities, SORT_DESC, $media_ids);
+    }
+
+    if (empty($media_ids)) {
+      return '';
+    }
+
+    // Construct the MPD URL
+    $media_list = ',' . implode(',', $media_ids) . ',';
+    $mpd_url = "https://play.vod2.infomaniak.com/dash/{$vod_id}/{$encoding_id}/{$media_list}.urlset/manifest.mpd";
+
+    return $mpd_url;
+  }
+
   private function delete_video_from_api($vod_id)
   {
     $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
     if (!$channel_id || !$api_token) {
-      error_log('VOD Eikon: Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API');
       return false;
     }
 
@@ -364,7 +381,6 @@ class VOD_Eikon
     ));
 
     if (is_wp_error($response)) {
-      error_log('VOD Eikon API Delete Error: ' . $response->get_error_message());
       return false;
     }
 
@@ -372,11 +388,8 @@ class VOD_Eikon
 
     // API returns 204 No Content on successful deletion
     if ($response_code === 204) {
-      error_log('VOD Eikon: Successfully deleted video ' . $vod_id . ' from Infomaniak VOD service');
       return true;
     } else {
-      $body = wp_remote_retrieve_body($response);
-      error_log('VOD Eikon API Delete Error: HTTP ' . $response_code . ' - ' . $body);
       return false;
     }
   }
