@@ -91,8 +91,8 @@ class VOD_Eikon
   public function add_admin_menu()
   {
     add_media_page(
-      'VOD Eikon Videos',
-      'VOD Videos',
+      'Videos',
+      'Videos',
       'manage_options',
       'vod-eikon',
       array($this, 'admin_page')
@@ -132,7 +132,7 @@ class VOD_Eikon
     $videos = $this->get_videos_from_db();
 ?>
     <div class="wrap">
-      <h1>VOD Eikon Videos</h1>
+      <h1>Videos</h1>
 
       <div class="vod-eikon-actions">
         <button id="sync-videos" class="button button-primary">
