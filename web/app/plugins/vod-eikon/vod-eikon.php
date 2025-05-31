@@ -204,7 +204,7 @@ class VOD_Eikon
       return false;
     }
 
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media";
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster";
 
     $response = wp_remote_get($api_url, array(
       'headers' => array(
@@ -227,35 +227,71 @@ class VOD_Eikon
       return false;
     }
 
-    // Debug: Log the API response structure
-    error_log('VOD Eikon API Response: ' . print_r($data, true));
+    // Log the full API response for debugging
+    error_log('VOD Eikon - Full API Response: ' . print_r($data, true));
 
     global $wpdb;
     $synced_count = 0;
 
     foreach ($data['data'] as $video_data) {
-      // Debug: Log each video data structure
-      error_log('VOD Eikon Video Data: ' . print_r($video_data, true));
-
+      // Log each video data structure
+      error_log('VOD Eikon - Video Data: ' . print_r($video_data, true));
       $vod_id = sanitize_text_field($video_data['id'] ?? '');
       $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
 
-      // Try multiple possible field names for poster
+      if (empty($vod_id) || empty($name)) {
+        continue;
+      }
+
+      // Filter out videos that are not in the root folder (path != "/")
+      // Only sync videos that are in the root folder
+      $folder_path = $video_data['folder']['path'] ?? '';
+      if ($folder_path !== '/') {
+        error_log('VOD Eikon - Skipping video not in root folder: ' . $vod_id . ' (folder path: ' . $folder_path . ')');
+        continue;
+      }
+
+      // Filter out videos that are in the trash (have a discarded_at timestamp)
+      $discarded_at = $video_data['discarded_at'] ?? null;
+      if (!empty($discarded_at)) {
+        error_log('VOD Eikon - Skipping trashed video: ' . $vod_id . ' (discarded at: ' . $discarded_at . ')');
+        continue;
+      }
+
+      // Handle poster field - it might be a string URL or an array containing URLs
       $poster = '';
-      foreach (['poster', 'thumbnail', 'poster_url', 'thumb', 'image', 'cover'] as $field) {
-        if (!empty($video_data[$field])) {
-          $poster = esc_url_raw($video_data[$field]);
-          break;
+      if (!empty($video_data['poster'])) {
+        if (is_string($video_data['poster'])) {
+          $poster = esc_url_raw($video_data['poster']);
+        } elseif (is_array($video_data['poster'])) {
+          // Check common poster URL fields in the array
+          foreach (['url', 'src', 'href', 'link'] as $field) {
+            if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
+              $poster = esc_url_raw($video_data['poster'][$field]);
+              break;
+            }
+          }
+          // If no standard field found, try the first string value in the array
+          if (empty($poster)) {
+            foreach ($video_data['poster'] as $value) {
+              if (is_string($value) && filter_var($value, FILTER_VALIDATE_URL)) {
+                $poster = esc_url_raw($value);
+                break;
+              }
+            }
+          }
         }
       }
 
-      // Try multiple possible field names for MPD URL
+      // Log poster field specifically
+      error_log('VOD Eikon - Poster field for video ' . $vod_id . ': ' . var_export($video_data['poster'] ?? 'NOT_SET', true));
+      error_log('VOD Eikon - Processed poster URL for video ' . $vod_id . ': ' . $poster);
+
       $mpd_url = '';
-      foreach (['mpd_url', 'dash_url', 'streaming_url', 'manifest_url', 'mpd', 'dash'] as $field) {
-        if (!empty($video_data[$field])) {
-          $mpd_url = esc_url_raw($video_data[$field]);
-          break;
-        }
+
+      // Check for direct MPD URL field
+      if (!empty($video_data['mpd_url'])) {
+        $mpd_url = esc_url_raw($video_data['mpd_url']);
       }
 
       // Check for nested URLs object
@@ -266,10 +302,6 @@ class VOD_Eikon
             break;
           }
         }
-      }
-
-      if (empty($vod_id) || empty($name)) {
-        continue;
       }
 
       // Check if video already exists
@@ -310,69 +342,45 @@ class VOD_Eikon
     return $synced_count;
   }
 
-  public function ajax_sync_videos()
+  private function delete_video_from_api($vod_id)
   {
-    check_ajax_referer('vod_eikon_nonce', 'nonce');
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
 
-    if (!current_user_can('manage_options')) {
-      wp_die('Unauthorized');
+    if (!$channel_id || !$api_token) {
+      error_log('VOD Eikon: Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API');
+      return false;
     }
 
-    $synced_count = $this->sync_videos_from_api();
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}";
 
-    if ($synced_count !== false) {
-      wp_send_json_success(array(
-        'message' => "Successfully synchronized {$synced_count} new videos.",
-        'videos' => $this->get_videos_from_db()
-      ));
-    } else {
-      wp_send_json_error(array(
-        'message' => 'Failed to synchronize videos. Check error logs for details.'
-      ));
-    }
-  }
-
-  public function ajax_delete_video()
-  {
-    check_ajax_referer('vod_eikon_nonce', 'nonce');
-
-    if (!current_user_can('manage_options')) {
-      wp_die('Unauthorized');
-    }
-
-    $video_id = intval($_POST['video_id']);
-
-    global $wpdb;
-    $result = $wpdb->delete(
-      $this->table_name,
-      array('id' => $video_id),
-      array('%d')
-    );
-
-    if ($result !== false) {
-      wp_send_json_success(array(
-        'message' => 'Video deleted successfully.'
-      ));
-    } else {
-      wp_send_json_error(array(
-        'message' => 'Failed to delete video.'
-      ));
-    }
-  }
-
-  public function debug_api_response()
-  {
-    if (!current_user_can('manage_options')) {
-      wp_die('Unauthorized');
-    }
-
-    $result = $this->sync_videos_from_api();
-
-    wp_send_json_success(array(
-      'message' => "Debug sync completed. Check error logs for API response details.",
-      'synced_count' => $result
+    $response = wp_remote_request($api_url, array(
+      'method' => 'DELETE',
+      'headers' => array(
+        'Authorization' => 'Bearer ' . $api_token,
+        'Content-Type' => 'application/json'
+      ),
+      'timeout' => 30
     ));
+
+    if (is_wp_error($response)) {
+      error_log('VOD Eikon API Delete Error: ' . $response->get_error_message());
+      return false;
+    }
+
+    $response_code = wp_remote_retrieve_response_code($response);
+
+    // API returns 204 No Content on successful deletion
+    if ($response_code === 204) {
+      error_log('VOD Eikon: Successfully deleted video ' . $vod_id . ' from Infomaniak VOD service');
+      return true;
+    } else {
+      $body = wp_remote_retrieve_body($response);
+      error_log('VOD Eikon API Delete Error: HTTP ' . $response_code . ' - ' . $body);
+      return false;
+    }
   }
+
 
   private function get_videos_from_db()
   {
@@ -381,6 +389,148 @@ class VOD_Eikon
     return $wpdb->get_results(
       "SELECT * FROM {$this->table_name} ORDER BY created_at DESC"
     );
+  }
+
+  public function ajax_sync_videos()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_die(json_encode(array(
+        'success' => false,
+        'data' => array('message' => 'Invalid security token.')
+      )));
+    }
+
+    $synced_count = $this->sync_videos_from_api();
+
+    if ($synced_count !== false) {
+      wp_send_json_success(array(
+        'message' => sprintf('Successfully synchronized %d videos.', $synced_count)
+      ));
+    } else {
+      wp_send_json_error(array(
+        'message' => 'Failed to synchronize videos. Please check your API configuration.'
+      ));
+    }
+  }
+
+  public function ajax_delete_video()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_die(json_encode(array(
+        'success' => false,
+        'data' => array('message' => 'Invalid security token.')
+      )));
+    }
+
+    $video_id = intval($_POST['video_id']);
+
+    if (empty($video_id)) {
+      wp_send_json_error(array(
+        'message' => 'Invalid video ID.'
+      ));
+    }
+
+    global $wpdb;
+
+    // First, get the video details to retrieve the VOD ID
+    $video = $wpdb->get_row($wpdb->prepare(
+      "SELECT * FROM {$this->table_name} WHERE id = %d",
+      $video_id
+    ));
+
+    if (!$video) {
+      wp_send_json_error(array(
+        'message' => 'Video not found.'
+      ));
+    }
+
+    // Delete from Infomaniak VOD API first
+    $api_delete_result = $this->delete_video_from_api($video->vod_id);
+
+    if (!$api_delete_result) {
+      wp_send_json_error(array(
+        'message' => 'Failed to delete video from Infomaniak VOD service.'
+      ));
+    }
+
+    // If API deletion was successful, delete from local database
+    $result = $wpdb->delete(
+      $this->table_name,
+      array('id' => $video_id),
+      array('%d')
+    );
+
+    if ($result !== false) {
+      wp_send_json_success(array(
+        'message' => 'Video deleted successfully from both Infomaniak VOD service and local database.'
+      ));
+    } else {
+      wp_send_json_error(array(
+        'message' => 'Video was deleted from Infomaniak VOD service but failed to delete from local database.'
+      ));
+    }
+  }
+
+  public function debug_api_response()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_die(json_encode(array(
+        'success' => false,
+        'data' => array('message' => 'Invalid security token.')
+      )));
+    }
+
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+
+    if (!$channel_id || !$api_token) {
+      wp_send_json_error(array(
+        'message' => 'Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API.'
+      ));
+    }
+
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster";
+
+    $response = wp_remote_get($api_url, array(
+      'headers' => array(
+        'Authorization' => 'Bearer ' . $api_token,
+        'Accept' => 'application/json'
+      ),
+      'timeout' => 30
+    ));
+
+    if (is_wp_error($response)) {
+      wp_send_json_error(array(
+        'message' => 'API Error: ' . $response->get_error_message()
+      ));
+    }
+
+    $response_code = wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if ($response_code !== 200) {
+      wp_send_json_error(array(
+        'message' => "API returned status code {$response_code}. Response: " . substr($body, 0, 500)
+      ));
+    }
+
+    if (!$data || !isset($data['data'])) {
+      wp_send_json_error(array(
+        'message' => 'Invalid API response structure. Response: ' . substr($body, 0, 500)
+      ));
+    }
+
+    wp_send_json_success(array(
+      'message' => sprintf(
+        'API response successful. Found %d videos. Response code: %d',
+        count($data['data']),
+        $response_code
+      )
+    ));
   }
 
   public function ajax_get_vod_player()
