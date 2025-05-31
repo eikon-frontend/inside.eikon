@@ -52,7 +52,7 @@ function vod_eikon_player($vod_id, $options = array())
   $video = vod_eikon_get_video($vod_id);
 
   if (!$video || empty($video->mpd_url)) {
-    return '<p>Video not found or MPD URL not available.</p>';
+    return '<p>Vidéo introuvable ou URL MPD non disponible.</p>';
   }
 
   // Default options
@@ -122,7 +122,7 @@ function vod_eikon_video_grid($options = array())
   $videos = vod_eikon_get_videos();
 
   if (empty($videos)) {
-    return '<p>No videos available.</p>';
+    return '<p>Aucune vidéo disponible.</p>';
   }
 
   $defaults = array(
@@ -148,7 +148,7 @@ function vod_eikon_video_grid($options = array())
     }
 
     if ($options['link_to_player'] && $video->mpd_url) {
-      $html .= '<button onclick="openVideoModal(\'' . esc_js($video->vod_id) . '\')" style="background: #0073aa; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Play Video</button>';
+      $html .= '<button onclick="openVideoModal(\'' . esc_js($video->vod_id) . '\')" style="background: #0073aa; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Lire la Vidéo</button>';
     }
 
     $html .= '</div>';

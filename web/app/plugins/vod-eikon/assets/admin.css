@@ -281,6 +281,25 @@
     opacity: 0.65;
 }
 
+/* Processing indicator animation */
+.processing-indicator .dashicons-clock {
+    animation: pulse 2s infinite;
+}
+
+/* Action buttons styling */
+.vod-eikon-videos td:last-child {
+    white-space: nowrap;
+}
+
+.vod-eikon-videos .button {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+.vod-eikon-videos .button:last-child {
+    margin-right: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .vod-eikon-videos code {
@@ -369,8 +388,4 @@
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
-}
-
-.processing-indicator .dashicons-clock {
-    animation: pulse 2s infinite;
 }

@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VOD Eikon
  * Plugin URI: https://eikon.ch
- * Description: Manage Infomaniak VOD videos directly from WordPress. Upload, list, and delete videos using the Infomaniak VOD API.
+ * Description: Gérez les vidéos Infomaniak VOD directement depuis WordPress. Téléchargez, listez et supprimez des vidéos en utilisant l'API Infomaniak VOD.
  * Version: 1.0.0
  * Author: EIKON
  * Author URI: https://eikon.ch
@@ -100,8 +100,8 @@ class VOD_Eikon
   public function add_admin_menu()
   {
     add_media_page(
-      'Videos',
-      'Videos',
+      'Vidéos',
+      'Vidéos',
       'manage_options',
       'vod-eikon',
       array($this, 'admin_page')
@@ -143,7 +143,7 @@ class VOD_Eikon
     $videos = $this->get_videos_from_db();
 ?>
     <div class="wrap">
-      <h1>VOD Videos Manager</h1>
+      <h1>Gestionnaire de Vidéos VOD</h1>
 
       <!-- Tabs Navigation -->
       <div class="vod-tabs-wrapper">
@@ -151,13 +151,13 @@ class VOD_Eikon
           <li class="vod-tab-nav active" data-tab="videos">
             <a href="#videos-tab">
               <span class="dashicons dashicons-format-video"></span>
-              Video Library
+              Bibliothèque Vidéo
             </a>
           </li>
           <li class="vod-tab-nav" data-tab="upload">
             <a href="#upload-tab">
               <span class="dashicons dashicons-upload"></span>
-              Upload Video
+              Télécharger une Vidéo
             </a>
           </li>
         </ul>
@@ -170,26 +170,26 @@ class VOD_Eikon
             <div class="vod-eikon-actions">
               <button id="sync-videos" class="button button-primary">
                 <span class="dashicons dashicons-update"></span>
-                Synchronize Videos
+                Synchroniser
               </button>
               <button id="update-incomplete-videos" class="button button-primary">
                 <span class="dashicons dashicons-update-alt"></span>
-                Update Incomplete Videos
+                MàJ des données incomplètes
               </button>
               <span id="sync-status"></span>
             </div>
 
             <div class="vod-eikon-videos">
               <?php if (empty($videos)): ?>
-                <p>No videos found. Click "Synchronize Videos" to fetch from Infomaniak VOD API.</p>
+                <p>Aucune vidéo trouvée. Cliquez sur "Synchroniser les Vidéos" pour récupérer depuis l'API VOD Infomaniak.</p>
               <?php else: ?>
                 <table class="wp-list-table widefat fixed striped">
                   <thead>
                     <tr>
-                      <th>Poster</th>
-                      <th>Name</th>
-                      <th>VOD ID</th>
-                      <th>MPD URL</th>
+                      <th>Affiche</th>
+                      <th>Nom</th>
+                      <th>ID VOD</th>
+                      <th>URL MPD</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -203,15 +203,15 @@ class VOD_Eikon
                           <?php if ($video->poster): ?>
                             <img src="<?php echo esc_url($video->poster); ?>" alt="<?php echo esc_attr($video->name); ?>" style="max-width: 80px; height: auto;">
                           <?php else: ?>
-                            <span class="dashicons dashicons-format-video" style="color: #dc3545;" title="Poster missing - video may still be processing"></span>
+                            <span class="dashicons dashicons-format-video" style="color: #dc3545;" title="Affiche manquante - la vidéo est peut-être encore en cours de traitement"></span>
                           <?php endif; ?>
                         </td>
                         <td>
                           <?php echo esc_html($video->name); ?>
                           <?php if ($is_incomplete): ?>
-                            <span class="processing-indicator" title="Video is still processing">
+                            <span class="processing-indicator" title="La vidéo est encore en cours de traitement">
                               <span class="dashicons dashicons-clock" style="color: #ffc107; font-size: 14px;"></span>
-                              <small style="color: #ffc107;">Processing</small>
+                              <small style="color: #ffc107;">Traitement</small>
                             </span>
                           <?php endif; ?>
                         </td>
@@ -220,12 +220,12 @@ class VOD_Eikon
                           <?php if ($video->mpd_url): ?>
                             <code><?php echo esc_html($video->mpd_url); ?></code>
                           <?php else: ?>
-                            <em style="color: #dc3545;">No MPD URL available</em>
+                            <em style="color: #dc3545;">Aucune URL MPD disponible</em>
                           <?php endif; ?>
                         </td>
                         <td>
                           <button class="button delete-video" data-video-id="<?php echo esc_attr($video->id); ?>">
-                            Delete
+                            Supprimer
                           </button>
                         </td>
                       </tr>
@@ -239,15 +239,15 @@ class VOD_Eikon
           <!-- Upload Tab -->
           <div id="upload-tab" class="vod-tab-panel">
             <div class="vod-upload-section">
-              <h2>Upload Video to Infomaniak VOD</h2>
-              <p>Upload a video file to your Infomaniak VOD channel. Supported formats: MP4, MOV, AVI, MKV.</p>
+              <h2>Télécharger une Vidéo vers Infomaniak VOD</h2>
+              <p>Téléchargez un fichier vidéo vers votre chaîne Infomaniak VOD. Formats supportés : MP4, MOV, AVI, MKV.</p>
 
               <div class="notice notice-info">
                 <p>
                   <span class="dashicons dashicons-info"></span>
-                  <strong>Processing Time:</strong> After upload, videos need time to process on Infomaniak's servers.
-                  The poster image and playback URL will be available once processing is complete (usually within 5-30 minutes).
-                  The system will automatically check for updates at regular intervals.
+                  <strong>Temps de Traitement :</strong> Après le téléchargement, les vidéos ont besoin de temps pour être traitées sur les serveurs d'Infomaniak.
+                  L'image d'affiche et l'URL de lecture seront disponibles une fois le traitement terminé (généralement entre 5 et 30 minutes).
+                  Le système vérifiera automatiquement les mises à jour à intervalles réguliers.
                 </p>
               </div>
 
@@ -255,11 +255,11 @@ class VOD_Eikon
                 <table class="form-table">
                   <tr>
                     <th scope="row">
-                      <label for="video-file">Video File</label>
+                      <label for="video-file">Fichier Vidéo</label>
                     </th>
                     <td>
                       <input type="file" id="video-file" name="video_file" accept="video/*" required>
-                      <p class="description">Select a video file to upload. Maximum file size: <?php echo $this->format_bytes($this->get_server_upload_limit()); ?></p>
+                      <p class="description">Sélectionnez un fichier vidéo à télécharger. Taille maximale du fichier : <?php echo $this->format_bytes($this->get_server_upload_limit()); ?></p>
                     </td>
                   </tr>
                 </table>
@@ -267,10 +267,10 @@ class VOD_Eikon
                 <div class="vod-upload-actions">
                   <button type="submit" id="upload-video" class="button button-primary">
                     <span class="dashicons dashicons-upload"></span>
-                    Upload Video
+                    Télécharger la Vidéo
                   </button>
                   <button type="button" id="cancel-upload" class="button button-secondary" style="display: none;">
-                    Cancel Upload
+                    Annuler le Téléchargement
                   </button>
                 </div>
 
@@ -278,7 +278,7 @@ class VOD_Eikon
                   <div class="progress-bar">
                     <div class="progress-fill"></div>
                   </div>
-                  <p class="progress-text">Uploading... 0%</p>
+                  <p class="progress-text">Téléchargement... 0%</p>
                 </div>
 
                 <div id="upload-status" class="vod-upload-status"></div>
@@ -579,7 +579,7 @@ class VOD_Eikon
       $message = sprintf('Successfully synchronized %d videos.', $synced_count);
 
       if ($removed_count > 0) {
-        $message .= sprintf(' Removed %d videos that were discarded or no longer exist on the server.', $removed_count);
+        $message .= sprintf(' Supprimé %d vidéos qui ont été rejetées ou qui n\'existent plus sur le serveur.', $removed_count);
       }
 
       wp_send_json_success(array(
@@ -587,7 +587,7 @@ class VOD_Eikon
       ));
     } else {
       wp_send_json_error(array(
-        'message' => 'Failed to synchronize videos. Please check your API configuration.'
+        'message' => 'Échec de la synchronisation des vidéos. Veuillez vérifier votre configuration API.'
       ));
     }
   }
@@ -606,7 +606,7 @@ class VOD_Eikon
 
     if (empty($video_id)) {
       wp_send_json_error(array(
-        'message' => 'Invalid video ID.'
+        'message' => 'ID de vidéo invalide.'
       ));
     }
 
@@ -620,7 +620,7 @@ class VOD_Eikon
 
     if (!$video) {
       wp_send_json_error(array(
-        'message' => 'Video not found.'
+        'message' => 'Vidéo introuvable.'
       ));
     }
 
@@ -629,7 +629,7 @@ class VOD_Eikon
 
     if (!$api_delete_result) {
       wp_send_json_error(array(
-        'message' => 'Failed to delete video from Infomaniak VOD service.'
+        'message' => 'Échec de la suppression de la vidéo du service VOD Infomaniak.'
       ));
     }
 
@@ -642,11 +642,11 @@ class VOD_Eikon
 
     if ($result !== false) {
       wp_send_json_success(array(
-        'message' => 'Video deleted successfully from both Infomaniak VOD service and local database.'
+        'message' => 'Vidéo supprimée avec succès du service VOD Infomaniak et de la base de données locale.'
       ));
     } else {
       wp_send_json_error(array(
-        'message' => 'Video was deleted from Infomaniak VOD service but failed to delete from local database.'
+        'message' => 'La vidéo a été supprimée du service VOD Infomaniak mais n\'a pas pu être supprimée de la base de données locale.'
       ));
     }
   }
@@ -656,7 +656,7 @@ class VOD_Eikon
     $vod_id = sanitize_text_field($_GET['vod_id'] ?? '');
 
     if (empty($vod_id)) {
-      wp_die('Invalid video ID');
+      wp_die('ID de vidéo invalide');
     }
 
     echo vod_eikon_player($vod_id, array(
@@ -709,14 +709,14 @@ class VOD_Eikon
     // Verify nonce for security
     if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
       wp_send_json_error(array(
-        'message' => 'Invalid security token.'
+        'message' => 'Jeton de sécurité invalide.'
       ));
     }
 
     // Check if user can upload files
     if (!current_user_can('upload_files')) {
       wp_send_json_error(array(
-        'message' => 'You do not have permission to upload files.'
+        'message' => 'Vous n\'avez pas l\'autorisation de télécharger des fichiers.'
       ));
     }
 
@@ -735,7 +735,7 @@ class VOD_Eikon
 
     if (!$channel_id || !$api_token) {
       wp_send_json_error(array(
-        'message' => 'Missing environment variables INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API.'
+        'message' => 'Variables d\'environnement manquantes INFOMANIAK_CHANNEL_ID ou INFOMANIAK_TOKEN_API.'
       ));
     }
 
@@ -746,7 +746,7 @@ class VOD_Eikon
     // Check if file was uploaded
     if (!isset($_FILES['video_file']) || $_FILES['video_file']['error'] !== UPLOAD_ERR_OK) {
       wp_send_json_error(array(
-        'message' => 'No file uploaded or upload error occurred.'
+        'message' => 'Aucun fichier téléchargé ou erreur de téléchargement.'
       ));
     }
 
@@ -766,7 +766,7 @@ class VOD_Eikon
 
     if (!in_array($file_type, $allowed_types)) {
       wp_send_json_error(array(
-        'message' => 'Invalid file type. Please upload MP4, MOV, AVI, or MKV files only.'
+        'message' => 'Type de fichier invalide. Veuillez télécharger uniquement des fichiers MP4, MOV, AVI ou MKV.'
       ));
     }
 
@@ -774,7 +774,7 @@ class VOD_Eikon
     $max_upload_size = $this->get_server_upload_limit();
     if ($file['size'] > $max_upload_size) {
       wp_send_json_error(array(
-        'message' => 'File size exceeds ' . $this->format_bytes($max_upload_size) . ' limit.'
+        'message' => 'La taille du fichier dépasse la limite de ' . $this->format_bytes($max_upload_size) . '.'
       ));
     }
 
@@ -796,7 +796,7 @@ class VOD_Eikon
       }
 
       wp_send_json_success(array(
-        'message' => 'Video uploaded successfully! The video may take a few minutes to process. Poster image and playback URL will be available once processing is complete.',
+        'message' => 'Vidéo téléchargée avec succès ! La vidéo peut prendre quelques minutes à traiter. L\'image d\'affiche et l\'URL de lecture seront disponibles une fois le traitement terminé.',
         'video_id' => $upload_result['video_id']
       ));
     } else {
@@ -1262,7 +1262,6 @@ class VOD_Eikon
       // Add small delay to avoid hitting API rate limits
       usleep(500000); // 0.5 seconds
     }
-
   }
 
   public function ajax_update_incomplete_videos()
@@ -1287,11 +1286,11 @@ class VOD_Eikon
 
     if ($remaining_incomplete > 0) {
       wp_send_json_success(array(
-        'message' => sprintf('Update completed. %d videos still have missing data (may still be processing).', $remaining_incomplete)
+        'message' => sprintf('Mise à jour terminée. %d vidéos ont encore des données manquantes (peut-être encore en cours de traitement).', $remaining_incomplete)
       ));
     } else {
       wp_send_json_success(array(
-        'message' => 'All videos have been updated successfully!'
+        'message' => 'Toutes les vidéos ont été mises à jour avec succès !'
       ));
     }
   }

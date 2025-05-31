@@ -51,7 +51,7 @@ jQuery(document).ready(function ($) {
 
     if (!fileInput.files.length) {
       console.log('VOD Eikon: Validation failed - no file selected');
-      $status.html('<div class="notice notice-error inline"><p>Please select a video file.</p></div>');
+      $status.html('<div class="notice notice-error inline"><p>Veuillez sélectionner un fichier vidéo.</p></div>');
       return;
     }
 
@@ -63,7 +63,7 @@ jQuery(document).ready(function ($) {
 
     if (file.size > maxSize) {
       console.log('VOD Eikon: Validation failed - file too large');
-      $status.html('<div class="notice notice-error inline"><p>File size exceeds server limit of ' + vodEikon.max_upload_size_formatted + '.</p></div>');
+      $status.html('<div class="notice notice-error inline"><p>La taille du fichier dépasse la limite du serveur de ' + vodEikon.max_upload_size_formatted + '.</p></div>');
       return;
     }
 
@@ -71,7 +71,7 @@ jQuery(document).ready(function ($) {
     var allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'];
     if (!allowedTypes.includes(file.type)) {
       console.log('VOD Eikon: Validation failed - invalid file type: ' + file.type);
-      $status.html('<div class="notice notice-error inline"><p>Invalid file type. Please upload MP4, MOV, AVI, or MKV files only.</p></div>');
+      $status.html('<div class="notice notice-error inline"><p>Type de fichier invalide. Veuillez télécharger uniquement des fichiers MP4, MOV, AVI ou MKV.</p></div>');
       return;
     }
 
@@ -92,7 +92,7 @@ jQuery(document).ready(function ($) {
         var percentComplete = (e.loaded / e.total) * 100;
         console.log('VOD Eikon: Upload progress: ' + Math.round(percentComplete) + '%');
         $('.progress-fill').css('width', percentComplete + '%');
-        $('.progress-text').text('Uploading... ' + Math.round(percentComplete) + '%');
+        $('.progress-text').text('Téléchargement... ' + Math.round(percentComplete) + '%');
       }
     });
 
@@ -125,23 +125,23 @@ jQuery(document).ready(function ($) {
           console.log('VOD Eikon: Raw response: ', xhr.responseText);
           // Check if response contains PHP error about POST size limit
           if (xhr.responseText.includes('POST Content-Length') && xhr.responseText.includes('exceeds the limit')) {
-            $status.html('<div class="notice notice-error inline"><p>File too large for server configuration. Please contact your administrator.</p></div>');
+            $status.html('<div class="notice notice-error inline"><p>Fichier trop volumineux pour la configuration du serveur. Veuillez contacter votre administrateur.</p></div>');
           } else if (xhr.responseText.includes('Fatal error') || xhr.responseText.includes('PHP Fatal error')) {
-            $status.html('<div class="notice notice-error inline"><p>Server error during upload. Please check server logs and try again.</p></div>');
+            $status.html('<div class="notice notice-error inline"><p>Erreur serveur pendant le téléchargement. Veuillez vérifier les logs du serveur et réessayer.</p></div>');
           } else {
-            $status.html('<div class="notice notice-error inline"><p>Invalid response from server. Please try again.</p></div>');
+            $status.html('<div class="notice notice-error inline"><p>Réponse invalide du serveur. Veuillez réessayer.</p></div>');
           }
         }
       } else if (xhr.status === 400) {
         // Check if it's a PHP POST size limit error
         if (xhr.responseText.includes('POST Content-Length') && xhr.responseText.includes('exceeds the limit')) {
-          $status.html('<div class="notice notice-error inline"><p>Server configuration has been updated. Please try uploading again.</p></div>');
+          $status.html('<div class="notice notice-error inline"><p>La configuration du serveur a été mise à jour. Veuillez réessayer de télécharger.</p></div>');
         } else {
-          $status.html('<div class="notice notice-error inline"><p>Bad request. Please check your file and try again.</p></div>');
+          $status.html('<div class="notice notice-error inline"><p>Requête incorrecte. Veuillez vérifier votre fichier et réessayer.</p></div>');
         }
       } else {
         console.log('VOD Eikon: Upload failed with HTTP status: ' + xhr.status);
-        $status.html('<div class="notice notice-error inline"><p>Upload failed (HTTP ' + xhr.status + '). Please try again.</p></div>');
+        $status.html('<div class="notice notice-error inline"><p>Échec du téléchargement (HTTP ' + xhr.status + '). Veuillez réessayer.</p></div>');
       }
 
       // Reset form state
@@ -150,12 +150,12 @@ jQuery(document).ready(function ($) {
       $cancelBtn.hide();
       $form.find('input, textarea').prop('disabled', false);
       $('.progress-fill').css('width', '0%');
-      $('.progress-text').text('Uploading... 0%');
+      $('.progress-text').text('Téléchargement... 0%');
     });
 
     xhr.addEventListener('error', function () {
       console.error('VOD Eikon: XMLHttpRequest error occurred');
-      $status.html('<div class="notice notice-error inline"><p>Upload failed. Please check your connection and try again.</p></div>');
+      $status.html('<div class="notice notice-error inline"><p>Échec du téléchargement. Veuillez vérifier votre connexion et réessayer.</p></div>');
 
       // Reset form state
       $progress.hide();
@@ -163,12 +163,12 @@ jQuery(document).ready(function ($) {
       $cancelBtn.hide();
       $form.find('input, textarea').prop('disabled', false);
       $('.progress-fill').css('width', '0%');
-      $('.progress-text').text('Uploading... 0%');
+      $('.progress-text').text('Téléchargement... 0%');
     });
 
     xhr.addEventListener('timeout', function () {
       console.error('VOD Eikon: XMLHttpRequest timeout occurred');
-      $status.html('<div class="notice notice-error inline"><p>Upload timed out. Please try again or contact support if the issue persists.</p></div>');
+      $status.html('<div class="notice notice-error inline"><p>Délai d\'attente du téléchargement dépassé. Veuillez réessayer ou contacter le support si le problème persiste.</p></div>');
 
       // Reset form state
       $progress.hide();
@@ -176,7 +176,7 @@ jQuery(document).ready(function ($) {
       $cancelBtn.hide();
       $form.find('input, textarea').prop('disabled', false);
       $('.progress-fill').css('width', '0%');
-      $('.progress-text').text('Uploading... 0%');
+      $('.progress-text').text('Téléchargement... 0%');
     });
 
     // Send the request
@@ -204,17 +204,18 @@ jQuery(document).ready(function ($) {
     $('#cancel-upload').hide();
     $form.find('input, textarea').prop('disabled', false);
     $('.progress-fill').css('width', '0%');
-    $('.progress-text').text('Uploading... 0%');
-    $('#upload-status').html('<div class="notice notice-warning inline"><p>Upload cancelled.</p></div>');
+    $('.progress-text').text('Téléchargement... 0%');
+    $('#upload-status').html('<div class="notice notice-warning inline"><p>Téléchargement annulé.</p></div>');
   });
 
   // Sync videos functionality
   $('#sync-videos').on('click', function () {
     var $button = $(this);
     var $status = $('#sync-status');
+    var isSuccess = false;
 
     $button.prop('disabled', true).find('.dashicons').addClass('spin');
-    $status.html('<span class="spinner is-active"></span> Synchronizing videos...');
+    $status.html('<span class="spinner is-active"></span> Synchronisation des vidéos...');
 
     $.ajax({
       url: vodEikon.ajax_url,
@@ -225,6 +226,7 @@ jQuery(document).ready(function ($) {
       },
       success: function (response) {
         if (response.success) {
+          isSuccess = true;
           $status.html('<div class="notice notice-success inline"><p>' + response.data.message + '</p></div>');
 
           // Reload the page to show updated videos
@@ -236,15 +238,17 @@ jQuery(document).ready(function ($) {
         }
       },
       error: function () {
-        $status.html('<div class="notice notice-error inline"><p>An error occurred while synchronizing videos.</p></div>');
+        $status.html('<div class="notice notice-error inline"><p>Une erreur s\'est produite lors de la synchronisation des vidéos.</p></div>');
       },
       complete: function () {
         $button.prop('disabled', false).find('.dashicons').removeClass('spin');
 
-        // Clear status message after 5 seconds
-        setTimeout(function () {
-          $status.empty();
-        }, 5000);
+        // Only clear status message on error cases (success cases reload the page)
+        if (!isSuccess) {
+          setTimeout(function () {
+            $status.empty();
+          }, 5000);
+        }
       }
     });
   });
@@ -255,11 +259,11 @@ jQuery(document).ready(function ($) {
     var videoId = $button.data('video-id');
     var $row = $button.closest('tr');
 
-    if (!confirm('Are you sure you want to delete this video from the local database?')) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette vidéo de la base de données locale ?')) {
       return;
     }
 
-    $button.prop('disabled', true).text('Deleting...');
+    $button.prop('disabled', true).text('Suppression...');
 
     $.ajax({
       url: vodEikon.ajax_url,
@@ -275,13 +279,13 @@ jQuery(document).ready(function ($) {
             $row.remove();
           });
         } else {
-          alert('Failed to delete video: ' + response.data.message);
-          $button.prop('disabled', false).text('Delete');
+          alert('Échec de la suppression de la vidéo : ' + response.data.message);
+          $button.prop('disabled', false).text('Supprimer');
         }
       },
       error: function () {
-        alert('An error occurred while deleting the video.');
-        $button.prop('disabled', false).text('Delete');
+        alert('Une erreur s\'est produite lors de la suppression de la vidéo.');
+        $button.prop('disabled', false).text('Supprimer');
       }
     });
   });
@@ -293,7 +297,7 @@ jQuery(document).ready(function ($) {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(function () {
         // Create temporary tooltip
-        var $tooltip = $('<span class="vod-copy-tooltip">Copied!</span>');
+        var $tooltip = $('<span class="vod-copy-tooltip">Copié !</span>');
         $(this).after($tooltip);
 
         setTimeout(function () {
@@ -310,7 +314,7 @@ jQuery(document).ready(function ($) {
       document.execCommand('copy');
       $temp.remove();
 
-      var $tooltip = $('<span class="vod-copy-tooltip">Copied!</span>');
+      var $tooltip = $('<span class="vod-copy-tooltip">Copié !</span>');
       $(this).after($tooltip);
 
       setTimeout(function () {
@@ -325,9 +329,10 @@ jQuery(document).ready(function ($) {
   $('#update-incomplete-videos').on('click', function () {
     var $button = $(this);
     var $status = $('#sync-status');
+    var isSuccess = false;
 
     $button.prop('disabled', true).find('.dashicons').addClass('spin');
-    $status.html('<span class="spinner is-active"></span> Updating incomplete videos...');
+    $status.html('<span class="spinner is-active"></span> Mise à jour des vidéos incomplètes...');
 
     $.ajax({
       url: vodEikon.ajax_url,
@@ -338,6 +343,7 @@ jQuery(document).ready(function ($) {
       },
       success: function (response) {
         if (response.success) {
+          isSuccess = true;
           $status.html('<div class="notice notice-success inline"><p>' + response.data.message + '</p></div>');
 
           // Reload the page to show updated videos after a short delay
@@ -349,15 +355,17 @@ jQuery(document).ready(function ($) {
         }
       },
       error: function () {
-        $status.html('<div class="notice notice-error inline"><p>An error occurred while updating incomplete videos.</p></div>');
+        $status.html('<div class="notice notice-error inline"><p>Une erreur s\'est produite lors de la mise à jour des vidéos incomplètes.</p></div>');
       },
       complete: function () {
         $button.prop('disabled', false).find('.dashicons').removeClass('spin');
 
-        // Clear status message after 5 seconds
-        setTimeout(function () {
-          $status.empty();
-        }, 5000);
+        // Only clear status message on error cases (success cases reload the page)
+        if (!isSuccess) {
+          setTimeout(function () {
+            $status.empty();
+          }, 5000);
+        }
       }
     });
   });
