@@ -3,7 +3,7 @@
 /**
  * Plugin Name: ACF VOD Video Field
  * Plugin URI: #
- * Description: ACF field that allows selection of videos from the Infomaniak VOD system
+ * Description: ACF field that allows selection of videos from the VOD Eikon plugin
  * Version: 1.0.0
  * Author: EIKON
  * Author URI: https://eikon.ch
@@ -21,6 +21,20 @@ if (!class_exists('ACF')) {
   return;
 }
 
+// Check if VOD Eikon plugin is active
+function vod_video_field_check_dependencies()
+{
+  if (!function_exists('vod_eikon_get_videos')) {
+    add_action('admin_notices', function () {
+      echo '<div class="notice notice-error"><p>';
+      echo '<strong>VOD Video Field:</strong> This plugin requires the VOD Eikon plugin to be installed and activated.';
+      echo '</p></div>';
+    });
+    return false;
+  }
+  return true;
+}
+
 // Define plugin constants
 define('ACF_VOD_VIDEO_FIELD_VERSION', '1.0.0');
 define('ACF_VOD_VIDEO_FIELD_URL', plugin_dir_url(__FILE__));
@@ -34,6 +48,11 @@ include_once(ACF_VOD_VIDEO_FIELD_PATH . 'class-acf-field-vod-video.php');
  */
 function acf_vod_video_field_init()
 {
+  // Check dependencies before registering the field
+  if (!vod_video_field_check_dependencies()) {
+    return;
+  }
+
   // Register the field type with ACF
   acf_register_field_type('acf_field_vod_video');
 }
@@ -69,18 +88,10 @@ add_action('graphql_register_types', function () {
           'type' => 'String',
           'description' => __('The thumbnail URL of the video.', 'vod-video-field'),
         ],
-        'url' => [
-          'type' => 'String',
-          'description' => __('The URL of the video.', 'vod-video-field'),
-        ],
         'dashUrl' => [
           'type' => 'String',
           'description' => __('The DASH URL of the video.', 'vod-video-field'),
-        ],
-        'folder' => [
-          'type' => 'String',
-          'description' => __('The folder code of the video.', 'vod-video-field'),
-        ],
+        ]
       ],
     ]);
 
@@ -125,36 +136,35 @@ add_action('graphql_register_types', function () {
           // Handle both string (JSON) and array values
           $field_data = is_string($field_value) ? json_decode($field_value, true) : $field_value;
 
-          // Get the video details from the database
-          global $wpdb;
-          $table_name = $wpdb->prefix . 'vod_video';
-
-          if (isset($field_data['id']['media'])) {
-            $video_id = $field_data['id']['media'];
+          // If the field value is just a VOD ID (integer), query the VOD Eikon table
+          if (is_numeric($field_data)) {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
             $video = $wpdb->get_row($wpdb->prepare(
-              "SELECT
-                sname AS title,
-                sImageUrlV2 AS thumbnail,
-                sServerCode AS id,
-                sVideoUrlV2 AS url,
-                sVideoDashUrlV2 AS dashUrl,
-                sFolderCode AS folder
+              "SELECT vod_id, title, poster, mpd_url
               FROM $table_name
-              WHERE sServerCode = %s",
-              $video_id
+              WHERE vod_id = %d",
+              $field_data
             ));
 
             if ($video) {
               return array(
-                'id' => $video->id,
+                'id' => $video->vod_id,
                 'title' => $video->title,
-                'thumbnail' => esc_url($video->thumbnail),
-                'url' => esc_url($video->url),
-                'dashUrl' => esc_url($video->dashUrl),
-                'folder' => $video->folder
+                'thumbnail' => esc_url($video->poster),
+                'dashUrl' => esc_url($video->mpd_url)
               );
             }
+          }
+          // If the field value is an object with video data, return it directly
+          elseif (is_array($field_data) && isset($field_data['vod_id'])) {
+            return array(
+              'id' => $field_data['vod_id'],
+              'title' => $field_data['title'] ?? '',
+              'thumbnail' => isset($field_data['poster']) ? esc_url($field_data['poster']) : '',
+              'dashUrl' => isset($field_data['mpd_url']) ? esc_url($field_data['mpd_url']) : ''
+            );
           }
 
           return null;
@@ -175,6 +185,28 @@ add_filter('acf/format_value/type=vod_video', function ($value, $post_id, $field
   // Handle both string (JSON) and array values
   $field_data = is_string($value) ? json_decode($value, true) : $value;
 
-  // Return the full field data structure
+  // If the value is just a VOD ID (integer), fetch full video data from VOD Eikon
+  if (is_numeric($field_data)) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'vod_eikon_videos';
+
+    $video = $wpdb->get_row($wpdb->prepare(
+      "SELECT vod_id, title, poster, mpd_url
+      FROM $table_name
+      WHERE vod_id = %d",
+      $field_data
+    ));
+
+    if ($video) {
+      return array(
+        'vod_id' => $video->vod_id,
+        'title' => $video->title,
+        'poster' => $video->poster,
+        'mpd_url' => $video->mpd_url
+      );
+    }
+  }
+
+  // Return the full field data structure if it's already an object
   return $field_data;
 }, 10, 3);

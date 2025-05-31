@@ -3,7 +3,7 @@
 /**
  * ACF VOD Video Field Class
  *
- * This file defines the custom field type for selecting videos from Infomaniak VOD.
+ * This file defines the custom field type for selecting videos from VOD Eikon plugin.
  */
 
 // Exit if accessed directly
@@ -45,25 +45,24 @@ class acf_field_vod_video extends acf_field
     $this->category = 'content';
 
     // Field description
-    $this->description = __('Select videos from the VOD Infomaniak plugin', 'vod-video-field');
+    $this->description = __('Select videos from the VOD Eikon plugin', 'vod-video-field');
 
     // Field defaults
     $this->defaults = array(
-      'return_format' => 'array',
+      'return_format' => 'object'
     );
 
     // Translation strings
     $this->l10n = array(
-      'select_video' => __('Select Video', 'vod-video-field'),
-      'search_videos' => __('Search Videos', 'vod-video-field'),
-      'no_videos_found' => __('No videos found', 'vod-video-field'),
-      'loading' => __('Loading...', 'vod-video-field'),
-      'error' => __('Error loading videos', 'vod-video-field'),
-      'no_video_selected' => __('No video selected', 'vod-video-field'),
-      'remove_video' => __('Retirer la vidéo', 'vod-video-field'),
+      'select_video' => __('Sélectionner une vidéo', 'vod-video-field'),
+      'search_videos' => __('Rechercher des vidéos...', 'vod-video-field'),
+      'no_videos_found' => __('Aucune vidéo trouvée', 'vod-video-field'),
+      'remove_video' => __('Supprimer la vidéo', 'vod-video-field'),
+      'loading' => __('Chargement...', 'vod-video-field'),
+      'error' => __('Erreur lors du chargement des vidéos', 'vod-video-field'),
     );
 
-    $this->icon = 'text';
+    $this->icon = 'format-video';
 
     parent::__construct();
 
@@ -87,9 +86,9 @@ class acf_field_vod_video extends acf_field
       'name'          => 'return_format',
       'layout'        => 'horizontal',
       'choices'       => array(
-        'array'  => __('Video Array', 'vod-video-field'),
+        'object' => __('Video Object', 'vod-video-field'),
         'id'     => __('Video ID', 'vod-video-field'),
-        'url'    => __('Video URL', 'vod-video-field'),
+        'url'    => __('MPD URL', 'vod-video-field'),
       ),
     ));
   }
@@ -102,6 +101,12 @@ class acf_field_vod_video extends acf_field
    */
   public function render_field($field)
   {
+    // Check if VOD Eikon plugin is active
+    if (!$this->is_vod_eikon_active()) {
+      echo '<div class="notice notice-error"><p>' . __('VOD Eikon plugin is required but not active.', 'vod-video-field') . '</p></div>';
+      return;
+    }
+
     // Get the value
     $value = isset($field['value']) ? $field['value'] : '';
 
@@ -129,32 +134,16 @@ class acf_field_vod_video extends acf_field
       }
     }
 
-    // Hidden input - store the original structure
+    // Hidden input - store the video data as JSON
     $input_value = '';
     if (!empty($value)) {
-      if (is_string($value) && $value[0] === '{') {
-        // If it's already a JSON string, use it as is
+      if (is_string($value)) {
         $input_value = $value;
-      } else if (is_array($value)) {
-        // Check if we need to reconstruct the original structure
-        if (isset($value['id']) && !is_array($value['id']) && isset($value['url'])) {
-          // Convert from flat structure back to nested
-          $nested_value = array(
-            'id' => array(
-              'media' => $value['id'],
-              'thumbnail' => $value['thumbnail'],
-              'url' => $value['url'],
-              'folder' => $value['folder'],
-            ),
-            'title' => $value['title'],
-          );
-          $input_value = wp_json_encode($nested_value);
-        } else {
-          // Already in the correct structure
-          $input_value = wp_json_encode($value);
-        }
+      } else {
+        $input_value = wp_json_encode($value);
       }
     }
+
     printf(
       '<input type="hidden" id="%s" class="vod-video-input" name="%s" value="%s" data-key="%s">',
       esc_attr($field['id']),
@@ -171,7 +160,7 @@ class acf_field_vod_video extends acf_field
       echo '<div class="vod-video-preview">';
       echo '<div class="vod-video-thumbnail">';
 
-      $thumbnail = isset($video_data['id']['thumbnail']) ? $video_data['id']['thumbnail'] : '';
+      $thumbnail = isset($video_data['poster']) ? $video_data['poster'] : '';
       if ($thumbnail) {
         printf(
           '<img src="%s" alt="%s">',
@@ -179,38 +168,41 @@ class acf_field_vod_video extends acf_field
           esc_attr($video_data['title'] ?? '')
         );
       } else {
-        echo '<div class="vod-video-placeholder"></div>';
+        echo '<div class="vod-video-placeholder"><span class="dashicons dashicons-format-video"></span></div>';
       }
 
       echo '</div>';
       echo '<div class="vod-video-details">';
       echo '<h4>' . esc_html($video_data['title'] ?? '') . '</h4>';
+      if (isset($video_data['vod_id'])) {
+        echo '<p><small>VOD ID: ' . esc_html($video_data['vod_id']) . '</small></p>';
+      }
       echo '<div class="vod-video-actions">';
-      echo '<a href="#" class="vod-video-remove button">' . esc_html__('Retirer la vidéo', 'vod-video-field') . '</a>';
+      echo '<a href="#" class="vod-video-remove button">' . esc_html($this->l10n['remove_video']) . '</a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';
     } else {
       echo '<div class="vod-video-empty">';
-      echo '<p>' . esc_html__('Aucune vidéo', 'vod-video-field') . '</p>';
+      echo '<p>' . esc_html__('Aucune vidéo sélectionnée', 'vod-video-field') . '</p>';
       echo '</div>';
     }
 
     // Selection button
     echo '<div class="vod-video-select">';
-    echo '<a href="#" class="vod-video-button button">' . esc_html__('Selectionner une vidéo', 'vod-video-field') . '</a>';
+    echo '<a href="#" class="vod-video-button button">' . esc_html($this->l10n['select_video']) . '</a>';
     echo '</div>';
 
     // Modal
     echo '<div class="vod-video-modal">';
     echo '<div class="vod-video-modal-content">';
     echo '<div class="vod-video-modal-header">';
-    echo '<h3>' . esc_html__('Sélectionner une vidéo', 'vod-video-field') . '</h3>';
+    echo '<h3>' . esc_html($this->l10n['select_video']) . '</h3>';
     echo '<a href="#" class="vod-video-modal-close">&times;</a>';
     echo '</div>';
 
     echo '<div class="vod-video-modal-search">';
-    echo '<input type="text" class="vod-video-search-input" placeholder="' . esc_attr__('Rechercher des vidéos...', 'vod-video-field') . '">';
+    echo '<input type="text" class="vod-video-search-input" placeholder="' . esc_attr($this->l10n['search_videos']) . '">';
     echo '</div>';
 
     echo '<div class="vod-video-modal-results">';
@@ -249,7 +241,7 @@ class acf_field_vod_video extends acf_field
   }
 
   /**
-   * AJAX callback to search for videos
+   * AJAX callback to search for videos from VOD Eikon plugin
    */
   public function ajax_search_videos()
   {
@@ -258,45 +250,72 @@ class acf_field_vod_video extends acf_field
       wp_send_json_error(array('message' => __('Invalid security token', 'vod-video-field')));
     }
 
+    // Check if VOD Eikon plugin is active
+    if (!$this->is_vod_eikon_active()) {
+      wp_send_json_error(array('message' => __('VOD Eikon plugin is not active', 'vod-video-field')));
+    }
+
     $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'vod_video';
+    // Get videos from VOD Eikon plugin
+    $videos = $this->get_vod_eikon_videos($search_term);
 
-    // Query the database for videos with non-null URLs
-    $query = $wpdb->prepare(
-      "SELECT
-        sname AS title,
-        sImageUrlV2 AS thumbnail,
-        sServerCode AS id,
-        sVideoUrlV2 AS url,
-        sVideoDashUrlV2 AS dashUrl,
-        sFolderCode AS folder
-      FROM $table_name
-      WHERE sname LIKE %s
-        AND sImageUrlV2 IS NOT NULL
-        AND sVideoDashUrlV2 IS NOT NULL
-      ORDER BY sname ASC",
-      '%' . $wpdb->esc_like($search_term) . '%'
-    );
+    wp_send_json_success(array('videos' => $videos));
+  }
+
+  /**
+   * Get videos from VOD Eikon plugin
+   *
+   * @param string $search_term Optional search term to filter videos
+   * @return array Array of video data
+   */
+  private function get_vod_eikon_videos($search_term = '')
+  {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'vod_eikon_videos';
+
+    // Build query
+    $query = "SELECT * FROM {$table_name}";
+    $params = array();
+
+    if (!empty($search_term)) {
+      $query .= " WHERE name LIKE %s";
+      $params[] = '%' . $wpdb->esc_like($search_term) . '%';
+    }
+
+    $query .= " ORDER BY created_at DESC LIMIT 20";
+
+    if (!empty($params)) {
+      $query = $wpdb->prepare($query, ...$params);
+    }
 
     $results = $wpdb->get_results($query);
 
-    // Format the results and ensure all values are present
-    $videos = array_map(function ($row) {
-      return array(
-        'id' => array(
-          'media' => $row->id,
-          'thumbnail' => esc_url($row->thumbnail),
-          'url' => esc_url($row->url),
-          'dashUrl' => esc_url($row->dashUrl),
-          'folder' => $row->folder
-        ),
-        'title' => $row->title
+    // Format the results for the field
+    $videos = array();
+    foreach ($results as $video) {
+      $videos[] = array(
+        'id' => $video->id,
+        'vod_id' => $video->vod_id,
+        'title' => $video->name,
+        'poster' => $video->poster,
+        'mpd_url' => $video->mpd_url,
+        'created_at' => $video->created_at,
+        'updated_at' => $video->updated_at,
       );
-    }, $results);
+    }
 
-    wp_send_json_success(array('videos' => $videos));
+    return $videos;
+  }
+
+  /**
+   * Check if VOD Eikon plugin is active
+   *
+   * @return bool
+   */
+  private function is_vod_eikon_active()
+  {
+    return class_exists('VOD_Eikon') || function_exists('vod_eikon_get_videos');
   }
 
   /**
@@ -311,11 +330,6 @@ class acf_field_vod_video extends acf_field
   {
     // Bail early if no value
     if (empty($value)) {
-      return $value;
-    }
-
-    // Format the value based on the return format setting
-    if ($field['return_format'] === 'id') {
       return $value;
     }
 
@@ -334,18 +348,20 @@ class acf_field_vod_video extends acf_field
       return $value;
     }
 
-    // Keep the original structure
-    if (isset($video_data['id']) && is_array($video_data['id'])) {
-      // Return URL only if that's the format requested
-      if ($field['return_format'] === 'url') {
-        return $video_data['id']['url'] ?? '';
-      }
+    // Format based on return format setting
+    $return_format = isset($field['return_format']) ? $field['return_format'] : 'object';
 
-      // Return the full data structure
-      return $video_data;
+    switch ($return_format) {
+      case 'id':
+        return isset($video_data['vod_id']) ? $video_data['vod_id'] : '';
+
+      case 'url':
+        return isset($video_data['mpd_url']) ? $video_data['mpd_url'] : '';
+
+      case 'object':
+      default:
+        return $video_data;
     }
-
-    return $value;
   }
 
   /**
@@ -363,12 +379,10 @@ class acf_field_vod_video extends acf_field
       return null;
     }
 
-    // If it's a string, try to decode it, handling both escaped and unescaped JSON
+    // If it's a string, try to decode it
     if (is_string($value)) {
-      // First try direct decode
       $decoded = json_decode($value, true);
       if (json_last_error() !== JSON_ERROR_NONE) {
-        // If that fails, try with stripslashes
         $decoded = json_decode(stripslashes($value), true);
       }
 
@@ -382,7 +396,7 @@ class acf_field_vod_video extends acf_field
       return null;
     }
 
-    if (!isset($value['id']) || !isset($value['id']['media'])) {
+    if (!isset($value['vod_id']) && !isset($value['id'])) {
       return null;
     }
 
@@ -403,8 +417,6 @@ class acf_field_vod_video extends acf_field
       return null;
     }
 
-    // Format value based on return format
-    $formatted_value = $this->format_value($value, $post_id, $field);
-    return $formatted_value;
+    return $value;
   }
 }

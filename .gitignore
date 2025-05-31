@@ -12,6 +12,7 @@ web/app/uploads/*
 !web/app/plugins/wp-graphql-tax-query
 !web/app/plugins/vod-video-field
 !web/app/plugins/vod-infomaniak
+!web/app/plugins/vod-eikon
 
 # Custom blocks plugins
 !web/app/mu-plugins/eikonblocks-*

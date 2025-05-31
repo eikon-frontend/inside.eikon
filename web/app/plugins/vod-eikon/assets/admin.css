@@ -1,0 +1,336 @@
+/* VOD Eikon Admin Styles */
+
+/* Tabs Styling */
+.vod-tabs-wrapper {
+    margin-top: 20px;
+}
+
+.vod-tabs-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #ccd0d4;
+    display: flex;
+}
+
+.vod-tab-nav {
+    margin: 0;
+    margin-bottom: -1px;
+}
+
+.vod-tab-nav a {
+    display: block;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: #555;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background: #f1f1f1;
+    transition: all 0.3s ease;
+}
+
+.vod-tab-nav a:hover {
+    background: #e8e8e8;
+    color: #333;
+}
+
+.vod-tab-nav.active a {
+    background: #fff;
+    color: #333;
+    border: 1px solid #ccd0d4;
+    border-bottom: 1px solid #fff;
+    font-weight: 600;
+}
+
+.vod-tab-nav a .dashicons {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.vod-tab-content {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-top: none;
+    padding: 20px;
+}
+
+.vod-tab-panel {
+    display: none;
+}
+
+.vod-tab-panel.active {
+    display: block;
+}
+
+/* Upload Section Styling */
+.vod-upload-section {
+    max-width: 800px;
+}
+
+.vod-upload-section h2 {
+    margin-top: 0;
+}
+
+.vod-upload-actions {
+    margin: 20px 0;
+}
+
+.vod-upload-actions .button {
+    margin-right: 10px;
+}
+
+.vod-upload-progress {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0073aa, #005177);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.progress-text {
+    margin: 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+.vod-upload-status {
+    margin: 15px 0;
+}
+
+.vod-upload-section .form-table th {
+    width: 150px;
+    padding: 15px 10px 15px 0;
+    vertical-align: top;
+}
+
+.vod-upload-section .form-table td {
+    padding: 15px 10px;
+}
+
+.vod-upload-section input[type="file"] {
+    width: 100%;
+    max-width: 400px;
+}
+
+.vod-upload-section input[type="text"],
+.vod-upload-section textarea {
+    width: 100%;
+    max-width: 500px;
+}
+
+.vod-upload-actions .button .dashicons {
+    margin-right: 5px;
+}
+
+/* Existing styles from before */
+.vod-eikon-actions {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.vod-eikon-actions .button {
+    margin-right: 10px;
+}
+
+.vod-eikon-actions .dashicons {
+    margin-right: 5px;
+}
+
+.vod-eikon-actions .dashicons.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#sync-status {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#sync-status .spinner {
+    float: none;
+    margin: 0 5px;
+}
+
+.vod-eikon-videos {
+    margin-top: 20px;
+}
+
+.vod-eikon-videos table {
+    margin-top: 0;
+}
+
+.vod-eikon-videos td {
+    vertical-align: middle;
+}
+
+.vod-eikon-videos img {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.vod-eikon-videos code {
+    background: #f1f1f1;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    max-width: 250px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
+
+.vod-eikon-videos code:hover {
+    background: #e0e0e0;
+}
+
+/* Table column width control */
+.vod-eikon-videos .wp-list-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(1) { /* Poster */
+    width: 100px;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
+    width: 25%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(3) { /* VOD ID */
+    width: 15%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(4) { /* MPD URL */
+    width: 40%;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(5) { /* Actions */
+    width: 15%;
+}
+
+.vod-eikon-videos .wp-list-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.vod-copy-tooltip {
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-left: 10px;
+    position: relative;
+}
+
+.vod-copy-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: #333;
+}
+
+.delete-video {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.delete-video:hover {
+    background: #c82333;
+    border-color: #c82333;
+    color: white;
+}
+
+.delete-video:disabled {
+    background: #6c757d;
+    border-color: #6c757d;
+    opacity: 0.65;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .vod-eikon-videos code {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 782px) {
+    .vod-eikon-videos .wp-list-table td {
+        padding: 8px 5px;
+    }
+
+    .vod-eikon-videos img {
+        max-width: 60px;
+    }
+
+    .vod-eikon-videos code {
+        max-width: 120px;
+        font-size: 11px;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(4) { /* MPD URL */
+        width: 35%;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
+        width: 30%;
+    }
+}
+
+/* Notice styling improvements */
+.notice.inline {
+    margin: 5px 0;
+    padding: 8px 12px;
+}
+
+.notice.inline p {
+    margin: 0;
+}
+
+/* Loading state improvements */
+.vod-eikon-actions .button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Table improvements */
+.vod-eikon-videos .wp-list-table th {
+    font-weight: 600;
+}
+
+.vod-eikon-videos .wp-list-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
