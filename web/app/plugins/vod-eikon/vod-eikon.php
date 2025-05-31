@@ -52,6 +52,9 @@ class VOD_Eikon
     // Test endpoint to verify AJAX is working
     add_action('wp_ajax_test_vod_ajax', array($this, 'test_ajax_endpoint'));
 
+    // Add debug endpoint for upload limits
+    add_action('wp_ajax_debug_upload_limits', array($this, 'debug_upload_limits'));
+
     // Schedule daily sync if not already scheduled
     if (!wp_next_scheduled('vod_eikon_daily_sync')) {
       wp_schedule_event(time(), 'daily', 'vod_eikon_daily_sync');
@@ -120,7 +123,9 @@ class VOD_Eikon
 
     wp_localize_script('vod-eikon-admin', 'vodEikon', array(
       'ajax_url' => admin_url('admin-ajax.php'),
-      'nonce' => wp_create_nonce('vod_eikon_nonce')
+      'nonce' => wp_create_nonce('vod_eikon_nonce'),
+      'max_upload_size' => $this->get_server_upload_limit(),
+      'max_upload_size_formatted' => $this->format_bytes($this->get_server_upload_limit())
     ));
 
     wp_enqueue_style(
@@ -168,6 +173,10 @@ class VOD_Eikon
               <button id="debug-api" class="button button-secondary">
                 <span class="dashicons dashicons-search"></span>
                 Debug API Response
+              </button>
+              <button id="debug-upload-limits" class="button button-secondary">
+                <span class="dashicons dashicons-info"></span>
+                Upload Limits Info
               </button>
               <button id="test-ajax" class="button button-secondary">
                 <span class="dashicons dashicons-admin-tools"></span>
@@ -236,7 +245,7 @@ class VOD_Eikon
                     </th>
                     <td>
                       <input type="file" id="video-file" name="video_file" accept="video/*" required>
-                      <p class="description">Select a video file to upload. Maximum file size: 2GB</p>
+                      <p class="description">Select a video file to upload. Maximum file size: <?php echo $this->format_bytes($this->get_server_upload_limit()); ?></p>
                     </td>
                   </tr>
                 </table>
@@ -758,11 +767,12 @@ class VOD_Eikon
       ));
     }
 
-    // Check file size (2GB limit)
-    if ($file['size'] > 2 * 1024 * 1024 * 1024) {
+    // Check file size against server limits
+    $max_upload_size = $this->get_server_upload_limit();
+    if ($file['size'] > $max_upload_size) {
       error_log('VOD Eikon: File too large: ' . $file['size'] . ' bytes');
       wp_send_json_error(array(
-        'message' => 'File size exceeds 2GB limit.'
+        'message' => 'File size exceeds ' . $this->format_bytes($max_upload_size) . ' limit.'
       ));
     }
 
@@ -908,6 +918,53 @@ class VOD_Eikon
   }
 
   /**
+   * Get the actual server upload limits
+   */
+  private function get_server_upload_limit()
+  {
+    // Get upload_max_filesize and post_max_size from PHP configuration
+    $upload_max = $this->parse_size(ini_get('upload_max_filesize'));
+    $post_max = $this->parse_size(ini_get('post_max_size'));
+
+    // WordPress also has a limit
+    $wp_max = wp_max_upload_size();
+
+    // Return the smallest limit (most restrictive)
+    $max_size = min($upload_max, $post_max, $wp_max);
+
+    return $max_size;
+  }
+
+  /**
+   * Convert PHP size string to bytes
+   */
+  private function parse_size($size)
+  {
+    $unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
+    $size = preg_replace('/[^0-9\.]/', '', $size);
+
+    if ($unit) {
+      return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+    } else {
+      return round($size);
+    }
+  }
+
+  /**
+   * Format bytes to human readable format
+   */
+  private function format_bytes($size, $precision = 2)
+  {
+    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+    for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
+      $size /= 1024;
+    }
+
+    return round($size, $precision) . ' ' . $units[$i];
+  }
+
+  /**
    * Test AJAX endpoint to verify basic functionality
    */
   public function test_ajax_endpoint()
@@ -916,6 +973,58 @@ class VOD_Eikon
     wp_send_json_success(array(
       'message' => 'AJAX is working correctly!'
     ));
+  }
+
+  /**
+   * Debugging endpoint to check upload limits
+   */
+  public function debug_upload_limits()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_send_json_error(array(
+        'message' => 'Invalid security token.'
+      ));
+    }
+
+    $limit_info = $this->get_upload_limit_info();
+
+    wp_send_json_success(array(
+      'message' => 'Upload limits retrieved successfully.',
+      'limits' => $limit_info
+    ));
+  }
+
+  /**
+   * Get detailed upload limit information for debugging
+   */
+  public function get_upload_limit_info()
+  {
+    $upload_max = $this->parse_size(ini_get('upload_max_filesize'));
+    $post_max = $this->parse_size(ini_get('post_max_size'));
+    $wp_max = wp_max_upload_size();
+    $effective_limit = min($upload_max, $post_max, $wp_max);
+
+    return array(
+      'upload_max_filesize' => array(
+        'raw' => ini_get('upload_max_filesize'),
+        'bytes' => $upload_max,
+        'formatted' => $this->format_bytes($upload_max)
+      ),
+      'post_max_size' => array(
+        'raw' => ini_get('post_max_size'),
+        'bytes' => $post_max,
+        'formatted' => $this->format_bytes($post_max)
+      ),
+      'wp_max_upload_size' => array(
+        'bytes' => $wp_max,
+        'formatted' => $this->format_bytes($wp_max)
+      ),
+      'effective_limit' => array(
+        'bytes' => $effective_limit,
+        'formatted' => $this->format_bytes($effective_limit)
+      )
+    );
   }
 }
 

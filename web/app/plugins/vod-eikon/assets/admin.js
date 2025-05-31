@@ -56,13 +56,14 @@ jQuery(document).ready(function ($) {
     }
 
     var file = fileInput.files[0];
-    var maxSize = 2 * 1024 * 1024 * 1024; // 2GB
+    var maxSize = vodEikon.max_upload_size; // Use server upload limit
 
     console.log('VOD Eikon: File details - Name: ' + file.name + ', Size: ' + file.size + ', Type: ' + file.type);
+    console.log('VOD Eikon: Server upload limit: ' + vodEikon.max_upload_size_formatted);
 
     if (file.size > maxSize) {
       console.log('VOD Eikon: Validation failed - file too large');
-      $status.html('<div class="notice notice-error inline"><p>File size exceeds 2GB limit.</p></div>');
+      $status.html('<div class="notice notice-error inline"><p>File size exceeds server limit of ' + vodEikon.max_upload_size_formatted + '.</p></div>');
       return;
     }
 
@@ -391,6 +392,48 @@ jQuery(document).ready(function ($) {
         setTimeout(function () {
           $status.empty();
         }, 3000);
+      }
+    });
+  });
+
+  // Debug upload limits functionality
+  $('#debug-upload-limits').on('click', function () {
+    var $button = $(this);
+    var $status = $('#sync-status');
+
+    $button.prop('disabled', true).find('.dashicons').addClass('spin');
+    $status.html('<span class="spinner is-active"></span> Getting upload limits...');
+
+    $.ajax({
+      url: vodEikon.ajax_url,
+      type: 'POST',
+      data: {
+        action: 'debug_upload_limits',
+        nonce: vodEikon.nonce
+      },
+      success: function (response) {
+        if (response.success) {
+          var limits = response.data.limits;
+          var message = 'Upload Limits:<br>' +
+            '• PHP upload_max_filesize: ' + limits.upload_max_filesize.formatted + ' (' + limits.upload_max_filesize.raw + ')<br>' +
+            '• PHP post_max_size: ' + limits.post_max_size.formatted + ' (' + limits.post_max_size.raw + ')<br>' +
+            '• WordPress limit: ' + limits.wp_max_upload_size.formatted + '<br>' +
+            '• <strong>Effective limit: ' + limits.effective_limit.formatted + '</strong>';
+          $status.html('<span class="notice notice-info inline"><p>' + message + '</p></span>');
+        } else {
+          $status.html('<span class="notice notice-error inline"><p>' + response.data.message + '</p></span>');
+        }
+      },
+      error: function () {
+        $status.html('<span class="notice notice-error inline"><p>An error occurred while getting upload limits.</p></span>');
+      },
+      complete: function () {
+        $button.prop('disabled', false).find('.dashicons').removeClass('spin');
+
+        // Clear status message after 10 seconds (longer for upload info)
+        setTimeout(function () {
+          $status.empty();
+        }, 10000);
       }
     });
   });
