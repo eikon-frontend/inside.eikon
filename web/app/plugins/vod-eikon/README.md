@@ -4,15 +4,17 @@ A WordPress plugin that integrates with the Infomaniak VOD API to manage and dis
 
 ## Features
 
-- Synchronize videos from Infomaniak VOD API
+- **Real-time callback system** for instant video processing updates
 - **Upload videos directly to Infomaniak VOD via WordPress admin**
+- Synchronize videos from Infomaniak VOD API
 - Store video metadata in WordPress database
 - Tabbed admin interface for managing and uploading videos
 - Helper functions for displaying videos in themes
 - DashJS integration for MPD video playback
-- Automatic daily synchronization
+- Automatic daily synchronization (fallback)
 - Video grid display with modal player
 - Real-time upload progress tracking
+- Event-driven video updates (media_ready, media_deleted)
 
 ## Installation
 
@@ -28,6 +30,19 @@ You need to set two environment variables in your `.env` file or server configur
 INFOMANIAK_CHANNEL_ID=your_channel_id
 INFOMANIAK_TOKEN_API=your_api_token
 ```
+
+### Callback System Setup
+
+**Important:** Configure Infomaniak VOD webhook for real-time updates:
+
+1. **Callback URL:** `https://your-site.com/vod-callback/`
+2. **Events to enable:**
+   - `media_ready` - When video processing is complete
+   - `media_deleted` - When video is deleted
+3. **HTTP Method:** POST
+4. **Content-Type:** application/json
+
+The callback system replaces the old polling mechanism and provides instant updates when videos are processed or deleted on Infomaniak's servers.
 
 ## Database Structure
 
@@ -246,9 +261,29 @@ When a video is uploaded:
 1. **Upload**: Video is uploaded to Infomaniak's servers
 2. **Initial Sync**: Video is added to WordPress database (may be missing poster/MPD URL)
 3. **Processing**: Infomaniak processes the video (encoding, thumbnail generation)
-4. **Automatic Updates**: Plugin checks for completion at 2, 5, 10, and 30 minutes after upload
-5. **Hourly Checks**: Plugin runs hourly to update any remaining incomplete videos
-6. **Manual Updates**: Use "Update Incomplete Videos" button for immediate checks
+4. **Callback Updates**: Infomaniak sends `media_ready` callback when processing is complete
+5. **Automatic Database Update**: Plugin receives callback and updates video data instantly
+6. **Fallback Sync**: Daily synchronization runs as a fallback for any missed updates
+
+### Callback System Troubleshooting
+
+1. **Callback endpoint not accessible**
+
+   - Test endpoint: `curl -I https://your-site.com/vod-callback/`
+   - Should return HTTP 200 or 405 (method not allowed for GET)
+   - Ensure WordPress rewrite rules are flushed (deactivate/reactivate plugin)
+
+2. **Callbacks not being received**
+
+   - Check Infomaniak VOD webhook configuration
+   - Verify callback URL is correctly set: `https://your-site.com/vod-callback/`
+   - Ensure your server is accessible from external sources (no firewall blocking)
+   - Check WordPress debug.log for callback processing messages
+
+3. **Testing callbacks manually**
+   - Use the test script: `php test-callback.php` (in plugin directory)
+   - Send test POST requests with JSON payload to callback endpoint
+   - Look for log entries: "VOD Callback: Processing media_ready event for video: ..."
 
 ### Debug Mode
 

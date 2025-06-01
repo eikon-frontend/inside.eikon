@@ -656,4 +656,43 @@ jQuery(document).ready(function ($) {
       alert('Erreur lors de l\'initialisation du lecteur vidéo.');
     }
   }
+
+  // Test API logging functionality
+  $('#test-api-logging').on('click', function (e) {
+    e.preventDefault();
+
+    console.log('VOD Eikon: Test API logging button clicked');
+
+    var $button = $(this);
+    var originalText = $button.text();
+
+    // Disable button and show loading state
+    $button.prop('disabled', true).text('Test en cours...');
+
+    $.ajax({
+      url: vodEikon.ajax_url,
+      type: 'POST',
+      data: {
+        action: 'test_api_logging',
+        nonce: vodEikon.nonce
+      },
+      success: function (response) {
+        console.log('VOD Eikon: Test API logging response:', response);
+
+        if (response.success) {
+          alert('Test du logging API réussi ! Vérifiez les logs de débogage WordPress pour voir les entrées de log détaillées.');
+        } else {
+          alert('Erreur lors du test du logging API: ' + (response.data.message || 'Erreur inconnue'));
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('VOD Eikon: Test API logging AJAX error:', error);
+        alert('Erreur AJAX lors du test du logging: ' + error);
+      },
+      complete: function () {
+        // Re-enable button and restore original text
+        $button.prop('disabled', false).text(originalText);
+      }
+    });
+  });
 });

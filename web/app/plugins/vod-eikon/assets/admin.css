@@ -509,7 +509,7 @@
 
 /* Ensure proper alignment of action icons */
 .wp-list-table .actions-column {
-    text-align: center;
+    text-align: right;
     white-space: nowrap;
 }
 
