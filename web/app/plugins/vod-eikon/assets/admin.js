@@ -255,15 +255,18 @@ jQuery(document).ready(function ($) {
 
   // Delete video functionality
   $('.delete-video').on('click', function () {
-    var $button = $(this);
-    var videoId = $button.data('video-id');
-    var $row = $button.closest('tr');
+    var $icon = $(this);
+    var videoId = $icon.data('video-id');
+    var $row = $icon.closest('tr');
+    var $dashicon = $icon.find('.dashicons');
 
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette vidéo de la base de données locale ?')) {
       return;
     }
 
-    $button.prop('disabled', true).text('Suppression...');
+    // Show loading state
+    $icon.addClass('loading');
+    $dashicon.removeClass('dashicons-trash').addClass('dashicons-update spin');
 
     $.ajax({
       url: vodEikon.ajax_url,
@@ -275,17 +278,27 @@ jQuery(document).ready(function ($) {
       },
       success: function (response) {
         if (response.success) {
-          $row.fadeOut(function () {
-            $row.remove();
-          });
+          // Show success state briefly before removing row
+          $dashicon.removeClass('spin dashicons-update').addClass('dashicons-yes-alt');
+          $icon.removeClass('loading').addClass('success');
+
+          setTimeout(function () {
+            $row.fadeOut(function () {
+              $row.remove();
+            });
+          }, 1000);
         } else {
           alert('Échec de la suppression de la vidéo : ' + response.data.message);
-          $button.prop('disabled', false).text('Supprimer');
+          // Reset to original state
+          $icon.removeClass('loading');
+          $dashicon.removeClass('spin dashicons-update').addClass('dashicons-trash');
         }
       },
       error: function () {
         alert('Une erreur s\'est produite lors de la suppression de la vidéo.');
-        $button.prop('disabled', false).text('Supprimer');
+        // Reset to original state
+        $icon.removeClass('loading');
+        $dashicon.removeClass('spin dashicons-update').addClass('dashicons-trash');
       }
     });
   });
@@ -369,4 +382,142 @@ jQuery(document).ready(function ($) {
       }
     });
   });
+
+  // Toggle details functionality
+  $('.toggle-details').on('click', function (e) {
+    e.preventDefault();
+
+    var $icon = $(this);
+    var videoId = $icon.data('video-id');
+    var $detailsRow = $('#details-' + videoId);
+    var $dashicon = $icon.find('.dashicons');
+
+    if ($detailsRow.is(':visible')) {
+      // Hide details
+      $detailsRow.slideUp(300);
+      $dashicon.removeClass('dashicons-arrow-up-alt2').addClass('dashicons-arrow-down-alt2');
+      $icon.removeClass('details-expanded');
+    } else {
+      // Show details
+      $detailsRow.slideDown(300);
+      $dashicon.removeClass('dashicons-arrow-down-alt2').addClass('dashicons-arrow-up-alt2');
+      $icon.addClass('details-expanded');
+    }
+  });
+
+  // Individual video sync functionality
+  $('.sync-single-video').on('click', function (e) {
+    e.preventDefault();
+
+    var $icon = $(this);
+    var vodId = $icon.data('vod-id');
+    var $dashicon = $icon.find('.dashicons');
+
+    // Disable icon and show loading state
+    $icon.addClass('loading');
+    $dashicon.addClass('spin');
+
+    $.ajax({
+      url: vodEikon.ajax_url,
+      type: 'POST',
+      data: {
+        action: 'sync_single_video',
+        vod_id: vodId,
+        nonce: vodEikon.nonce
+      },
+      success: function (response) {
+        if (response.success) {
+          // Show success state temporarily
+          $dashicon.removeClass('spin dashicons-update').addClass('dashicons-yes-alt');
+          $icon.removeClass('loading').addClass('success');
+
+          // Refresh the page after a short delay to show updated data
+          setTimeout(function () {
+            location.reload();
+          }, 1500);
+        } else {
+          // Show error state
+          $dashicon.removeClass('spin dashicons-update').addClass('dashicons-warning');
+          $icon.removeClass('loading').addClass('error');
+
+          // Reset after delay
+          setTimeout(function () {
+            $icon.removeClass('error');
+            $dashicon.removeClass('dashicons-warning').addClass('dashicons-update');
+          }, 3000);
+        }
+      },
+      error: function () {
+        // Show error state
+        $dashicon.removeClass('spin dashicons-update').addClass('dashicons-warning');
+        $icon.removeClass('loading').addClass('error');
+
+        // Reset after delay
+        setTimeout(function () {
+          $icon.removeClass('error');
+          $dashicon.removeClass('dashicons-warning').addClass('dashicons-update');
+        }, 3000);
+      }
+    });
+  });
+
+  // Copy URL functionality
+  $('.copy-url').on('click', function (e) {
+    e.preventDefault();
+
+    var $button = $(this);
+    var url = $button.data('url');
+
+    // Use modern clipboard API if available
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(function () {
+        showCopySuccess($button);
+      }).catch(function () {
+        fallbackCopyToClipboard(url, $button);
+      });
+    } else {
+      fallbackCopyToClipboard(url, $button);
+    }
+  });
+
+  // Helper function to show copy success
+  function showCopySuccess($button) {
+    var originalHtml = $button.html();
+    $button.html('<span class="dashicons dashicons-yes-alt"></span> Copié !');
+    $button.addClass('button-success');
+
+    setTimeout(function () {
+      $button.removeClass('button-success');
+      $button.html(originalHtml);
+    }, 2000);
+  }
+
+  // Fallback copy function for older browsers
+  function fallbackCopyToClipboard(text, $button) {
+    var textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+      showCopySuccess($button);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      var originalHtml = $button.html();
+      $button.html('<span class="dashicons dashicons-warning"></span> Erreur');
+      $button.addClass('button-error');
+
+      setTimeout(function () {
+        $button.removeClass('button-error');
+        $button.html(originalHtml);
+      }, 2000);
+    }
+
+    document.body.removeChild(textArea);
+  }
 });

@@ -219,23 +219,16 @@
 }
 
 .vod-eikon-videos .wp-list-table th:nth-child(1) { /* Poster */
-    width: 100px;
+    width: 120px;
 }
 
 .vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
-    width: 25%;
+    width: auto;
 }
 
-.vod-eikon-videos .wp-list-table th:nth-child(3) { /* VOD ID */
-    width: 15%;
-}
-
-.vod-eikon-videos .wp-list-table th:nth-child(4) { /* MPD URL */
-    width: 40%;
-}
-
-.vod-eikon-videos .wp-list-table th:nth-child(5) { /* Actions */
-    width: 15%;
+.vod-eikon-videos .wp-list-table th:nth-child(3) { /* Actions */
+    width: 180px;
+    text-align: center;
 }
 
 .vod-eikon-videos .wp-list-table td {
@@ -264,40 +257,20 @@
 }
 
 .delete-video {
-    background: #dc3545;
-    border-color: #dc3545;
-    color: white;
+    color: #dc3545;
 }
 
 .delete-video:hover {
-    background: #c82333;
-    border-color: #c82333;
-    color: white;
+    color: #c82333;
 }
 
 .delete-video:disabled {
-    background: #6c757d;
-    border-color: #6c757d;
-    opacity: 0.65;
+    color: #6c757d;
 }
 
 /* Processing indicator animation */
 .processing-indicator .dashicons-clock {
     animation: pulse 2s infinite;
-}
-
-/* Action buttons styling */
-.vod-eikon-videos td:last-child {
-    white-space: nowrap;
-}
-
-.vod-eikon-videos .button {
-    margin-right: 5px;
-    margin-bottom: 2px;
-}
-
-.vod-eikon-videos .button:last-child {
-    margin-right: 0;
 }
 
 /* Responsive adjustments */
@@ -316,17 +289,16 @@
         max-width: 60px;
     }
 
-    .vod-eikon-videos code {
-        max-width: 120px;
-        font-size: 11px;
-    }
-
-    .vod-eikon-videos .wp-list-table th:nth-child(4) { /* MPD URL */
-        width: 35%;
+    .vod-eikon-videos .wp-list-table th:nth-child(1) { /* Poster */
+        width: 80px;
     }
 
     .vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
-        width: 30%;
+        width: auto;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(3) { /* Actions */
+        width: 140px;
     }
 }
 
@@ -388,4 +360,273 @@
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
+}
+
+/* Video Details Styling */
+.video-details-row {
+    background-color: #f8f9fa;
+    border-top: none !important;
+}
+
+.video-details-content {
+    padding: 20px;
+    margin: 0 10px;
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Details table styling */
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;
+}
+
+.details-table tr {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.details-table tr:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    text-align: left;
+    vertical-align: top;
+    padding: 12px 20px 12px 0;
+    width: 200px;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    text-align: right;
+    vertical-align: top;
+    padding: 12px 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.detail-value code {
+    color: #64748b;
+}
+
+.copyable-url {
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: Monaco, 'Courier New', monospace;
+    font-size: 12px;
+    word-break: break-all;
+    border: 1px solid #e2e8f0;
+    margin-right: 8px;
+    display: inline-block;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status-complete {
+    color: #16a34a;
+    font-weight: 600;
+    background: #dcfce7;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-incomplete {
+    color: #ea580c;
+    font-weight: 600;
+    background: #fed7aa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Icon-only styling (replaces old button styling) */
+.copy-url {
+    padding: 4px 8px;
+    font-size: 11px;
+    line-height: 1.2;
+    min-height: auto;
+    vertical-align: top;
+}
+
+.copy-url:hover {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+}
+
+/* Removed old button state styles - now using action-icon states */
+
+/* Removed duplicate spin animation - using the one at line 164 */
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive adjustments for details */
+@media screen and (max-width: 782px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .copyable-url {
+        max-width: 200px;
+        font-size: 11px;
+    }
+
+    .video-details-content {
+        padding: 15px;
+        margin: 0 5px;
+    }
+}
+
+/* Table enhancements */
+.video-main-row:hover {
+    background-color: #f8f9fa;
+}
+
+.video-details-row td {
+    padding: 0 !important;
+    border-top: none !important;
+}
+
+/* Enhanced button spacing - REMOVED (no longer using buttons) */
+
+/* Ensure proper alignment of action icons */
+.wp-list-table .actions-column {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.wp-list-table .actions-column .action-icon {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    color: #666;
+    font-size: 16px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.wp-list-table .actions-column .action-icon:first-child {
+    margin-left: 0;
+}
+
+.wp-list-table .actions-column .action-icon:last-child {
+    margin-right: 0;
+}
+
+.wp-list-table .actions-column .action-icon:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Specific styling for each action type */
+.action-icon.toggle-details:hover {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.action-icon.sync-single-video:hover {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.action-icon.delete-video:hover {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+/* Active/expanded state for details toggle */
+.action-icon.toggle-details.details-expanded {
+    background-color: #1976d2;
+    color: white;
+}
+
+/* Loading state */
+.action-icon.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Responsive design for details table */
+@media (max-width: 768px) {
+    .detail-label {
+        width: 120px;
+        font-size: 12px;
+        padding: 10px 15px 10px 0;
+    }
+
+    .detail-value {
+        padding: 10px 0;
+        font-size: 13px;
+    }
+
+    .copyable-url {
+        max-width: 200px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    .video-details-content {
+        padding: 15px;
+        margin: 0 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .details-table {
+        font-size: 12px;
+    }
+
+    .detail-label {
+        width: 100px;
+        font-size: 11px;
+        padding: 8px 10px 8px 0;
+    }
+
+    .detail-value {
+        padding: 8px 0;
+        font-size: 12px;
+    }
+
+    .copyable-url {
+        max-width: 150px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .copy-url {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+}
+
+/* Success/error states */
+.action-icon.success {
+    background-color: #2e7d32;
+    color: white;
+}
+
+.action-icon.error {
+    background-color: #d32f2f;
+    color: white;
 }

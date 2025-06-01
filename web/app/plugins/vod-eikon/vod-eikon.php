@@ -42,6 +42,7 @@ class VOD_Eikon
     add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     add_action('wp_ajax_sync_vod_videos', array($this, 'ajax_sync_videos'));
     add_action('wp_ajax_update_incomplete_videos', array($this, 'ajax_update_incomplete_videos'));
+    add_action('wp_ajax_sync_single_video', array($this, 'ajax_sync_single_video'));
     add_action('wp_ajax_delete_vod_video', array($this, 'ajax_delete_video'));
     add_action('wp_ajax_get_vod_player', array($this, 'ajax_get_vod_player'));
     add_action('wp_ajax_nopriv_get_vod_player', array($this, 'ajax_get_vod_player'));
@@ -188,9 +189,7 @@ class VOD_Eikon
                     <tr>
                       <th>Affiche</th>
                       <th>Nom</th>
-                      <th>ID VOD</th>
-                      <th>URL MPD</th>
-                      <th>Actions</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -198,7 +197,7 @@ class VOD_Eikon
                       $is_incomplete = empty($video->poster) || empty($video->mpd_url);
                       $row_class = $is_incomplete ? 'incomplete-video' : '';
                     ?>
-                      <tr data-video-id="<?php echo esc_attr($video->id); ?>" class="<?php echo $row_class; ?>">
+                      <tr data-video-id="<?php echo esc_attr($video->id); ?>" class="<?php echo $row_class; ?> video-main-row">
                         <td>
                           <?php if ($video->poster): ?>
                             <img src="<?php echo esc_url($video->poster); ?>" alt="<?php echo esc_attr($video->name); ?>" style="max-width: 80px; height: auto;">
@@ -215,18 +214,59 @@ class VOD_Eikon
                             </span>
                           <?php endif; ?>
                         </td>
-                        <td><?php echo esc_html($video->vod_id); ?></td>
-                        <td>
-                          <?php if ($video->mpd_url): ?>
-                            <code><?php echo esc_html($video->mpd_url); ?></code>
-                          <?php else: ?>
-                            <em style="color: #dc3545;">Aucune URL MPD disponible</em>
-                          <?php endif; ?>
+                        <td class="actions-column">
+                          <span class="action-icon sync-single-video" data-video-id="<?php echo esc_attr($video->id); ?>" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" title="Synchroniser cette vidéo">
+                            <span class="dashicons dashicons-update"></span>
+                          </span>
+                          <span class="action-icon delete-video" data-video-id="<?php echo esc_attr($video->id); ?>" title="Supprimer cette vidéo">
+                            <span class="dashicons dashicons-trash"></span>
+                          </span>
+                          <span class="action-icon toggle-details" data-video-id="<?php echo esc_attr($video->id); ?>" title="Afficher/Masquer les détails">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                          </span>
                         </td>
-                        <td>
-                          <button class="button delete-video" data-video-id="<?php echo esc_attr($video->id); ?>">
-                            Supprimer
-                          </button>
+                      </tr>
+                      <!-- Details Row (Hidden by default) -->
+                      <tr id="details-<?php echo esc_attr($video->id); ?>" class="video-details-row" style="display: none;">
+                        <td colspan="3">
+                          <div class="video-details-content">
+                            <table class="details-table">
+                              <tbody>
+                                <tr>
+                                  <td class="detail-label">ID VOD:</td>
+                                  <td class="detail-value"><?php echo esc_html($video->vod_id); ?></td>
+                                </tr>
+                                <tr>
+                                  <td class="detail-label">URL MPD:</td>
+                                  <td class="detail-value">
+                                    <?php if ($video->mpd_url): ?>
+                                      <code class="copyable-url"><?php echo esc_html($video->mpd_url); ?></code>
+                                      <button class="button button-small copy-url" data-url="<?php echo esc_attr($video->mpd_url); ?>">
+                                        <span class="dashicons dashicons-admin-page"></span>
+                                        Copier
+                                      </button>
+                                    <?php else: ?>
+                                      <em style="color: #dc3545;">Aucune URL MPD disponible</em>
+                                    <?php endif; ?>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td class="detail-label">Date de création:</td>
+                                  <td class="detail-value"><?php echo esc_html(date('d/m/Y H:i', strtotime($video->created_at))); ?></td>
+                                </tr>
+                                <tr>
+                                  <td class="detail-label">Statut:</td>
+                                  <td class="detail-value">
+                                    <?php if ($is_incomplete): ?>
+                                      <span class="status-incomplete">En cours de traitement</span>
+                                    <?php else: ?>
+                                      <span class="status-complete">Prêt</span>
+                                    <?php endif; ?>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </td>
                       </tr>
                     <?php endforeach; ?>
@@ -588,6 +628,55 @@ class VOD_Eikon
     } else {
       wp_send_json_error(array(
         'message' => 'Échec de la synchronisation des vidéos. Veuillez vérifier votre configuration API.'
+      ));
+    }
+  }
+
+  public function ajax_sync_single_video()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_die(json_encode(array(
+        'success' => false,
+        'data' => array('message' => 'Invalid security token.')
+      )));
+    }
+
+    $vod_id = sanitize_text_field($_POST['vod_id'] ?? '');
+
+    if (empty($vod_id)) {
+      wp_send_json_error(array(
+        'message' => 'ID VOD invalide.'
+      ));
+    }
+
+    // Update the single video using the existing function
+    $this->check_video_processing_status($vod_id);
+
+    // Get the updated video from database to check if anything changed
+    global $wpdb;
+    $updated_video = $wpdb->get_row($wpdb->prepare(
+      "SELECT * FROM {$this->table_name} WHERE vod_id = %s",
+      $vod_id
+    ));
+
+    if (!$updated_video) {
+      wp_send_json_error(array(
+        'message' => 'Vidéo introuvable.'
+      ));
+    }
+
+    $is_complete = !empty($updated_video->poster) && !empty($updated_video->mpd_url);
+
+    if ($is_complete) {
+      wp_send_json_success(array(
+        'message' => 'Vidéo synchronisée avec succès !',
+        'video' => $updated_video
+      ));
+    } else {
+      wp_send_json_success(array(
+        'message' => 'Synchronisation effectuée. La vidéo est peut-être encore en cours de traitement.',
+        'video' => $updated_video
       ));
     }
   }
