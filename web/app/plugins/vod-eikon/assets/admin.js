@@ -520,4 +520,140 @@ jQuery(document).ready(function ($) {
 
     document.body.removeChild(textArea);
   }
+
+  // Video Player Modal functionality
+  var $modal = $('#vod-player-modal');
+  var $modalTitle = $('#vod-player-modal-title');
+  var $playerContainer = $('#vod-player-container');
+  var currentPlayer = null;
+
+  // Play video button click handler
+  $('.vod-eikon-videos').on('click', '.play-video', function (e) {
+    e.preventDefault();
+
+    var $button = $(this);
+    var vodId = $button.data('vod-id');
+    var mpdUrl = $button.data('mpd-url');
+    var poster = $button.data('poster');
+    var title = $button.data('title');
+
+    if (!mpdUrl) {
+      alert('URL MPD non disponible pour cette vidéo.');
+      return;
+    }
+
+    openVideoModal(vodId, mpdUrl, poster, title);
+  });
+
+  // Close modal handlers
+  $('.vod-player-modal-close, .vod-player-modal-backdrop').on('click', function (e) {
+    e.preventDefault();
+    closeVideoModal();
+  });
+
+  // Prevent modal content click from closing modal
+  $('.vod-player-modal-content').on('click', function (e) {
+    e.stopPropagation();
+  });
+
+  // Escape key to close modal
+  $(document).on('keydown', function (e) {
+    if (e.keyCode === 27 && $modal.is(':visible')) { // ESC key
+      closeVideoModal();
+    }
+  });
+
+  function openVideoModal(vodId, mpdUrl, poster, title) {
+    // Set modal title
+    $modalTitle.text(title || 'Lecture Vidéo');
+
+    // Clear previous player
+    if (currentPlayer) {
+      currentPlayer.destroy();
+      currentPlayer = null;
+    }
+
+    // Create video element
+    var playerId = 'vod-player-' + vodId;
+    var videoElement = '<video id="' + playerId + '" controls';
+
+    if (poster) {
+      videoElement += ' poster="' + poster + '"';
+    }
+
+    videoElement += ' style="width: 100%; height: 100%;">';
+    videoElement += 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.';
+    videoElement += '</video>';
+
+    $playerContainer.html(videoElement);
+
+    // Show modal
+    $modal.show();
+    $('body').addClass('modal-open');
+
+    // Initialize DashJS player
+    loadDashJSAndInitPlayer(playerId, mpdUrl);
+  }
+
+  function closeVideoModal() {
+    // Hide modal
+    $modal.hide();
+    $('body').removeClass('modal-open');
+
+    // Destroy player
+    if (currentPlayer) {
+      currentPlayer.destroy();
+      currentPlayer = null;
+    }
+
+    // Clear player container
+    $playerContainer.empty();
+  }
+
+  function loadDashJSAndInitPlayer(playerId, mpdUrl) {
+    // Check if DashJS is already loaded
+    if (typeof dashjs !== 'undefined') {
+      initPlayer(playerId, mpdUrl);
+    } else {
+      // Load DashJS dynamically
+      var script = document.createElement('script');
+      script.src = 'https://cdn.dashjs.org/latest/dash.all.min.js';
+      script.onload = function () {
+        initPlayer(playerId, mpdUrl);
+      };
+      script.onerror = function () {
+        console.error('Failed to load DashJS library');
+        alert('Erreur lors du chargement du lecteur vidéo. Veuillez réessayer.');
+      };
+      document.head.appendChild(script);
+    }
+  }
+
+  function initPlayer(playerId, mpdUrl) {
+    try {
+      var videoElement = document.getElementById(playerId);
+
+      if (!videoElement) {
+        console.error('Video element not found:', playerId);
+        return;
+      }
+
+      currentPlayer = dashjs.MediaPlayer().create();
+      currentPlayer.initialize(videoElement, mpdUrl, false); // false = no autoplay
+
+      // Add event listeners for better user experience
+      currentPlayer.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function () {
+        console.log('Stream initialized successfully');
+      });
+
+      currentPlayer.on(dashjs.MediaPlayer.events.ERROR, function (e) {
+        console.error('DashJS Error:', e);
+        alert('Erreur lors de la lecture de la vidéo: ' + (e.error ? e.error.message : 'Erreur inconnue'));
+      });
+
+    } catch (error) {
+      console.error('Error initializing player:', error);
+      alert('Erreur lors de l\'initialisation du lecteur vidéo.');
+    }
+  }
 });

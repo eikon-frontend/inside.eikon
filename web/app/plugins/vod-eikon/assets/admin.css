@@ -540,6 +540,11 @@
 }
 
 /* Specific styling for each action type */
+.action-icon.play-video:hover {
+    background-color: #e8f5e8;
+    color: #28a745;
+}
+
 .action-icon.toggle-details:hover {
     background-color: #e3f2fd;
     color: #1976d2;
@@ -629,4 +634,121 @@
 .action-icon.error {
     background-color: #d32f2f;
     color: white;
+}
+
+/* Video Player Modal */
+.vod-player-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+    overflow: hidden;
+}
+
+.vod-player-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+}
+
+.vod-player-modal-content {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.vod-player-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.vod-player-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #23282d;
+    font-weight: 600;
+}
+
+.vod-player-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.vod-player-modal-close:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.vod-player-modal-body {
+    padding: 20px;
+    flex: 1;
+    overflow: hidden;
+}
+
+#vod-player-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    position: relative;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#vod-player-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vod-player-modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .vod-player-modal-header {
+        padding: 15px;
+    }
+
+    .vod-player-modal-body {
+        padding: 15px;
+    }
+
+    .vod-player-modal-header h3 {
+        font-size: 16px;
+    }
 }

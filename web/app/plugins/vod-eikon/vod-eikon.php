@@ -215,6 +215,11 @@ class VOD_Eikon
                           <?php endif; ?>
                         </td>
                         <td class="actions-column">
+                          <?php if ($video->mpd_url): ?>
+                            <span class="action-icon play-video" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" data-mpd-url="<?php echo esc_attr($video->mpd_url); ?>" data-poster="<?php echo esc_attr($video->poster); ?>" data-title="<?php echo esc_attr($video->name); ?>" title="Lire la vidéo">
+                              <span class="dashicons dashicons-video-alt3"></span>
+                            </span>
+                          <?php endif; ?>
                           <span class="action-icon sync-single-video" data-video-id="<?php echo esc_attr($video->id); ?>" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" title="Synchroniser cette vidéo">
                             <span class="dashicons dashicons-update"></span>
                           </span>
@@ -329,6 +334,22 @@ class VOD_Eikon
         </div>
       </div>
     </div>
+
+    <!-- Video Player Modal -->
+    <div id="vod-player-modal" class="vod-player-modal" style="display: none;">
+      <div class="vod-player-modal-backdrop"></div>
+      <div class="vod-player-modal-content">
+        <div class="vod-player-modal-header">
+          <h3 id="vod-player-modal-title">Lecture Vidéo</h3>
+          <button class="vod-player-modal-close">
+            <span class="dashicons dashicons-no-alt"></span>
+          </button>
+        </div>
+        <div class="vod-player-modal-body">
+          <div id="vod-player-container"></div>
+        </div>
+      </div>
+    </div>
 <?php
   }
 
@@ -357,6 +378,9 @@ class VOD_Eikon
 
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body, true);
+
+    // Debug: Log the API response array
+    error_log('VOD Eikon - API Response Data: ' . print_r($data, true));
 
     if (!$data || !isset($data['data'])) {
       return false;
