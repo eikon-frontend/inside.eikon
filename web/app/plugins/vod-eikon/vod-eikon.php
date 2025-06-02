@@ -1686,7 +1686,12 @@ class VOD_Eikon
     $event_type = null;
     $video_data = null;
 
-    if (isset($data['event'])) {
+    // First check for Infomaniak's notification_event array format
+    if (isset($data['notification_event']) && is_array($data['notification_event']) && !empty($data['notification_event'])) {
+      $event_type = $data['notification_event'][0]; // First element contains the event type
+      $video_data = $data; // The entire payload is the video data
+      error_log('VOD Callback: Found notification_event array with event type: ' . $event_type);
+    } elseif (isset($data['event'])) {
       $event_type = $data['event'];
       $video_data = isset($data['data']) ? $data['data'] : $data;
     } elseif (isset($data['type'])) {
