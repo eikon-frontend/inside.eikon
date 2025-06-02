@@ -11,7 +11,6 @@ web/app/uploads/*
 # Custom query, not available on composer
 !web/app/plugins/wp-graphql-tax-query
 !web/app/plugins/vod-video-field
-!web/app/plugins/vod-infomaniak
 !web/app/plugins/vod-eikon
 
 # Custom blocks plugins
