@@ -144,7 +144,7 @@ add_action('graphql_register_types', function () {
             $video = $wpdb->get_row($wpdb->prepare(
               "SELECT vod_id, title, poster, mpd_url
               FROM $table_name
-              WHERE vod_id = %d",
+              WHERE vod_id = %d AND published = 1",
               $field_data
             ));
 
@@ -193,7 +193,7 @@ add_filter('acf/format_value/type=vod_video', function ($value, $post_id, $field
     $video = $wpdb->get_row($wpdb->prepare(
       "SELECT vod_id, title, poster, mpd_url
       FROM $table_name
-      WHERE vod_id = %d",
+      WHERE vod_id = %d AND published = 1",
       $field_data
     ));
 

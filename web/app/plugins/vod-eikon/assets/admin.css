@@ -219,16 +219,12 @@
 }
 
 .vod-eikon-videos .wp-list-table th:nth-child(1) { /* Poster */
-    width: 120px;
+    width: 80px;
 }
 
-.vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
-    width: auto;
-}
-
-.vod-eikon-videos .wp-list-table th:nth-child(3) { /* Actions */
-    width: 180px;
-    text-align: center;
+.vod-eikon-videos .wp-list-table th:nth-child(3),
+.vod-eikon-videos .wp-list-table th:nth-child(4) {
+  width: 140px;
 }
 
 .vod-eikon-videos .wp-list-table td {
@@ -289,16 +285,21 @@
         max-width: 60px;
     }
 
+    .vod-eikon-videos .wp-list-table td:nth-child(1),
     .vod-eikon-videos .wp-list-table th:nth-child(1) { /* Poster */
-        width: 80px;
+      display: none;
     }
 
     .vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
         width: auto;
     }
 
-    .vod-eikon-videos .wp-list-table th:nth-child(3) { /* Actions */
-        width: 140px;
+    .vod-eikon-videos .wp-list-table th:nth-child(3) {
+      width: 80px;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(4) {
+        width: 110px;
     }
 }
 
@@ -509,14 +510,14 @@
 
 /* Ensure proper alignment of action icons */
 .wp-list-table .actions-column {
-    text-align: right;
-    white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
 }
 
 .wp-list-table .actions-column .action-icon {
     display: inline-block;
     margin: 0 4px;
-    padding: 8px;
+    padding: 8px 0;
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.2s ease;
@@ -543,6 +544,10 @@
 .action-icon.play-video:hover {
     background-color: #e8f5e8;
     color: #28a745;
+}
+
+.action-icon.toggle-details:hover {
+  margin-left: auto;
 }
 
 .action-icon.toggle-details:hover {

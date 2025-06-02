@@ -13,31 +13,44 @@ if (!defined('ABSPATH')) {
 /**
  * Get all VOD videos from the database
  *
+ * @param bool $published_only Whether to return only published videos (default: true)
  * @return array Array of video objects
  */
-function vod_eikon_get_videos()
+function vod_eikon_get_videos($published_only = true)
 {
   global $wpdb;
   $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
-  return $wpdb->get_results("SELECT * FROM {$table_name} ORDER BY created_at DESC");
+  if ($published_only) {
+    return $wpdb->get_results("SELECT * FROM {$table_name} WHERE published = 1 ORDER BY created_at DESC");
+  } else {
+    return $wpdb->get_results("SELECT * FROM {$table_name} ORDER BY created_at DESC");
+  }
 }
 
 /**
  * Get a specific video by its VOD ID
  *
  * @param string $vod_id The VOD ID from Infomaniak
+ * @param bool $published_only Whether to only return if video is published (default: true)
  * @return object|null Video object or null if not found
  */
-function vod_eikon_get_video($vod_id)
+function vod_eikon_get_video($vod_id, $published_only = true)
 {
   global $wpdb;
   $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
-  return $wpdb->get_row($wpdb->prepare(
-    "SELECT * FROM {$table_name} WHERE vod_id = %s",
-    $vod_id
-  ));
+  if ($published_only) {
+    return $wpdb->get_row($wpdb->prepare(
+      "SELECT * FROM {$table_name} WHERE vod_id = %s AND published = 1",
+      $vod_id
+    ));
+  } else {
+    return $wpdb->get_row($wpdb->prepare(
+      "SELECT * FROM {$table_name} WHERE vod_id = %s",
+      $vod_id
+    ));
+  }
 }
 
 /**
@@ -49,7 +62,9 @@ function vod_eikon_get_video($vod_id)
  */
 function vod_eikon_player($vod_id, $options = array())
 {
-  $video = vod_eikon_get_video($vod_id);
+  // Default to showing only published videos in player
+  $published_only = isset($options['published_only']) ? $options['published_only'] : true;
+  $video = vod_eikon_get_video($vod_id, $published_only);
 
   if (!$video || empty($video->mpd_url)) {
     return '<p>Vidéo introuvable ou URL MPD non disponible.</p>';
@@ -119,7 +134,9 @@ function vod_eikon_player($vod_id, $options = array())
  */
 function vod_eikon_video_grid($options = array())
 {
-  $videos = vod_eikon_get_videos();
+  // Default to showing only published videos in grid
+  $published_only = isset($options['published_only']) ? $options['published_only'] : true;
+  $videos = vod_eikon_get_videos($published_only);
 
   if (empty($videos)) {
     return '<p>Aucune vidéo disponible.</p>';

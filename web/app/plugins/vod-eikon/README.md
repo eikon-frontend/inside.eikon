@@ -14,7 +14,7 @@ A WordPress plugin that integrates with the Infomaniak VOD API to manage and dis
 - Automatic daily synchronization (fallback)
 - Video grid display with modal player
 - Real-time upload progress tracking
-- Event-driven video updates (media_ready, media_deleted)
+- Event-driven video updates (media_deleted)
 
 ## Installation
 
@@ -37,12 +37,29 @@ INFOMANIAK_TOKEN_API=your_api_token
 
 1. **Callback URL:** `https://your-site.com/vod-callback/`
 2. **Events to enable:**
-   - `media_ready` - When video processing is complete
+   - `encoding_finished` - When video encoding is complete
+   - `thumbnail_finished` - When thumbnail generation is complete
    - `media_deleted` - When video is deleted
 3. **HTTP Method:** POST
 4. **Content-Type:** application/json
 
 The callback system replaces the old polling mechanism and provides instant updates when videos are processed or deleted on Infomaniak's servers.
+
+### Video Publication Workflow
+
+Videos go through a simplified processing workflow:
+
+1. **Upload**: Video is uploaded to Infomaniak VOD
+2. **Processing**: Video encoding and thumbnail generation occur in parallel
+3. **Auto-Publishing**: Videos are automatically marked as published when both MPD URL and poster are available
+4. **Published**: Only published videos are shown by default in helper functions and ACF fields
+
+The plugin includes automatic publishing logic that:
+
+- Checks during video sync for videos with both poster and MPD URL
+- Automatically marks them as published (`published = 1`)
+- Ensures no videos are missed for publishing, even if they were processed while the plugin was inactive
+- Runs both during manual sync operations and automatic update checks
 
 ## Database Structure
 
@@ -53,6 +70,7 @@ The plugin creates a table `wp_vod_eikon_videos` with the following fields:
 - `name` - Video title/name
 - `poster` - URL to video poster/thumbnail image
 - `mpd_url` - MPD URL for DashJS integration
+- `published` - Boolean flag indicating if video is fully processed and ready (default: 0)
 - `created_at` - Timestamp when record was created
 - `updated_at` - Timestamp when record was last updated
 
@@ -83,29 +101,46 @@ Access the admin interface through **Media > VOD Videos** in your WordPress admi
 
 The plugin provides several helper functions for use in themes and other plugins:
 
-### `vod_eikon_get_videos()`
+### `vod_eikon_get_videos($published_only)`
 
 Get all videos from the database.
 
 ```php
+// Get only published videos (default)
 $videos = vod_eikon_get_videos();
 foreach ($videos as $video) {
     echo '<h3>' . $video->name . '</h3>';
     echo '<img src="' . $video->poster . '" alt="' . $video->name . '">';
 }
+
+// Get all videos including unpublished ones
+$all_videos = vod_eikon_get_videos(false);
 ```
 
-### `vod_eikon_get_video($vod_id)`
+**Parameters:**
+
+- `$published_only` (bool, optional) - Whether to only return published videos. Default: `true`
+
+### `vod_eikon_get_video($vod_id, $published_only)`
 
 Get a specific video by its VOD ID.
 
 ```php
+// Get a published video (default)
 $video = vod_eikon_get_video('your_vod_id');
 if ($video) {
     echo '<h3>' . $video->name . '</h3>';
     echo '<p>MPD URL: ' . $video->mpd_url . '</p>';
 }
+
+// Get any video regardless of publication status
+$any_video = vod_eikon_get_video('your_vod_id', false);
 ```
+
+**Parameters:**
+
+- `$vod_id` (string) - The VOD ID of the video to retrieve
+- `$published_only` (bool, optional) - Whether to only return published videos. Default: `true`
 
 ### `vod_eikon_player($vod_id, $options)`
 
@@ -132,21 +167,33 @@ echo vod_eikon_player('your_vod_id', array(
 - `controls` - Show player controls (default: true)
 - `poster` - Custom poster URL (default: uses video poster)
 
-### `vod_eikon_video_grid($options)`
+### `vod_eikon_video_grid($options, $published_only)`
 
 Display a grid of video thumbnails with modal player.
 
 ```php
-// Basic grid
+// Basic grid (published videos only)
 echo vod_eikon_video_grid();
 
-// Custom grid
+// Custom grid with published videos only
 echo vod_eikon_video_grid(array(
     'columns' => 4,
     'show_title' => true,
     'link_to_player' => true
 ));
+
+// Include all videos regardless of status
+echo vod_eikon_video_grid(array(
+    'columns' => 3,
+    'show_title' => true,
+    'link_to_player' => true
+), false);
 ```
+
+**Parameters:**
+
+- `$options` (array, optional) - Display options for the grid
+- `$published_only` (bool, optional) - Whether to only show published videos. Default: `true`
 
 #### Grid Options:
 
@@ -261,7 +308,7 @@ When a video is uploaded:
 1. **Upload**: Video is uploaded to Infomaniak's servers
 2. **Initial Sync**: Video is added to WordPress database (may be missing poster/MPD URL)
 3. **Processing**: Infomaniak processes the video (encoding, thumbnail generation)
-4. **Callback Updates**: Infomaniak sends `media_ready` callback when processing is complete
+4. **Callback Updates**: Infomaniak sends `encoding_finished` callback when processing is complete
 5. **Automatic Database Update**: Plugin receives callback and updates video data instantly
 6. **Fallback Sync**: Daily synchronization runs as a fallback for any missed updates
 
@@ -283,7 +330,7 @@ When a video is uploaded:
 3. **Testing callbacks manually**
    - Use the test script: `php test-callback.php` (in plugin directory)
    - Send test POST requests with JSON payload to callback endpoint
-   - Look for log entries: "VOD Callback: Processing media_ready event for video: ..."
+   - Look for log entries: "VOD Callback: Processing encoding_finished event for video: ..."
 
 ### Debug Mode
 

@@ -49,7 +49,8 @@ class acf_field_vod_video extends acf_field
 
     // Field defaults
     $this->defaults = array(
-      'return_format' => 'object'
+      'return_format' => 'object',
+      'published_only' => 1
     );
 
     // Translation strings
@@ -91,6 +92,15 @@ class acf_field_vod_video extends acf_field
         'url'    => __('MPD URL', 'vod-video-field'),
       ),
     ));
+
+    // Published Only
+    acf_render_field_setting($field, array(
+      'label'         => __('Show Published Videos Only', 'vod-video-field'),
+      'instructions'  => __('Only show videos that have completed encoding and thumbnail generation', 'vod-video-field'),
+      'type'          => 'true_false',
+      'name'          => 'published_only',
+      'ui'            => 1,
+    ));
   }
 
   /**
@@ -118,8 +128,9 @@ class acf_field_vod_video extends acf_field
       $input_name = 'acf[' . $input_name . ']';
     }
 
-    // Start field wrapper
-    echo '<div class="acf-input">';
+    // Start field wrapper with data attributes for field settings
+    $published_only = isset($field['published_only']) ? (int) $field['published_only'] : 1;
+    echo '<div class="acf-input" data-published-only="' . esc_attr($published_only) . '">';
 
     // Parse the value if it exists
     $video_data = null;
@@ -256,9 +267,10 @@ class acf_field_vod_video extends acf_field
     }
 
     $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+    $published_only = isset($_POST['published_only']) ? (bool) $_POST['published_only'] : true;
 
     // Get videos from VOD Eikon plugin
-    $videos = $this->get_vod_eikon_videos($search_term);
+    $videos = $this->get_vod_eikon_videos($search_term, $published_only);
 
     wp_send_json_success(array('videos' => $videos));
   }
@@ -267,9 +279,10 @@ class acf_field_vod_video extends acf_field
    * Get videos from VOD Eikon plugin
    *
    * @param string $search_term Optional search term to filter videos
+   * @param bool $published_only Whether to only return published videos (default: true)
    * @return array Array of video data
    */
-  private function get_vod_eikon_videos($search_term = '')
+  private function get_vod_eikon_videos($search_term = '', $published_only = true)
   {
     global $wpdb;
     $table_name = $wpdb->prefix . 'vod_eikon_videos';
@@ -277,10 +290,22 @@ class acf_field_vod_video extends acf_field
     // Build query
     $query = "SELECT * FROM {$table_name}";
     $params = array();
+    $where_conditions = array();
 
+    // Filter by published status
+    if ($published_only) {
+      $where_conditions[] = "published = 1";
+    }
+
+    // Add search filter
     if (!empty($search_term)) {
-      $query .= " WHERE name LIKE %s";
+      $where_conditions[] = "name LIKE %s";
       $params[] = '%' . $wpdb->esc_like($search_term) . '%';
+    }
+
+    // Add WHERE clause if we have conditions
+    if (!empty($where_conditions)) {
+      $query .= " WHERE " . implode(' AND ', $where_conditions);
     }
 
     $query .= " ORDER BY created_at DESC LIMIT 20";

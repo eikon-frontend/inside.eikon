@@ -122,13 +122,18 @@
     function searchVideos(term) {
       $results.html('<div class="vod-video-loading">' + acf_vod_video_field.i18n.loading + '</div>');
 
+      // Get the published_only setting from the field data
+      const $acfInput = $field.find('.acf-input');
+      const publishedOnly = $acfInput.data('published-only') !== undefined ? $acfInput.data('published-only') : true;
+
       $.ajax({
         url: acf_vod_video_field.ajax_url,
         type: 'POST',
         data: {
           action: 'acf_vod_video_search',
           nonce: acf_vod_video_field.nonce,
-          search: term
+          search: term,
+          published_only: publishedOnly
         },
         success: function (response) {
           if (response.success && response.data.videos) {

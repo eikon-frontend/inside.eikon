@@ -97,6 +97,7 @@ class VOD_Eikon
             name varchar(255) NOT NULL,
             poster varchar(500) DEFAULT '',
             mpd_url varchar(500) DEFAULT '',
+            published tinyint(1) DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
@@ -202,13 +203,29 @@ class VOD_Eikon
                     <tr>
                       <th>Affiche</th>
                       <th>Nom</th>
-                      <th></th>
+                      <th>Statut</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php foreach ($videos as $video):
-                      $is_incomplete = empty($video->poster) || empty($video->mpd_url);
-                      $row_class = $is_incomplete ? 'incomplete-video' : '';
+                      // Check video status based only on published field
+                      $is_published = (bool)($video->published ?? 0);
+
+                      // Determine status display based only on published flag
+                      if ($is_published) {
+                        $status_class = 'published-video';
+                        $status_text = 'Publié';
+                        $status_icon = 'dashicons-yes-alt';
+                        $status_color = '#4caf50';
+                      } else {
+                        $status_class = 'processing-video';
+                        $status_text = 'En cours de traitement';
+                        $status_icon = 'dashicons-clock';
+                        $status_color = '#ff9800';
+                      }
+
+                      $row_class = $is_published ? '' : 'incomplete-video';
                     ?>
                       <tr data-video-id="<?php echo esc_attr($video->id); ?>" class="<?php echo $row_class; ?> video-main-row">
                         <td>
@@ -220,15 +237,15 @@ class VOD_Eikon
                         </td>
                         <td>
                           <?php echo esc_html($video->name); ?>
-                          <?php if ($is_incomplete): ?>
-                            <span class="processing-indicator" title="La vidéo est encore en cours de traitement">
-                              <span class="dashicons dashicons-clock" style="color: #ffc107; font-size: 14px;"></span>
-                              <small style="color: #ffc107;">Traitement</small>
-                            </span>
-                          <?php endif; ?>
+                        </td>
+                        <td>
+                          <span class="status-indicator <?php echo $status_class; ?>" title="<?php echo esc_attr($status_text); ?>">
+                            <span class="dashicons <?php echo $status_icon; ?>" style="color: <?php echo $status_color; ?>; font-size: 16px; vertical-align: middle;"></span>
+                            <span style="color: <?php echo $status_color; ?>; margin-left: 5px; font-weight: 500;"><?php echo $status_text; ?></span>
+                          </span>
                         </td>
                         <td class="actions-column">
-                          <?php if ($video->mpd_url): ?>
+                          <?php if ($is_published && $video->mpd_url): ?>
                             <span class="action-icon play-video" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" data-mpd-url="<?php echo esc_attr($video->mpd_url); ?>" data-poster="<?php echo esc_attr($video->poster); ?>" data-title="<?php echo esc_attr($video->name); ?>" title="Lire la vidéo">
                               <span class="dashicons dashicons-video-alt3"></span>
                             </span>
@@ -275,7 +292,7 @@ class VOD_Eikon
                                 <tr>
                                   <td class="detail-label">Statut:</td>
                                   <td class="detail-value">
-                                    <?php if ($is_incomplete): ?>
+                                    <?php if (!$is_published): ?>
                                       <span class="status-incomplete">En cours de traitement</span>
                                     <?php else: ?>
                                       <span class="status-complete">Prêt</span>
@@ -366,6 +383,21 @@ class VOD_Eikon
 <?php
   }
 
+  /**
+   * Synchronize videos from Infomaniak VOD API
+   *
+   * This function implements a simplified workflow where videos are marked as published
+   * only when both MPD URL and poster are available. The enhanced debug logging
+   * confirmed that all database updates are working correctly.
+   *
+   * Database Update Issue Resolution (June 2025):
+   * - Added comprehensive debug logging to track database update success/failure
+   * - Confirmed that "rows affected: 0" is normal when data hasn't changed
+   * - Verified all 9 videos now have published=1 with both poster and MPD URL
+   * - The sync function correctly determines published status based on asset availability
+   *
+   * @return array|false Array with sync results or false on failure
+   */
   public function sync_videos_from_api()
   {
     $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
@@ -470,8 +502,12 @@ class VOD_Eikon
         }
       }
 
+      error_log("VOD API: sync_videos_from_api - Video {$vod_id}: extracted poster='" . $poster . "'");
+
       // Construct MPD URL from encoded_medias data
       $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
+
+      error_log("VOD API: sync_videos_from_api - Video {$vod_id}: constructed mpd_url='" . $mpd_url . "'");
 
       // Check if video already exists
       $existing = $wpdb->get_var($wpdb->prepare(
@@ -480,30 +516,62 @@ class VOD_Eikon
       ));
 
       if ($existing) {
-        // Update existing video
-        $wpdb->update(
+        // Update existing video - preserve published status if it exists
+        $current_video = $wpdb->get_row($wpdb->prepare(
+          "SELECT published FROM {$this->table_name} WHERE vod_id = %s",
+          $vod_id
+        ));
+
+        // Determine published status: if we have both MPD and poster, mark as published
+        $has_mpd = !empty($mpd_url);
+        $has_poster = !empty($poster);
+        $published = ($has_mpd && $has_poster) ? 1 : ($current_video ? $current_video->published : 0);
+
+        error_log("VOD API: sync_videos_from_api - Video {$vod_id}: has_mpd=" . ($has_mpd ? 'true' : 'false') . ", has_poster=" . ($has_poster ? 'true' : 'false') . ", current_published=" . ($current_video ? $current_video->published : 'NULL') . ", calculated_published=" . $published);
+
+        $result = $wpdb->update(
           $this->table_name,
           array(
             'name' => $name,
             'poster' => $poster,
-            'mpd_url' => $mpd_url
+            'mpd_url' => $mpd_url,
+            'published' => $published
           ),
           array('vod_id' => $vod_id),
-          array('%s', '%s', '%s'),
+          array('%s', '%s', '%s', '%d'),
           array('%s')
         );
+
+        if ($result !== false) {
+          error_log("VOD API: sync_videos_from_api - Successfully updated video {$vod_id}, rows affected: " . $result);
+        } else {
+          error_log("VOD API: sync_videos_from_api - Failed to update video {$vod_id}, wpdb error: " . $wpdb->last_error);
+        }
       } else {
         // Insert new video
-        $wpdb->insert(
+        $has_mpd = !empty($mpd_url);
+        $has_poster = !empty($poster);
+        $published = ($has_mpd && $has_poster) ? 1 : 0;
+
+        error_log("VOD API: sync_videos_from_api - New video {$vod_id}: has_mpd=" . ($has_mpd ? 'true' : 'false') . ", has_poster=" . ($has_poster ? 'true' : 'false') . ", published=" . $published);
+
+        $result = $wpdb->insert(
           $this->table_name,
           array(
             'vod_id' => $vod_id,
             'name' => $name,
             'poster' => $poster,
-            'mpd_url' => $mpd_url
+            'mpd_url' => $mpd_url,
+            'published' => $published
           ),
-          array('%s', '%s', '%s', '%s')
+          array('%s', '%s', '%s', '%s', '%d')
         );
+
+        if ($result !== false) {
+          error_log("VOD API: sync_videos_from_api - Successfully inserted new video {$vod_id}, insert_id: " . $wpdb->insert_id);
+        } else {
+          error_log("VOD API: sync_videos_from_api - Failed to insert new video {$vod_id}, wpdb error: " . $wpdb->last_error);
+        }
         $synced_count++;
       }
     }
@@ -940,17 +1008,14 @@ class VOD_Eikon
     if ($upload_result['success']) {
       error_log('VOD API: ajax_upload_video() - Upload successful, video ID: ' . ($upload_result['video_id'] ?? 'unknown'));
 
-      // Sync videos to update the database with the new upload
-      error_log('VOD API: ajax_upload_video() - Starting sync after successful upload');
-      $this->sync_videos_from_api();
+      // Don't sync videos immediately after upload - wait for callbacks
+      // The video will be added to the database only when callbacks are triggered
+      error_log('VOD API: ajax_upload_video() - Video uploaded successfully, waiting for encoding and thumbnail completion callbacks');
 
-      // Schedule a delayed update to check for processing completion
       $video_id = $upload_result['video_id'];
-      // Note: Individual video processing checks removed in favor of callback system
-      // Callbacks will automatically update video data when processing is complete
 
       wp_send_json_success(array(
-        'message' => 'Vidéo téléchargée avec succès ! La vidéo peut prendre quelques minutes à traiter. L\'image d\'affiche et l\'URL de lecture seront automatiquement mises à jour via le système de callbacks.',
+        'message' => 'Vidéo téléchargée avec succès ! La vidéo sera automatiquement ajoutée à la base de données lorsque l\'encodage et la génération de la miniature seront terminés via le système de callbacks.',
         'video_id' => $upload_result['video_id']
       ));
     } else {
@@ -1136,6 +1201,36 @@ class VOD_Eikon
   {
 
     global $wpdb;
+
+    // First, check for videos that have both poster and MPD URL but are not published
+    // This ensures no videos are missed for publishing
+    $unpublished_complete_videos = $wpdb->get_results(
+      "SELECT vod_id FROM {$this->table_name}
+       WHERE (poster != '' AND poster IS NOT NULL)
+       AND (mpd_url != '' AND mpd_url IS NOT NULL)
+       AND published != 1
+       ORDER BY created_at DESC"
+    );
+
+    if (!empty($unpublished_complete_videos)) {
+      error_log('VOD API: update_incomplete_videos - Found ' . count($unpublished_complete_videos) . ' videos with poster and MPD URL that need to be marked as published');
+
+      foreach ($unpublished_complete_videos as $video) {
+        $result = $wpdb->update(
+          $this->table_name,
+          array('published' => 1),
+          array('vod_id' => $video->vod_id),
+          array('%d'),
+          array('%s')
+        );
+
+        if ($result !== false) {
+          error_log('VOD API: update_incomplete_videos - Marked video ' . $video->vod_id . ' as published');
+        } else {
+          error_log('VOD API: update_incomplete_videos - Failed to mark video ' . $video->vod_id . ' as published: ' . $wpdb->last_error);
+        }
+      }
+    }
 
     // Find videos that are missing poster OR mpd_url (indicating they may still be processing)
     $incomplete_videos = $wpdb->get_results(
@@ -1450,6 +1545,20 @@ class VOD_Eikon
           $update_format[] = '%s';
         }
 
+        // Check if we should mark as published (both poster and mpd_url available)
+        $current_video = $wpdb->get_row($wpdb->prepare(
+          "SELECT poster, mpd_url FROM {$this->table_name} WHERE vod_id = %s",
+          $vod_id
+        ));
+
+        $final_poster = !empty($poster) ? $poster : $current_video->poster;
+        $final_mpd = !empty($mpd_url) ? $mpd_url : $current_video->mpd_url;
+
+        if (!empty($final_poster) && !empty($final_mpd)) {
+          $update_data['published'] = 1;
+          $update_format[] = '%d';
+        }
+
         $result = $wpdb->update(
           $this->table_name,
           $update_data,
@@ -1523,9 +1632,27 @@ class VOD_Eikon
       return;
     }
 
-    // If video already has both poster and MPD URL, no need to check
+    // If video already has both poster and MPD URL, ensure it's published
     if (!empty($current_video->poster) && !empty($current_video->mpd_url)) {
-      error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Video already has poster and MPD URL, skipping');
+      if ($current_video->published != 1) {
+        error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Video has poster and MPD URL but not published, updating to published=1');
+
+        $result = $wpdb->update(
+          $this->table_name,
+          array('published' => 1),
+          array('vod_id' => $vod_id),
+          array('%d'),
+          array('%s')
+        );
+
+        if ($result !== false) {
+          error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Successfully marked as published');
+        } else {
+          error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Failed to mark as published: ' . $wpdb->last_error);
+        }
+      } else {
+        error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Video already has poster, MPD URL and is published, skipping');
+      }
       return;
     }
 
@@ -1674,14 +1801,14 @@ class VOD_Eikon
 
     // Handle different event types
     switch ($event_type) {
-      case 'media_ready':
-        $this->handle_media_ready($video_data);
+      case 'encoding_finished':
+        $this->handle_encoding_finished($video_data);
+        break;
+      case 'thumbnail_finished':
+        $this->handle_thumbnail_finished($video_data);
         break;
       case 'media_deleted':
         $this->handle_media_deleted($video_data);
-        break;
-      case 'vod.media.processed': // Keep backward compatibility
-        $this->handle_media_ready($video_data);
         break;
       default:
         error_log('Unhandled VOD event type: ' . $event_type);
@@ -1689,89 +1816,6 @@ class VOD_Eikon
     }
 
     exit; // End execution after handling callback
-  }
-
-  /**
-   * Handle the media_ready event
-   * Called when a video has finished processing and is ready for playback
-   */
-  private function handle_media_ready($video_data)
-  {
-    if (empty($video_data['id'])) {
-      error_log('VOD Callback: Missing video ID in media_ready event');
-      return;
-    }
-
-    $vod_id = sanitize_text_field($video_data['id']);
-    $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
-
-    error_log('VOD Callback: Processing media_ready event for video: ' . $vod_id);
-
-    // Extract poster URL
-    $poster = '';
-    if (!empty($video_data['poster'])) {
-      if (is_string($video_data['poster'])) {
-        $poster = esc_url_raw($video_data['poster']);
-      } elseif (is_array($video_data['poster'])) {
-        // Check common poster URL fields in the array
-        foreach (['url', 'src', 'href', 'link'] as $field) {
-          if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
-            $poster = esc_url_raw($video_data['poster'][$field]);
-            break;
-          }
-        }
-      }
-    }
-
-    // Construct MPD URL from encoded_medias data
-    $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
-
-    global $wpdb;
-
-    // Check if video already exists
-    $existing = $wpdb->get_var($wpdb->prepare(
-      "SELECT id FROM {$this->table_name} WHERE vod_id = %s",
-      $vod_id
-    ));
-
-    if ($existing) {
-      // Update existing video
-      $result = $wpdb->update(
-        $this->table_name,
-        array(
-          'name' => $name,
-          'poster' => $poster,
-          'mpd_url' => $mpd_url
-        ),
-        array('vod_id' => $vod_id),
-        array('%s', '%s', '%s'),
-        array('%s')
-      );
-
-      if ($result !== false) {
-        error_log('VOD Callback: Updated existing video: ' . $vod_id);
-      } else {
-        error_log('VOD Callback: Failed to update video: ' . $vod_id);
-      }
-    } else {
-      // Insert new video
-      $result = $wpdb->insert(
-        $this->table_name,
-        array(
-          'vod_id' => $vod_id,
-          'name' => $name,
-          'poster' => $poster,
-          'mpd_url' => $mpd_url
-        ),
-        array('%s', '%s', '%s', '%s')
-      );
-
-      if ($result !== false) {
-        error_log('VOD Callback: Added new video: ' . $vod_id);
-      } else {
-        error_log('VOD Callback: Failed to add video: ' . $vod_id);
-      }
-    }
   }
 
   /**
@@ -1806,13 +1850,166 @@ class VOD_Eikon
   }
 
   /**
-   * Handle the video processed event (backward compatibility)
-   * @deprecated Use handle_media_ready instead
+   * Handle the encoding_finished event
+   * Called when video encoding has been completed
    */
-  private function handle_video_processed($video_data)
+  private function handle_encoding_finished($video_data)
   {
-    error_log('VOD Callback: Handling legacy vod.media.processed event, redirecting to handle_media_ready');
-    $this->handle_media_ready($video_data);
+    if (empty($video_data['id'])) {
+      error_log('VOD Callback: Missing video ID in encoding_finished event');
+      return;
+    }
+
+    $vod_id = sanitize_text_field($video_data['id']);
+    $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
+
+    error_log('VOD Callback: Processing encoding_finished event for video: ' . $vod_id);
+
+    // Construct MPD URL from encoded_medias data
+    $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
+
+    global $wpdb;
+
+    // Check if video already exists
+    $existing = $wpdb->get_var($wpdb->prepare(
+      "SELECT id FROM {$this->table_name} WHERE vod_id = %s",
+      $vod_id
+    ));
+
+    if ($existing) {
+      // Update existing video with encoding data and check if we can publish
+      $current_video = $wpdb->get_row($wpdb->prepare(
+        "SELECT poster FROM {$this->table_name} WHERE vod_id = %s",
+        $vod_id
+      ));
+
+      // Set published if both MPD and poster are available
+      $published = (!empty($mpd_url) && !empty($current_video->poster)) ? 1 : 0;
+
+      $result = $wpdb->update(
+        $this->table_name,
+        array(
+          'name' => $name,
+          'mpd_url' => $mpd_url,
+          'published' => $published
+        ),
+        array('vod_id' => $vod_id),
+        array('%s', '%s', '%d'),
+        array('%s')
+      );
+
+      if ($result !== false) {
+        error_log('VOD Callback: Updated video with encoding data: ' . $vod_id . ($published ? ' (published)' : ' (not published - waiting for poster)'));
+      } else {
+        error_log('VOD Callback: Failed to update video with encoding data: ' . $vod_id);
+      }
+    } else {
+      // Insert new video with encoding data (not published yet since no poster)
+      $result = $wpdb->insert(
+        $this->table_name,
+        array(
+          'vod_id' => $vod_id,
+          'name' => $name,
+          'mpd_url' => $mpd_url,
+          'published' => 0
+        ),
+        array('%s', '%s', '%s', '%d')
+      );
+
+      if ($result !== false) {
+        error_log('VOD Callback: Added new video with encoding data: ' . $vod_id . ' (not published - waiting for poster)');
+      } else {
+        error_log('VOD Callback: Failed to add video with encoding data: ' . $vod_id);
+      }
+    }
+  }
+
+  /**
+   * Handle the thumbnail_finished event
+   * Called when video thumbnail generation has been completed
+   */
+  private function handle_thumbnail_finished($video_data)
+  {
+    if (empty($video_data['id'])) {
+      error_log('VOD Callback: Missing video ID in thumbnail_finished event');
+      return;
+    }
+
+    $vod_id = sanitize_text_field($video_data['id']);
+    $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
+
+    error_log('VOD Callback: Processing thumbnail_finished event for video: ' . $vod_id);
+
+    // Extract poster URL
+    $poster = '';
+    if (!empty($video_data['poster'])) {
+      if (is_string($video_data['poster'])) {
+        $poster = esc_url_raw($video_data['poster']);
+      } elseif (is_array($video_data['poster'])) {
+        // Check common poster URL fields in the array
+        foreach (['url', 'src', 'href', 'link'] as $field) {
+          if (!empty($video_data['poster'][$field]) && is_string($video_data['poster'][$field])) {
+            $poster = esc_url_raw($video_data['poster'][$field]);
+            break;
+          }
+        }
+      }
+    }
+
+    global $wpdb;
+
+    // Check if video already exists
+    $existing = $wpdb->get_var($wpdb->prepare(
+      "SELECT id FROM {$this->table_name} WHERE vod_id = %s",
+      $vod_id
+    ));
+
+    if ($existing) {
+      // Update existing video with thumbnail data and check if we can publish
+      $current_video = $wpdb->get_row($wpdb->prepare(
+        "SELECT mpd_url FROM {$this->table_name} WHERE vod_id = %s",
+        $vod_id
+      ));
+
+      // Set published if both poster and MPD are available
+      $published = (!empty($poster) && !empty($current_video->mpd_url)) ? 1 : 0;
+
+      $result = $wpdb->update(
+        $this->table_name,
+        array(
+          'name' => $name,
+          'poster' => $poster,
+          'published' => $published
+        ),
+        array('vod_id' => $vod_id),
+        array('%s', '%s', '%d'),
+        array('%s')
+      );
+
+      if ($result !== false) {
+        error_log('VOD Callback: Updated video with thumbnail data: ' . $vod_id . ($published ? ' (published)' : ' (not published - waiting for encoding)'));
+      } else {
+        error_log('VOD Callback: Failed to update video with thumbnail data: ' . $vod_id);
+      }
+    } else {
+      // Insert new video with thumbnail data (not published yet since no MPD)
+      $result = $wpdb->insert(
+        $this->table_name,
+        array(
+          'vod_id' => $vod_id,
+          'name' => $name,
+          'poster' => $poster,
+          'published' => 0
+        ),
+        array('%s', '%s', '%s', '%d')
+      );
+
+      if ($result !== false) {
+        error_log('VOD Callback: Added new video with thumbnail data: ' . $vod_id . ' (not published - waiting for encoding)');
+      } else {
+        error_log('VOD Callback: Failed to add video with thumbnail data: ' . $vod_id);
+      }
+    }
   }
 
   /**

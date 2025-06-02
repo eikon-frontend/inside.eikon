@@ -9,6 +9,7 @@ This plugin adds a new field type to Advanced Custom Fields that enables you to 
 ### Features
 
 - Browse and search videos from your Infomaniak VOD library
+- Filter videos by publication status (only show fully processed videos by default)
 - Preview selected videos with thumbnails
 - Select videos via a modal interface
 - Various return formats (array, ID, or URL)
@@ -83,6 +84,15 @@ Specify how the field value should be returned in templates:
 - **Video ID**: Returns only the video ID
 - **Video URL**: Returns only the video URL
 
+### Show Published Videos Only
+
+Controls whether the field should only display videos that have completed both encoding and thumbnail generation:
+
+- **Enabled** (default): Only shows videos where both encoding and thumbnail generation are complete (published = 1)
+- **Disabled**: Shows all videos regardless of processing status
+
+This setting is useful for ensuring that only fully processed videos are available for selection in production environments, while allowing access to all videos during development or administrative tasks.
+
 ## Developer Hooks
 
 ### Filters
@@ -148,4 +158,3 @@ Developed by [EIKON](https://eikon.ch).
 ## License
 
 This plugin is licensed under the GPL v2 or later.
-
