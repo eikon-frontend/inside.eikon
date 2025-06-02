@@ -578,7 +578,7 @@ class VOD_Eikon
       if (!empty($media['id']) && !empty($media['size'])) {
         $sized_medias[] = array(
           'id' => $media['id'],
-          'size' => intval($media['size'])
+          'size' => (int)round((float)$media['size'])
         );
       }
     }
@@ -1207,7 +1207,7 @@ class VOD_Eikon
       }      // Try to manually trigger poster generation via API if poster is empty
       if (empty($video_data['poster'])) {
         // Check if video is sufficiently processed before attempting poster generation
-        $processing_progress = isset($video_data['progress']) ? intval($video_data['progress']) : 0;
+        $processing_progress = isset($video_data['progress']) ? (int)round((float)$video_data['progress']) : 0;
 
         if ($processing_progress < 80) {
         } else {
@@ -1369,8 +1369,8 @@ class VOD_Eikon
       // Check if video is still processing (no encoded_medias or empty poster)
       $has_encoded_medias = !empty($video_data['encoded_medias']) && is_array($video_data['encoded_medias']);
       $has_poster = !empty($video_data['poster']);
-      $processing_progress = isset($video_data['progress']) ? intval($video_data['progress']) : 0;
-      $video_state = isset($video_data['state']) ? intval($video_data['state']) : 0;
+      $processing_progress = isset($video_data['progress']) ? (int)round((float)$video_data['progress']) : 0;
+      $video_state = isset($video_data['state']) ? (int)round((float)$video_data['state']) : 0;
 
       // Log processing status for better debugging
 
