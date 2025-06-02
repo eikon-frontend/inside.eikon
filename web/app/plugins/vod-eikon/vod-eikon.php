@@ -1679,33 +1679,75 @@ class VOD_Eikon
       exit;
     }
 
-    // Validate the data structure
-    if (!isset($data['event']) || !isset($data['data'])) {
-      error_log('VOD Callback: Invalid data structure - missing event or data');
-      error_log('VOD Callback: Received data: ' . print_r($data, true));
-      echo json_encode(array('status' => 'error', 'message' => 'Invalid data structure'));
+    // Log the complete received data structure for debugging
+    error_log('VOD Callback: Complete received data structure: ' . print_r($data, true));
+
+    // Try to extract event type from different possible field names
+    $event_type = null;
+    $video_data = null;
+
+    if (isset($data['event'])) {
+      $event_type = $data['event'];
+      $video_data = isset($data['data']) ? $data['data'] : $data;
+    } elseif (isset($data['type'])) {
+      $event_type = $data['type'];
+      $video_data = isset($data['data']) ? $data['data'] : $data;
+    } elseif (isset($data['event_type'])) {
+      $event_type = $data['event_type'];
+      $video_data = isset($data['data']) ? $data['data'] : $data;
+    } else {
+      // Check if the entire payload IS the event data (no wrapper)
+      $available_keys = array_keys($data);
+      error_log('VOD Callback: No standard event field found. Available keys: ' . implode(', ', $available_keys));
+
+      // Try to infer event type from available data
+      if (isset($data['id']) && isset($data['status'])) {
+        // This might be a direct video data payload
+        error_log('VOD Callback: Attempting to infer event type from payload structure');
+        if (isset($data['encoded_medias']) || (isset($data['status']) && $data['status'] === 'published')) {
+          $event_type = 'encoding_finished';
+          $video_data = $data;
+        } elseif (isset($data['poster'])) {
+          $event_type = 'thumbnail_finished';
+          $video_data = $data;
+        }
+      }
+    }
+
+    if (!$event_type) {
+      error_log('VOD Callback: Could not determine event type from payload');
+      echo json_encode(array('status' => 'error', 'message' => 'Could not determine event type'));
       exit;
     }
 
-    $event_type = $data['event'];
-    $video_data = $data['data'];
-
     error_log('VOD Callback: Processing event type: ' . $event_type);
 
+    // Normalize event type (handle different naming conventions)
+    $normalized_event = strtolower(str_replace([' ', '-', '_'], '_', $event_type));
+
     // Handle different event types
-    switch ($event_type) {
+    switch ($normalized_event) {
       case 'encoding_finished':
+      case 'encodingfinished':
+      case 'media_encoded':
+      case 'video_encoded':
         $this->handle_encoding_finished($video_data);
         break;
       case 'thumbnail_finished':
+      case 'thumbnailfinished':
+      case 'thumbnail_generated':
+      case 'poster_generated':
         $this->handle_thumbnail_finished($video_data);
         break;
       case 'media_deleted':
+      case 'mediadeleted':
+      case 'video_deleted':
+      case 'deleted':
         $this->handle_media_deleted($video_data);
         break;
       default:
-        error_log('VOD Callback: Unhandled event type: ' . $event_type);
-        echo json_encode(array('status' => 'error', 'message' => 'Unhandled event type'));
+        error_log('VOD Callback: Unhandled event type: ' . $event_type . ' (normalized: ' . $normalized_event . ')');
+        echo json_encode(array('status' => 'error', 'message' => 'Unhandled event type: ' . $event_type));
         exit;
     }
 
@@ -1753,6 +1795,7 @@ class VOD_Eikon
   {
     if (empty($video_data['id'])) {
       error_log('VOD Callback: Missing video ID in encoding_finished event');
+      error_log('VOD Callback: Received video_data: ' . print_r($video_data, true));
       return;
     }
 
@@ -1760,9 +1803,17 @@ class VOD_Eikon
     $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
 
     error_log('VOD Callback: Processing encoding_finished event for video: ' . $vod_id);
+    error_log('VOD Callback: Video name: ' . $name);
 
     // Construct MPD URL from encoded_medias data
     $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
+
+    if (empty($mpd_url)) {
+      error_log('VOD Callback: Could not construct MPD URL for video: ' . $vod_id);
+      error_log('VOD Callback: encoded_medias data: ' . print_r($video_data['encoded_medias'] ?? 'missing', true));
+    } else {
+      error_log('VOD Callback: Constructed MPD URL: ' . $mpd_url);
+    }
 
     global $wpdb;
 
@@ -1828,6 +1879,7 @@ class VOD_Eikon
   {
     if (empty($video_data['id'])) {
       error_log('VOD Callback: Missing video ID in thumbnail_finished event');
+      error_log('VOD Callback: Received video_data: ' . print_r($video_data, true));
       return;
     }
 
@@ -1835,6 +1887,7 @@ class VOD_Eikon
     $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
 
     error_log('VOD Callback: Processing thumbnail_finished event for video: ' . $vod_id);
+    error_log('VOD Callback: Video name: ' . $name);
 
     // Extract poster URL
     $poster = '';
