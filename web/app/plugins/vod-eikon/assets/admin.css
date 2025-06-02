@@ -22,11 +22,11 @@
     display: block;
     padding: 12px 18px;
     text-decoration: none;
-    color: #555;
+    color: #777;
     border: 1px solid transparent;
     border-bottom: none;
     background: #f1f1f1;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
 }
 
 .vod-tab-nav a:hover {
@@ -39,7 +39,6 @@
     color: #333;
     border: 1px solid #ccd0d4;
     border-bottom: 1px solid #fff;
-    font-weight: 600;
 }
 
 .vod-tab-nav a .dashicons {

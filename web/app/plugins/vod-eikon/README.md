@@ -45,6 +45,28 @@ INFOMANIAK_TOKEN_API=your_api_token
 
 The callback system replaces the old polling mechanism and provides instant updates when videos are processed or deleted on Infomaniak's servers.
 
+#### Testing the Callback System
+
+1. **Use the WordPress Admin Test Button:**
+
+   - Go to Media > VOD Videos
+   - Click "Test callback endpoint" button
+   - Check WordPress debug.log for test results
+
+2. **Use the Command Line Test Script:**
+
+   ```bash
+   cd /path/to/plugin/directory
+   php test-callback.php your-domain.com
+   ```
+
+3. **Manual Testing with cURL:**
+   ```bash
+   curl -X POST https://your-site.com/vod-callback/ \
+     -H "Content-Type: application/json" \
+     -d '{"event":"encoding_finished","data":{"id":"test123","title":"Test Video"}}'
+   ```
+
 ### Video Publication Workflow
 
 Videos go through a simplified processing workflow:

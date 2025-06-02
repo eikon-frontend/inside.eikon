@@ -695,4 +695,43 @@ jQuery(document).ready(function ($) {
       }
     });
   });
+
+  // Test callback endpoint functionality
+  $('#test-callback-endpoint').on('click', function (e) {
+    e.preventDefault();
+
+    console.log('VOD Eikon: Test callback endpoint button clicked');
+
+    var $button = $(this);
+    var originalText = $button.text();
+
+    // Disable button and show loading state
+    $button.prop('disabled', true).text('Test en cours...');
+
+    $.ajax({
+      url: vodEikon.ajax_url,
+      type: 'POST',
+      data: {
+        action: 'test_callback_endpoint',
+        nonce: vodEikon.nonce
+      },
+      success: function (response) {
+        console.log('VOD Eikon: Test callback endpoint response:', response);
+
+        if (response.success) {
+          alert('Test du callback endpoint réussi ! Vérifiez les logs de débogage WordPress pour voir les détails du test.\n\nURL du callback: ' + response.data.callback_url);
+        } else {
+          alert('Erreur lors du test du callback endpoint: ' + (response.data.message || 'Erreur inconnue'));
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('VOD Eikon: Test callback endpoint AJAX error:', error);
+        alert('Erreur AJAX lors du test du callback: ' + error);
+      },
+      complete: function () {
+        // Re-enable button and restore original text
+        $button.prop('disabled', false).text(originalText);
+      }
+    });
+  });
 });

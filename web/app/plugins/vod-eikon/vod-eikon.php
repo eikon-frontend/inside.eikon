@@ -48,10 +48,11 @@ class VOD_Eikon
     add_action('wp_ajax_nopriv_get_vod_player', array($this, 'ajax_get_vod_player'));
     add_action('wp_ajax_upload_vod_video', array($this, 'ajax_upload_video'));
     add_action('wp_ajax_test_api_logging', array($this, 'ajax_test_api_logging'));
+    add_action('wp_ajax_test_callback_endpoint', array($this, 'ajax_test_callback_endpoint'));
 
     // Add callback endpoint for Infomaniak VOD events
     add_action('init', array($this, 'register_callback_endpoint'));
-    add_action('wp_loaded', array($this, 'handle_vod_callback'));
+    add_action('parse_request', array($this, 'handle_vod_callback'));
 
     // Keep daily sync for full synchronization fallback
     if (!wp_next_scheduled('vod_eikon_daily_sync')) {
@@ -190,6 +191,10 @@ class VOD_Eikon
               <button id="test-api-logging" class="button button-secondary">
                 <span class="dashicons dashicons-admin-tools"></span>
                 Tester le logging API
+              </button>
+              <button id="test-callback-endpoint" class="button button-secondary">
+                <span class="dashicons dashicons-admin-tools"></span>
+                Tester callback endpoint
               </button>
               <span id="sync-status"></span>
             </div>
@@ -404,13 +409,10 @@ class VOD_Eikon
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
     if (!$channel_id || !$api_token) {
-      error_log('VOD API: Missing credentials - INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API not set');
       return false;
     }
 
     $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster,streams,encoded_medias";
-
-    error_log('VOD API: Making sync_videos_from_api request to: ' . $api_url);
 
     $response = wp_remote_get($api_url, array(
       'headers' => array(
@@ -421,23 +423,17 @@ class VOD_Eikon
     ));
 
     if (is_wp_error($response)) {
-      error_log('VOD API: sync_videos_from_api failed - WP Error: ' . $response->get_error_message());
       return false;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $body = wp_remote_retrieve_body($response);
 
-    error_log('VOD API: sync_videos_from_api response - HTTP ' . $response_code . ' - Body length: ' . strlen($body) . ' chars');
-
     $data = json_decode($body, true);
 
     if (!$data || !isset($data['data'])) {
-      error_log('VOD API: sync_videos_from_api - Invalid JSON response or missing data field. Body: ' . substr($body, 0, 500) . '...');
       return false;
     }
-
-    error_log('VOD API: sync_videos_from_api - Successfully parsed JSON, found ' . count($data['data']) . ' videos');
 
     global $wpdb;
     $synced_count = 0;
@@ -502,12 +498,8 @@ class VOD_Eikon
         }
       }
 
-      error_log("VOD API: sync_videos_from_api - Video {$vod_id}: extracted poster='" . $poster . "'");
-
       // Construct MPD URL from encoded_medias data
       $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
-
-      error_log("VOD API: sync_videos_from_api - Video {$vod_id}: constructed mpd_url='" . $mpd_url . "'");
 
       // Check if video already exists
       $existing = $wpdb->get_var($wpdb->prepare(
@@ -527,8 +519,6 @@ class VOD_Eikon
         $has_poster = !empty($poster);
         $published = ($has_mpd && $has_poster) ? 1 : ($current_video ? $current_video->published : 0);
 
-        error_log("VOD API: sync_videos_from_api - Video {$vod_id}: has_mpd=" . ($has_mpd ? 'true' : 'false') . ", has_poster=" . ($has_poster ? 'true' : 'false') . ", current_published=" . ($current_video ? $current_video->published : 'NULL') . ", calculated_published=" . $published);
-
         $result = $wpdb->update(
           $this->table_name,
           array(
@@ -541,19 +531,11 @@ class VOD_Eikon
           array('%s', '%s', '%s', '%d'),
           array('%s')
         );
-
-        if ($result !== false) {
-          error_log("VOD API: sync_videos_from_api - Successfully updated video {$vod_id}, rows affected: " . $result);
-        } else {
-          error_log("VOD API: sync_videos_from_api - Failed to update video {$vod_id}, wpdb error: " . $wpdb->last_error);
-        }
       } else {
         // Insert new video
         $has_mpd = !empty($mpd_url);
         $has_poster = !empty($poster);
         $published = ($has_mpd && $has_poster) ? 1 : 0;
-
-        error_log("VOD API: sync_videos_from_api - New video {$vod_id}: has_mpd=" . ($has_mpd ? 'true' : 'false') . ", has_poster=" . ($has_poster ? 'true' : 'false') . ", published=" . $published);
 
         $result = $wpdb->insert(
           $this->table_name,
@@ -568,11 +550,8 @@ class VOD_Eikon
         );
 
         if ($result !== false) {
-          error_log("VOD API: sync_videos_from_api - Successfully inserted new video {$vod_id}, insert_id: " . $wpdb->insert_id);
-        } else {
-          error_log("VOD API: sync_videos_from_api - Failed to insert new video {$vod_id}, wpdb error: " . $wpdb->last_error);
+          $synced_count++;
         }
-        $synced_count++;
       }
     }
 
@@ -675,13 +654,10 @@ class VOD_Eikon
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
     if (!$channel_id || !$api_token) {
-      error_log('VOD API: delete_video_from_api(' . $vod_id . ') - Missing credentials');
       return false;
     }
 
     $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}";
-
-    error_log('VOD API: delete_video_from_api(' . $vod_id . ') - Making DELETE request to: ' . $api_url);
 
     $response = wp_remote_request($api_url, array(
       'method' => 'DELETE',
@@ -693,20 +669,15 @@ class VOD_Eikon
     ));
 
     if (is_wp_error($response)) {
-      error_log('VOD API: delete_video_from_api(' . $vod_id . ') - WP Error: ' . $response->get_error_message());
       return false;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
 
-    error_log('VOD API: delete_video_from_api(' . $vod_id . ') - Response HTTP ' . $response_code);
-
     // API returns 204 No Content on successful deletion
     if ($response_code === 204) {
-      error_log('VOD API: delete_video_from_api(' . $vod_id . ') - Successfully deleted');
       return true;
     } else {
-      error_log('VOD API: delete_video_from_api(' . $vod_id . ') - Deletion failed with HTTP ' . $response_code);
       return false;
     }
   }
@@ -911,17 +882,12 @@ class VOD_Eikon
    */
   public function ajax_upload_video()
   {
-    error_log('VOD API: ajax_upload_video() - Upload request initiated');
-
     // Increase execution time and memory limits for video upload
     set_time_limit(0); // No time limit
     ini_set('memory_limit', '512M');
 
-    error_log('VOD API: ajax_upload_video() - Set execution time to unlimited and memory limit to 512M');
-
     // Verify nonce for security
     if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
-      error_log('VOD API: ajax_upload_video() - Security token verification failed');
       wp_send_json_error(array(
         'message' => 'Jeton de sécurité invalide.'
       ));
@@ -929,7 +895,6 @@ class VOD_Eikon
 
     // Check if user can upload files
     if (!current_user_can('upload_files')) {
-      error_log('VOD API: ajax_upload_video() - User lacks upload permission');
       wp_send_json_error(array(
         'message' => 'Vous n\'avez pas l\'autorisation de télécharger des fichiers.'
       ));
@@ -937,8 +902,6 @@ class VOD_Eikon
 
     $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
     $api_token = getenv('INFOMANIAK_TOKEN_API');
-
-    error_log('VOD API: ajax_upload_video() - Retrieved credentials from environment');
 
     // Also try $_ENV as fallback
     if (!$channel_id) {
@@ -950,7 +913,6 @@ class VOD_Eikon
     }
 
     if (!$channel_id || !$api_token) {
-      error_log('VOD API: ajax_upload_video() - Missing credentials - INFOMANIAK_CHANNEL_ID or INFOMANIAK_TOKEN_API not set');
       wp_send_json_error(array(
         'message' => 'Variables d\'environnement manquantes INFOMANIAK_CHANNEL_ID ou INFOMANIAK_TOKEN_API.'
       ));
@@ -962,7 +924,6 @@ class VOD_Eikon
 
     // Check if file was uploaded
     if (!isset($_FILES['video_file']) || $_FILES['video_file']['error'] !== UPLOAD_ERR_OK) {
-      error_log('VOD API: ajax_upload_video() - File upload error or no file provided');
       wp_send_json_error(array(
         'message' => 'Aucun fichier téléchargé ou erreur de téléchargement.'
       ));
@@ -970,22 +931,17 @@ class VOD_Eikon
 
     $file = $_FILES['video_file'];
 
-    error_log('VOD API: ajax_upload_video() - File details - Name: ' . $file['name'] . ', Size: ' . $file['size'] . ' bytes, Type: ' . $file['type']);
-
     // Generate title from filename if not provided
     if (empty($title)) {
       $title = pathinfo($file['name'], PATHINFO_FILENAME);
       $title = sanitize_text_field($title);
     }
 
-    error_log('VOD API: ajax_upload_video() - Generated title: ' . $title);
-
     // Validate file type
     $allowed_types = array('video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska');
     $file_type = $file['type'];
 
     if (!in_array($file_type, $allowed_types)) {
-      error_log('VOD API: ajax_upload_video() - Invalid file type: ' . $file_type);
       wp_send_json_error(array(
         'message' => 'Type de fichier invalide. Veuillez télécharger uniquement des fichiers MP4, MOV, AVI ou MKV.'
       ));
@@ -994,23 +950,17 @@ class VOD_Eikon
     // Check file size against server limits
     $max_upload_size = $this->get_server_upload_limit();
     if ($file['size'] > $max_upload_size) {
-      error_log('VOD API: ajax_upload_video() - File size exceeds limit - File: ' . $file['size'] . ' bytes, Limit: ' . $max_upload_size . ' bytes');
       wp_send_json_error(array(
         'message' => 'La taille du fichier dépasse la limite de ' . $this->format_bytes($max_upload_size) . '.'
       ));
     }
 
-    error_log('VOD API: ajax_upload_video() - Starting upload to Infomaniak API');
-
     // Upload to Infomaniak VOD API
     $upload_result = $this->upload_to_infomaniak($file, $title, $description, $channel_id, $api_token);
 
     if ($upload_result['success']) {
-      error_log('VOD API: ajax_upload_video() - Upload successful, video ID: ' . ($upload_result['video_id'] ?? 'unknown'));
-
       // Don't sync videos immediately after upload - wait for callbacks
       // The video will be added to the database only when callbacks are triggered
-      error_log('VOD API: ajax_upload_video() - Video uploaded successfully, waiting for encoding and thumbnail completion callbacks');
 
       $video_id = $upload_result['video_id'];
 
@@ -1019,7 +969,6 @@ class VOD_Eikon
         'video_id' => $upload_result['video_id']
       ));
     } else {
-      error_log('VOD API: ajax_upload_video() - Upload failed: ' . $upload_result['message']);
       wp_send_json_error(array(
         'message' => $upload_result['message']
       ));
@@ -1033,8 +982,6 @@ class VOD_Eikon
   {
     $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/upload";
 
-    error_log('VOD API: upload_to_infomaniak() - Starting upload to: ' . $api_url);
-
     // Prepare the file for upload
     $cfile = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
 
@@ -1046,8 +993,6 @@ class VOD_Eikon
     if (!empty($description)) {
       $post_fields['description'] = $description;
     }
-
-    error_log('VOD API: upload_to_infomaniak() - Upload parameters - Title: ' . $title . ', Description: ' . ($description ?: 'none') . ', File: ' . $file['name']);
 
     // Initialize cURL
     $ch = curl_init();
@@ -1069,34 +1014,18 @@ class VOD_Eikon
       CURLOPT_VERBOSE => true, // Enable verbose logging
       CURLOPT_NOPROGRESS => false, // Enable progress function
       CURLOPT_PROGRESSFUNCTION => function ($resource, $download_total, $downloaded, $upload_total, $uploaded) {
-        if ($upload_total > 0) {
-          $percent = round(($uploaded / $upload_total) * 100, 1);
-          if ($percent % 10 == 0) { // Log every 10%
-            error_log('VOD API: upload_to_infomaniak() - Upload progress: ' . $percent . '% (' . $uploaded . '/' . $upload_total . ' bytes)');
-          }
-        }
         return 0; // Return 0 to continue
       }
     ));
-
-    error_log('VOD API: upload_to_infomaniak() - Starting cURL execution');
 
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curl_error = curl_error($ch);
     $curl_info = curl_getinfo($ch);
 
-    error_log('VOD API: upload_to_infomaniak() - cURL completed - HTTP ' . $http_code . ' - Response length: ' . strlen($response) . ' chars');
-
-    if ($curl_error) {
-      error_log('VOD API: upload_to_infomaniak() - cURL Error: ' . $curl_error);
-    }
-
-
     curl_close($ch);
 
     if ($curl_error) {
-      error_log('VOD API: upload_to_infomaniak() - Upload failed with cURL error: ' . $curl_error);
       return array(
         'success' => false,
         'message' => 'Upload failed: ' . $curl_error
@@ -1120,7 +1049,6 @@ class VOD_Eikon
         }
       }
 
-      error_log('VOD API: upload_to_infomaniak() - Upload failed: ' . $error_message);
       return array(
         'success' => false,
         'message' => $error_message
@@ -1130,7 +1058,6 @@ class VOD_Eikon
     $response_data = json_decode($response, true);
 
     if (!$response_data || !isset($response_data['data'])) {
-      error_log('VOD API: upload_to_infomaniak() - Invalid JSON response or missing data field');
       return array(
         'success' => false,
         'message' => 'Invalid response from upload API'
@@ -1138,7 +1065,6 @@ class VOD_Eikon
     }
 
     $video_id = $response_data['data']['id'] ?? '';
-    error_log('VOD API: upload_to_infomaniak() - Upload successful - Video ID: ' . $video_id);
 
     return array(
       'success' => true,
@@ -1213,8 +1139,6 @@ class VOD_Eikon
     );
 
     if (!empty($unpublished_complete_videos)) {
-      error_log('VOD API: update_incomplete_videos - Found ' . count($unpublished_complete_videos) . ' videos with poster and MPD URL that need to be marked as published');
-
       foreach ($unpublished_complete_videos as $video) {
         $result = $wpdb->update(
           $this->table_name,
@@ -1223,12 +1147,6 @@ class VOD_Eikon
           array('%d'),
           array('%s')
         );
-
-        if ($result !== false) {
-          error_log('VOD API: update_incomplete_videos - Marked video ' . $video->vod_id . ' as published');
-        } else {
-          error_log('VOD API: update_incomplete_videos - Failed to mark video ' . $video->vod_id . ' as published: ' . $wpdb->last_error);
-        }
       }
     }
 
@@ -1261,8 +1179,6 @@ class VOD_Eikon
       // Get individual video data from API - try with different parameters
       $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias,thumbnails,images";
 
-      error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Making GET request to: ' . $api_url);
-
       $response = wp_remote_get($api_url, array(
         'headers' => array(
           'Authorization' => 'Bearer ' . $api_token,
@@ -1272,19 +1188,15 @@ class VOD_Eikon
       ));
 
       if (is_wp_error($response)) {
-        error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - WP Error: ' . $response->get_error_message());
         continue;
       }
 
       $response_code = wp_remote_retrieve_response_code($response);
       $body = wp_remote_retrieve_body($response);
 
-      error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Response HTTP ' . $response_code . ' - Body length: ' . strlen($body) . ' chars');
-
       $data = json_decode($body, true);
 
       if (!$data || !isset($data['data'])) {
-        error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Invalid JSON response or missing data field');
         continue;
       }
 
@@ -1315,8 +1227,6 @@ class VOD_Eikon
 
           foreach ($poster_times as $time) {
 
-            error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Attempting poster generation at time ' . $time . 's - URL: ' . $generate_poster_url);
-
             $poster_response = wp_remote_post($generate_poster_url, array(
               'headers' => array(
                 'Authorization' => 'Bearer ' . $api_token,
@@ -1331,21 +1241,15 @@ class VOD_Eikon
               $poster_code = wp_remote_retrieve_response_code($poster_response);
               $poster_body = wp_remote_retrieve_body($poster_response);
 
-              error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Poster generation response HTTP ' . $poster_code . ' - Body: ' . substr($poster_body, 0, 200) . '...');
-
               if ($poster_code == 200 || $poster_code == 201) {
                 $poster_generated = true;
                 break;
               }
-            } else {
-              error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Poster generation WP Error: ' . $poster_response->get_error_message());
             }
           }
 
           // Method 2: Try alternative thumbnail endpoint
           $thumbnail_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}/thumbnail";
-
-          error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Trying thumbnail endpoint: ' . $thumbnail_url);
 
           $thumbnail_response = wp_remote_post($thumbnail_url, array(
             'headers' => array(
@@ -1360,16 +1264,10 @@ class VOD_Eikon
           if (!is_wp_error($thumbnail_response)) {
             $thumb_code = wp_remote_retrieve_response_code($thumbnail_response);
             $thumb_body = wp_remote_retrieve_body($thumbnail_response);
-
-            error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Thumbnail response HTTP ' . $thumb_code . ' - Body: ' . substr($thumb_body, 0, 200) . '...');
-          } else {
-            error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Thumbnail WP Error: ' . $thumbnail_response->get_error_message());
           }
 
           // Method 3: Check if there's a specific thumbnails endpoint
           $thumbnails_list_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}/thumbnails";
-
-          error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Checking thumbnails list: ' . $thumbnails_list_url);
 
           $thumbnails_response = wp_remote_get($thumbnails_list_url, array(
             'headers' => array(
@@ -1383,23 +1281,17 @@ class VOD_Eikon
             $thumbnails_code = wp_remote_retrieve_response_code($thumbnails_response);
             $thumbnails_body = wp_remote_retrieve_body($thumbnails_response);
 
-            error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Thumbnails list response HTTP ' . $thumbnails_code . ' - Body: ' . substr($thumbnails_body, 0, 300) . '...');
-
             if ($thumbnails_code == 200) {
               $thumbnails_data = json_decode($thumbnails_body, true);
               if (isset($thumbnails_data['data']) && !empty($thumbnails_data['data'])) {
-                error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Found ' . count($thumbnails_data['data']) . ' thumbnails');
+                // Found thumbnails
               }
             }
-          } else {
-            error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Thumbnails list WP Error: ' . $thumbnails_response->get_error_message());
           }
 
           // Wait a moment and re-fetch the video data if any generation was triggered
           if ($poster_generated) {
             sleep(3);
-
-            error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Re-fetching video data after poster generation');
 
             $refetch_response = wp_remote_get($api_url, array(
               'headers' => array(
@@ -1413,14 +1305,10 @@ class VOD_Eikon
               $refetch_code = wp_remote_retrieve_response_code($refetch_response);
               $refetch_body = wp_remote_retrieve_body($refetch_response);
 
-              error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Re-fetch response HTTP ' . $refetch_code . ' - Body length: ' . strlen($refetch_body) . ' chars');
-
               $refetch_data = json_decode($refetch_body, true);
               if ($refetch_data && isset($refetch_data['data'])) {
                 $video_data = $refetch_data['data'];
               }
-            } else {
-              error_log('VOD API: update_incomplete_videos(' . $vod_id . ') - Re-fetch WP Error: ' . $refetch_response->get_error_message());
             }
           }
         }
@@ -1619,8 +1507,6 @@ class VOD_Eikon
 
     global $wpdb;
 
-    error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Starting processing status check');
-
     // Get current video data from database
     $current_video = $wpdb->get_row($wpdb->prepare(
       "SELECT * FROM {$this->table_name} WHERE vod_id = %s",
@@ -1628,15 +1514,12 @@ class VOD_Eikon
     ));
 
     if (!$current_video) {
-      error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Video not found in database');
       return;
     }
 
     // If video already has both poster and MPD URL, ensure it's published
     if (!empty($current_video->poster) && !empty($current_video->mpd_url)) {
       if ($current_video->published != 1) {
-        error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Video has poster and MPD URL but not published, updating to published=1');
-
         $result = $wpdb->update(
           $this->table_name,
           array('published' => 1),
@@ -1644,14 +1527,6 @@ class VOD_Eikon
           array('%d'),
           array('%s')
         );
-
-        if ($result !== false) {
-          error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Successfully marked as published');
-        } else {
-          error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Failed to mark as published: ' . $wpdb->last_error);
-        }
-      } else {
-        error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Video already has poster, MPD URL and is published, skipping');
       }
       return;
     }
@@ -1660,14 +1535,11 @@ class VOD_Eikon
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
     if (!$channel_id || !$api_token) {
-      error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Missing credentials');
       return;
     }
 
     // Get video data from API
     $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias";
-
-    error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Making GET request to: ' . $api_url);
 
     $response = wp_remote_get($api_url, array(
       'headers' => array(
@@ -1678,19 +1550,15 @@ class VOD_Eikon
     ));
 
     if (is_wp_error($response)) {
-      error_log('VOD API: check_video_processing_status(' . $vod_id . ') - WP Error: ' . $response->get_error_message());
       return;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $body = wp_remote_retrieve_body($response);
 
-    error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Response HTTP ' . $response_code . ' - Body length: ' . strlen($body) . ' chars');
-
     $data = json_decode($body, true);
 
     if (!$data || !isset($data['data'])) {
-      error_log('VOD API: check_video_processing_status(' . $vod_id . ') - Invalid JSON response or missing data field');
       return;
     }
 
@@ -1747,11 +1615,6 @@ class VOD_Eikon
         $update_format,
         array('%s')
       );
-
-      if ($result !== false) {
-      } else {
-      }
-    } else {
     }
   }
 
@@ -1762,42 +1625,72 @@ class VOD_Eikon
   {
     add_rewrite_rule('^vod-callback/?$', 'index.php?vod_callback=1', 'top');
     add_rewrite_tag('%vod_callback%', '([^&]+)');
+
+    // Register the custom query variable
+    add_filter('query_vars', function ($vars) {
+      $vars[] = 'vod_callback';
+      return $vars;
+    });
   }
 
   /**
    * Handle the VOD callback from Infomaniak
    */
-  public function handle_vod_callback()
+  public function handle_vod_callback($wp)
   {
-    if (!isset($_GET['vod_callback']) || $_GET['vod_callback'] != 1) {
+    // Check if this is a callback request
+    if (!isset($wp->query_vars['vod_callback']) || $wp->query_vars['vod_callback'] != 1) {
       return;
+    }
+
+    // Log that we received a callback request
+    error_log('VOD Callback: Received callback request');
+
+    // Only handle POST requests
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+      error_log('VOD Callback: Non-POST request received, method: ' . $_SERVER['REQUEST_METHOD']);
+      http_response_code(405); // Method not allowed
+      header('Allow: POST');
+      exit;
     }
 
     // Send HTTP 200 response immediately to acknowledge receipt
     http_response_code(200);
+    header('Content-Type: application/json');
 
     // Get the raw POST data from Infomaniak
     $body = file_get_contents('php://input');
 
     // Log the raw body for debugging
-    error_log('VOD Callback Received: ' . $body);
+    error_log('VOD Callback: Raw body received: ' . $body);
+
+    if (empty($body)) {
+      error_log('VOD Callback: Empty request body');
+      echo json_encode(array('status' => 'error', 'message' => 'Empty request body'));
+      exit;
+    }
 
     // Parse the JSON data
     $data = json_decode($body, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-      error_log('JSON Decode Error: ' . json_last_error_msg());
+      error_log('VOD Callback: JSON Decode Error: ' . json_last_error_msg());
+      echo json_encode(array('status' => 'error', 'message' => 'Invalid JSON'));
       exit;
     }
 
     // Validate the data structure
     if (!isset($data['event']) || !isset($data['data'])) {
-      error_log('Invalid VOD callback data structure');
+      error_log('VOD Callback: Invalid data structure - missing event or data');
+      error_log('VOD Callback: Received data: ' . print_r($data, true));
+      echo json_encode(array('status' => 'error', 'message' => 'Invalid data structure'));
       exit;
     }
 
     $event_type = $data['event'];
     $video_data = $data['data'];
+
+    error_log('VOD Callback: Processing event type: ' . $event_type);
 
     // Handle different event types
     switch ($event_type) {
@@ -1811,10 +1704,13 @@ class VOD_Eikon
         $this->handle_media_deleted($video_data);
         break;
       default:
-        error_log('Unhandled VOD event type: ' . $event_type);
-        break;
+        error_log('VOD Callback: Unhandled event type: ' . $event_type);
+        echo json_encode(array('status' => 'error', 'message' => 'Unhandled event type'));
+        exit;
     }
 
+    // Send success response
+    echo json_encode(array('status' => 'success', 'message' => 'Callback processed'));
     exit; // End execution after handling callback
   }
 
@@ -2018,17 +1914,11 @@ class VOD_Eikon
    */
   public function test_api_logging()
   {
-    error_log('VOD API: test_api_logging() - Starting API logging test');
-
-    // Test sync_videos_from_api logging
-    error_log('VOD API: test_api_logging() - Testing sync_videos_from_api logging');
+    // Test sync_videos_from_api
     $this->sync_videos_from_api();
 
-    // Test update_incomplete_videos logging
-    error_log('VOD API: test_api_logging() - Testing update_incomplete_videos logging');
+    // Test update_incomplete_videos
     $this->update_incomplete_videos();
-
-    error_log('VOD API: test_api_logging() - API logging test completed');
 
     return true;
   }
@@ -2056,6 +1946,85 @@ class VOD_Eikon
 
     wp_send_json_success(array(
       'message' => 'API logging test completed. Check debug logs for VOD API entries.'
+    ));
+  }
+
+  /**
+   * AJAX handler for testing callback endpoint
+   */
+  public function ajax_test_callback_endpoint()
+  {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      wp_send_json_error(array(
+        'message' => 'Invalid security token.'
+      ));
+    }
+
+    // Check if user has appropriate capabilities
+    if (!current_user_can('manage_options')) {
+      wp_send_json_error(array(
+        'message' => 'Insufficient permissions.'
+      ));
+    }
+
+    $site_url = home_url();
+    $callback_url = $site_url . '/vod-callback/';
+
+    error_log('VOD Callback Test: Starting callback endpoint test');
+    error_log('VOD Callback Test: Callback URL: ' . $callback_url);
+
+    // Test 1: Check current rewrite rules
+    global $wp_rewrite;
+    $rules = get_option('rewrite_rules');
+    $callback_rule_exists = false;
+
+    if (is_array($rules)) {
+      foreach ($rules as $pattern => $replacement) {
+        if (strpos($pattern, 'vod-callback') !== false) {
+          $callback_rule_exists = true;
+          error_log('VOD Callback Test: Found rewrite rule - Pattern: ' . $pattern . ' -> ' . $replacement);
+          break;
+        }
+      }
+    }
+
+    if (!$callback_rule_exists) {
+      error_log('VOD Callback Test: ❌ No callback rewrite rule found');
+      wp_send_json_error(array(
+        'message' => 'Callback rewrite rule not found. Try deactivating and reactivating the plugin to flush rewrite rules.'
+      ));
+      return;
+    }
+
+    error_log('VOD Callback Test: ✅ Callback rewrite rule exists');
+
+    // Test 2: Simulate a callback
+    $test_data = array(
+      'event' => 'encoding_finished',
+      'data' => array(
+        'id' => 'test_callback_' . time(),
+        'title' => 'Test Callback Video',
+        'encoded_medias' => array(
+          array(
+            'id' => 'test_media_1',
+            'profile' => 'test_profile'
+          )
+        )
+      )
+    );
+
+    error_log('VOD Callback Test: Simulating callback with data: ' . json_encode($test_data));
+
+    // Manually trigger the callback handler
+    $this->handle_encoding_finished($test_data['data']);
+
+    error_log('VOD Callback Test: Callback test completed');
+
+    wp_send_json_success(array(
+      'message' => 'Callback endpoint test completed. Check debug logs for "VOD Callback Test:" entries.',
+      'callback_url' => $callback_url,
+      'rewrite_rule_exists' => $callback_rule_exists
     ));
   }
 }
