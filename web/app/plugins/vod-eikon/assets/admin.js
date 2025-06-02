@@ -254,7 +254,7 @@ jQuery(document).ready(function ($) {
   });
 
   // Delete video functionality
-  $('.delete-video').on('click', function () {
+  $('.vod-eikon-videos').on('click', '.delete-video', function () {
     var $icon = $(this);
     var videoId = $icon.data('video-id');
     var $row = $icon.closest('tr');
@@ -384,7 +384,7 @@ jQuery(document).ready(function ($) {
   });
 
   // Toggle details functionality
-  $('.toggle-details').on('click', function (e) {
+  $('.vod-eikon-videos').on('click', '.toggle-details', function (e) {
     e.preventDefault();
 
     var $icon = $(this);
@@ -406,7 +406,7 @@ jQuery(document).ready(function ($) {
   });
 
   // Individual video sync functionality
-  $('.sync-single-video').on('click', function (e) {
+  $('.vod-eikon-videos').on('click', '.sync-single-video', function (e) {
     e.preventDefault();
 
     var $icon = $(this);

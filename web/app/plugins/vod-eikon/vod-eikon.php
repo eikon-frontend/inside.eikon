@@ -1736,6 +1736,7 @@ class VOD_Eikon
       case 'encodingfinished':
       case 'media_encoded':
       case 'video_encoded':
+      case 'media_ready':
         $this->handle_encoding_finished($video_data);
         break;
       case 'thumbnail_finished':
