@@ -650,14 +650,21 @@ class VOD_Eikon
 
   private function delete_video_from_api($vod_id)
   {
+    error_log('VOD Delete API: Starting delete_video_from_api for VOD ID: ' . $vod_id);
+
     $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
+    error_log('VOD Delete API: Channel ID: ' . ($channel_id ? 'Set' : 'Not set'));
+    error_log('VOD Delete API: API Token: ' . ($api_token ? 'Set' : 'Not set'));
+
     if (!$channel_id || !$api_token) {
+      error_log('VOD Delete API: Missing environment variables');
       return false;
     }
 
     $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}";
+    error_log('VOD Delete API: API URL: ' . $api_url);
 
     $response = wp_remote_request($api_url, array(
       'method' => 'DELETE',
@@ -668,16 +675,25 @@ class VOD_Eikon
       'timeout' => 30
     ));
 
+    error_log('VOD Delete API: Request sent');
+
     if (is_wp_error($response)) {
+      error_log('VOD Delete API: WP Error: ' . $response->get_error_message());
       return false;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
+    $response_body = wp_remote_retrieve_body($response);
+
+    error_log('VOD Delete API: Response code: ' . $response_code);
+    error_log('VOD Delete API: Response body: ' . $response_body);
 
     // API returns 204 No Content on successful deletion
     if ($response_code === 204) {
+      error_log('VOD Delete API: Deletion successful (204 response)');
       return true;
     } else {
+      error_log('VOD Delete API: Deletion failed with response code: ' . $response_code);
       return false;
     }
   }
@@ -775,17 +791,25 @@ class VOD_Eikon
 
   public function ajax_delete_video()
   {
+    error_log('VOD Delete: AJAX delete_video handler called');
+    error_log('VOD Delete: POST data: ' . print_r($_POST, true));
+
     // Verify nonce for security
     if (!wp_verify_nonce($_POST['nonce'], 'vod_eikon_nonce')) {
+      error_log('VOD Delete: Nonce verification failed');
       wp_die(json_encode(array(
         'success' => false,
         'data' => array('message' => 'Invalid security token.')
       )));
     }
 
+    error_log('VOD Delete: Nonce verification passed');
+
     $video_id = intval($_POST['video_id']);
+    error_log('VOD Delete: Video ID: ' . $video_id);
 
     if (empty($video_id)) {
+      error_log('VOD Delete: Invalid video ID provided');
       wp_send_json_error(array(
         'message' => 'ID de vidéo invalide.'
       ));
@@ -799,21 +823,33 @@ class VOD_Eikon
       $video_id
     ));
 
+    error_log('VOD Delete: Database query executed');
+    error_log('VOD Delete: Video found: ' . ($video ? 'Yes' : 'No'));
+
+    if ($video) {
+      error_log('VOD Delete: Video details - ID: ' . $video->id . ', VOD ID: ' . $video->vod_id . ', Name: ' . $video->name);
+    }
+
     if (!$video) {
+      error_log('VOD Delete: Video not found in database');
       wp_send_json_error(array(
         'message' => 'Vidéo introuvable.'
       ));
     }
 
+    error_log('VOD Delete: Attempting to delete from Infomaniak API');
     // Delete from Infomaniak VOD API first
     $api_delete_result = $this->delete_video_from_api($video->vod_id);
+    error_log('VOD Delete: API delete result: ' . ($api_delete_result ? 'success' : 'failure'));
 
     if (!$api_delete_result) {
+      error_log('VOD Delete: Failed to delete from Infomaniak API');
       wp_send_json_error(array(
         'message' => 'Échec de la suppression de la vidéo du service VOD Infomaniak.'
       ));
     }
 
+    error_log('VOD Delete: Attempting to delete from local database');
     // If API deletion was successful, delete from local database
     $result = $wpdb->delete(
       $this->table_name,
@@ -821,11 +857,15 @@ class VOD_Eikon
       array('%d')
     );
 
+    error_log('VOD Delete: Database delete result: ' . var_export($result, true));
+
     if ($result !== false) {
+      error_log('VOD Delete: Local database deletion successful');
       wp_send_json_success(array(
         'message' => 'Vidéo supprimée avec succès du service VOD Infomaniak et de la base de données locale.'
       ));
     } else {
+      error_log('VOD Delete: Local database deletion failed');
       wp_send_json_error(array(
         'message' => 'La vidéo a été supprimée du service VOD Infomaniak mais n\'a pas pu être supprimée de la base de données locale.'
       ));

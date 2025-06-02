@@ -546,10 +546,6 @@
 }
 
 .action-icon.toggle-details:hover {
-  margin-left: auto;
-}
-
-.action-icon.toggle-details:hover {
     background-color: #e3f2fd;
     color: #1976d2;
 }

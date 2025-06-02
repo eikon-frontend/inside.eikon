@@ -255,18 +255,36 @@ jQuery(document).ready(function ($) {
 
   // Delete video functionality
   $('.vod-eikon-videos').on('click', '.delete-video', function () {
+    console.log('VOD Eikon: Delete button clicked');
+
     var $icon = $(this);
     var videoId = $icon.data('video-id');
     var $row = $icon.closest('tr');
     var $dashicon = $icon.find('.dashicons');
 
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette vidéo de la base de données locale ?')) {
+    console.log('VOD Eikon: Video ID to delete:', videoId);
+    console.log('VOD Eikon: vodEikon object:', typeof vodEikon !== 'undefined' ? vodEikon : 'undefined');
+
+    if (!videoId) {
+      console.error('VOD Eikon: No video ID found for delete operation');
+      alert('Erreur: ID de vidéo introuvable');
       return;
     }
+
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette vidéo de la base de données locale ?')) {
+      console.log('VOD Eikon: Delete cancelled by user');
+      return;
+    }
+
+    console.log('VOD Eikon: Delete confirmed, proceeding with AJAX request');
 
     // Show loading state
     $icon.addClass('loading');
     $dashicon.removeClass('dashicons-trash').addClass('dashicons-update spin');
+
+    console.log('VOD Eikon: Sending delete AJAX request');
+    console.log('VOD Eikon: AJAX URL:', vodEikon.ajax_url);
+    console.log('VOD Eikon: Nonce:', vodEikon.nonce);
 
     $.ajax({
       url: vodEikon.ajax_url,
@@ -276,7 +294,12 @@ jQuery(document).ready(function ($) {
         video_id: videoId,
         nonce: vodEikon.nonce
       },
+      beforeSend: function () {
+        console.log('VOD Eikon: AJAX request about to be sent');
+      },
       success: function (response) {
+        console.log('VOD Eikon: AJAX success response:', response);
+
         if (response.success) {
           // Show success state briefly before removing row
           $dashicon.removeClass('spin dashicons-update').addClass('dashicons-yes-alt');
@@ -288,13 +311,20 @@ jQuery(document).ready(function ($) {
             });
           }, 1000);
         } else {
+          console.error('VOD Eikon: Delete failed:', response.data ? response.data.message : 'Unknown error');
           alert('Échec de la suppression de la vidéo : ' + response.data.message);
           // Reset to original state
           $icon.removeClass('loading');
           $dashicon.removeClass('spin dashicons-update').addClass('dashicons-trash');
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
+        console.error('VOD Eikon: AJAX error occurred');
+        console.error('Status:', status);
+        console.error('Error:', error);
+        console.error('Response Text:', xhr.responseText);
+        console.error('Status Code:', xhr.status);
+
         alert('Une erreur s\'est produite lors de la suppression de la vidéo.');
         // Reset to original state
         $icon.removeClass('loading');
