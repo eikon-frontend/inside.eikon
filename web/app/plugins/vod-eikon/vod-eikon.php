@@ -179,25 +179,27 @@ class VOD_Eikon
 
           <!-- Videos Tab -->
           <div id="videos-tab" class="vod-tab-panel active">
-            <div class="vod-eikon-actions">
-              <button id="sync-videos" class="button button-primary">
-                <span class="dashicons dashicons-update"></span>
-                Synchroniser
-              </button>
-              <button id="update-incomplete-videos" class="button button-primary">
-                <span class="dashicons dashicons-update-alt"></span>
-                MàJ des données incomplètes
-              </button>
-              <button id="test-api-logging" class="button button-secondary">
-                <span class="dashicons dashicons-admin-tools"></span>
-                Tester le logging API
-              </button>
-              <button id="test-callback-endpoint" class="button button-secondary">
-                <span class="dashicons dashicons-admin-tools"></span>
-                Tester callback endpoint
-              </button>
-              <span id="sync-status"></span>
-            </div>
+            <?php if (current_user_can('manage_options')): ?>
+              <div class="vod-eikon-actions">
+                <button id="sync-videos" class="button button-primary">
+                  <span class="dashicons dashicons-update"></span>
+                  Synchroniser
+                </button>
+                <button id="update-incomplete-videos" class="button button-primary">
+                  <span class="dashicons dashicons-update-alt"></span>
+                  MàJ des données incomplètes
+                </button>
+                <button id="test-api-logging" class="button button-secondary">
+                  <span class="dashicons dashicons-admin-tools"></span>
+                  Tester le logging API
+                </button>
+                <button id="test-callback-endpoint" class="button button-secondary">
+                  <span class="dashicons dashicons-admin-tools"></span>
+                  Tester callback endpoint
+                </button>
+                <span id="sync-status"></span>
+              </div>
+            <?php endif; ?>
 
             <div class="vod-eikon-videos">
               <?php if (empty($videos)): ?>
