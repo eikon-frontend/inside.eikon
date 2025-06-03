@@ -562,6 +562,12 @@ jQuery(document).ready(function ($) {
     e.preventDefault();
 
     var $button = $(this);
+
+    // Check if button is disabled
+    if ($button.hasClass('disabled')) {
+      return false;
+    }
+
     var vodId = $button.data('vod-id');
     var mpdUrl = $button.data('mpd-url');
     var poster = $button.data('poster');

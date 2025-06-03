@@ -572,6 +572,19 @@
     pointer-events: none;
 }
 
+/* Disabled state */
+.action-icon.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #999;
+}
+
+.action-icon.disabled:hover {
+    background-color: transparent;
+    color: #999;
+}
+
 /* Responsive design for details table */
 @media (max-width: 768px) {
     .detail-label {

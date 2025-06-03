@@ -256,6 +256,10 @@ class VOD_Eikon
                             <span class="action-icon play-video" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" data-mpd-url="<?php echo esc_attr($video->mpd_url); ?>" data-poster="<?php echo esc_attr($video->poster); ?>" data-title="<?php echo esc_attr($video->name); ?>" title="Lire la vidéo">
                               <span class="dashicons dashicons-video-alt3"></span>
                             </span>
+                          <?php else: ?>
+                            <span class="action-icon play-video disabled" title="Vidéo en cours de traitement - lecture non disponible">
+                              <span class="dashicons dashicons-video-alt3"></span>
+                            </span>
                           <?php endif; ?>
                           <span class="action-icon sync-single-video" data-video-id="<?php echo esc_attr($video->id); ?>" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" title="Synchroniser cette vidéo">
                             <span class="dashicons dashicons-update"></span>
