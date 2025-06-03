@@ -327,9 +327,9 @@ class VOD_Eikon
                   <span class="dashicons dashicons-info"></span>
                   <strong>Temps de Traitement :</strong> Après le téléchargement, les vidéos ont besoin de temps pour être traitées sur les serveurs d'Infomaniak.
                   L'image d'affiche et l'URL de lecture seront disponibles une fois le traitement terminé (généralement entre 5 et 30 minutes).
-                  Le système vérifiera automatiquement les mises à jour à intervalles réguliers.
                 </p>
               </div>
+
 
               <form id="vod-upload-form" enctype="multipart/form-data">
                 <table class="form-table">
