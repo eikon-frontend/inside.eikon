@@ -114,7 +114,7 @@ class VOD_Eikon
     add_media_page(
       'Vidéos',
       'Vidéos',
-      'manage_options',
+      'upload_files',
       'vod-eikon',
       array($this, 'admin_page')
     );
@@ -1780,15 +1780,11 @@ class VOD_Eikon
         $this->handle_encoding_finished($video_data);
         break;
       case 'thumbnail_finished':
-      case 'thumbnailfinished':
       case 'thumbnail_generated':
-      case 'poster_generated':
         $this->handle_thumbnail_finished($video_data);
         break;
       case 'media_deleted':
-      case 'mediadeleted':
       case 'video_deleted':
-      case 'deleted':
         $this->handle_media_deleted($video_data);
         break;
       default:
