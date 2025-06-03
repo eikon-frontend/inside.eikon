@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VOD Eikon
  * Plugin URI: https://eikon.ch
- * Description: Gérez les vidéos Infomaniak VOD directement depuis WordPress. Téléchargez, listez et supprimez des vidéos en utilisant l'API Infomaniak VOD.
+ * Description: Gérez les vidéos Infomaniak VOD directement depuis WordPress. Uploadez, listez et supprimez des vidéos en utilisant l'API Infomaniak VOD.
  * Version: 1.0.0
  * Author: EIKON
  * Author URI: https://eikon.ch
@@ -169,7 +169,7 @@ class VOD_Eikon
           <li class="vod-tab-nav" data-tab="upload">
             <a href="#upload-tab">
               <span class="dashicons dashicons-upload"></span>
-              Télécharger une Vidéo
+              Uploader une Vidéo
             </a>
           </li>
         </ul>
@@ -321,13 +321,13 @@ class VOD_Eikon
           <!-- Upload Tab -->
           <div id="upload-tab" class="vod-tab-panel">
             <div class="vod-upload-section">
-              <h2>Télécharger une Vidéo vers Infomaniak VOD</h2>
-              <p>Téléchargez un fichier vidéo vers votre chaîne Infomaniak VOD. Formats supportés : MP4, MOV, AVI, MKV.</p>
+              <h2>Uploader une Vidéo vers Infomaniak VOD</h2>
+              <p>Uploadez un fichier vidéo vers votre chaîne Infomaniak VOD. Formats supportés : MP4, MOV, AVI, MKV.</p>
 
               <div class="notice notice-info">
                 <p>
                   <span class="dashicons dashicons-info"></span>
-                  <strong>Temps de Traitement :</strong> Après le téléchargement, les vidéos ont besoin de temps pour être traitées sur les serveurs d'Infomaniak.
+                  <strong>Temps de Traitement :</strong> Après le chargement, les vidéos ont besoin de temps pour être traitées sur les serveurs d'Infomaniak.
                   L'image d'affiche et l'URL de lecture seront disponibles une fois le traitement terminé (généralement entre 5 et 30 minutes).
                 </p>
               </div>
@@ -341,7 +341,7 @@ class VOD_Eikon
                     </th>
                     <td>
                       <input type="file" id="video-file" name="video_file" accept="video/*" required>
-                      <p class="description">Sélectionnez un fichier vidéo à télécharger. Taille maximale du fichier : <?php echo $this->format_bytes($this->get_server_upload_limit()); ?></p>
+                      <p class="description">Sélectionnez un fichier vidéo à uploader. Taille maximale du fichier : <?php echo $this->format_bytes($this->get_server_upload_limit()); ?></p>
                     </td>
                   </tr>
                 </table>
@@ -349,7 +349,7 @@ class VOD_Eikon
                 <div class="vod-upload-actions">
                   <button type="submit" id="upload-video" class="button button-primary">
                     <span class="dashicons dashicons-upload"></span>
-                    Télécharger la Vidéo
+                    Uploader la Vidéo
                   </button>
                   <button type="button" id="cancel-upload" class="button button-secondary" style="display: none;">
                     Annuler le Téléchargement
@@ -938,7 +938,7 @@ class VOD_Eikon
     // Check if user can upload files
     if (!current_user_can('upload_files')) {
       wp_send_json_error(array(
-        'message' => 'Vous n\'avez pas l\'autorisation de télécharger des fichiers.'
+        'message' => 'Vous n\'avez pas l\'autorisation de uploader des fichiers.'
       ));
     }
 
@@ -967,7 +967,7 @@ class VOD_Eikon
     // Check if file was uploaded
     if (!isset($_FILES['video_file']) || $_FILES['video_file']['error'] !== UPLOAD_ERR_OK) {
       wp_send_json_error(array(
-        'message' => 'Aucun fichier téléchargé ou erreur de téléchargement.'
+        'message' => 'Aucun fichier uploadé ou erreur de chargement.'
       ));
     }
 
@@ -985,7 +985,7 @@ class VOD_Eikon
 
     if (!in_array($file_type, $allowed_types)) {
       wp_send_json_error(array(
-        'message' => 'Type de fichier invalide. Veuillez télécharger uniquement des fichiers MP4, MOV, AVI ou MKV.'
+        'message' => 'Type de fichier invalide. Veuillez uploader uniquement des fichiers MP4, MOV, AVI ou MKV.'
       ));
     }
 
@@ -1007,7 +1007,7 @@ class VOD_Eikon
       $video_id = $upload_result['video_id'];
 
       wp_send_json_success(array(
-        'message' => 'Vidéo téléchargée avec succès ! La vidéo sera automatiquement ajoutée à la base de données lorsque l\'encodage et la génération de la miniature seront terminés via le système de callbacks.',
+        'message' => 'Vidéo uploadée avec succès ! La vidéo sera automatiquement ajoutée à la base de données lorsque l\'encodage et la génération de la miniature seront terminés via le système de callbacks.',
         'video_id' => $upload_result['video_id']
       ));
     } else {
