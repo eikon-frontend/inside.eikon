@@ -196,12 +196,13 @@ add_action('graphql_register_types', function () {
             }
 
             // Return cached data if no refresh needed or refresh failed
-            return array(
-              'id' => $field_data['vod_id'],
+            $result = array(
+              'id' => $field_data['vod_id'], // Use vod_id as the main id for GraphQL
               'title' => $field_data['title'] ?? '',
               'thumbnail' => isset($field_data['poster']) ? esc_url($field_data['poster']) : '',
               'dashUrl' => isset($field_data['mpd_url']) ? esc_url($field_data['mpd_url']) : ''
             );
+            return $result;
           }
 
           return null;
