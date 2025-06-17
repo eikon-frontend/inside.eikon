@@ -2,7 +2,12 @@
   'use strict';
 
   /**
-   * Helper function to find the input element using consistent selectors
+   * Helper function to find the input element using consis      // Refresh button click
+      $container.on('click', '.vod-video-refresh', function (e) {
+        e.preventDefault();
+        refreshSelectedVideo();
+      });
+    }ors
    * @param {jQuery} $field The field element to search within
    * @return {jQuery|null} The found input element or null
    */
@@ -94,6 +99,12 @@
       $container.on('click', '.vod-video-remove', function (e) {
         e.preventDefault();
         removeSelectedVideo();
+      });
+
+      // Refresh video button
+      $container.on('click', '.vod-video-refresh', function (e) {
+        e.preventDefault();
+        refreshSelectedVideo();
       });
     }
 
@@ -249,6 +260,87 @@
     }
 
     /**
+     * Refresh the selected video with fresh data from database
+     */
+    function refreshSelectedVideo() {
+      const $fieldInput = findInputElement($field);
+      if (!$fieldInput) {
+        return;
+      }
+
+      const currentValue = $fieldInput.val();
+      if (!currentValue) {
+        return;
+      }
+
+      // Parse current video data to get VOD ID
+      let currentVideoData;
+      try {
+        currentVideoData = JSON.parse(currentValue);
+      } catch (e) {
+        console.error('Error parsing current video data:', e);
+        return;
+      }
+
+      const vodId = currentVideoData.vod_id || currentVideoData.id;
+      if (!vodId) {
+        console.error('No VOD ID found in current video data');
+        return;
+      }
+
+      // Show loading state
+      const $refreshBtn = $container.find('.vod-video-refresh');
+      const originalText = $refreshBtn.text();
+      $refreshBtn.text(acf_vod_video_field.i18n.loading).prop('disabled', true);
+
+      // Make AJAX request to refresh video data
+      $.ajax({
+        url: acf_vod_video_field.ajax_url,
+        type: 'POST',
+        data: {
+          action: 'acf_vod_video_refresh',
+          nonce: acf_vod_video_field.nonce,
+          vod_id: vodId
+        },
+        success: function (response) {
+          if (response.success && response.data.video) {
+            // Update field with fresh data
+            const jsonValue = JSON.stringify(response.data.video);
+
+            $fieldInput
+              .val(jsonValue)
+              .attr('value', jsonValue)
+              .trigger('change');
+
+            // Trigger ACF's change event
+            if (typeof acf !== 'undefined') {
+              acf.doAction('change', $field);
+            }
+
+            // Update the preview
+            updatePreview(response.data.video);
+
+            // Show success message
+            showNotification(acf_vod_video_field.i18n.refresh_success, 'success');
+
+            // Log for debugging
+            console.log('VOD Video refreshed successfully:', response.data.video);
+          } else {
+            console.error('VOD Video refresh failed:', response.data?.message);
+            showNotification(response.data?.message || acf_vod_video_field.i18n.refresh_error, 'error');
+          }
+        },
+        error: function () {
+          showNotification(acf_vod_video_field.i18n.refresh_error, 'error');
+        },
+        complete: function () {
+          // Restore button state
+          $refreshBtn.text(originalText).prop('disabled', false);
+        }
+      });
+    }
+
+    /**
      * Update the video preview
      */
     function updatePreview(videoData) {
@@ -256,33 +348,70 @@
       $currentPreview.remove();
 
       if (videoData && videoData.title) {
-        let html = '<div class="vod-video-preview">';
-        html += '<div class="vod-video-thumbnail">';
+        const $preview = $('<div class="vod-video-preview"></div>');
+
+        // Create thumbnail
+        const $thumbnail = $('<div class="vod-video-thumbnail"></div>');
         if (videoData.poster) {
-          html += '<img src="' + videoData.poster + '" alt="' + videoData.title + '">';
+          const $img = $('<img>')
+            .attr('src', videoData.poster)
+            .attr('alt', videoData.title)
+            .on('error', function () {
+              $(this).parent().html('<div class="vod-video-placeholder vod-video-error"><span class="dashicons dashicons-format-video"></span><small>Image indisponible</small></div>');
+              $preview.addClass('vod-video-stale-image');
+              showNotification('L\'image de la vidéo semble être obsolète. Utilisez le bouton "Actualiser" pour mettre à jour.', 'info');
+            });
+          $thumbnail.append($img);
         } else {
-          html += '<div class="vod-video-placeholder"><span class="dashicons dashicons-format-video"></span></div>';
+          $thumbnail.html('<div class="vod-video-placeholder"><span class="dashicons dashicons-format-video"></span></div>');
         }
-        html += '</div>';
-        html += '<div class="vod-video-details">';
-        html += '<h4>' + videoData.title + '</h4>';
+
+        // Create details
+        const $details = $('<div class="vod-video-details"></div>');
+        $details.append('<h4>' + $('<div>').text(videoData.title).html() + '</h4>');
+
         if (videoData.vod_id) {
-          html += '<p><small>VOD ID: ' + videoData.vod_id + '</small></p>';
+          $details.append('<p><small>VOD ID: ' + $('<div>').text(videoData.vod_id).html() + '</small></p>');
         }
-        html += '<div class="vod-video-actions">';
-        html += '<a href="#" class="vod-video-remove button">' + acf_vod_video_field.i18n.remove_video + '</a>';
-        html += '</div>';
-        html += '</div>';
-        html += '</div>';
 
-        $container.find('.vod-video-select').before(html);
+        // Create actions
+        const $actions = $('<div class="vod-video-actions"></div>');
+        const $removeBtn = $('<a href="#" class="vod-video-remove button"><span class="dashicons dashicons-trash"></span> ' + acf_vod_video_field.i18n.remove_video + '</a>');
+        const $refreshBtn = $('<a href="#" class="vod-video-refresh button" style="margin-left: 5px;"><span class="dashicons dashicons-update"></span> ' + acf_vod_video_field.i18n.refresh_video + '</a>');
+
+        $actions.append($removeBtn).append($refreshBtn);
+        $details.append($actions);
+
+        // Assemble preview
+        $preview.append($thumbnail).append($details);
+
+        // Insert before select button
+        $container.find('.vod-video-select').before($preview);
       } else {
-        let html = '<div class="vod-video-empty">';
-        html += '<p>Aucune vidéo sélectionnée</p>';
-        html += '</div>';
-
-        $container.find('.vod-video-select').before(html);
+        const $empty = $('<div class="vod-video-empty"><p>Aucune vidéo sélectionnée</p></div>');
+        $container.find('.vod-video-select').before($empty);
       }
+    }
+
+    /**
+     * Show a notification message
+     */
+    function showNotification(message, type = 'info') {
+      // Remove any existing notifications
+      $('.vod-video-notification').remove();
+
+      // Create notification element
+      const $notification = $('<div class="vod-video-notification vod-video-notification-' + type + '">' + message + '</div>');
+
+      // Add to container
+      $container.prepend($notification);
+
+      // Auto-hide after 3 seconds
+      setTimeout(function () {
+        $notification.fadeOut(300, function () {
+          $(this).remove();
+        });
+      }, 3000);
     }
 
     // Initialize event handlers

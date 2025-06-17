@@ -100,7 +100,8 @@
                             },
                             "graphql_field_name": "vod",
                             "return_format": "array",
-                            "allow_in_bindings": 0
+                            "allow_in_bindings": 0,
+                            "published_only": 1
                         },
                         {
                             "key": "field_683003b21de04",
@@ -124,7 +125,57 @@
                             "append": "",
                             "show_in_graphql": 1,
                             "graphql_description": "",
-                            "graphql_field_name": "",
+                            "graphql_field_name": "caption",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_68513db0fe0e6",
+                            "label": "Titre",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "",
+                            "graphql_field_name": "titre",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_68513dbafe0e7",
+                            "label": "Auteur",
+                            "name": "author",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "",
+                            "graphql_field_name": "auteur",
                             "graphql_non_null": 0
                         }
                     ],
@@ -265,5 +316,5 @@
     "graphql_field_name": "portfolio",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1748160149
+    "modified": 1750154748
 }

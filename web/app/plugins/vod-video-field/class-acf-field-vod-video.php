@@ -59,8 +59,11 @@ class acf_field_vod_video extends acf_field
       'search_videos' => __('Rechercher des vidéos...', 'vod-video-field'),
       'no_videos_found' => __('Aucune vidéo trouvée', 'vod-video-field'),
       'remove_video' => __('Supprimer la vidéo', 'vod-video-field'),
+      'refresh_video' => __('Actualiser la vidéo', 'vod-video-field'),
       'loading' => __('Chargement...', 'vod-video-field'),
       'error' => __('Erreur lors du chargement des vidéos', 'vod-video-field'),
+      'refresh_success' => __('Vidéo actualisée avec succès', 'vod-video-field'),
+      'refresh_error' => __('Erreur lors de l\'actualisation de la vidéo', 'vod-video-field'),
     );
 
     $this->icon = 'format-video';
@@ -69,6 +72,7 @@ class acf_field_vod_video extends acf_field
 
     // Add AJAX handlers
     add_action('wp_ajax_acf_vod_video_search', array($this, 'ajax_search_videos'));
+    add_action('wp_ajax_acf_vod_video_refresh', array($this, 'ajax_refresh_video'));
   }
 
   /**
@@ -188,8 +192,10 @@ class acf_field_vod_video extends acf_field
       if (isset($video_data['vod_id'])) {
         echo '<p><small>VOD ID: ' . esc_html($video_data['vod_id']) . '</small></p>';
       }
+
       echo '<div class="vod-video-actions">';
-      echo '<a href="#" class="vod-video-remove button">' . esc_html($this->l10n['remove_video']) . '</a>';
+      echo '<a href="#" class="vod-video-remove button"><span class="dashicons dashicons-trash"></span> ' . esc_html($this->l10n['remove_video']) . '</a>';
+      echo '<a href="#" class="vod-video-refresh button" style="margin-left: 5px;"><span class="dashicons dashicons-update"></span> ' . esc_html($this->l10n['refresh_video']) . '</a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';
@@ -201,7 +207,7 @@ class acf_field_vod_video extends acf_field
 
     // Selection button
     echo '<div class="vod-video-select">';
-    echo '<a href="#" class="vod-video-button button">' . esc_html($this->l10n['select_video']) . '</a>';
+    echo '<a href="#" class="vod-video-button button"><span class="dashicons dashicons-plus-alt2"></span> ' . esc_html($this->l10n['select_video']) . '</a>';
     echo '</div>';
 
     // Modal
@@ -273,6 +279,68 @@ class acf_field_vod_video extends acf_field
     $videos = $this->get_vod_eikon_videos($search_term, $published_only);
 
     wp_send_json_success(array('videos' => $videos));
+  }
+
+  /**
+   * AJAX callback to refresh video data from VOD Eikon plugin
+   */
+  public function ajax_refresh_video()
+  {
+    // Check nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'acf_vod_video_search_nonce')) {
+      wp_send_json_error(array('message' => __('Invalid security token', 'vod-video-field')));
+    }
+
+    // Check if VOD Eikon plugin is active
+    if (!$this->is_vod_eikon_active()) {
+      wp_send_json_error(array('message' => __('VOD Eikon plugin is not active', 'vod-video-field')));
+    }
+
+    $vod_id = isset($_POST['vod_id']) ? intval($_POST['vod_id']) : 0;
+
+    if (!$vod_id) {
+      wp_send_json_error(array('message' => __('Invalid video ID', 'vod-video-field')));
+    }
+
+    // Get fresh video data from database
+    $video_data = $this->get_fresh_video_data($vod_id);
+
+    if (!$video_data) {
+      wp_send_json_error(array('message' => __('Video not found', 'vod-video-field')));
+    }
+
+    wp_send_json_success(array('video' => $video_data));
+  }
+
+  /**
+   * Get fresh video data from VOD Eikon database
+   *
+   * @param int $vod_id The VOD ID to refresh
+   * @return array|null Video data or null if not found
+   */
+  private function get_fresh_video_data($vod_id)
+  {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'vod_eikon_videos';
+
+    $video = $wpdb->get_row($wpdb->prepare(
+      "SELECT * FROM {$table_name} WHERE vod_id = %d AND published = 1",
+      $vod_id
+    ));
+
+    if (!$video) {
+      return null;
+    }
+
+    return array(
+      'id' => $video->id,
+      'vod_id' => $video->vod_id,
+      'title' => $video->name,
+      'poster' => $video->poster,
+      'mpd_url' => $video->mpd_url,
+      'created_at' => $video->created_at,
+      'updated_at' => $video->updated_at,
+    );
   }
 
   /**

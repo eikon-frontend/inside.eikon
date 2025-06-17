@@ -232,6 +232,116 @@
     text-overflow: ellipsis;
 }
 
+/* Notification Styles */
+.vod-video-notification {
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    font-size: 13px;
+    line-height: 1.4;
+    animation: slideInDown 0.3s ease-out;
+}
+
+.vod-video-notification-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.vod-video-notification-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.vod-video-notification-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Refresh Button Styling */
+.vod-video-refresh {
+    background-color: #0073aa;
+    color: white;
+    border-color: #0073aa;
+}
+
+.vod-video-refresh:hover {
+    background-color: #005a87;
+    border-color: #005a87;
+    color: white;
+}
+
+.vod-video-refresh:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Enhanced Actions Layout */
+.vod-video-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.vod-video-actions .button {
+    flex: 0 0 auto;
+    font-size: 12px;
+    height: auto;
+    padding: 4px 8px;
+}
+
+/* Button Icons */
+.vod-video-actions .button .dashicons,
+.vod-video-select .button .dashicons {
+    font-size: 16px;
+    line-height: 1;
+    vertical-align: middle;
+    margin-right: 4px;
+    margin-top: -2px;
+}
+
+.vod-video-button .dashicons {
+    color: #0073aa;
+}
+
+.vod-video-remove .dashicons {
+    color: #d63638;
+}
+
+.vod-video-refresh .dashicons {
+    color: #00a32a;
+}
+
+/* Button hover states */
+.vod-video-button:hover .dashicons {
+    color: #005a87;
+}
+
+.vod-video-remove:hover .dashicons {
+    color: #b32d2e;
+}
+
+.vod-video-refresh:hover .dashicons {
+    color: #008a20;
+}
+
+.vod-video-refresh:disabled .dashicons {
+    color: #a7aaad;
+}
+
 /* Responsive Adjustments */
 @media screen and (max-width: 782px) {
     .vod-video-thumbnail {
@@ -263,5 +373,40 @@
         margin-left: 20px; /* Maintain left margin within the new space */
         margin-right: 20px; /* Maintain right margin */
     }
+}
+
+/* Stale Image Indicator */
+.vod-video-stale-image .vod-video-thumbnail {
+    border: 2px solid #ffb900;
+    position: relative;
+}
+
+.vod-video-stale-image .vod-video-thumbnail::after {
+    content: "⚠";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ffb900;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.vod-video-placeholder.vod-video-error {
+    background-color: #f8d7da;
+    border: 2px solid #f5c6cb;
+    color: #721c24;
+}
+
+.vod-video-placeholder.vod-video-error small {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
 }
 

@@ -157,8 +157,42 @@ add_action('graphql_register_types', function () {
               );
             }
           }
-          // If the field value is an object with video data, return it directly
+          // If the field value is an object with video data, check if we need to refresh it
           elseif (is_array($field_data) && isset($field_data['vod_id'])) {
+            // Check if we should refresh the data (e.g., if poster URL is old or missing)
+            $should_refresh = false;
+
+            // If no poster URL or it seems to be an outdated format, refresh from database
+            if (
+              empty($field_data['poster']) ||
+              (isset($field_data['updated_at']) && strtotime($field_data['updated_at']) < strtotime('-1 hour'))
+            ) {
+              $should_refresh = true;
+            }
+
+            if ($should_refresh) {
+              // Get fresh data from database
+              global $wpdb;
+              $table_name = $wpdb->prefix . 'vod_eikon_videos';
+
+              $video = $wpdb->get_row($wpdb->prepare(
+                "SELECT vod_id, title, poster, mpd_url, updated_at
+                FROM $table_name
+                WHERE vod_id = %d AND published = 1",
+                $field_data['vod_id']
+              ));
+
+              if ($video) {
+                return array(
+                  'id' => $video->vod_id,
+                  'title' => $video->title,
+                  'thumbnail' => esc_url($video->poster),
+                  'dashUrl' => esc_url($video->mpd_url)
+                );
+              }
+            }
+
+            // Return cached data if no refresh needed or refresh failed
             return array(
               'id' => $field_data['vod_id'],
               'title' => $field_data['title'] ?? '',
