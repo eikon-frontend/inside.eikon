@@ -139,15 +139,15 @@ add_action('graphql_register_types', function () {
           // Handle both string (JSON) and array values
           $field_data = is_string($field_value) ? json_decode($field_value, true) : $field_value;
 
-          // If the field value is just a VOD ID (integer), query the VOD Eikon table
-          if (is_numeric($field_data)) {
+          // If the field value is just a VOD ID (string), query the VOD Eikon table
+          if (is_string($field_data) || is_numeric($field_data)) {
             global $wpdb;
             $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
             $video = $wpdb->get_row($wpdb->prepare(
               "SELECT vod_id, name, poster, mpd_url
               FROM $table_name
-              WHERE vod_id = %d AND published = 1",
+              WHERE vod_id = %s AND published = 1",
               $field_data
             ));
 
@@ -181,7 +181,7 @@ add_action('graphql_register_types', function () {
               $video = $wpdb->get_row($wpdb->prepare(
                 "SELECT vod_id, name, poster, mpd_url, updated_at
                 FROM $table_name
-                WHERE vod_id = %d AND published = 1",
+                WHERE vod_id = %s AND published = 1",
                 $field_data['vod_id']
               ));
 
@@ -223,15 +223,15 @@ add_filter('acf/format_value/type=vod_video', function ($value, $post_id, $field
   // Handle both string (JSON) and array values
   $field_data = is_string($value) ? json_decode($value, true) : $value;
 
-  // If the value is just a VOD ID (integer), fetch full video data from VOD Eikon
-  if (is_numeric($field_data)) {
+  // If the value is just a VOD ID (string or numeric), fetch full video data from VOD Eikon
+  if (is_string($field_data) || is_numeric($field_data)) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
     $video = $wpdb->get_row($wpdb->prepare(
       "SELECT vod_id, name, poster, mpd_url
       FROM $table_name
-      WHERE vod_id = %d AND published = 1",
+      WHERE vod_id = %s AND published = 1",
       $field_data
     ));
 

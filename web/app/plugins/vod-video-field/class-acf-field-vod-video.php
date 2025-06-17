@@ -296,9 +296,9 @@ class acf_field_vod_video extends acf_field
       wp_send_json_error(array('message' => __('VOD Eikon plugin is not active', 'vod-video-field')));
     }
 
-    $vod_id = isset($_POST['vod_id']) ? intval($_POST['vod_id']) : 0;
+    $vod_id = isset($_POST['vod_id']) ? sanitize_text_field($_POST['vod_id']) : '';
 
-    if (!$vod_id) {
+    if (empty($vod_id)) {
       wp_send_json_error(array('message' => __('Invalid video ID', 'vod-video-field')));
     }
 
@@ -315,7 +315,7 @@ class acf_field_vod_video extends acf_field
   /**
    * Get fresh video data from VOD Eikon database
    *
-   * @param int $vod_id The VOD ID to refresh
+   * @param string $vod_id The VOD ID to refresh
    * @return array|null Video data or null if not found
    */
   private function get_fresh_video_data($vod_id)
@@ -324,7 +324,7 @@ class acf_field_vod_video extends acf_field
     $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
     $video = $wpdb->get_row($wpdb->prepare(
-      "SELECT * FROM {$table_name} WHERE vod_id = %d AND published = 1",
+      "SELECT * FROM {$table_name} WHERE vod_id = %s AND published = 1",
       $vod_id
     ));
 
