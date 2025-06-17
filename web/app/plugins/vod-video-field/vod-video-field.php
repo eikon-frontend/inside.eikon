@@ -142,7 +142,7 @@ add_action('graphql_register_types', function () {
             $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
             $video = $wpdb->get_row($wpdb->prepare(
-              "SELECT vod_id, title, poster, mpd_url
+              "SELECT vod_id, name, poster, mpd_url
               FROM $table_name
               WHERE vod_id = %d AND published = 1",
               $field_data
@@ -151,7 +151,7 @@ add_action('graphql_register_types', function () {
             if ($video) {
               return array(
                 'id' => $video->vod_id,
-                'title' => $video->title,
+                'title' => $video->name,
                 'thumbnail' => esc_url($video->poster),
                 'dashUrl' => esc_url($video->mpd_url)
               );
@@ -176,7 +176,7 @@ add_action('graphql_register_types', function () {
               $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
               $video = $wpdb->get_row($wpdb->prepare(
-                "SELECT vod_id, title, poster, mpd_url, updated_at
+                "SELECT vod_id, name, poster, mpd_url, updated_at
                 FROM $table_name
                 WHERE vod_id = %d AND published = 1",
                 $field_data['vod_id']
@@ -185,7 +185,7 @@ add_action('graphql_register_types', function () {
               if ($video) {
                 return array(
                   'id' => $video->vod_id,
-                  'title' => $video->title,
+                  'title' => $video->name,
                   'thumbnail' => esc_url($video->poster),
                   'dashUrl' => esc_url($video->mpd_url)
                 );
@@ -225,7 +225,7 @@ add_filter('acf/format_value/type=vod_video', function ($value, $post_id, $field
     $table_name = $wpdb->prefix . 'vod_eikon_videos';
 
     $video = $wpdb->get_row($wpdb->prepare(
-      "SELECT vod_id, title, poster, mpd_url
+      "SELECT vod_id, name, poster, mpd_url
       FROM $table_name
       WHERE vod_id = %d AND published = 1",
       $field_data
@@ -234,7 +234,7 @@ add_filter('acf/format_value/type=vod_video', function ($value, $post_id, $field
     if ($video) {
       return array(
         'vod_id' => $video->vod_id,
-        'title' => $video->title,
+        'title' => $video->name,
         'poster' => $video->poster,
         'mpd_url' => $video->mpd_url
       );
