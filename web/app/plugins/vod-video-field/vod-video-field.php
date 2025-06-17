@@ -105,9 +105,11 @@ add_action('graphql_register_types', function () {
           $post_id = null;
 
           // Get the field value from either direct field or flexible content layout
-          if (isset($root['vod'])) {
+          if (array_key_exists('vod', $root)) {
+            // Use array_key_exists instead of isset to handle null values properly
             $field_value = $root['vod'];
           } else {
+            // Only fall back to post-based lookup for direct post fields, not flexible content
             // Extract post ID from root using various methods
             if (is_array($root) && isset($root['databaseId'])) {
               $post_id = $root['databaseId'];
@@ -123,7 +125,8 @@ add_action('graphql_register_types', function () {
               $post_id = $context->nodeid ?? get_queried_object_id();
             }
 
-            if ($post_id) {
+            // Only try to get field value from post if we have a post ID and this is not a flexible content layout
+            if ($post_id && !isset($root['fieldName'])) {
               // Try getting the field value using multiple methods
               $field_value = get_field('vod', $post_id) ?: get_post_meta($post_id, 'vod', true) ?: get_field('field_vod', $post_id);
             }
