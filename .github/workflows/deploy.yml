@@ -62,5 +62,5 @@ jobs:
       - name: Clear opcache
         run: |
           ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "echo '<?php opcache_reset(); ?>' > ${{ vars.DEPLOY_PATH }}/current/web/opcache_clear.php"
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "curl -s https://inside-2024.eikon.ch/opcache_clear.php"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "curl -s https://inside.eikon.ch/opcache_clear.php"
           ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "rm -rf ${{ vars.DEPLOY_PATH }}/current/web/opcache_clear.php"
