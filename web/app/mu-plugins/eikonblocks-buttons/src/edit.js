@@ -1,4 +1,4 @@
-import { useBlockProps, BlockControls, AlignmentToolbar } from '@wordpress/block-editor';
+import { useBlockProps, BlockControls, AlignmentToolbar, URLInput } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
@@ -30,9 +30,13 @@ export default function Edit(props) {
     setAttributes({ items: newItems });
   };
 
-  const handleUrlChange = (index, url) => {
+  const handleUrlChange = (index, link) => {
     const newItems = [...items];
-    newItems[index] = { ...newItems[index], url };
+    newItems[index] = {
+      ...newItems[index],
+      url: link.url || link,
+      opensInNewTab: link.opensInNewTab !== undefined ? link.opensInNewTab : newItems[index].opensInNewTab
+    };
     setAttributes({ items: newItems });
   };
 
@@ -85,12 +89,11 @@ export default function Edit(props) {
                     <label>{__('Lien', 'eikonblocks')}</label>
                   </td>
                   <td>
-                    <input
-                      type="text"
+                    <URLInput
                       value={item.url || ''}
-                      onChange={(e) => handleUrlChange(index, e.target.value)}
+                      onChange={(url, link) => handleUrlChange(index, link || { url })}
                       placeholder={__('Enter URL', 'eikonblocks')}
-                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
+                      className="eikonblocks-url-input"
                     />
                   </td>
                 </tr>
