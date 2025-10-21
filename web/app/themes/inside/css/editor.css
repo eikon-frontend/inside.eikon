@@ -2,9 +2,13 @@
   padding: 20px;
 }
 
-.wp-block h2{
+.wp-block h2 {
   margin: 0;
   font-size: 14px;
+}
+
+.wp-block a {
+  color: inherit;
 }
 
 .wp-block-list {
