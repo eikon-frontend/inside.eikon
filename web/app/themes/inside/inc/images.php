@@ -83,6 +83,7 @@ add_filter('upload_mimes', function ($mimes) {
   $mimes['png'] = 'image/png';
   $mimes['webp'] = 'image/webp';
   $mimes['pdf'] = 'application/pdf';
+  $mimes['zip'] = 'application/zip';
 
   return $mimes;
 });
