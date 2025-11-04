@@ -7,4 +7,3 @@ $wp_roles->remove_role("matomo_superuser_role");
 $wp_roles->remove_role("matomo_admin_role");
 
 $wp_roles->add_role("supervisor", "Enseignant / enseignante");
-$wp_roles->add_role("responsable", "Responsable de branche");
