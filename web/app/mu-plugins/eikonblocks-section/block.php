@@ -30,3 +30,17 @@ function eikonblocks_section_init()
   register_block_type(__DIR__ . '/build');
 }
 add_action('init', 'eikonblocks_section_init');
+
+/**
+ * Filter to hide the block if it is inactive.
+ */
+function eikonblocks_section_render_filter($block_content, $block)
+{
+  if ($block['blockName'] === 'eikonblocks/section') {
+    if (isset($block['attrs']['isActive']) && $block['attrs']['isActive'] === false) {
+      return '';
+    }
+  }
+  return $block_content;
+}
+add_filter('render_block', 'eikonblocks_section_render_filter', 10, 2);

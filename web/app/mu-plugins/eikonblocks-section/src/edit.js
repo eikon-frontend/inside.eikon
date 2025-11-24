@@ -1,10 +1,10 @@
-import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InnerBlocks, InspectorControls, BlockControls } from '@wordpress/block-editor';
 import { PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { SelectControl, PanelBody, ToggleControl } from '@wordpress/components';
+import { SelectControl, PanelBody, ToggleControl, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 
 const Edit = ({ attributes, setAttributes }) => {
-  const { backgroundColor, textColor, paddingTop, paddingBottom, isPaddingSymmetrical } = attributes;
+  const { backgroundColor, textColor, paddingTop, paddingBottom, isPaddingSymmetrical, isActive } = attributes;
 
   const paddingClasses = isPaddingSymmetrical
     ? `padding-${paddingTop}`
@@ -12,7 +12,24 @@ const Edit = ({ attributes, setAttributes }) => {
 
   return (
     <>
+      <BlockControls>
+        <ToolbarGroup>
+          <ToolbarButton
+            icon={isActive ? 'visibility' : 'hidden'}
+            label={isActive ? __('Hide', 'eikonblocks') : __('Show', 'eikonblocks')}
+            onClick={() => setAttributes({ isActive: !isActive })}
+            isPressed={!isActive}
+          />
+        </ToolbarGroup>
+      </BlockControls>
       <InspectorControls>
+        <PanelBody title={__('Visibility', 'eikonblocks')} initialOpen={true}>
+          <ToggleControl
+            label={__('Active', 'eikonblocks')}
+            checked={isActive}
+            onChange={(value) => setAttributes({ isActive: value })}
+          />
+        </PanelBody>
         <PanelColorSettings
           title={__('Color Settings', 'eikonblocks')}
           initialOpen={true}
@@ -78,7 +95,11 @@ const Edit = ({ attributes, setAttributes }) => {
       <div
         {...useBlockProps({
           className: paddingClasses,
-          style: { backgroundColor, color: textColor },
+          style: {
+            backgroundColor,
+            color: textColor,
+            opacity: isActive ? 1 : 0.5
+          },
         })}
       >
         <div className='eikonblock-title'>eikonblock // section</div>

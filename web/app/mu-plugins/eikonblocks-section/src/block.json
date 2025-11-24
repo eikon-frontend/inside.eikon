@@ -31,6 +31,10 @@
     "core/list-item"
   ],
   "attributes": {
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
     "backgroundColor": {
       "type": "string",
       "default": "white"
