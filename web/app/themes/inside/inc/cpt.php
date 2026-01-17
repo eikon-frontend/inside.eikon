@@ -307,7 +307,8 @@ add_action('pre_get_posts', 'set_default_page_order');
 // Expose all draft and review (pending) posts from cpt project to graphql
 add_filter('graphql_connection_query_args', function ($query_args, $connection_resolver) {
   if (class_exists('\WPGraphQL\Data\Connection\PostObjectConnectionResolver') && $connection_resolver instanceof \WPGraphQL\Data\Connection\PostObjectConnectionResolver) {
-    if ('project' === $connection_resolver->get_post_type()) {
+    $post_type = isset($query_args['post_type']) ? $query_args['post_type'] : '';
+    if ((is_array($post_type) && in_array('project', $post_type)) || $post_type === 'project') {
       $query_args['post_status'] = ['publish', 'draft', 'pending'];
     }
   }
