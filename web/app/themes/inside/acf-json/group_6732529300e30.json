@@ -81,7 +81,8 @@
             },
             "graphql_field_name": "vod",
             "return_format": "array",
-            "allow_in_bindings": 1
+            "allow_in_bindings": 1,
+            "published_only": 1
         }
     ],
     "location": [
@@ -102,11 +103,12 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
+    "display_title": "",
     "show_in_graphql": 1,
     "graphql_field_name": "pageFields",
     "map_graphql_types_from_location_rules": 1,
     "graphql_types": [
         "Page"
     ],
-    "modified": 1748127270
+    "modified": 1768657114
 }

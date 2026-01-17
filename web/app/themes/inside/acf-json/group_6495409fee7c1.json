@@ -3,6 +3,31 @@
     "title": "Projets",
     "fields": [
         {
+            "key": "field_696b90ae9f475",
+            "label": "Sous-titre",
+            "name": "subtitle",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "subtitle",
+            "graphql_non_null": 0
+        },
+        {
             "key": "field_6495409ff160e",
             "label": "Année de production",
             "name": "year",
@@ -143,9 +168,10 @@
     "active": true,
     "description": "",
     "show_in_rest": 1,
+    "display_title": "",
     "show_in_graphql": 1,
     "graphql_field_name": "projetsFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1732355643
+    "modified": 1768657131
 }
