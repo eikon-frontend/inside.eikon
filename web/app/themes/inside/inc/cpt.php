@@ -67,6 +67,51 @@ function project_post_type()
 }
 add_action('init', 'project_post_type', 5);
 
+/**
+ * Ensure projects have a slug (post_name) even when saved as draft/pending.
+ *
+ * Nuxt fetches projects by GraphQL idType: SLUG. WordPress sometimes keeps post_name empty
+ * until the first publish, which makes unpublished projects unreachable by slug.
+ */
+function eikon_ensure_project_slug_on_save($post_id, $post, $update)
+{
+  static $running = false;
+  if ($running) {
+    return;
+  }
+
+  if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+    return;
+  }
+
+  if (empty($post) || $post->post_type !== 'project') {
+    return;
+  }
+
+  // Don't generate slugs for placeholder posts.
+  if ($post->post_status === 'auto-draft') {
+    return;
+  }
+
+  // Only set if empty; don't override manually edited slugs.
+  if (!empty($post->post_name) || empty($post->post_title)) {
+    return;
+  }
+
+  $running = true;
+
+  $slug = sanitize_title($post->post_title);
+  $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
+
+  wp_update_post([
+    'ID' => $post_id,
+    'post_name' => $slug,
+  ]);
+
+  $running = false;
+}
+add_action('save_post_project', 'eikon_ensure_project_slug_on_save', 10, 3);
+
 
 register_taxonomy('year', array('project'), array(
   'labels' => array(
