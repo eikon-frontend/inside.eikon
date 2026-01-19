@@ -418,28 +418,59 @@ class VOD_Eikon
       return false;
     }
 
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster,streams,encoded_medias";
+    // Fetch all videos with pagination support
+    $all_videos = array();
+    $page = 1;
+    $per_page = 100; // Request more items per page
+    
+    do {
+      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster,streams,encoded_medias&page={$page}&per_page={$per_page}";
 
-    $response = wp_remote_get($api_url, array(
-      'headers' => array(
-        'Authorization' => 'Bearer ' . $api_token,
-        'Accept' => 'application/json'
-      ),
-      'timeout' => 30
-    ));
+      $response = wp_remote_get($api_url, array(
+        'headers' => array(
+          'Authorization' => 'Bearer ' . $api_token,
+          'Accept' => 'application/json'
+        ),
+        'timeout' => 30
+      ));
 
-    if (is_wp_error($response)) {
+      if (is_wp_error($response)) {
+        return false;
+      }
+
+      $response_code = wp_remote_retrieve_response_code($response);
+      $body = wp_remote_retrieve_body($response);
+
+      $data = json_decode($body, true);
+
+      if (!$data || !isset($data['data'])) {
+        break;
+      }
+      
+      // Add videos from this page to the collection
+      $all_videos = array_merge($all_videos, $data['data']);
+      
+      // Check if there are more pages
+      $has_more = false;
+      if (isset($data['pages']) && $page < $data['pages']) {
+        $has_more = true;
+      } elseif (isset($data['pagination']['pages']) && $page < $data['pagination']['pages']) {
+        $has_more = true;
+      } elseif (count($data['data']) >= $per_page) {
+        // If we got a full page, there might be more
+        $has_more = true;
+      }
+      
+      $page++;
+      
+    } while ($has_more && $page <= 100); // Safety limit of 100 pages
+    
+    if (empty($all_videos)) {
       return false;
     }
-
-    $response_code = wp_remote_retrieve_response_code($response);
-    $body = wp_remote_retrieve_body($response);
-
-    $data = json_decode($body, true);
-
-    if (!$data || !isset($data['data'])) {
-      return false;
-    }
+    
+    // Replace $data['data'] with all collected videos
+    $data = array('data' => $all_videos);
 
     global $wpdb;
     $synced_count = 0;
