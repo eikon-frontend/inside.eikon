@@ -465,10 +465,11 @@ class VOD_Eikon
 
       // Filter out videos that are not in the root folder (path != "/")
       // Only sync videos that are in the root folder
-      $folder_path = $video_data['folder']['path'] ?? '';
-      if ($folder_path !== '/') {
-        continue;
-      }
+      // DISABLED: Sync all videos regardless of folder
+      // $folder_path = $video_data['folder']['path'] ?? '';
+      // if ($folder_path !== '/') {
+      //   continue;
+      // }
 
       // Filter out videos that are in the trash (have a discarded_at timestamp)
       $discarded_at = $video_data['discarded_at'] ?? null;
