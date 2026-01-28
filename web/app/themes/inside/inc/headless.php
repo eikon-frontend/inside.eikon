@@ -21,9 +21,14 @@ function info_box($post)
   if ($post->post_name) {
     $post_external_url = get_permalink($post->ID);
     echo '<h3>URL Externe & QR Code</h3>';
-    echo '<a href="' . $post_external_url . '" target="_blank">' . $post_external_url . '</a><hr />';
-    $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
-    echo '<img style="width:100%" src="' . $base64_data . '" />';
+
+    if ($post_external_url && filter_var($post_external_url, FILTER_VALIDATE_URL)) {
+      echo '<a href="' . esc_url($post_external_url) . '" target="_blank">' . esc_url($post_external_url) . '</a><hr />';
+      $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
+      echo '<img style="width:100%" src="' . esc_attr($base64_data) . '" alt="QR Code" />';
+    } else {
+      echo '<p style="color: #d63638;">URL invalide pour la génération du QR code.</p>';
+    }
   } else {
     echo "Enregistrez d'abord le projet pour obtenir l'URL externe et le QR Code.";
   }

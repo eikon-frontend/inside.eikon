@@ -1,6 +1,7 @@
 # Inside Eikon - Improvements & Recommendations
 
 ## Priority System
+
 - 🔴 **Critical**: Security, data integrity, or blocking issues
 - 🟠 **High**: Performance, user experience, or code quality
 - 🟡 **Medium**: Nice-to-have improvements, optimization
@@ -10,61 +11,12 @@
 
 ## 🔴 Critical Priority
 
-### 1. Security: Disable Display Errors in Production
-**File**: `web/app/themes/inside/inc/graphql.php:4`
-
-**Issue**:
-```php
-@ini_set('display_errors', 0);
-```
-Using error suppression operator `@` and disabling errors in theme code is fragile.
-
-**Problem**: 
-- Already handled in `config/application.php:116` properly
-- Theme override may not work in all server configs
-- Using `@` hides potential configuration issues
-
-**Fix**:
-```php
-// Remove line 4 from graphql.php entirely
-// Already handled in config/application.php
-```
-
-**Priority**: 🔴 Critical - Could expose sensitive errors in production
-
----
-
-### 2. Security: QR Code Generation Vulnerability
-**File**: `web/app/themes/inside/inc/headless.php:24`
-
-**Issue**:
-```php
-$post_external_url = get_permalink($post->ID);
-// ... generates QR code with URL
-```
-
-**Problem**: URL passed to QR generation without validation. If permalink generation fails or returns unexpected value, could cause issues.
-
-**Fix**:
-```php
-$post_external_url = get_permalink($post->ID);
-if ($post_external_url && filter_var($post_external_url, FILTER_VALIDATE_URL)) {
-    echo '<a href="' . esc_url($post_external_url) . '" target="_blank">' . esc_url($post_external_url) . '</a><hr />';
-    $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
-    echo '<img style="width:100%" src="' . esc_attr($base64_data) . '" alt="QR Code" />';
-} else {
-    echo "URL invalide pour la génération du QR code.";
-}
-```
-
-**Priority**: 🔴 Critical - Security and data validation
-
----
-
 ### 3. Database Query: SQL Injection Prevention
+
 **File**: `web/app/themes/inside/inc/cpt.php:291-295`
 
 **Issue**:
+
 ```php
 $count = (int) $wpdb->get_var($wpdb->prepare(
     "SELECT COUNT(ID) FROM $wpdb->posts WHERE
@@ -76,6 +28,7 @@ $count = (int) $wpdb->get_var($wpdb->prepare(
 **Problem**: `$wpdb->posts` variable interpolation happens BEFORE `$wpdb->prepare()`, which is correct, but the query has unnecessary line breaks that could cause issues.
 
 **Fix**:
+
 ```php
 $count = (int) $wpdb->get_var($wpdb->prepare(
     "SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type = 'project' AND post_author = %d",
@@ -90,25 +43,28 @@ $count = (int) $wpdb->get_var($wpdb->prepare(
 ## 🟠 High Priority
 
 ### 4. Missing Error Handling in Image Conversion
+
 **File**: `web/app/themes/inside/inc/images.php:12-39`
 
 **Issue**: WebP conversion filter doesn't handle errors or inform users of failures.
 
 **Problem**:
+
 - Silent failures if GD/Imagick not available
 - No logging when conversion fails
 - Original images deleted without verifying WebP creation success
 
 **Fix**:
+
 ```php
 add_filter('wp_generate_attachment_metadata', function ($metadata) {
     if (!function_exists('wp_get_image_editor')) {
         error_log('WebP conversion: wp_get_image_editor not available');
         return $metadata;
     }
-    
+
     $upload_dir = wp_upload_dir();
-    
+
     // Convert original image
     $original_file = $upload_dir['basedir'] . '/' . $metadata['file'];
     if (!preg_match('/\.webp$/i', $original_file)) {
@@ -123,7 +79,7 @@ add_filter('wp_generate_attachment_metadata', function ($metadata) {
             error_log('WebP editor error for ' . $original_file . ': ' . $original_image->get_error_message());
         }
     }
-    
+
     // Convert variations
     foreach ($metadata['sizes'] as $size => $sizeInfo) {
         $file = $upload_dir['basedir'] . '/' . dirname($metadata['file']) . '/' . $sizeInfo['file'];
@@ -150,6 +106,7 @@ add_filter('wp_generate_attachment_metadata', function ($metadata) {
 ---
 
 ### 5. VOD Plugin: Missing Nonce Verification
+
 **File**: `web/app/plugins/vod-eikon/vod-eikon.php`
 
 **Issue**: AJAX endpoints need nonce verification audit.
@@ -157,6 +114,7 @@ add_filter('wp_generate_attachment_metadata', function ($metadata) {
 **Problem**: Security best practice - all AJAX actions should verify nonces.
 
 **Check Required**:
+
 ```php
 // Ensure all AJAX handlers have:
 check_ajax_referer('vod_eikon_nonce', 'nonce');
@@ -167,6 +125,7 @@ check_ajax_referer('vod_eikon_nonce', 'nonce');
 ---
 
 ### 6. Performance: N+1 Query in Project Column
+
 **File**: `web/app/themes/inside/inc/cpt.php:287-298`
 
 **Issue**: User column queries database for each user row individually.
@@ -174,24 +133,25 @@ check_ajax_referer('vod_eikon_nonce', 'nonce');
 **Problem**: If you have 100 users, this creates 100 separate database queries.
 
 **Fix**:
+
 ```php
 // Cache the counts
 function user_projects_column_value($value, $column_name, $id) {
     if ($column_name == 'user_projects') {
         static $project_counts = null;
-        
+
         if ($project_counts === null) {
             global $wpdb;
             $results = $wpdb->get_results(
-                "SELECT post_author, COUNT(ID) as count 
-                 FROM $wpdb->posts 
-                 WHERE post_type = 'project' 
+                "SELECT post_author, COUNT(ID) as count
+                 FROM $wpdb->posts
+                 WHERE post_type = 'project'
                  GROUP BY post_author",
                 OBJECT_K
             );
             $project_counts = array_map(function($r) { return $r->count; }, $results);
         }
-        
+
         return isset($project_counts[$id]) ? (int) $project_counts[$id] : 0;
     }
 }
@@ -202,9 +162,11 @@ function user_projects_column_value($value, $column_name, $id) {
 ---
 
 ### 7. Inconsistent Hook Priority
+
 **File**: `web/app/themes/inside/inc/acf.php:23-25`
 
 **Issue**:
+
 ```php
 add_filter('acf/fields/wysiwyg/toolbars', function ($toolbars) {
     return $toolbars;
@@ -220,9 +182,11 @@ add_filter('acf/fields/wysiwyg/toolbars', function ($toolbars) {
 ---
 
 ### 8. Hardcoded URLs in Deployment
+
 **File**: `.github/workflows/deploy.yml:65`
 
 **Issue**:
+
 ```yaml
 ssh ... "curl -s https://inside.eikon.ch/opcache_clear.php"
 ```
@@ -230,6 +194,7 @@ ssh ... "curl -s https://inside.eikon.ch/opcache_clear.php"
 **Problem**: Production URL hardcoded in workflow.
 
 **Fix**:
+
 ```yaml
 - name: Clear opcache
   run: |
@@ -247,15 +212,18 @@ Add `SITE_URL` to GitHub variables.
 ## 🟡 Medium Priority
 
 ### 9. Missing Translation Text Domain
+
 **File**: Various `inc/*.php` files
 
 **Issue**: Many `__()` calls use incorrect or missing text domains.
 
 **Examples**:
+
 - `web/app/themes/inside/inc/cpt.php` uses 'project', 'department' text domains
 - `web/app/themes/inside/inc/admin.php:40` has no text domain
 
 **Fix**: Standardize to theme text domain:
+
 ```php
 // Replace
 __('Text', 'project')
@@ -268,11 +236,13 @@ __('Text', 'inside-eikon')
 ---
 
 ### 10. Comment Inconsistency
+
 **File**: Multiple files
 
 **Issue**: Comments in French mixed with English variable names.
 
 **Examples**:
+
 ```php
 // web/app/themes/inside/inc/cpt.php
 'name' => _x('Projets', 'Post Type General Name', 'project'),
@@ -285,6 +255,7 @@ __('Text', 'inside-eikon')
 ---
 
 ### 11. Redundant Theme Support Call
+
 **File**: `web/app/themes/inside/inc/cpt.php:273` and `web/app/themes/inside/inc/images.php:3`
 
 **Issue**: `add_theme_support('post-thumbnails')` called twice.
@@ -296,11 +267,13 @@ __('Text', 'inside-eikon')
 ---
 
 ### 12. Magic Numbers in Theme Configuration
+
 **File**: `web/app/themes/inside/theme.json`
 
 **Issue**: Hardcoded pixel values throughout without documentation.
 
 **Recommendation**: Add comments explaining the design system:
+
 ```json
 {
   "settings": {
@@ -322,6 +295,7 @@ Consider using CSS custom properties for better maintainability.
 ---
 
 ### 13. Missing .nvmrc or .node-version
+
 **File**: Root directory
 
 **Issue**: No Node.js version specified.
@@ -329,6 +303,7 @@ Consider using CSS custom properties for better maintainability.
 **Problem**: Team members might use different Node versions causing build inconsistencies.
 
 **Fix**: Add `.nvmrc`:
+
 ```
 20
 ```
@@ -340,15 +315,18 @@ Or `.node-version` for better tool compatibility.
 ---
 
 ### 14. README Typo and Outdated Info
+
 **File**: `README.md`
 
 **Issues**:
+
 - Line 18: `.env.exemple` should be `.env.example`
 - Line 19: `vim .emv` should be `vim .env`
 - Missing block build instructions in setup
 
 **Fix**:
-```markdown
+
+````markdown
 ## Setup
 
 1. Duplicate and edit the .env file:
@@ -356,6 +334,7 @@ Or `.node-version` for better tool compatibility.
    cp .env.example .env
    vim .env
    ```
+````
 
 2. Configure your database and URLs in `.env`
 
@@ -364,7 +343,8 @@ Or `.node-version` for better tool compatibility.
    composer install
    node build-all-blocks.js
    ```
-```
+
+````
 
 **Priority**: 🟡 Medium - Documentation
 
@@ -377,13 +357,15 @@ Or `.node-version` for better tool compatibility.
 ```php
 * Plugin Name:       eikonblocks: PROJECTS
 * Description:       Maruqee block scaffolded...
-```
+````
 
 **Problems**:
+
 - Typo: "Maruqee" should be "Marquee" (but this is the Projects block, not Marquee)
 - Inconsistent capitalization
 
 **Fix**: Update all block headers to be consistent:
+
 ```php
 /**
  * Plugin Name:       Eikon Blocks: Projects
@@ -399,24 +381,26 @@ Or `.node-version` for better tool compatibility.
 ## 🟢 Low Priority
 
 ### 16. Add phpcs.xml Configuration
+
 **File**: Root directory (missing)
 
 **Issue**: `composer.json` includes PHP_CodeSniffer but no ruleset configuration.
 
 **Recommendation**: Add `phpcs.xml`:
+
 ```xml
 <?xml version="1.0"?>
 <ruleset name="Inside Eikon">
     <description>Coding standards for Inside Eikon</description>
-    
+
     <file>web/app/themes/inside</file>
     <file>web/app/plugins/vod-eikon</file>
-    
+
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
-    
+
     <rule ref="PSR12"/>
-    
+
     <!-- Allow WordPress-style hooks -->
     <rule ref="PSR12.Functions.NullableTypeDeclaration.SpaceBeforeNullabilityIndicator">
         <severity>0</severity>
@@ -429,33 +413,42 @@ Or `.node-version` for better tool compatibility.
 ---
 
 ### 17. Add Block Documentation
+
 **File**: Each `eikonblocks-*/` directory
 
 **Issue**: No README files explaining block usage.
 
 **Recommendation**: Add `README.md` to each block:
-```markdown
+
+````markdown
 # Eikon Block: Card
 
 ## Description
+
 Card block with image and inner blocks for content.
 
 ## Usage
+
 Must be nested inside a Section block.
 
 ## Attributes
+
 - `imageUrl` (string): Card image URL
 - `imagePosition` (string): 'left' or 'right'
 
 ## Allowed Inner Blocks
+
 - Heading, Buttons, Paragraph, List, Image
 
 ## Development
+
 ```bash
 npm run start  # Development with watch
 npm run build  # Production build
 ```
-```
+````
+
+````
 
 **Priority**: 🟢 Low - Documentation
 
@@ -476,22 +469,25 @@ npm run build  # Production build
     "lint:blocks": "for dir in web/app/mu-plugins/eikonblocks-*; do (cd $dir && npm run lint:js); done"
   }
 }
-```
+````
 
 **Priority**: 🟢 Low - Developer experience
 
 ---
 
 ### 19. Add Git Hooks with Husky
+
 **File**: Root directory (missing)
 
 **Recommendation**: Add pre-commit hooks to ensure code quality:
+
 ```bash
 npm install --save-dev husky lint-staged
 npx husky init
 ```
 
 Configure `.husky/pre-commit`:
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -508,11 +504,13 @@ git diff --cached --name-only --diff-filter=ACMR "*.php" | xargs -r ./vendor/bin
 ---
 
 ### 20. Add Composer Scripts
+
 **File**: `composer.json`
 
 **Issue**: Only has `test` script, could add more useful commands.
 
 **Recommendation**:
+
 ```json
 "scripts": {
     "test": ["phpcs"],
@@ -527,11 +525,13 @@ git diff --cached --name-only --diff-filter=ACMR "*.php" | xargs -r ./vendor/bin
 ---
 
 ### 21. Environment-Specific Configurations
+
 **File**: `config/environments/` directory
 
 **Issue**: Only production config exists, but Bedrock supports environment-specific configs.
 
 **Recommendation**: Add `config/environments/development.php`:
+
 ```php
 <?php
 use Roots\WPConfig\Config;
@@ -550,6 +550,7 @@ ini_set('display_errors', '1');
 ---
 
 ### 22. Add Block Screenshots
+
 **File**: Each `eikonblocks-*/` directory
 
 **Issue**: Blocks don't have preview screenshots for documentation.
@@ -561,14 +562,17 @@ ini_set('display_errors', '1');
 ---
 
 ### 23. Standardize Block Naming
+
 **File**: Various block files
 
 **Issue**: Inconsistent block naming conventions:
+
 - Some use "eikonblocks/card"
 - Directory names use "eikonblocks-card"
 - Display names vary
 
 **Recommendation**: Document naming convention:
+
 - Directory: `eikonblocks-{name}` (kebab-case)
 - Block namespace: `eikonblocks/{name}` (lowercase)
 - Display name: Proper case (e.g., "Projects", "Card")
@@ -580,7 +584,7 @@ ini_set('display_errors', '1');
 ## Summary Statistics
 
 - **🔴 Critical**: 3 issues
-- **🟠 High**: 5 issues  
+- **🟠 High**: 5 issues
 - **🟡 Medium**: 7 issues
 - **🟢 Low**: 8 issues
 
@@ -591,6 +595,7 @@ ini_set('display_errors', '1');
 ## Recommended Action Plan
 
 ### Phase 1 (Week 1): Critical & High Priority
+
 1. Fix error display suppression in graphql.php
 2. Add URL validation to QR code generation
 3. Fix SQL query formatting
@@ -601,6 +606,7 @@ ini_set('display_errors', '1');
 8. Fix hardcoded deployment URL
 
 ### Phase 2 (Week 2-3): Medium Priority
+
 9. Standardize text domains
 10. Clean up duplicate theme support calls
 11. Add Node version file
@@ -609,6 +615,7 @@ ini_set('display_errors', '1');
 14. Document theme.json design tokens
 
 ### Phase 3 (Future): Low Priority
+
 14. Add phpcs.xml configuration
 15. Create block documentation
 16. Add development scripts
