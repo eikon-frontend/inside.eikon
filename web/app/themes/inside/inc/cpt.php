@@ -67,6 +67,11 @@ function project_post_type()
 }
 add_action('init', 'project_post_type', 5);
 
+// Flush rewrite rules when the theme is activated to ensure CPT slugs work properly
+add_action('after_switch_theme', function () {
+  flush_rewrite_rules();
+});
+
 /**
  * Ensure projects have a slug (post_name) even when saved as draft/pending.
  *
@@ -289,8 +294,7 @@ function user_projects_column_value($value, $column_name, $id)
   if ($column_name == 'user_projects') {
     global $wpdb;
     $count = (int) $wpdb->get_var($wpdb->prepare(
-      "SELECT COUNT(ID) FROM $wpdb->posts WHERE
-       post_type = 'project' AND post_author = %d",
+      "SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type = 'project' AND post_author = %d",
       $id
     ));
     return $count;
