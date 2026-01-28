@@ -1,8 +1,5 @@
 <?php
 
-// Disable display_errors to prevent PHP warnings from breaking JSON response
-@ini_set('display_errors', 0);
-
 add_filter(
   'graphql_PostObjectsConnectionOrderbyEnum_values',
   function ($values) {
