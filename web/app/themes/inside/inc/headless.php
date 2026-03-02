@@ -19,7 +19,15 @@ add_action('add_meta_boxes', 'add_custom_meta_box');
 function info_box($post)
 {
   if ($post->post_name) {
-    $post_external_url = get_permalink($post->ID);
+    // Construct frontend URL logic similar to preview_post_link
+    $frontend_url = home_url('/');
+
+    if ($post->post_type === 'project') {
+      $post_external_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+    } else {
+      $post_external_url = get_permalink($post->ID);
+    }
+
     echo '<h3>URL Externe & QR Code</h3>';
 
     if ($post_external_url && filter_var($post_external_url, FILTER_VALIDATE_URL)) {
