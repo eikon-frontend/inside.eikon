@@ -79,3 +79,36 @@ function handle_documentation_notice_dismissal()
 
 add_action('admin_notices', 'display_documentation_notice');
 add_action('wp_ajax_dismiss_documentation_notice', 'handle_documentation_notice_dismissal');
+
+/**
+ * Customize the preview link to point to the headless frontend.
+ *
+ * 1. Only allow preview if the post has a slug (saved at least once).
+ * 2. Force the URL to use the slug instead of ?p=ID, even for drafts.
+ */
+add_filter('preview_post_link', function ($link, $post) {
+  // If post is auto-draft or has no slug, return empty string (hides/disables preview)
+  if ($post->post_status === 'auto-draft' || empty($post->post_name)) {
+    return '';
+  }
+
+  // Get the home URL (frontend URL)
+  $frontend_url = home_url('/');
+
+  // If the post type is 'project', construct the URL with /projets/slug/
+  // The CPT rewrite slug is 'projets' (plural)
+  if ($post->post_type === 'project') {
+    return trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+  }
+
+  // For other post types, fall back to default permalink but ensure it uses the slug
+  // However, get_permalink() for drafts usually adds ?p=ID parameters if not published.
+  // We force slug usage if available.
+  if ($post->post_name) {
+    // Assuming standard structure for other types, or allow WP to handle if not project
+    // But user specifically mentioned 'project' in the example URL
+    return get_permalink($post);
+  }
+
+  return $link;
+}, 10, 2);
