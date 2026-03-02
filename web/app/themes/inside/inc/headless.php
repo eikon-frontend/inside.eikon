@@ -88,6 +88,23 @@ function handle_documentation_notice_dismissal()
 add_action('admin_notices', 'display_documentation_notice');
 add_action('wp_ajax_dismiss_documentation_notice', 'handle_documentation_notice_dismissal');
 
+add_action('admin_head', function () {
+  global $post;
+  if (!$post) return;
+
+  // If the post is an auto-draft or doesn't have a name/slug yet, hide the preview button
+  if ($post->post_status === 'auto-draft' || empty($post->post_name)) {
+    echo '<style>
+            #post-preview,
+            .editor-post-preview,
+            .block-editor-post-preview__button-toggle,
+            .block-editor-post-preview__dropdown {
+                display: none !important;
+            }
+        </style>';
+  }
+});
+
 /**
  * Customize the preview link to point to the headless frontend.
  *
@@ -101,6 +118,7 @@ add_filter('preview_post_link', function ($link, $post) {
   }
 
   // Get the home URL (frontend URL)
+  //...
   $frontend_url = home_url('/');
 
   // If the post type is 'project', construct the URL with /projets/slug/
