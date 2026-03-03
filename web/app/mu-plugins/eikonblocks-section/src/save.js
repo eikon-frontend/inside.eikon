@@ -2,7 +2,7 @@ import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
 import { colorMap } from './colorUtils';
 
 export default function Save({ attributes }) {
-  const { backgroundColor, textColor, paddingTop, paddingBottom, isPaddingSymmetrical } = attributes;
+  const { backgroundColor, textColor, paddingTop, paddingBottom, isPaddingSymmetrical, anchor } = attributes;
 
   const bgColorSlug = colorMap[backgroundColor] || backgroundColor;
   const textColorSlug = colorMap[textColor] || textColor;
@@ -22,6 +22,7 @@ export default function Save({ attributes }) {
     <div
       {...useBlockProps.save({
         className: className,
+        id: anchor || undefined,
       })}
     >
       <InnerBlocks.Content />

@@ -1,10 +1,10 @@
 import { useBlockProps, InnerBlocks, InspectorControls, BlockControls } from '@wordpress/block-editor';
 import { PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { SelectControl, PanelBody, ToggleControl, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { SelectControl, PanelBody, ToggleControl, ToolbarGroup, ToolbarButton, TextControl } from '@wordpress/components';
 
 const Edit = ({ attributes, setAttributes }) => {
-  const { backgroundColor, textColor, paddingTop, paddingBottom, isPaddingSymmetrical, isActive } = attributes;
+  const { backgroundColor, textColor, paddingTop, paddingBottom, isPaddingSymmetrical, isActive, anchor } = attributes;
 
   const paddingClasses = isPaddingSymmetrical
     ? `padding-${paddingTop}`
@@ -46,6 +46,14 @@ const Edit = ({ attributes, setAttributes }) => {
             },
           ]}
         />
+        <PanelBody title={__('Anchor', 'eikonblocks')} initialOpen={true}>
+          <TextControl
+            label={__('HTML Anchor', 'eikonblocks')}
+            help={__("Saisissez un identifiant unique sans espaces. Vous pourrez ensuite créer un lien vers cette section en ajoutant #identifiant à l'URL.", 'eikonblocks')}
+            value={anchor || ''}
+            onChange={(value) => setAttributes({ anchor: value.replace(/\s+/g, '-').toLowerCase() })}
+          />
+        </PanelBody>
         <PanelBody title={__('Padding Settings', 'eikonblocks')} initialOpen={true}>
           <ToggleControl
             label={__('Padding Symmetry', 'eikonblocks')}
