@@ -6,15 +6,116 @@ use QRcode\QRstr;
 function add_custom_meta_box()
 {
   add_meta_box(
+    'project-completion',
+    'État du projet',
+    'project_completion_checklist',
+    'project',
+    'side',
+    'high'
+  );
+  add_meta_box(
     'infos-box',
-    'Informations du projet',
+    'URL Externe & QR Code',
     'info_box',
     'project',
     'side',
-    'low'
-  ); //spaces were here
+    'high'
+  );
 }
 add_action('add_meta_boxes', 'add_custom_meta_box');
+
+/**
+ * Display project completion checklist
+ */
+function project_completion_checklist($post)
+{
+  // Get post data
+  $has_title = !empty($post->post_title);
+  $has_thumbnail = has_post_thumbnail($post->ID);
+  $has_content = !empty($post->post_content);
+
+  // Get ACF fields
+  $project_fields = get_field('projets', $post->ID);
+  $has_project_fields = !empty($project_fields) && is_array($project_fields) && count($project_fields) > 0;
+
+  // Check for gallery field (could be in project_fields or as separate field)
+  $has_gallery = false;
+  if (is_array($project_fields)) {
+    foreach ($project_fields as $field) {
+      if (isset($field['acf_fc_layout']) && $field['acf_fc_layout'] === 'galerie' && !empty($field['photos'])) {
+        $has_gallery = true;
+        break;
+      }
+    }
+  }
+
+  // Calculate completion percentage
+  $total_items = 4;
+  $completed_items = 0;
+  $completed_items += $has_title ? 1 : 0;
+  $completed_items += $has_thumbnail ? 1 : 0;
+  $completed_items += $has_content ? 1 : 0;
+  $completed_items += $has_project_fields ? 1 : 0;
+
+  $completion_percent = ($completed_items / $total_items) * 100;
+  $is_complete = $completion_percent === 100;
+
+  // Helper function to render checklist item
+  $render_item = function ($label, $is_complete) {
+    $icon = $is_complete ? '✓' : '◯';
+    $color = $is_complete ? '#10b981' : '#d1d5db';
+    $text_color = $is_complete ? '#065f46' : '#6b7280';
+    ?>
+    <div style="display: flex; align-items: center; margin: 8px 0; padding: 8px; background: <?php echo $is_complete ? '#ecfdf5' : '#f9fafb'; ?>; border-radius: 4px; border-left: 3px solid <?php echo $color; ?>;">
+      <span style="color: <?php echo $color; ?>; font-size: 18px; font-weight: bold; margin-right: 10px; min-width: 20px; text-align: center;">
+        <?php echo esc_html($icon); ?>
+      </span>
+      <span style="color: <?php echo $text_color; ?>; font-size: 14px;">
+        <?php echo esc_html($label); ?>
+      </span>
+    </div>
+    <?php
+  };
+  ?>
+  <div style="margin: 0;">
+    <!-- Completion Progress -->
+    <div style="margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
+        <strong style="font-size: 14px; color: #1f2937;">Complétude du projet</strong>
+        <span style="font-size: 16px; font-weight: bold; color: <?php echo $is_complete ? '#10b981' : '#f59e0b'; ?>;">
+          <?php echo (int) $completion_percent; ?>%
+        </span>
+      </div>
+      <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+        <div style="width: <?php echo (int) $completion_percent; ?>%; height: 100%; background: <?php echo $is_complete ? '#10b981' : '#f59e0b'; ?>; transition: width 0.3s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Checklist Items -->
+    <div style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+      <?php
+      $render_item('Titre du projet', $has_title);
+      $render_item('Image à la une', $has_thumbnail);
+      $render_item('Contenu / Description', $has_content);
+      $render_item('Mise en page du projet', $has_project_fields);
+      ?>
+    </div>
+
+    <!-- Status Message -->
+    <div style="margin-top: 12px; padding: 10px; border-radius: 4px; background: <?php echo $is_complete ? '#d1fae5' : '#fef3c7'; ?>; border: 1px solid <?php echo $is_complete ? '#6ee7b7' : '#fcd34d'; ?>;">
+      <p style="margin: 0; font-size: 13px; color: <?php echo $is_complete ? '#065f46' : '#92400e'; ?>;">
+        <?php
+        if ($is_complete) {
+          echo '✓ <strong>Parfait !</strong> Ton projet est complet et prêt à être partagé.';
+        } else {
+          echo '⚠ <strong>Presque là !</strong> Complète les sections manquantes.';
+        }
+        ?>
+      </p>
+    </div>
+  </div>
+  <?php
+}
 
 function info_box($post)
 {
@@ -28,17 +129,20 @@ function info_box($post)
       $post_external_url = get_permalink($post->ID);
     }
 
-    echo '<h3>URL Externe & QR Code</h3>';
-
+    echo '<div style="text-align: center;">';
     if ($post_external_url && filter_var($post_external_url, FILTER_VALIDATE_URL)) {
-      echo '<a href="' . esc_url($post_external_url) . '" target="_blank">' . esc_url($post_external_url) . '</a><hr />';
+      echo '<p style="margin-bottom: 12px; word-break: break-all; font-size: 12px; color: #6b7280;">';
+      echo '<a href="' . esc_url($post_external_url) . '" target="_blank" style="color: #0891b2; text-decoration: none;">' . esc_url($post_external_url) . '</a>';
+      echo '</p>';
       $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
-      echo '<img style="width:100%" src="' . esc_attr($base64_data) . '" alt="QR Code" />';
+      echo '<img style="width: 100%; max-width: 200px; border-radius: 4px; border: 1px solid #e5e7eb;" src="' . esc_attr($base64_data) . '" alt="QR Code" />';
+      echo '<p style="margin-top: 12px; font-size: 12px; color: #6b7280;">Scannez pour accéder au projet</p>';
     } else {
       echo '<p style="color: #d63638;">URL invalide pour la génération du QR code.</p>';
     }
+    echo '</div>';
   } else {
-    echo "Enregistrez d'abord le projet pour obtenir l'URL externe et le QR Code.";
+    echo '<p style="padding: 12px; background: #fef3c7; border-left: 3px solid #fcd34d; border-radius: 4px; color: #92400e; font-size: 14px;">Enregistrez d\'abord le projet pour obtenir l\'URL externe et le QR Code.</p>';
   }
 }
 
@@ -310,12 +414,12 @@ add_action('edit_form_after_title', function () {
     error_log('Preview URL: ' . $preview_url);
   }
 
-  ?>
+?>
   <div id="sample-permalink-container" style="margin: 12px 0; padding: 10px; background: #f6f7f7; border: 1px solid #e5e5e5; border-radius: 3px;">
     <strong><?php esc_html_e('Permalink:', 'default'); ?></strong>
     <a id="sample-permalink" href="<?php echo esc_url($preview_url); ?>" target="_blank">
       <?php echo esc_html($preview_url); ?>
     </a>
   </div>
-  <?php
+<?php
 });
