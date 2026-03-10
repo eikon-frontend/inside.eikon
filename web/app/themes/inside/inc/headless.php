@@ -140,7 +140,10 @@ function info_box($post)
       echo '<p style="margin-bottom: 12px; word-break: break-all; font-size: 12px; color: #6b7280;">';
       echo '<a href="' . esc_url($post_external_url) . '" target="_blank" style="color: #0891b2; text-decoration: none;">' . esc_url($post_external_url) . '</a>';
       echo '</p>';
+      // Suppress PHP 8.0+ deprecation warning for imagedestroy() in QR code library
+      $previous_error_reporting = error_reporting(E_ALL & ~E_DEPRECATED);
       $base64_data = QRcode::base64_webp($post_external_url, QRstr::QR_ECLEVEL_L, 50, 0);
+      error_reporting($previous_error_reporting);
       echo '<img style="width: 100%; max-width: 200px; border-radius: 4px; border: 1px solid #e5e7eb;" src="' . esc_attr($base64_data) . '" alt="QR Code" />';
       echo '<p style="margin-top: 12px; font-size: 12px; color: #6b7280;">Scannez pour accéder au projet</p>';
     } else {
