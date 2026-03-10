@@ -168,10 +168,10 @@
     "active": true,
     "description": "",
     "show_in_rest": 1,
-    "display_title": "",
+    "display_title": "Informations",
     "show_in_graphql": 1,
     "graphql_field_name": "projetsFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1768657131
+    "modified": 1773155110
 }
