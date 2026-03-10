@@ -226,10 +226,10 @@ function eikon_random_project_widget_content()
     $section_terms = get_the_terms($project->ID, 'section');
     $subjects_terms = get_the_terms($project->ID, 'subjects');
   ?>
-    <div style="padding: 0;">
+    <div style="padding: 0; overflow: hidden;">
       <!-- Featured Image with Overlay -->
       <?php if ($project_thumbnail) : ?>
-        <div style="position: relative; margin: -12px -12px 16px -12px; border-radius: 8px 8px 0 0; overflow: hidden; aspect-ratio: 16/9; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="position: relative; margin: 0 0 16px 0; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <img src="<?php echo esc_url($project_thumbnail); ?>" alt="<?php echo esc_attr($project->post_title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 100%);"></div>
         </div>
@@ -238,7 +238,7 @@ function eikon_random_project_widget_content()
       <!-- Content Section -->
       <div style="padding: 0;">
         <!-- Title -->
-        <h3 style="margin: 16px 0 8px 0; font-size: 18px; font-weight: 600; color: #1f2937; line-height: 1.4;">
+        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1f2937; line-height: 1.4;">
           <?php echo esc_html($project->post_title); ?>
         </h3>
 
@@ -272,7 +272,7 @@ function eikon_random_project_widget_content()
         </div>
 
         <!-- CTA Button -->
-        <a href="<?php echo esc_url($project_url); ?>" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3); transition: all 0.2s ease;">
+        <a href="<?php echo esc_url($project_url); ?>" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3); transition: all 0.2s ease; box-sizing: border-box;">
           Découvrir le projet <span style="margin-left: 6px;">→</span>
         </a>
       </div>
