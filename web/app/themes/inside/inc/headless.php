@@ -248,14 +248,76 @@ add_filter('get_sample_permalink_html', function ($html, $post_id) {
     error_log('Preview URL: ' . $preview_url);
   }
 
-  // Build the permalink HTML manually to ensure it's shown
-  $html = '<strong>' . esc_html__('Permalink:', 'default') . '</strong> ';
-  $html .= '<span id="sample-permalink"><a href="' . esc_url($preview_url) . '" target="_blank">' . esc_html($preview_url) . '</a></span> ';
-  $html .= '<span id="edit-slug-buttons"><a href="#post_name" class="edit-permalink">' . esc_html__('Edit', 'default') . '</a></span>';
+  // Build the permalink HTML with proper WordPress structure
+  // WordPress expects this in a div#sample-permalink-container
+  $new_html = '<div id="sample-permalink-container">';
+  $new_html .= '<strong>' . esc_html__('Permalink:', 'default') . '</strong> ';
+  $new_html .= '<span id="sample-permalink"><a href="' . esc_url($preview_url) . '" target="_blank">' . esc_html($preview_url) . '</a></span> ';
+  $new_html .= '<span id="edit-slug-buttons"><a href="#post_name" class="edit-permalink">' . esc_html__('Edit', 'default') . '</a></span>';
+  $new_html .= '</div>';
 
   if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
     error_log('Custom permalink HTML generated successfully');
+    error_log('Returning HTML: ' . substr($new_html, 0, 200) . '...');
   }
 
-  return $html;
+  return $new_html;
 }, 10, 2);
+
+/**
+ * Display permalink in publish metabox for draft/pending projects.
+ *
+ * The get_sample_permalink_html filter may not work for draft/pending posts in all contexts.
+ * This hook provides a fallback to ensure the permalink is always visible.
+ */
+add_action('post_submitbox_misc_actions', function () {
+  global $post;
+
+  if (!$post || $post->post_type !== 'project') {
+    return;
+  }
+
+  // Only for draft/pending/future posts
+  if (!in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
+    return;
+  }
+
+  // Only if belongs to current user
+  $current_user = wp_get_current_user();
+  if (!$current_user->ID || (int) $post->post_author !== $current_user->ID) {
+    return;
+  }
+
+  // Only for student/teacher
+  $is_student = in_array('student', $current_user->roles, true);
+  $is_teacher = in_array('teacher', $current_user->roles, true);
+  if (!$is_student && !$is_teacher) {
+    return;
+  }
+
+  // Only if has slug
+  if (empty($post->post_name)) {
+    return;
+  }
+
+  // Build and display the permalink
+  $frontend_url = home_url('/');
+  $preview_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('=== DEBUG: post_submitbox_misc_actions permalink output ===');
+    error_log('Post ID: ' . $post->ID);
+    error_log('Preview URL: ' . $preview_url);
+  }
+
+  ?>
+  <div class="misc-pub-section" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+    <strong><?php esc_html_e('Preview Link:', 'default'); ?></strong>
+    <p style="margin: 5px 0 0 0;">
+      <a href="<?php echo esc_url($preview_url); ?>" target="_blank" style="text-decoration: none;">
+        <?php echo esc_html($preview_url); ?>
+      </a>
+    </p>
+  </div>
+  <?php
+});
