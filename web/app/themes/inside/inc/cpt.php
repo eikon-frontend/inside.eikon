@@ -93,25 +93,53 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
     return;
   }
 
+  // Debug logging
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('=== DEBUG: eikon_ensure_project_slug_on_save called ===');
+    error_log('Post ID: ' . $post_id);
+    error_log('Post Status: ' . $post->post_status);
+    error_log('Post Name (current): "' . $post->post_name . '"');
+    error_log('Post Title: "' . $post->post_title . '"');
+    error_log('Is Update: ' . ($update ? 'yes' : 'no'));
+  }
+
   // Don't generate slugs for placeholder posts.
   if ($post->post_status === 'auto-draft') {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Post is auto-draft, skipping slug generation');
+    }
     return;
   }
 
   // Only set if empty; don't override manually edited slugs.
   if (!empty($post->post_name) || empty($post->post_title)) {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Post already has slug or title is empty, skipping. post_name empty: ' . (empty($post->post_name) ? 'yes' : 'no') . ', title empty: ' . (empty($post->post_title) ? 'yes' : 'no'));
+    }
     return;
   }
 
   $running = true;
 
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Generating slug from title: ' . $post->post_title);
+  }
+
   $slug = sanitize_title($post->post_title);
   $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Generated slug: "' . $slug . '"');
+  }
 
   wp_update_post([
     'ID' => $post_id,
     'post_name' => $slug,
   ]);
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Slug update completed');
+  }
 
   $running = false;
 }
