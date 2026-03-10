@@ -219,3 +219,21 @@ add_filter('preview_post_link', function ($link, $post) {
 
   return $link;
 }, 10, 2);
+
+/**
+ * Fix the permalink/sample permalink shown in the editor for project posts.
+ * This affects the clickable permalink displayed below the post title.
+ */
+add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name, $post) {
+  // Only apply to project posts
+  if (!$post || $post->post_type !== 'project' || empty($post->post_name)) {
+    return $permalink;
+  }
+
+  // Build the frontend URL for the project
+  $frontend_url = home_url('/');
+  $project_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+
+  // Return array with [full_url, display_slug]
+  return array($project_url, $post->post_name . '/');
+}, 10, 5);
