@@ -54,7 +54,6 @@
     "wpengine/advanced-custom-fields-pro": "^6.5",
     "wpackagist-plugin/wp-graphql": "^2.3",
     "wpackagist-plugin/wpgraphql-acf": "^2.4",
-    "wpackagist-plugin/members": "^3.2",
     "wpackagist-plugin/wp-mail-smtp": "^4.0",
     "jysperu/php-qr-code": "^2",
     "guzzlehttp/guzzle": "^7.9"
