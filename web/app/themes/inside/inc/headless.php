@@ -265,12 +265,12 @@ add_filter('get_sample_permalink_html', function ($html, $post_id) {
 }, 10, 2);
 
 /**
- * Display permalink in publish metabox for draft/pending projects.
+ * Display permalink under the title for draft/pending projects.
  *
- * The get_sample_permalink_html filter may not work for draft/pending posts in all contexts.
- * This hook provides a fallback to ensure the permalink is always visible.
+ * WordPress hides the permalink for unpublished posts. This hook ensures
+ * students can see their preview link right under the title.
  */
-add_action('post_submitbox_misc_actions', function () {
+add_action('edit_form_after_title', function () {
   global $post;
 
   if (!$post || $post->post_type !== 'project') {
@@ -305,19 +305,17 @@ add_action('post_submitbox_misc_actions', function () {
   $preview_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
 
   if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-    error_log('=== DEBUG: post_submitbox_misc_actions permalink output ===');
+    error_log('=== DEBUG: edit_form_after_title - displaying permalink ===');
     error_log('Post ID: ' . $post->ID);
     error_log('Preview URL: ' . $preview_url);
   }
 
-?>
-  <div class="misc-pub-section" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
-    <strong><?php esc_html_e('Preview Link:', 'default'); ?></strong>
-    <p style="margin: 5px 0 0 0;">
-      <a href="<?php echo esc_url($preview_url); ?>" target="_blank" style="text-decoration: none;">
-        <?php echo esc_html($preview_url); ?>
-      </a>
-    </p>
+  ?>
+  <div id="sample-permalink-container" style="margin: 12px 0; padding: 10px; background: #f6f7f7; border: 1px solid #e5e5e5; border-radius: 3px;">
+    <strong><?php esc_html_e('Permalink:', 'default'); ?></strong>
+    <a id="sample-permalink" href="<?php echo esc_url($preview_url); ?>" target="_blank">
+      <?php echo esc_html($preview_url); ?>
+    </a>
   </div>
-<?php
+  <?php
 });
