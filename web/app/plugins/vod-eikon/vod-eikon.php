@@ -307,13 +307,17 @@ class VOD_Eikon
                           <?php echo esc_html($video->name); ?>
                         </td>
                         <td class="uploaded-column">
-
+                          <?php
+                          $upload_date = new DateTime($video->created_at);
+                          $formatted_date = $upload_date->format('d.m.Y H:i:s');
+                          $full_timestamp = $upload_date->format('d/m/Y H:i:s');
+                          ?>
                           <div class="upload-user">
                             <?php echo !empty($video->uploader_email) ? '<code>' . esc_html($video->uploader_email) . '</code>' : '<em style="color: #999;">Non spécifié</em>'; ?>
                           </div>
                           <div class="upload-date">
-                            <time>
-                              <?php echo new DateTime($video->created_at)->format('d/m/Y H:i:s') ?>
+                            <time datetime="<?php echo esc_attr($upload_date->format('c')); ?>" title="<?php echo esc_attr($full_timestamp); ?>">
+                              <?php echo esc_html($formatted_date); ?>
                             </time>
                           </div>
                         </td>
