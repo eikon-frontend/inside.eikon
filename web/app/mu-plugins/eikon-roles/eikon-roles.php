@@ -548,41 +548,5 @@ function eikon_allow_draft_post_reading($caps, $cap, $user_id, $args)
 }
 add_filter('map_meta_cap', 'eikon_allow_draft_post_reading', 10, 4);
 
-/**
- * Ensure the publish box "Visit" link works for draft projects
- *
- * WordPress filters the frontend link URL in the publish box.
- * We need to ensure it's properly set for draft posts with the preview_post_link filter.
- */
-function eikon_fix_post_publish_box_link($link, $post)
-{
-  // Only for project post type
-  if ($post->post_type !== 'project') {
-    return $link;
-  }
 
-  // Current user
-  $current_user = wp_get_current_user();
-  $is_student = in_array('student', $current_user->roles, true);
-  $is_teacher = in_array('teacher', $current_user->roles, true);
-
-  // Only for students and teachers
-  if (!$is_student && !$is_teacher) {
-    return $link;
-  }
-
-  // If it's a draft/pending post by the current user, use preview_post_link
-  if (in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
-    if ((int) $post->post_author === $current_user->ID) {
-      // Use the preview link which is already customized in headless.php
-      $preview_link = preview_post_link($post);
-      if (!empty($preview_link)) {
-        return $preview_link;
-      }
-    }
-  }
-
-  return $link;
-}
-add_filter('post_link', 'eikon_fix_post_publish_box_link', 10, 2);
 add_action('pre_get_posts', 'eikon_restrict_media_library');
