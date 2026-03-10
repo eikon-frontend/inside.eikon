@@ -949,7 +949,7 @@ class VOD_Eikon
     // Check permissions - students can only delete their own videos
     $current_user = wp_get_current_user();
     if (in_array('student', $current_user->roles, true)) {
-      if ($video->user_id !== $current_user->ID) {
+      if (intval($video->user_id) !== intval($current_user->ID)) {
         error_log('VOD Delete: Student attempting to delete another student\'s video');
         wp_send_json_error(array(
           'message' => 'Vous ne pouvez supprimer que vos propres vidéos.'
