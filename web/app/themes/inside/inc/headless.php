@@ -165,3 +165,53 @@ add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name
   // Return as array: [base_url, post_name]
   return array($project_url, $post->post_name);
 }, 10, 5);
+
+/**
+ * Ensure the sample permalink HTML is shown for draft/pending student projects.
+ *
+ * WordPress sometimes hides the permalink for pending posts. We override this
+ * to ensure students can always see the preview link for their own draft/pending projects.
+ */
+add_filter('get_sample_permalink_html', function ($html, $post_id) {
+  $post = get_post($post_id);
+
+  // Only for projects
+  if (!$post || $post->post_type !== 'project') {
+    return $html;
+  }
+
+  // Only if the post is draft/pending and belongs to current user
+  $current_user = wp_get_current_user();
+  if (!$current_user->ID || (int) $post->post_author !== $current_user->ID) {
+    return $html;
+  }
+
+  // Check if user is student or teacher
+  $is_student = in_array('student', $current_user->roles, true);
+  $is_teacher = in_array('teacher', $current_user->roles, true);
+
+  if (!$is_student && !$is_teacher) {
+    return $html;
+  }
+
+  // Only for draft/pending/future posts
+  if (!in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
+    return $html;
+  }
+
+  // If no slug, don't show
+  if (empty($post->post_name)) {
+    return $html;
+  }
+
+  // Get the frontend URL
+  $frontend_url = home_url('/');
+  $preview_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+
+  // Build the permalink HTML manually to ensure it's shown
+  $html = '<strong>' . esc_html__('Permalink:', 'default') . '</strong> ';
+  $html .= '<span id="sample-permalink"><a href="' . esc_url($preview_url) . '" target="_blank">' . esc_html($preview_url) . '</a></span> ';
+  $html .= '<span id="edit-slug-buttons"><a href="#post_name" class="edit-permalink">' . esc_html__('Edit', 'default') . '</a></span>';
+
+  return $html;
+}, 10, 2);
