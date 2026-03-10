@@ -67,11 +67,6 @@ function project_post_type()
 }
 add_action('init', 'project_post_type', 5);
 
-// Flush rewrite rules when the theme is activated to ensure CPT slugs work properly
-add_action('after_switch_theme', function () {
-  flush_rewrite_rules();
-});
-
 /**
  * Ensure projects have a slug (post_name) even when saved as draft/pending.
  *
