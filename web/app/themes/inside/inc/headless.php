@@ -119,9 +119,9 @@ function project_completion_checklist_content($post)
       <p style="margin: 0; font-size: 12px; color: <?php echo $is_complete ? '#065f46' : '#92400e'; ?>;">
         <?php
         if ($is_complete) {
-          echo '✓ <strong>Parfait !</strong> Ton projet est complet et prêt à être partagé.';
+          echo '✓ Ton projet est complet.';
         } else {
-          echo '⚠ <strong>Presque là !</strong> Complète les sections manquantes.';
+          echo '⚠ Complète les sections manquantes.';
         }
         ?>
       </p>
@@ -142,7 +142,7 @@ function info_box_content($post)
       $post_external_url = get_permalink($post->ID);
     }
 
-    echo '<h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1f2937;">URL Externe & QR Code</h4>';
+    echo '<h4 style="margin: 0 0 12px 0; font-size: 12px; color: #1f2937;">URL Externe & QR Code</h4>';
     echo '<div style="text-align: center;">';
     if ($post_external_url && filter_var($post_external_url, FILTER_VALIDATE_URL)) {
       echo '<p style="margin-bottom: 12px; word-break: break-all; font-size: 12px; color: #6b7280;">';
@@ -159,7 +159,7 @@ function info_box_content($post)
     }
     echo '</div>';
   } else {
-    echo '<p style="padding: 12px; background: #fef3c7; border-left: 3px solid #fcd34d; border-radius: 4px; color: #92400e; font-size: 14px;">Enregistrez d\'abord le projet pour obtenir l\'URL externe et le QR Code.</p>';
+    echo '<p style="padding: 12px; background: #fef3c7; border-left: 3px solid #fcd34d; border-radius: 4px; color: #92400e; font-size: 12px;">Enregistrez d\'abord le projet pour obtenir l\'URL externe et le QR Code.</p>';
   }
 }
 
