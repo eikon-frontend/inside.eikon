@@ -34,12 +34,16 @@ function project_completion_checklist($post)
   $has_thumbnail = has_post_thumbnail($post->ID);
   $has_content = !empty($post->post_content);
 
+  // Check for ACF taxonomy fields (year, section, subjects)
+  $has_year = !empty(get_the_terms($post->ID, 'year'));
+  $has_section = !empty(get_the_terms($post->ID, 'section'));
+  $has_subjects = !empty(get_the_terms($post->ID, 'subjects'));
+  $has_taxonomy_fields = $has_year && $has_section && $has_subjects;
+
   // Get ACF fields
   $project_fields = get_field('projets', $post->ID);
-  $has_project_fields = !empty($project_fields) && is_array($project_fields) && count($project_fields) > 0;
-
-  // Check for gallery field (could be in project_fields or as separate field)
   $has_gallery = false;
+  
   if (is_array($project_fields)) {
     foreach ($project_fields as $field) {
       if (isset($field['acf_fc_layout']) && $field['acf_fc_layout'] === 'galerie' && !empty($field['photos'])) {
@@ -50,12 +54,13 @@ function project_completion_checklist($post)
   }
 
   // Calculate completion percentage
-  $total_items = 4;
+  $total_items = 5;
   $completed_items = 0;
   $completed_items += $has_title ? 1 : 0;
   $completed_items += $has_thumbnail ? 1 : 0;
   $completed_items += $has_content ? 1 : 0;
-  $completed_items += $has_project_fields ? 1 : 0;
+  $completed_items += $has_gallery ? 1 : 0;
+  $completed_items += $has_taxonomy_fields ? 1 : 0;
 
   $completion_percent = ($completed_items / $total_items) * 100;
   $is_complete = $completion_percent === 100;
@@ -96,8 +101,9 @@ function project_completion_checklist($post)
       <?php
       $render_item('Titre du projet', $has_title);
       $render_item('Image à la une', $has_thumbnail);
-      $render_item('Contenu / Description', $has_content);
-      $render_item('Mise en page du projet', $has_project_fields);
+      $render_item('Description du projet', $has_content);
+      $render_item('Galerie du projet', $has_gallery);
+      $render_item('Métadonnées (année, classe, branche)', $has_taxonomy_fields);
       ?>
     </div>
 
