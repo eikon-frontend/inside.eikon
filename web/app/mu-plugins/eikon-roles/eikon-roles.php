@@ -517,9 +517,21 @@ function eikon_allow_draft_post_reading($caps, $cap, $user_id, $args)
     return $caps;
   }
 
+  // Debug logging
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('=== DEBUG: eikon_allow_draft_post_reading called ===');
+    error_log('User ID: ' . $user_id);
+    error_log('User Roles: ' . implode(', ', $user->roles));
+  }
+
   // Check if user is student or teacher
   $is_student = in_array('student', $user->roles, true);
   $is_teacher = in_array('teacher', $user->roles, true);
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Is Student: ' . ($is_student ? 'yes' : 'no'));
+    error_log('Is Teacher: ' . ($is_teacher ? 'yes' : 'no'));
+  }
 
   if (!$is_student && !$is_teacher) {
     return $caps;
@@ -528,19 +540,46 @@ function eikon_allow_draft_post_reading($caps, $cap, $user_id, $args)
   // Get the post from args (typically args[0] is the post ID)
   $post_id = isset($args[0]) ? (int) $args[0] : 0;
   if ($post_id === 0) {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('No post ID found in args');
+    }
     return $caps;
+  }
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Post ID: ' . $post_id);
   }
 
   $post = get_post($post_id);
   if (!$post || $post->post_type !== 'project') {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Not a project post or post not found');
+    }
     return $caps;
+  }
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Post Type: ' . $post->post_type);
+    error_log('Post Status: ' . $post->post_status);
+    error_log('Post Author ID: ' . $post->post_author);
   }
 
   // Allow students/teachers to read their own draft/pending/future projects
   if (in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
     if ((int) $post->post_author === $user_id) {
+      if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+        error_log('Allowing read_posts capability for user own draft project');
+      }
       // Map to read_posts capability since they own the post
       return array('read_posts');
+    } else {
+      if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+        error_log('User is not the post author, denying read capability');
+      }
+    }
+  } else {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Post status is not draft/pending/future');
     }
   }
 

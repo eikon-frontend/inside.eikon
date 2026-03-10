@@ -175,14 +175,35 @@ add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name
 add_filter('get_sample_permalink_html', function ($html, $post_id) {
   $post = get_post($post_id);
 
+  // Debug logging
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('=== DEBUG: get_sample_permalink_html called ===');
+    error_log('Post ID: ' . $post_id);
+    error_log('Post Type: ' . ($post ? $post->post_type : 'null'));
+    error_log('Post Status: ' . ($post ? $post->post_status : 'null'));
+    error_log('Post Name (slug): ' . ($post ? $post->post_name : 'null'));
+  }
+
   // Only for projects
   if (!$post || $post->post_type !== 'project') {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Not a project, returning default HTML');
+    }
     return $html;
   }
 
   // Only if the post is draft/pending and belongs to current user
   $current_user = wp_get_current_user();
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Current User ID: ' . $current_user->ID);
+    error_log('Current User Roles: ' . implode(', ', $current_user->roles));
+    error_log('Post Author ID: ' . $post->post_author);
+  }
+
   if (!$current_user->ID || (int) $post->post_author !== $current_user->ID) {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('User is not the post author, returning default HTML');
+    }
     return $html;
   }
 
@@ -190,17 +211,31 @@ add_filter('get_sample_permalink_html', function ($html, $post_id) {
   $is_student = in_array('student', $current_user->roles, true);
   $is_teacher = in_array('teacher', $current_user->roles, true);
 
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Is Student: ' . ($is_student ? 'yes' : 'no'));
+    error_log('Is Teacher: ' . ($is_teacher ? 'yes' : 'no'));
+  }
+
   if (!$is_student && !$is_teacher) {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('User is not student or teacher, returning default HTML');
+    }
     return $html;
   }
 
   // Only for draft/pending/future posts
   if (!in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Post status is not draft/pending/future (' . $post->post_status . '), returning default HTML');
+    }
     return $html;
   }
 
   // If no slug, don't show
   if (empty($post->post_name)) {
+    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+      error_log('Post has no slug, returning default HTML');
+    }
     return $html;
   }
 
@@ -208,10 +243,19 @@ add_filter('get_sample_permalink_html', function ($html, $post_id) {
   $frontend_url = home_url('/');
   $preview_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
 
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Building custom permalink HTML');
+    error_log('Preview URL: ' . $preview_url);
+  }
+
   // Build the permalink HTML manually to ensure it's shown
   $html = '<strong>' . esc_html__('Permalink:', 'default') . '</strong> ';
   $html .= '<span id="sample-permalink"><a href="' . esc_url($preview_url) . '" target="_blank">' . esc_html($preview_url) . '</a></span> ';
   $html .= '<span id="edit-slug-buttons"><a href="#post_name" class="edit-permalink">' . esc_html__('Edit', 'default') . '</a></span>';
+
+  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+    error_log('Custom permalink HTML generated successfully');
+  }
 
   return $html;
 }, 10, 2);
