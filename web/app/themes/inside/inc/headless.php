@@ -5,18 +5,11 @@ use QRcode\QRstr;
 
 function add_custom_meta_box()
 {
+  // Single "Review" metabox combining completion checklist and QR code
   add_meta_box(
-    'project-completion',
-    'État du projet',
-    'project_completion_checklist',
-    'project',
-    'side',
-    'high'
-  );
-  add_meta_box(
-    'infos-box',
-    'URL Externe & QR Code',
-    'info_box',
+    'project-review',
+    'Examen du projet',
+    'project_review_metabox',
     'project',
     'side',
     'high'
@@ -25,9 +18,23 @@ function add_custom_meta_box()
 add_action('add_meta_boxes', 'add_custom_meta_box');
 
 /**
- * Display project completion checklist
+ * Display project review metabox (completion checklist + QR code)
  */
-function project_completion_checklist($post)
+function project_review_metabox($post)
+{
+  // Display completion checklist
+  project_completion_checklist_content($post);
+
+  echo '<hr style="margin: 16px 0; border: none; border-top: 1px solid #e5e7eb;">';
+
+  // Display QR code
+  info_box_content($post);
+}
+
+/**
+ * Display project completion checklist content
+ */
+function project_completion_checklist_content($post)
 {
   // Get post data
   $has_title = !empty($post->post_title);
@@ -43,7 +50,7 @@ function project_completion_checklist($post)
   // Get ACF fields
   $project_fields = get_field('projets', $post->ID);
   $has_gallery = false;
-  
+
   if (is_array($project_fields)) {
     foreach ($project_fields as $field) {
       if (isset($field['acf_fc_layout']) && $field['acf_fc_layout'] === 'galerie' && !empty($field['photos'])) {
@@ -70,7 +77,7 @@ function project_completion_checklist($post)
     $icon = $is_complete ? '✓' : '◯';
     $color = $is_complete ? '#10b981' : '#d1d5db';
     $text_color = $is_complete ? '#065f46' : '#6b7280';
-    ?>
+?>
     <div style="display: flex; align-items: center; margin: 8px 0; padding: 8px; background: <?php echo $is_complete ? '#ecfdf5' : '#f9fafb'; ?>; border-radius: 4px; border-left: 3px solid <?php echo $color; ?>;">
       <span style="color: <?php echo $color; ?>; font-size: 18px; font-weight: bold; margin-right: 10px; min-width: 20px; text-align: center;">
         <?php echo esc_html($icon); ?>
@@ -79,7 +86,7 @@ function project_completion_checklist($post)
         <?php echo esc_html($label); ?>
       </span>
     </div>
-    <?php
+  <?php
   };
   ?>
   <div style="margin: 0;">
@@ -120,10 +127,10 @@ function project_completion_checklist($post)
       </p>
     </div>
   </div>
-  <?php
+<?php
 }
 
-function info_box($post)
+function info_box_content($post)
 {
   if ($post->post_name) {
     // Construct frontend URL logic similar to preview_post_link
@@ -135,6 +142,7 @@ function info_box($post)
       $post_external_url = get_permalink($post->ID);
     }
 
+    echo '<h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1f2937;">URL Externe & QR Code</h4>';
     echo '<div style="text-align: center;">';
     if ($post_external_url && filter_var($post_external_url, FILTER_VALIDATE_URL)) {
       echo '<p style="margin-bottom: 12px; word-break: break-all; font-size: 12px; color: #6b7280;">';
