@@ -24,15 +24,6 @@ add_filter('tiny_mce_before_init', function ($settings) {
 });
 
 // Remove media upload button from project post type editor
-add_filter('media_buttons_context', function ($context) {
-  global $post;
-  if ($post && $post->post_type === 'project') {
-    return 'hidden'; // Hide the media button context
-  }
-  return $context;
-}, 10, 1);
-
-// Alternative: disable media buttons completely for projects
 add_filter('media_buttons', function ($html) {
   global $post;
   if ($post && $post->post_type === 'project') {
