@@ -138,4 +138,30 @@ add_filter('preview_post_link', function ($link, $post) {
   return $link;
 }, 10, 2);
 
+/**
+ * Override the sample permalink URL structure for projects (for display in publish box).
+ *
+ * This ensures the URL shown under the title uses the frontend URL.
+ * Returns array format: [URL with placeholder, post_name/slug]
+ */
+add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name, $post) {
+  // Only for projects
+  if (!$post || $post->post_type !== 'project') {
+    return $permalink;
+  }
 
+  // If no slug yet, return the default
+  if (empty($post->post_name)) {
+    return $permalink;
+  }
+
+  // Get the frontend URL
+  $frontend_url = home_url('/');
+
+  // Construct the project permalink with placeholder
+  // WordPress expects this format: [full URL with %postname% placeholder if needed, or just the URL, ...post_name]
+  $project_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+
+  // Return as array: [base_url, post_name]
+  return array($project_url, $post->post_name);
+}, 10, 5);
