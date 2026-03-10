@@ -252,7 +252,7 @@ function eikon_add_dashboard_admin_bar($wp_admin_bar)
 
   $wp_admin_bar->add_node([
     'id' => 'dashboard',
-    'title' => '📊 Tableau de bord',
+    'title' => '<span class="dashicons dashicons-chart-bar"></span> Tableau de bord',
     'href' => admin_url(),
     'meta' => ['class' => 'dashboard-link'],
   ]);
