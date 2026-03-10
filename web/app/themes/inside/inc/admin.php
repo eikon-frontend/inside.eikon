@@ -21,6 +21,7 @@ function eikon_customize_dashboard()
   remove_meta_box('dashboard_secondary', 'dashboard', 'normal');
   remove_meta_box('dashboard_site_activity', 'dashboard', 'normal');
   remove_meta_box('dashboard_glance', 'dashboard', 'normal');
+  remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
 
   // Remove widgets from plugins (common ones)
   remove_meta_box('events-widget', 'dashboard', 'normal');
@@ -35,16 +36,53 @@ function eikon_customize_dashboard()
   // Add fun stats widget
   wp_add_dashboard_widget(
     'eikon_stats',
-    '📊 Statistiques Inside.eikon.ch',
+    'Statistiques Inside.eikon.ch',
     'eikon_stats_widget_content'
   );
 
   // Add random featured project widget
   wp_add_dashboard_widget(
     'eikon_random_project',
-    '🎨 Projet aléatoire du jour',
+    'Projet aléatoire du jour',
     'eikon_random_project_widget_content'
   );
+}
+
+/**
+ * Add dashicon styling to dashboard widget titles
+ */
+add_action('admin_print_styles', 'eikon_dashboard_dashicons_style');
+function eikon_dashboard_dashicons_style()
+{
+  echo '<style>
+    #eikon_stats .dashicons-chart-bar::before { content: "\f185"; }
+    #eikon_random_project .dashicons-format-gallery::before { content: "\f145"; }
+  </style>';
+}
+
+/**
+ * Filter dashboard widget title to add dashicons
+ */
+add_filter('wp_dashboard_setup', 'eikon_add_dashicons_to_titles', 50);
+function eikon_add_dashicons_to_titles()
+{
+  global $wp_dashboard_control_panel;
+  
+  // We'll add the dashicons via jQuery since we need to modify AFTER the widget is registered
+  echo '<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Stats widget
+      var statsTitle = document.querySelector("#eikon_stats h2");
+      if (statsTitle) {
+        statsTitle.innerHTML = \'<span class="dashicons dashicons-chart-bar"></span> \' + statsTitle.innerText;
+      }
+      // Random project widget
+      var projectTitle = document.querySelector("#eikon_random_project h2");
+      if (projectTitle) {
+        projectTitle.innerHTML = \'<span class="dashicons dashicons-format-gallery"></span> \' + projectTitle.innerText;
+      }
+    });
+  </script>';
 }
 
 /**
