@@ -132,13 +132,32 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
     error_log('Generated slug: "' . $slug . '"');
   }
 
-  wp_update_post([
-    'ID' => $post_id,
-    'post_name' => $slug,
-  ]);
+  // Use direct database update to avoid infinite hook loops with wp_update_post()
+  global $wpdb;
+  $result = $wpdb->update(
+    $wpdb->posts,
+    ['post_name' => $slug],
+    ['ID' => $post_id],
+    ['%s'],
+    ['%d']
+  );
 
   if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-    error_log('Slug update completed');
+    if ($result === false) {
+      error_log('Slug update FAILED - DB error: ' . $wpdb->last_error);
+    } elseif ($result === 0) {
+      error_log('Slug update completed but no rows affected (value may not have changed)');
+    } else {
+      error_log('Slug update successful - rows affected: ' . $result);
+    }
+
+    // Verify the update by querying the database
+    $verify_post = $wpdb->get_row($wpdb->prepare('SELECT ID, post_name FROM ' . $wpdb->posts . ' WHERE ID = %d', $post_id));
+    if ($verify_post) {
+      error_log('Verification - Post Name in DB: "' . $verify_post->post_name . '"');
+    } else {
+      error_log('Verification failed - could not fetch post from database');
+    }
   }
 
   $running = false;
