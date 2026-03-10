@@ -67,7 +67,7 @@ add_filter('wp_dashboard_setup', 'eikon_add_dashicons_to_titles', 50);
 function eikon_add_dashicons_to_titles()
 {
   global $wp_dashboard_control_panel;
-  
+
   // We'll add the dashicons via jQuery since we need to modify AFTER the widget is registered
   echo '<script>
     document.addEventListener("DOMContentLoaded", function() {
