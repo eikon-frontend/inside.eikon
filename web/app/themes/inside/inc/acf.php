@@ -23,13 +23,22 @@ add_filter('tiny_mce_before_init', function ($settings) {
   return $settings;
 });
 
-// Remove media upload button from project post type editor
+// Remove media upload button from project post type editor - higher priority
 add_filter('media_buttons', function ($html) {
   global $post;
   if ($post && $post->post_type === 'project') {
     return ''; // Remove media button HTML entirely
   }
   return $html;
+}, 1, 1);
+
+// Remove media buttons from ACF WYSIWYG fields on project posts
+add_filter('acf/fields/wysiwyg/media_buttons', function () {
+  global $post;
+  if ($post && $post->post_type === 'project') {
+    return false; // Disable media buttons in ACF WYSIWYG
+  }
+  return true;
 });
 
 // Custom WYSIWYG toolbar for portfolio text layout
