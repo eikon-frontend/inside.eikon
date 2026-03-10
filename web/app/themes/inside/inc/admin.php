@@ -221,52 +221,70 @@ function eikon_random_project_widget_content()
     $project = get_post();
     $project_url = get_permalink($project->ID);
     $project_thumbnail = get_the_post_thumbnail_url($project->ID, 'medium');
+    $author = get_userdata($project->post_author);
+    $year_terms = get_the_terms($project->ID, 'year');
+    $section_terms = get_the_terms($project->ID, 'section');
+    $subjects_terms = get_the_terms($project->ID, 'subjects');
   ?>
     <div style="padding: 0;">
+      <!-- Featured Image with Overlay -->
       <?php if ($project_thumbnail) : ?>
-        <div style="margin-bottom: 12px; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9;">
+        <div style="position: relative; margin: -12px -12px 16px -12px; border-radius: 8px 8px 0 0; overflow: hidden; aspect-ratio: 16/9; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <img src="<?php echo esc_url($project_thumbnail); ?>" alt="<?php echo esc_attr($project->post_title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 100%);"></div>
         </div>
       <?php endif; ?>
 
-      <h3 style="margin: 12px 0; font-size: 16px; color: #1f2937;">
-        <?php echo esc_html($project->post_title); ?>
-      </h3>
+      <!-- Content Section -->
+      <div style="padding: 0;">
+        <!-- Title -->
+        <h3 style="margin: 16px 0 8px 0; font-size: 18px; font-weight: 600; color: #1f2937; line-height: 1.4;">
+          <?php echo esc_html($project->post_title); ?>
+        </h3>
 
-      <?php
-      // Get authorship info
-      $author = get_userdata($project->post_author);
-      $year_terms = get_the_terms($project->ID, 'year');
-      $section_terms = get_the_terms($project->ID, 'section');
-      ?>
+        <!-- Author and Metadata -->
+        <div style="margin-bottom: 12px;">
+          <p style="margin: 6px 0; font-size: 12px; color: #6b7280; display: flex; align-items: center;">
+            <span style="display: inline-block; margin-right: 4px;">👤</span>
+            <?php echo esc_html($author->display_name); ?>
+          </p>
+        </div>
 
-      <p style="margin: 8px 0; font-size: 13px; color: #666;">
-        <strong>Par :</strong> <?php echo esc_html($author->display_name); ?>
-      </p>
+        <!-- Tags/Badges Row -->
+        <div style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px;">
+          <?php if ($year_terms) : ?>
+            <span style="background: #f3f4f6; color: #374151; padding: 4px 10px; border-radius: 14px; font-size: 11px; font-weight: 500;">
+              📅 <?php echo esc_html($year_terms[0]->name); ?>
+            </span>
+          <?php endif; ?>
 
-      <?php if ($year_terms) : ?>
-        <p style="margin: 8px 0; font-size: 13px; color: #666;">
-          <strong>Année :</strong> <?php echo esc_html($year_terms[0]->name); ?>
-        </p>
-      <?php endif; ?>
+          <?php if ($section_terms) : ?>
+            <span style="background: #ede9fe; color: #6d28d9; padding: 4px 10px; border-radius: 14px; font-size: 11px; font-weight: 500;">
+              🎓 <?php echo esc_html($section_terms[0]->name); ?>
+            </span>
+          <?php endif; ?>
 
-      <?php if ($section_terms) : ?>
-        <p style="margin: 8px 0; font-size: 13px; color: #666;">
-          <strong>Classe :</strong> <?php echo esc_html($section_terms[0]->name); ?>
-        </p>
-      <?php endif; ?>
+          <?php if ($subjects_terms) : ?>
+            <span style="background: #fce7f3; color: #831843; padding: 4px 10px; border-radius: 14px; font-size: 11px; font-weight: 500;">
+              🎨 <?php echo esc_html($subjects_terms[0]->name); ?>
+            </span>
+          <?php endif; ?>
+        </div>
 
-      <a href="<?php echo esc_url($project_url); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box; margin-top: 12px;">
-        Découvrir le projet →
-      </a>
+        <!-- CTA Button -->
+        <a href="<?php echo esc_url($project_url); ?>" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3); transition: all 0.2s ease;">
+          Découvrir le projet <span style="margin-left: 6px;">→</span>
+        </a>
+      </div>
     </div>
   <?php
     wp_reset_postdata();
   } else {
   ?>
-    <div style="padding: 0; text-align: center; color: #666;">
-      <p>Aucun projet publié pour le moment.</p>
-      <p style="font-size: 12px;">Revenez bientôt ! 🎨</p>
+    <div style="padding: 24px; text-align: center; color: #6b7280;">
+      <div style="font-size: 40px; margin-bottom: 8px;">🎨</div>
+      <p style="margin: 0 0 4px 0; font-weight: 600; color: #374151;">Aucun projet publié</p>
+      <p style="margin: 0; font-size: 13px;">Les projets apparaîtront ici</p>
     </div>
 <?php
   }
@@ -285,7 +303,7 @@ function eikon_add_dashboard_admin_bar($wp_admin_bar)
 
   $wp_admin_bar->add_node([
     'id' => 'dashboard',
-    'title' => '<span class="dashicons dashicons-chart-bar"></span> Tableau de bord',
+    'title' => '<span class="dashicons dashicons-dashboard"></span> Tableau de bord',
     'href' => admin_url(),
     'meta' => ['class' => 'dashboard-link'],
   ]);
