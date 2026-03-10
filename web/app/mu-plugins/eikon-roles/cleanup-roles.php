@@ -28,7 +28,6 @@ if (!$wp_roles) {
 // List of roles to completely remove from the database
 $roles_to_remove = array(
   'supervisor',
-  'editor',
   'subscriber',
   'responsable_de_branche',
   'responsable-de-branche',

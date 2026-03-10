@@ -10,10 +10,11 @@ This plugin **replaces the Members plugin** with a lightweight, custom solution 
 
 - **Super Admin**: Full administrative access (unchanged from WordPress default)
 - **Administrator**: Manage all content and users (restricted from settings/plugins/themes)
+- **Editor** (`editor`, "Editor"): Full content management (all post types, media, publishing)
 - **Teacher** (`teacher`, "Enseignant / enseignante"): Posts + Projects, can see all but only edit own content
 - **Student** (`student`, "Étudiant / étudiante"): Projects only, can only see and edit own projects
 
-All default WordPress roles (Editor, Subscriber, etc.) are automatically removed on init.
+All legacy roles (Supervisor, Subscriber, etc.) are automatically removed on init.
 
 ## Installation
 
@@ -48,6 +49,29 @@ The `project` custom post type uses `capability_type='post'`, which means:
 - **Cannot access**: WordPress settings, plugins, themes installation
 
 **Menu Access**: Full admin menu except Settings/Plugins/Appearance
+
+### Editor (`editor`)
+
+**Display**: "Editor"
+
+**Permissions**:
+
+- Create, edit, publish, and delete **all posts**
+- Create, edit, publish, and delete **all projects**
+- Create, edit, publish, and delete **all pages**
+- Create, edit, publish, and delete **all departments**
+- Upload and manage **all media files**
+- Edit content created by other users
+
+**Cannot do**:
+
+- Create or manage user accounts
+- Access WordPress settings
+- Activate plugins or manage themes
+- Access tools or dashboard
+- Delete media created by others (can edit metadata)
+
+**Admin Menu**: Posts, Pages, Projects, Departments, Media, Profile
 
 ### Teacher (`teacher`)
 
@@ -98,9 +122,10 @@ The `project` custom post type uses `capability_type='post'`, which means:
 
 The plugin:
 
-- Removes unwanted legacy roles (supervisor, editor, subscriber, responsable_de_branche, etc.)
+- Creates editor role with full content management capabilities
 - Creates teacher and student roles with appropriate capabilities
 - Configures administrator capabilities
+- Removes unwanted legacy roles (supervisor, subscriber, responsable_de_branche, etc.)
 - Sets default registration role to student
 - Automatically adds/updates capabilities if roles already exist
 
@@ -128,8 +153,9 @@ Teachers and students cannot publish content:
 
 **Menu items are hidden** based on role via `admin_menu` hook:
 
-- Students: Dashboard, Posts, Pages, Departments, Tools, Settings, Users removed
+- Editors: Dashboard, Tools, Settings, Appearance, Plugins removed (keep all content menus)
 - Teachers: Dashboard, Pages, Departments, Tools, Settings, Appearance, Plugins removed
+- Students: Dashboard, Posts, Pages, Departments, Tools, Settings, Users removed
 
 **Media library filtering** restricts uploads by author:
 

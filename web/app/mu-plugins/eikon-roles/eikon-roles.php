@@ -20,7 +20,10 @@ if (!defined('ABSPATH')) {
  */
 function eikon_init_roles()
 {
-  // Create Teacher role BEFORE removing editor role (so it can inherit)
+  // Create Editor role (full content management, no settings access)
+  eikon_create_editor_role();
+
+  // Create Teacher role
   eikon_create_teacher_role();
 
   // Create Student role
@@ -41,7 +44,6 @@ function eikon_cleanup_unwanted_roles()
 {
   $roles_to_remove = array(
     'supervisor',
-    'editor',
     'subscriber',
     'responsable_de_branche',
     'responsable-de-branche',
@@ -58,7 +60,7 @@ function eikon_cleanup_unwanted_roles()
   global $wp_roles;
   if ($wp_roles) {
     $all_roles = $wp_roles->get_names();
-    $protected_roles = array('teacher', 'student', 'administrator', 'super_admin');
+    $protected_roles = array('teacher', 'student', 'editor', 'administrator', 'super_admin');
     foreach ($all_roles as $role_name) {
       if (!in_array($role_name, $protected_roles, true)) {
         if (stripos($role_name, 'responsable') !== false || stripos($role_name, 'branch') !== false) {
@@ -66,6 +68,66 @@ function eikon_cleanup_unwanted_roles()
         }
       }
     }
+  }
+}
+
+/**
+ * Create Editor role with full content management capabilities
+ *
+ * Editors can:
+ * - Access all post types (posts, projects, pages, departments)
+ * - Create, edit, publish, and delete content
+ * - Upload and manage media
+ * - Manage access to published content
+ *
+ * Editors CANNOT:
+ * - Manage users
+ * - Access WordPress settings
+ * - Activate plugins or manage themes
+ * - Access tools
+ */
+function eikon_create_editor_role()
+{
+  $editor_caps = array(
+    'read'                      => true,
+    'read_posts'                => true,
+    'read_pages'                => true,
+    'edit_posts'                => true,
+    'edit_others_posts'         => true,
+    'edit_published_posts'      => true,
+    'publish_posts'             => true,
+    'delete_posts'              => true,
+    'delete_others_posts'       => true,
+    'delete_published_posts'    => true,
+    'manage_posts'              => true,
+    'create_posts'              => true,
+    'edit_pages'                => true,
+    'edit_others_pages'         => true,
+    'edit_published_pages'      => true,
+    'publish_pages'             => true,
+    'delete_pages'              => true,
+    'delete_others_pages'       => true,
+    'delete_published_pages'    => true,
+    'manage_pages'              => true,
+    'create_pages'              => true,
+    'upload_files'              => true,
+    'edit_files'                => true,
+  );
+
+  // Check if role already exists
+  $editor_role = get_role('editor');
+  if ($editor_role) {
+    // Role exists, update its capabilities
+    foreach ($editor_caps as $cap => $grant) {
+      if ($grant) {
+        $editor_role->add_cap($cap);
+      } else {
+        $editor_role->remove_cap($cap);
+      }
+    }
+  } else {
+    // Create new role with specified capabilities
+    add_role('editor', 'Editor', $editor_caps);
   }
 }
 
@@ -312,6 +374,21 @@ function eikon_remove_admin_menu_items()
     return;
   }
 
+  // For editors: remove settings, users, tools, and theme-related items
+  if (in_array('editor', $current_user->roles, true)) {
+    remove_menu_page('index.php'); // Dashboard
+    remove_menu_page('tools.php'); // Tools
+    remove_menu_page('options-general.php'); // Settings
+    remove_menu_page('themes.php'); // Appearance
+    remove_menu_page('plugins.php'); // Plugins
+
+    // Keep: edit.php (Posts)
+    // Keep: edit.php?post_type=page (Pages)
+    // Keep: edit.php?post_type=project (Projects)
+    // Keep: edit.php?post_type=department (Departments)
+    // Keep: upload.php (Media)
+  }
+
   // For students: remove everything except projects, media, and profile
   if (in_array('student', $current_user->roles, true)) {
     remove_menu_page('index.php'); // Dashboard
@@ -377,7 +454,7 @@ function eikon_sanitize_user_roles($user_id)
     return;
   }
 
-  $unwanted_roles = array('editor', 'subscriber', 'responsable_de_branche', 'branch_manager');
+  $unwanted_roles = array('subscriber', 'responsable_de_branche', 'branch_manager');
   $user_roles = $user->roles;
 
   // If user has unwanted roles, remove them
