@@ -78,11 +78,11 @@ function project_completion_checklist_content($post)
     $color = $is_complete ? '#10b981' : '#d1d5db';
     $text_color = $is_complete ? '#065f46' : '#6b7280';
 ?>
-    <div style="display: flex; align-items: center; margin: 8px 0; padding: 8px; background: <?php echo $is_complete ? '#ecfdf5' : '#f9fafb'; ?>; border-radius: 4px; border-left: 3px solid <?php echo $color; ?>;">
-      <span style="color: <?php echo $color; ?>; font-size: 18px; font-weight: bold; margin-right: 10px; min-width: 20px; text-align: center;">
+    <div style="display: flex; align-items: center; margin: 4px 0; padding: 6px; background: <?php echo $is_complete ? '#ecfdf5' : '#f9fafb'; ?>; border-radius: 4px; border-left: 3px solid <?php echo $color; ?>;">
+      <span style="color: <?php echo $color; ?>; font-size: 16px; font-weight: bold; margin-right: 8px; min-width: 18px; text-align: center;">
         <?php echo esc_html($icon); ?>
       </span>
-      <span style="color: <?php echo $text_color; ?>; font-size: 14px;">
+      <span style="color: <?php echo $text_color; ?>; font-size: 13px;">
         <?php echo esc_html($label); ?>
       </span>
     </div>
@@ -91,20 +91,20 @@ function project_completion_checklist_content($post)
   ?>
   <div style="margin: 0;">
     <!-- Completion Progress -->
-    <div style="margin-bottom: 16px;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
-        <strong style="font-size: 14px; color: #1f2937;">Complétude du projet</strong>
-        <span style="font-size: 16px; font-weight: bold; color: <?php echo $is_complete ? '#10b981' : '#f59e0b'; ?>;">
+    <div style="margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center;">
+        <strong style="font-size: 13px; color: #1f2937;">Complétude du projet</strong>
+        <span style="font-size: 15px; font-weight: bold; color: <?php echo $is_complete ? '#10b981' : '#f59e0b'; ?>;">
           <?php echo (int) $completion_percent; ?>%
         </span>
       </div>
-      <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+      <div style="width: 100%; height: 6px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
         <div style="width: <?php echo (int) $completion_percent; ?>%; height: 100%; background: <?php echo $is_complete ? '#10b981' : '#f59e0b'; ?>; transition: width 0.3s ease;"></div>
       </div>
     </div>
 
     <!-- Checklist Items -->
-    <div style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+    <div style="border-top: 1px solid #e5e7eb; padding-top: 8px;">
       <?php
       $render_item('Titre du projet', $has_title);
       $render_item('Image à la une', $has_thumbnail);
@@ -115,8 +115,8 @@ function project_completion_checklist_content($post)
     </div>
 
     <!-- Status Message -->
-    <div style="margin-top: 12px; padding: 10px; border-radius: 4px; background: <?php echo $is_complete ? '#d1fae5' : '#fef3c7'; ?>; border: 1px solid <?php echo $is_complete ? '#6ee7b7' : '#fcd34d'; ?>;">
-      <p style="margin: 0; font-size: 13px; color: <?php echo $is_complete ? '#065f46' : '#92400e'; ?>;">
+    <div style="margin-top: 8px; padding: 8px; border-radius: 4px; background: <?php echo $is_complete ? '#d1fae5' : '#fef3c7'; ?>; border: 1px solid <?php echo $is_complete ? '#6ee7b7' : '#fcd34d'; ?>;">
+      <p style="margin: 0; font-size: 12px; color: <?php echo $is_complete ? '#065f46' : '#92400e'; ?>;">
         <?php
         if ($is_complete) {
           echo '✓ <strong>Parfait !</strong> Ton projet est complet et prêt à être partagé.';
