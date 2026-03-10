@@ -316,7 +316,7 @@ class VOD_Eikon
                           $full_timestamp = $upload_date->format('d/m/Y H:i:s');
                           ?>
                           <div class="upload-user">
-                            <?php echo !empty($video->uploader_email) ? '<code>' . esc_html($video->uploader_email) . '</code>' : '<em style="color: #999;">Non spécifié</em>'; ?>
+                            <?php echo !empty($video->uploader_email) ? esc_html($video->uploader_email) : '<em style="color: #999;">Non spécifié</em>'; ?>
                           </div>
                           <div class="upload-date">
                             <time datetime="<?php echo esc_attr($upload_date->format('c')); ?>" title="<?php echo esc_attr($full_timestamp); ?>">

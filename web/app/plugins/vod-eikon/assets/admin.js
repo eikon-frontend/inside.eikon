@@ -278,8 +278,8 @@ jQuery(document).ready(function ($) {
 
     console.log('VOD Eikon: Delete confirmed, proceeding with AJAX request');
 
-    // Show loading state
-    $icon.addClass('loading');
+    // Show loading state and disable button immediately to prevent multiple clicks
+    $icon.addClass('loading').css('pointer-events', 'none').css('opacity', '0.6');
     $dashicon.removeClass('dashicons-trash').addClass('dashicons-update spin');
 
     console.log('VOD Eikon: Sending delete AJAX request');
@@ -301,20 +301,19 @@ jQuery(document).ready(function ($) {
         console.log('VOD Eikon: AJAX success response:', response);
 
         if (response.success) {
-          // Show success state briefly before removing row
+          // Show success state and remove row immediately
           $dashicon.removeClass('spin dashicons-update').addClass('dashicons-yes-alt');
-          $icon.removeClass('loading').addClass('success');
+          $icon.addClass('success');
 
-          setTimeout(function () {
-            $row.fadeOut(function () {
-              $row.remove();
-            });
-          }, 1000);
+          // Remove row with fadeOut effect
+          $row.fadeOut(300, function () {
+            $row.remove();
+          });
         } else {
           console.error('VOD Eikon: Delete failed:', response.data ? response.data.message : 'Unknown error');
           alert('Échec de la suppression de la vidéo : ' + response.data.message);
           // Reset to original state
-          $icon.removeClass('loading');
+          $icon.removeClass('loading').css('pointer-events', 'auto').css('opacity', '1');
           $dashicon.removeClass('spin dashicons-update').addClass('dashicons-trash');
         }
       },
@@ -327,7 +326,7 @@ jQuery(document).ready(function ($) {
 
         alert('Une erreur s\'est produite lors de la suppression de la vidéo.');
         // Reset to original state
-        $icon.removeClass('loading');
+        $icon.removeClass('loading').css('pointer-events', 'auto').css('opacity', '1');
         $dashicon.removeClass('spin dashicons-update').addClass('dashicons-trash');
       }
     });
