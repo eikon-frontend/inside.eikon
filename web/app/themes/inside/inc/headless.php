@@ -118,7 +118,6 @@ add_filter('preview_post_link', function ($link, $post) {
   }
 
   // Get the home URL (frontend URL)
-  //...
   $frontend_url = home_url('/');
 
   // If the post type is 'project', construct the URL with /projets/slug/
@@ -138,3 +137,65 @@ add_filter('preview_post_link', function ($link, $post) {
 
   return $link;
 }, 10, 2);
+
+/**
+ * Override the sample permalink to point to the frontend (for projects).
+ *
+ * This customizes what's displayed in the publish box underneath the title.
+ * For draft/pending projects, this ensures the URL shown is the frontend URL.
+ */
+add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name, $post) {
+  if (!$post || $post->post_type !== 'project') {
+    return $permalink;
+  }
+
+  // If no slug yet, return the default
+  if (empty($post->post_name)) {
+    return $permalink;
+  }
+
+  // Get the frontend URL
+  $frontend_url = home_url('/');
+
+  // Construct the project permalink
+  $project_permalink = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+
+  return $project_permalink;
+}, 10, 5);
+
+/**
+ * Filter the permalink anchor tag HTML to ensure proper linking.
+ *
+ * Ensures that when the permalink is displayed in the publish box, it's properly
+ * linked to the frontend preview URL instead of the admin edit page.
+ */
+add_filter('get_sample_permalink_html', function ($html, $post_id, $new_title = '', $new_slug = '') {
+  $post = get_post($post_id);
+
+  if (!$post || $post->post_type !== 'project') {
+    return $html;
+  }
+
+  // If no slug, disable the link
+  if (empty($post->post_name)) {
+    return $html;
+  }
+
+  // Get the correct preview URL
+  $preview_url = preview_post_link($post);
+
+  if (empty($preview_url)) {
+    return $html;
+  }
+
+  // Build the correct HTML with proper link
+  $frontend_url = home_url('/');
+  $project_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+
+  // Create the new HTML with the correct URL
+  $new_html = '<strong>' . esc_html__('Permalink:', 'default') . '</strong> ';
+  $new_html .= '<span id="sample-permalink"><a href="' . esc_url($preview_url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($project_url) . '</a></span> ';
+  $new_html .= '<span id="edit-slug-buttons"><a href="#post_name" class="edit-permalink" aria-label="' . esc_attr__('Edit permalink') . '">' . esc_html__('Edit', 'default') . '</a></span>';
+
+  return $new_html;
+}, 10, 4);
