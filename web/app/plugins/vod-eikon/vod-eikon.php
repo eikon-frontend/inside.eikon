@@ -44,6 +44,9 @@ class VOD_Eikon
 
   public function init()
   {
+    // Ensure database table is up to date
+    $this->create_database_table();
+
     add_action('admin_menu', array($this, 'add_admin_menu'));
     add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     add_action('wp_ajax_sync_vod_videos', array($this, 'ajax_sync_videos'));
@@ -1130,9 +1133,10 @@ class VOD_Eikon
           'vod_id' => $video_id,
           'name' => $title,
           'user_id' => $user_id,
+          'uploader_email' => $current_user->user_email,
           'published' => 0 // Start unpublished until callbacks provide media data
         ),
-        array('%s', '%s', '%d', '%d')
+        array('%s', '%s', '%d', '%s', '%d')
       );
 
       wp_send_json_success(array(
