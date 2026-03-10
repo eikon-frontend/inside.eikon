@@ -63,7 +63,7 @@ function eikon_documentation_widget_content()
     $doc_url = 'https://eikon-imd.notion.site';
     $role_text = 'pour enseignants';
   }
-  ?>
+?>
   <div style="padding: 0;">
     <p style="margin-top: 0;">
       Accédez à la documentation complète <strong><?php echo esc_html($role_text); ?></strong> :
@@ -74,7 +74,7 @@ function eikon_documentation_widget_content()
       </a>
     </p>
   </div>
-  <?php
+<?php
 }
 
 /**
@@ -85,19 +85,19 @@ function eikon_stats_widget_content()
   $total_projects = wp_count_posts('project')->publish + wp_count_posts('project')->draft + wp_count_posts('project')->pending;
   $total_users = count_users();
   $total_users_count = $total_users['total_users'];
-  
+
   // Count by user role
   $teacher_count = count(get_users(['role' => 'teacher']));
   $student_count = count(get_users(['role' => 'student']));
-  
+
   // Get published projects count
   $published_projects = wp_count_posts('project')->publish;
   $draft_projects = wp_count_posts('project')->draft;
-  
-  ?>
+
+?>
   <div style="padding: 0;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-      
+
       <!-- Total Projects -->
       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
         <div style="font-size: 32px; font-weight: bold;">
@@ -159,7 +159,7 @@ function eikon_stats_widget_content()
       </div>
 
     </div>
-    
+
     <p style="text-align: center; font-size: 12px; color: #666; margin: 0;">
       ✨ Bravo pour votre engagement dans Inside Eikon !
     </p>
@@ -181,35 +181,35 @@ function eikon_random_project_widget_content()
   ];
 
   $query = new WP_Query($args);
-  
+
   if ($query->have_posts()) {
     $query->the_post();
     $project = get_post();
     $project_url = get_permalink($project->ID);
     $project_thumbnail = get_the_post_thumbnail_url($project->ID, 'medium');
-    ?>
+  ?>
     <div style="padding: 0;">
       <?php if ($project_thumbnail) : ?>
         <div style="margin-bottom: 12px; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9;">
           <img src="<?php echo esc_url($project_thumbnail); ?>" alt="<?php echo esc_attr($project->post_title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
       <?php endif; ?>
-      
+
       <h3 style="margin: 12px 0; font-size: 16px; color: #1f2937;">
         <?php echo esc_html($project->post_title); ?>
       </h3>
-      
+
       <?php
       // Get authorship info
       $author = get_userdata($project->post_author);
       $year_terms = get_the_terms($project->ID, 'year');
       $section_terms = get_the_terms($project->ID, 'section');
       ?>
-      
+
       <p style="margin: 8px 0; font-size: 13px; color: #666;">
         <strong>Par :</strong> <?php echo esc_html($author->display_name); ?>
       </p>
-      
+
       <?php if ($year_terms) : ?>
         <p style="margin: 8px 0; font-size: 13px; color: #666;">
           <strong>Année :</strong> <?php echo esc_html($year_terms[0]->name); ?>
@@ -226,15 +226,15 @@ function eikon_random_project_widget_content()
         Découvrir le projet →
       </a>
     </div>
-    <?php
+  <?php
     wp_reset_postdata();
   } else {
-    ?>
+  ?>
     <div style="padding: 0; text-align: center; color: #666;">
       <p>Aucun projet publié pour le moment.</p>
       <p style="font-size: 12px;">Revenez bientôt ! 🎨</p>
     </div>
-    <?php
+<?php
   }
 }
 
