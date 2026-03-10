@@ -57,3 +57,18 @@ add_filter('tiny_mce_before_init', function ($settings) {
   $settings['block_formats'] = 'Paragraph=p;Heading 3=h3';
   return $settings;
 }, 20);
+
+// JavaScript to remove media buttons element from project post editor
+add_action('admin_head', function () {
+  global $post;
+  if ($post && $post->post_type === 'project') {
+    echo '<script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const mediaButtons = document.getElementById("wp-content-media-buttons");
+        if (mediaButtons) {
+          mediaButtons.remove();
+        }
+      });
+    </script>';
+  }
+});
