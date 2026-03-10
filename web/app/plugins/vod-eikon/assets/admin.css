@@ -221,14 +221,54 @@
     width: 80px;
 }
 
-.vod-eikon-videos .wp-list-table th:nth-child(3),
-.vod-eikon-videos .wp-list-table th:nth-child(4) {
-  width: 140px;
+.vod-eikon-videos .wp-list-table th:nth-child(2) { /* Name */
+    flex: 1;
+    min-width: 200px;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(3) { /* Uploaded (merged) */
+    width: 220px;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(4) { /* Status */
+    width: 140px;
+}
+
+.vod-eikon-videos .wp-list-table th:nth-child(5) { /* Actions */
+    width: 160px;
 }
 
 .vod-eikon-videos .wp-list-table td {
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+/* Uploaded column styling */
+.uploaded-column {
+    padding: 10px;
+}
+
+.upload-user {
+    margin-bottom: 6px;
+}
+
+.upload-user code {
+    background: #f1f1f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #666;
+    word-break: break-all;
+}
+
+.upload-date {
+    margin-top: 4px;
+}
+
+.upload-date time {
+    color: #666;
+    font-size: 12px;
 }
 
 .vod-copy-tooltip {
@@ -293,11 +333,16 @@
         width: auto;
     }
 
-    .vod-eikon-videos .wp-list-table th:nth-child(3) {
-      width: 80px;
+    .vod-eikon-videos .wp-list-table th:nth-child(3) { /* Uploaded */
+      width: 150px;
+      font-size: 12px;
     }
 
-    .vod-eikon-videos .wp-list-table th:nth-child(4) {
+    .vod-eikon-videos .wp-list-table th:nth-child(4) { /* Status */
+        width: 100px;
+    }
+
+    .vod-eikon-videos .wp-list-table th:nth-child(5) { /* Actions */
         width: 110px;
     }
 }
@@ -539,10 +584,45 @@
     color: #333;
 }
 
-/* Specific styling for each action type */
+/* Email column styling */
+.vod-eikon-videos .wp-list-table td:nth-child(3) code {
+    background: #f0f5ff;
+    border: 1px solid #d4e1f5;
+    color: #0066cc;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 3px;
+    max-width: 180px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Date column styling */
+.vod-eikon-videos .wp-list-table td:nth-child(4) time {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    cursor: help;
+}
+
+.vod-eikon-videos .wp-list-table td:nth-child(4) time:hover {
+    color: #0073aa;
+}
 .action-icon.play-video:hover {
     background-color: #e8f5e8;
     color: #28a745;
+}
+
+.action-icon.admin-link {
+    cursor: pointer;
+    color: #1965c9;
+}
+
+.action-icon.admin-link:hover {
+    background-color: #e3f2fd;
+    color: #0d5cb8;
 }
 
 .action-icon.toggle-details:hover {

@@ -25,11 +25,17 @@ class VOD_Eikon
 {
 
   private $table_name;
+  private $infomaniak_account_id;
+  private $infomaniak_channel_id;
 
   public function __construct()
   {
     global $wpdb;
     $this->table_name = $wpdb->prefix . 'vod_eikon_videos';
+
+    // Load environment variables with fallbacks
+    $this->infomaniak_account_id = $this->get_env_var('INFOMANIAK_ACCOUNT_ID', '702969');
+    $this->infomaniak_channel_id = $this->get_env_var('INFOMANIAK_CHANNEL_ID', '14234');
 
     add_action('plugins_loaded', array($this, 'init'));
     register_activation_hook(__FILE__, array($this, 'activate'));
@@ -86,6 +92,31 @@ class VOD_Eikon
     flush_rewrite_rules();
   }
 
+  /**
+   * Get environment variable with multiple fallback methods
+   */
+  private function get_env_var($var_name, $default = '')
+  {
+    // Try getenv() first
+    $value = getenv($var_name);
+    if ($value) {
+      return $value;
+    }
+
+    // Try $_ENV
+    if (isset($_ENV[$var_name])) {
+      return $_ENV[$var_name];
+    }
+
+    // Try $_SERVER
+    if (isset($_SERVER[$var_name])) {
+      return $_SERVER[$var_name];
+    }
+
+    // Return default
+    return $default;
+  }
+
   private function create_database_table()
   {
     global $wpdb;
@@ -98,15 +129,43 @@ class VOD_Eikon
             name varchar(255) NOT NULL,
             poster varchar(500) DEFAULT '',
             mpd_url varchar(500) DEFAULT '',
+            uploader_email varchar(255) DEFAULT '',
+            user_id bigint(20) DEFAULT 0,
             published tinyint(1) DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            UNIQUE KEY vod_id (vod_id)
+            UNIQUE KEY vod_id (vod_id),
+            KEY user_id (user_id)
         ) $charset_collate;";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
+
+    // Check if uploader_email column exists, add it if it doesn't (for existing installations)
+    $column_exists = $wpdb->get_results($wpdb->prepare(
+      "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s AND TABLE_SCHEMA = %s",
+      $this->table_name,
+      'uploader_email',
+      DB_NAME
+    ));
+
+    if (empty($column_exists)) {
+      $wpdb->query("ALTER TABLE {$this->table_name} ADD COLUMN uploader_email varchar(255) DEFAULT '' AFTER mpd_url");
+    }
+
+    // Check if user_id column exists, add it if it doesn't (for existing installations)
+    $user_id_exists = $wpdb->get_results($wpdb->prepare(
+      "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s AND TABLE_SCHEMA = %s",
+      $this->table_name,
+      'user_id',
+      DB_NAME
+    ));
+
+    if (empty($user_id_exists)) {
+      $wpdb->query("ALTER TABLE {$this->table_name} ADD COLUMN user_id bigint(20) DEFAULT 0 AFTER uploader_email");
+      $wpdb->query("ALTER TABLE {$this->table_name} ADD KEY user_id (user_id)");
+    }
   }
 
   public function add_admin_menu()
@@ -152,7 +211,8 @@ class VOD_Eikon
 
   public function admin_page()
   {
-    $videos = $this->get_videos_from_db();
+    $current_user = wp_get_current_user();
+    $videos = $this->get_videos_from_db($current_user->ID);
 ?>
     <div class="wrap">
       <h1>Gestionnaire de Vidéos VOD</h1>
@@ -210,6 +270,7 @@ class VOD_Eikon
                     <tr>
                       <th>Affiche</th>
                       <th>Nom</th>
+                      <th>Uploaded</th>
                       <th>Statut</th>
                       <th>Actions</th>
                     </tr>
@@ -245,10 +306,21 @@ class VOD_Eikon
                         <td>
                           <?php echo esc_html($video->name); ?>
                         </td>
+                        <td class="uploaded-column">
+
+                          <div class="upload-user">
+                            <?php echo !empty($video->uploader_email) ? '<code>' . esc_html($video->uploader_email) . '</code>' : '<em style="color: #999;">Non spécifié</em>'; ?>
+                          </div>
+                          <div class="upload-date">
+                            <time>
+                              <?php echo new DateTime($video->created_at)->format('d/m/Y H:i:s') ?>
+                            </time>
+                          </div>
+                        </td>
                         <td>
-                          <span class="status-indicator <?php echo $status_class; ?>" title="<?php echo esc_attr($status_text); ?>">
-                            <span class="dashicons <?php echo $status_icon; ?>" style="color: <?php echo $status_color; ?>; font-size: 16px; vertical-align: middle;"></span>
-                            <span style="color: <?php echo $status_color; ?>; margin-left: 5px; font-weight: 500;"><?php echo $status_text; ?></span>
+                          <span class="status-indicator <?php echo $status_class; ?>" title="<?php echo esc_attr($status_text); ?>
+                            <span class=" dashicons <?php echo $status_icon; ?>" style="color: <?php echo $status_color; ?>; font-size: 16px; vertical-align: middle;"></span>
+                          <span style="color: <?php echo $status_color; ?>; margin-left: 5px; font-weight: 500;"><?php echo $status_text; ?></span>
                           </span>
                         </td>
                         <td class="actions-column">
@@ -261,58 +333,17 @@ class VOD_Eikon
                               <span class="dashicons dashicons-video-alt3"></span>
                             </span>
                           <?php endif; ?>
+                          <?php if (current_user_can('manage_options')): ?>
+                            <a class="action-icon admin-link" href="https://manager.infomaniak.com/v3/<?php echo esc_attr($this->infomaniak_account_id); ?>/ng/vod-aod/pack/<?php echo esc_attr($this->infomaniak_channel_id); ?>/media/<?php echo esc_attr($video->vod_id); ?>/dashboard" target="_blank" rel="noopener noreferrer" title="Ouvrir sur Infomaniak">
+                              <span class="dashicons dashicons-external"></span>
+                            </a>
+                          <?php endif; ?>
                           <span class="action-icon sync-single-video" data-video-id="<?php echo esc_attr($video->id); ?>" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" title="Synchroniser cette vidéo">
                             <span class="dashicons dashicons-update"></span>
                           </span>
                           <span class="action-icon delete-video" data-video-id="<?php echo esc_attr($video->id); ?>" title="Supprimer cette vidéo">
                             <span class="dashicons dashicons-trash"></span>
                           </span>
-                          <span class="action-icon toggle-details" data-video-id="<?php echo esc_attr($video->id); ?>" title="Afficher/Masquer les détails">
-                            <span class="dashicons dashicons-arrow-down-alt2"></span>
-                          </span>
-                        </td>
-                      </tr>
-                      <!-- Details Row (Hidden by default) -->
-                      <tr id="details-<?php echo esc_attr($video->id); ?>" class="video-details-row" style="display: none;">
-                        <td colspan="3">
-                          <div class="video-details-content">
-                            <table class="details-table">
-                              <tbody>
-                                <tr>
-                                  <td class="detail-label">ID VOD:</td>
-                                  <td class="detail-value"><?php echo esc_html($video->vod_id); ?></td>
-                                </tr>
-                                <tr>
-                                  <td class="detail-label">URL MPD:</td>
-                                  <td class="detail-value">
-                                    <?php if ($video->mpd_url): ?>
-                                      <code class="copyable-url"><?php echo esc_html($video->mpd_url); ?></code>
-                                      <button class="button button-small copy-url" data-url="<?php echo esc_attr($video->mpd_url); ?>">
-                                        <span class="dashicons dashicons-admin-page"></span>
-                                        Copier
-                                      </button>
-                                    <?php else: ?>
-                                      <em style="color: #dc3545;">Aucune URL MPD disponible</em>
-                                    <?php endif; ?>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td class="detail-label">Date de création:</td>
-                                  <td class="detail-value"><?php echo esc_html(date('d/m/Y H:i', strtotime($video->created_at))); ?></td>
-                                </tr>
-                                <tr>
-                                  <td class="detail-label">Statut:</td>
-                                  <td class="detail-value">
-                                    <?php if (!$is_published): ?>
-                                      <span class="status-incomplete">En cours de traitement</span>
-                                    <?php else: ?>
-                                      <span class="status-complete">Prêt</span>
-                                    <?php endif; ?>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
                         </td>
                       </tr>
                     <?php endforeach; ?>
@@ -422,9 +453,9 @@ class VOD_Eikon
     $all_videos = array();
     $page = 1;
     $per_page = 100; // Request more items per page
-    
+
     do {
-      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster,streams,encoded_medias&page={$page}&per_page={$per_page}";
+      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media?with=poster,streams,encoded_medias,user&page={$page}&per_page={$per_page}";
 
       $response = wp_remote_get($api_url, array(
         'headers' => array(
@@ -446,10 +477,10 @@ class VOD_Eikon
       if (!$data || !isset($data['data'])) {
         break;
       }
-      
+
       // Add videos from this page to the collection
       $all_videos = array_merge($all_videos, $data['data']);
-      
+
       // Check if there are more pages
       $has_more = false;
       if (isset($data['pages']) && $page < $data['pages']) {
@@ -460,15 +491,14 @@ class VOD_Eikon
         // If we got a full page, there might be more
         $has_more = true;
       }
-      
+
       $page++;
-      
     } while ($has_more && $page <= 100); // Safety limit of 100 pages
-    
+
     if (empty($all_videos)) {
       return false;
     }
-    
+
     // Replace $data['data'] with all collected videos
     $data = array('data' => $all_videos);
 
@@ -492,6 +522,16 @@ class VOD_Eikon
 
       if (empty($vod_id) || empty($name)) {
         continue;
+      }
+
+      // Extract uploader email from user data
+      $uploader_email = '';
+      if (!empty($video_data['user'])) {
+        if (is_array($video_data['user'])) {
+          $uploader_email = sanitize_email($video_data['user']['email'] ?? '');
+        } elseif (is_string($video_data['user'])) {
+          $uploader_email = sanitize_email($video_data['user']);
+        }
       }
 
       // Filter out videos that are not in the root folder (path != "/")
@@ -563,10 +603,11 @@ class VOD_Eikon
             'name' => $name,
             'poster' => $poster,
             'mpd_url' => $mpd_url,
+            'uploader_email' => $uploader_email,
             'published' => $published
           ),
           array('vod_id' => $vod_id),
-          array('%s', '%s', '%s', '%d'),
+          array('%s', '%s', '%s', '%s', '%d'),
           array('%s')
         );
       } else {
@@ -582,9 +623,10 @@ class VOD_Eikon
             'name' => $name,
             'poster' => $poster,
             'mpd_url' => $mpd_url,
+            'uploader_email' => $uploader_email,
             'published' => $published
           ),
-          array('%s', '%s', '%s', '%s', '%d')
+          array('%s', '%s', '%s', '%s', '%s', '%d')
         );
 
         if ($result !== false) {
@@ -737,10 +779,32 @@ class VOD_Eikon
   }
 
 
-  private function get_videos_from_db()
+  private function get_videos_from_db($user_id = null)
   {
     global $wpdb;
+    $current_user = wp_get_current_user();
 
+    // If user_id is not provided, use the current user's ID
+    if ($user_id === null) {
+      $user_id = $current_user->ID;
+    }
+
+    // Admins and editors see all videos
+    if (in_array('administrator', $current_user->roles, true) || in_array('editor', $current_user->roles, true)) {
+      return $wpdb->get_results(
+        "SELECT * FROM {$this->table_name} ORDER BY created_at DESC"
+      );
+    }
+
+    // Students only see their own videos
+    if (in_array('student', $current_user->roles, true)) {
+      return $wpdb->get_results($wpdb->prepare(
+        "SELECT * FROM {$this->table_name} WHERE user_id = %d ORDER BY created_at DESC",
+        $user_id
+      ));
+    }
+
+    // Teachers see all videos (they can upload but can't edit others' videos)
     return $wpdb->get_results(
       "SELECT * FROM {$this->table_name} ORDER BY created_at DESC"
     );
@@ -875,6 +939,17 @@ class VOD_Eikon
       ));
     }
 
+    // Check permissions - students can only delete their own videos
+    $current_user = wp_get_current_user();
+    if (in_array('student', $current_user->roles, true)) {
+      if ($video->user_id !== $current_user->ID) {
+        error_log('VOD Delete: Student attempting to delete another student\'s video');
+        wp_send_json_error(array(
+          'message' => 'Vous ne pouvez supprimer que vos propres vidéos.'
+        ));
+      }
+    }
+
     error_log('VOD Delete: Attempting to delete from Infomaniak API');
     // Delete from Infomaniak VOD API first
     $api_delete_result = $this->delete_video_from_api($video->vod_id);
@@ -978,6 +1053,10 @@ class VOD_Eikon
       ));
     }
 
+    // Get current user ID for tracking
+    $current_user = wp_get_current_user();
+    $user_id = $current_user->ID;
+
     $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
     $api_token = getenv('INFOMANIAK_TOKEN_API');
 
@@ -1037,14 +1116,24 @@ class VOD_Eikon
     $upload_result = $this->upload_to_infomaniak($file, $title, $description, $channel_id, $api_token);
 
     if ($upload_result['success']) {
-      // Don't sync videos immediately after upload - wait for callbacks
-      // The video will be added to the database only when callbacks are triggered
-
+      // Store the video in the database with the current user's ID
+      global $wpdb;
       $video_id = $upload_result['video_id'];
 
+      $wpdb->insert(
+        $this->table_name,
+        array(
+          'vod_id' => $video_id,
+          'name' => $title,
+          'user_id' => $user_id,
+          'published' => 0 // Start unpublished until callbacks provide media data
+        ),
+        array('%s', '%s', '%d', '%d')
+      );
+
       wp_send_json_success(array(
-        'message' => 'Vidéo uploadée avec succès ! La vidéo sera automatiquement ajoutée à la base de données lorsque l\'encodage et la génération de la miniature seront terminés via le système de callbacks.',
-        'video_id' => $upload_result['video_id']
+        'message' => 'Vidéo uploadée avec succès ! La vidéo sera automatiquement mise à jour lorsque l\'encodage et la génération de la miniature seront terminés.',
+        'video_id' => $video_id
       ));
     } else {
       wp_send_json_error(array(
@@ -1255,7 +1344,7 @@ class VOD_Eikon
       $vod_id = $video->vod_id;
 
       // Get individual video data from API - try with different parameters
-      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias,thumbnails,images";
+      $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias,thumbnails,images,user";
 
       $response = wp_remote_get($api_url, array(
         'headers' => array(
@@ -1433,6 +1522,16 @@ class VOD_Eikon
       $processing_progress = isset($video_data['progress']) ? (int)round((float)$video_data['progress']) : 0;
       $video_state = isset($video_data['state']) ? (int)round((float)$video_data['state']) : 0;
 
+      // Extract uploader email from user data
+      $uploader_email = '';
+      if (!empty($video_data['user'])) {
+        if (is_array($video_data['user'])) {
+          $uploader_email = sanitize_email($video_data['user']['email'] ?? '');
+        } elseif (is_string($video_data['user'])) {
+          $uploader_email = sanitize_email($video_data['user']);
+        }
+      }
+
       // Log processing status for better debugging
 
       if (!$has_encoded_medias && !$has_poster) {
@@ -1497,7 +1596,7 @@ class VOD_Eikon
       }
 
       // Only update if we have new data
-      if (!empty($poster) || !empty($mpd_url)) {
+      if (!empty($poster) || !empty($mpd_url) || !empty($uploader_email)) {
         $update_data = array();
         $update_format = array();
 
@@ -1508,6 +1607,11 @@ class VOD_Eikon
 
         if (!empty($mpd_url)) {
           $update_data['mpd_url'] = $mpd_url;
+          $update_format[] = '%s';
+        }
+
+        if (!empty($uploader_email)) {
+          $update_data['uploader_email'] = $uploader_email;
           $update_format[] = '%s';
         }
 
@@ -1617,7 +1721,7 @@ class VOD_Eikon
     }
 
     // Get video data from API
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias";
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=poster,streams,encoded_medias,user";
 
     $response = wp_remote_get($api_url, array(
       'headers' => array(
@@ -1665,6 +1769,16 @@ class VOD_Eikon
       }
     }
 
+    // Extract uploader email from user data
+    $uploader_email = '';
+    if (!empty($video_data['user'])) {
+      if (is_array($video_data['user'])) {
+        $uploader_email = sanitize_email($video_data['user']['email'] ?? '');
+      } elseif (is_string($video_data['user'])) {
+        $uploader_email = sanitize_email($video_data['user']);
+      }
+    }
+
     // Construct MPD URL from encoded_medias data
     $mpd_url = $this->construct_mpd_url($vod_id, $video_data);
 
@@ -1681,6 +1795,12 @@ class VOD_Eikon
 
     if (!empty($mpd_url) && empty($current_video->mpd_url)) {
       $update_data['mpd_url'] = $mpd_url;
+      $update_format[] = '%s';
+      $has_new_data = true;
+    }
+
+    if (!empty($uploader_email) && empty($current_video->uploader_email)) {
+      $update_data['uploader_email'] = $uploader_email;
       $update_format[] = '%s';
       $has_new_data = true;
     }
