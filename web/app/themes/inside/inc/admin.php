@@ -26,6 +26,13 @@ function eikon_customize_dashboard()
   // Remove widgets from plugins (common ones)
   remove_meta_box('events-widget', 'dashboard', 'normal');
 
+  // Add custom documentation widget
+  wp_add_dashboard_widget(
+    'eikon_documentation',
+    'Documentation Inside.eikon.ch',
+    'eikon_documentation_widget_content'
+  );
+
   // Add fun stats widget
   wp_add_dashboard_widget(
     'eikon_stats',
@@ -76,6 +83,36 @@ function eikon_add_dashicons_to_titles()
       }
     });
   </script>';
+}
+
+/**
+ * Display documentation widget with role-based URL
+ */
+function eikon_documentation_widget_content()
+{
+  $current_user = wp_get_current_user();
+  $user_roles = $current_user->roles;
+
+  // Determine URL based on user role
+  if (in_array('student', $user_roles, true)) {
+    $doc_url = 'https://eikon-imd.notion.site/inside-eikon-ch-student';
+    $role_text = 'pour étudiants';
+  } else {
+    $doc_url = 'https://eikon-imd.notion.site';
+    $role_text = 'pour enseignants';
+  }
+?>
+  <div style="padding: 0;">
+    <p style="margin-top: 0;">
+      Accédez à la documentation complète <strong><?php echo esc_html($role_text); ?></strong> :
+    </p>
+    <p style="margin-bottom: 0;">
+      <a href="<?php echo esc_url($doc_url); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box;">
+        Ouvrir la documentation
+      </a>
+    </p>
+  </div>
+<?php
 }
 
 /**
@@ -160,10 +197,6 @@ function eikon_stats_widget_content()
       </div>
 
     </div>
-
-    <p style="text-align: center; font-size: 12px; color: #666; margin: 0;">
-      ✨ Bravo pour votre engagement dans Inside Eikon !
-    </p>
   </div>
   <?php
 }
