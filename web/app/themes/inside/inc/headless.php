@@ -310,7 +310,7 @@ add_action('post_submitbox_misc_actions', function () {
     error_log('Preview URL: ' . $preview_url);
   }
 
-  ?>
+?>
   <div class="misc-pub-section" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
     <strong><?php esc_html_e('Preview Link:', 'default'); ?></strong>
     <p style="margin: 5px 0 0 0;">
@@ -319,5 +319,5 @@ add_action('post_submitbox_misc_actions', function () {
       </a>
     </p>
   </div>
-  <?php
+<?php
 });
