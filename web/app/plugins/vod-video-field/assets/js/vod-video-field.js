@@ -170,25 +170,26 @@
         return;
       }
 
-      const $grid = $('<div class="vod-video-grid"></div>');
+      const $list = $('<div class="vod-video-list"></div>');
 
       videos.forEach(function (video) {
-        const $item = $('<div class="vod-video-item" data-video-id="' + video.id + '"></div>');
+        const $item = $('<div class="vod-video-card" data-video-id="' + video.id + '"></div>');
 
-        // Thumbnail
-        const $thumbnail = $('<div class="vod-video-item-thumbnail"></div>');
+        // Thumbnail container
+        const $thumbnail = $('<div class="vod-video-card-thumbnail"></div>');
         if (video.poster) {
           $thumbnail.html('<img src="' + video.poster + '" alt="' + video.title + '">');
         } else {
           $thumbnail.html('<div class="vod-video-placeholder"><span class="dashicons dashicons-format-video"></span></div>');
         }
 
-        // Details
-        const $details = $('<div class="vod-video-item-details"></div>');
-        $details.html('<h4>' + video.title + '</h4>');
-        if (video.vod_id) {
-          $details.append('<p><small>VOD ID: ' + video.vod_id + '</small></p>');
-        }
+        // Details container
+        const $details = $('<div class="vod-video-card-details"></div>');
+        $details.html(
+          '<h4>' + video.title + '</h4>' +
+          (video.vod_id ? '<p><small>VOD ID: ' + video.vod_id + '</small></p>' : '') +
+          (video.created_at ? '<p><small style="color: #999;">Upload: ' + new Date(video.created_at).toLocaleDateString() + '</small></p>' : '')
+        );
 
         $item.append($thumbnail);
         $item.append($details);
@@ -198,10 +199,10 @@
           selectVideo(video);
         });
 
-        $grid.append($item);
+        $list.append($item);
       });
 
-      $results.append($grid);
+      $results.append($list);
     }
 
     /**

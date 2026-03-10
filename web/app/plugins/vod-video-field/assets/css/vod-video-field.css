@@ -185,51 +185,73 @@
     color: #dc3232;
 }
 
-/* Video Grid */
-.vod-video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+/* Video List */
+.vod-video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.vod-video-item {
+.vod-video-card {
     cursor: pointer;
     border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;
-    transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: row;
+    background: #fff;
 }
 
-.vod-video-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-color: #aaa;
+.vod-video-card:hover {
+    border-color: #0073aa;
+    box-shadow: 0 2px 8px rgba(0, 115, 170, 0.15);
 }
 
-.vod-video-item-thumbnail {
-    height: 120px;
+.vod-video-card-thumbnail {
+    width: 140px;
+    min-width: 140px;
+    height: 100%;
     background-color: #f0f0f0;
     position: relative;
     overflow: hidden;
 }
 
-.vod-video-item-thumbnail img {
+.vod-video-card-thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.vod-video-item-title {
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.3;
+.vod-video-card-details {
+    flex: 1;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 140px;
+}
+
+.vod-video-card-details h4 {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    font-weight: 600;
     color: #23282d;
-    border-top: 1px solid #eee;
-    background: #f9f9f9;
-    white-space: nowrap;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.vod-video-card-details p {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.vod-video-card-details p small {
+    color: #999;
 }
 
 /* Notification Styles */

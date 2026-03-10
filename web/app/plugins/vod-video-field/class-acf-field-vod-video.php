@@ -365,6 +365,13 @@ class acf_field_vod_video extends acf_field
       $where_conditions[] = "published = 1";
     }
 
+    // Filter by user if student role
+    $current_user = wp_get_current_user();
+    if (in_array('student', $current_user->roles, true)) {
+      $where_conditions[] = "user_id = %d";
+      $params[] = $current_user->ID;
+    }
+
     // Add search filter
     if (!empty($search_term)) {
       $where_conditions[] = "name LIKE %s";
