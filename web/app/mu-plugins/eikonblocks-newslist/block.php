@@ -118,9 +118,12 @@ function eikonblocks_newslist_render($attributes, $content)
     } else {
     ?>
       <p><?php esc_html_e('No news found.', 'eikon'); ?></p>
-  <?php
+    <?php
     }
-    wp_reset_postdata();
+    ?>
+  </div>
+<?php
+  wp_reset_postdata();
 
-    return ob_get_clean();
-  }
+  return ob_get_clean();
+}
