@@ -120,7 +120,7 @@ function eikonblocks_newslist_render($attributes, $content)
                     $title = esc_html($link['title']);
                     $target = $link['target'] ? esc_attr($link['target']) : '_self';
                 ?>
-                    <a href="<?php echo $url; ?>" target="<?php echo $target; ?>" <?php echo $target === '_blank' ? 'rel="noopener noreferrer"' : ''; ?>><?php echo $title; ?></a>
+                    <a class="button button-plain" href="<?php echo $url; ?>" target="<?php echo $target; ?>" <?php echo $target === '_blank' ? 'rel="noopener noreferrer"' : ''; ?>><?php echo $title; ?></a>
                 <?php endif;
                 endforeach; ?>
               </footer>
