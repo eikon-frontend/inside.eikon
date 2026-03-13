@@ -19,6 +19,8 @@ add_filter('tiny_mce_before_init', function ($settings) {
     // Only show bold and italic buttons
     $settings['toolbar1'] = 'bold,italic';
     $settings['toolbar2'] = '';
+    // Disable code view tab (always visual mode)
+    $settings['quicktags'] = false;
   }
   return $settings;
 });
@@ -58,7 +60,7 @@ add_filter('tiny_mce_before_init', function ($settings) {
   return $settings;
 }, 20);
 
-// JavaScript to remove media buttons element from project post editor
+// JavaScript to remove media buttons and hide visual/code tabs from project post editor
 add_action('admin_head', function () {
   global $post;
   if ($post && $post->post_type === 'project') {
@@ -68,6 +70,12 @@ add_action('admin_head', function () {
         if (mediaButtons) {
           mediaButtons.remove();
         }
+        
+        // Hide visual/code tabs
+        const tabs = document.querySelectorAll(".wp-switch-editor, .wp-switch-html");
+        tabs.forEach(tab => {
+          tab.style.display = "none";
+        });
       });
     </script>';
   }
