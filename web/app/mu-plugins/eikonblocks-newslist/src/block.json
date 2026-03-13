@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "eikonblocks/newslist",
+  "version": "0.1.0",
+  "title": "News List",
+  "category": "widgets",
+  "icon": "editor-textcolor",
+  "description": "Display and filter news posts with taxonomy filtering.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "eikonblocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "parent": ["eikonblocks/section"],
+  "attributes": {
+    "selectedTaxonomies": {
+      "type": "object",
+      "default": {}
+    },
+    "postsPerPage": {
+      "type": "number",
+      "default": 10
+    }
+  }
+}
