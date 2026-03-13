@@ -70,7 +70,7 @@ add_action('admin_head', function () {
         if (mediaButtons) {
           mediaButtons.remove();
         }
-        
+
         // Hide visual/code tabs
         const tabs = document.querySelectorAll(".wp-switch-editor, .wp-switch-html");
         tabs.forEach(tab => {
