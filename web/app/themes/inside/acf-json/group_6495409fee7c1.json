@@ -119,6 +119,25 @@
             "show_in_graphql": 1,
             "default_value": "",
             "placeholder": ""
+        },
+        {
+            "key": "field_69b3c9e0ca249",
+            "label": "Video hero",
+            "name": "vod",
+            "aria-label": "",
+            "type": "vod_video",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "graphql_field_name": "vod",
+            "return_format": "object",
+            "published_only": 1,
+            "allow_in_bindings": 1
         }
     ],
     "location": [
@@ -148,5 +167,5 @@
     "graphql_field_name": "projetsFields",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1773155262
+    "modified": 1773390385
 }
