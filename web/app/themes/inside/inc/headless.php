@@ -39,7 +39,6 @@ function project_completion_checklist_content($post)
   // Get post data
   $has_title = !empty($post->post_title);
   $has_thumbnail = has_post_thumbnail($post->ID);
-  $has_content = !empty($post->post_content);
 
   // Check for ACF taxonomy fields (year, section, subjects)
   $has_year = !empty(get_the_terms($post->ID, 'year'));
@@ -48,41 +47,101 @@ function project_completion_checklist_content($post)
   $has_taxonomy_fields = $has_year && $has_section && $has_subjects;
 
   // Get ACF fields
-  $project_fields = get_field('projets', $post->ID);
-  $has_gallery = false;
+  $project_fields = get_field('galerie', $post->ID);
 
-  if (is_array($project_fields)) {
+  // Helper function to determine content status
+  $get_content_status = function () use ($post) {
+    if (empty($post->post_content)) {
+      return 'not_good';
+    }
+
+    // Count words using WordPress function
+    $word_count = str_word_count(strip_tags($post->post_content));
+
+    if ($word_count >= 50 && $word_count <= 100) {
+      return 'perfect';
+    }
+
+    return 'okay';
+  };
+
+  // Helper function to determine gallery status
+  $get_gallery_status = function () use ($project_fields) {
+    if (!is_array($project_fields) || empty($project_fields)) {
+      return 'not_good';
+    }
+
+    // Count gallery layout items (mosaic and image layouts)
+    $gallery_count = 0;
     foreach ($project_fields as $field) {
-      if (isset($field['acf_fc_layout']) && $field['acf_fc_layout'] === 'galerie' && !empty($field['photos'])) {
-        $has_gallery = true;
-        break;
+      if (isset($field['acf_fc_layout'])) {
+        $layout = $field['acf_fc_layout'];
+        if (($layout === 'mosaic' && !empty($field['mosaic'])) || ($layout === 'image' && !empty($field['image']))) {
+          $gallery_count++;
+        }
       }
     }
-  }
+
+    if ($gallery_count >= 3) {
+      return 'perfect';
+    } else if ($gallery_count >= 1) {
+      return 'okay';
+    }
+
+    return 'not_good';
+  };
+
+  // Get statuses
+  $content_status = $get_content_status();
+  $gallery_status = $get_gallery_status();
 
   // Calculate completion percentage
   $total_items = 5;
   $completed_items = 0;
   $completed_items += $has_title ? 1 : 0;
   $completed_items += $has_thumbnail ? 1 : 0;
-  $completed_items += $has_content ? 1 : 0;
-  $completed_items += $has_gallery ? 1 : 0;
+  $completed_items += ($content_status === 'perfect') ? 1 : 0;
+  $completed_items += ($gallery_status === 'perfect') ? 1 : 0;
   $completed_items += $has_taxonomy_fields ? 1 : 0;
 
   $completion_percent = ($completed_items / $total_items) * 100;
   $is_complete = $completion_percent === 100;
 
   // Helper function to render checklist item
-  $render_item = function ($label, $is_complete) {
-    $icon = $is_complete ? '✓' : '◯';
-    $color = $is_complete ? '#10b981' : '#d1d5db';
-    $text_color = $is_complete ? '#065f46' : '#6b7280';
+  $render_item = function ($label, $status) {
+    // Handle boolean values for backwards compatibility
+    if (is_bool($status)) {
+      $status = $status ? 'perfect' : 'not_good';
+    }
+
+    $status_config = array(
+      'perfect' => array(
+        'icon' => '✓',
+        'color' => '#10b981',
+        'text_color' => '#065f46',
+        'bg_color' => '#ecfdf5'
+      ),
+      'okay' => array(
+        'icon' => '◐',
+        'color' => '#f59e0b',
+        'text_color' => '#92400e',
+        'bg_color' => '#fffbeb'
+      ),
+      'not_good' => array(
+        'icon' => '◯',
+        'color' => '#d1d5db',
+        'text_color' => '#6b7280',
+        'bg_color' => '#f9fafb'
+      )
+    );
+
+    $config = isset($status_config[$status]) ? $status_config[$status] : $status_config['not_good'];
 ?>
-    <div style="display: flex; align-items: center; margin: 4px 0; padding: 6px; background: <?php echo $is_complete ? '#ecfdf5' : '#f9fafb'; ?>; border-radius: 4px; border-left: 3px solid <?php echo $color; ?>;">
-      <span style="color: <?php echo $color; ?>; font-size: 16px; font-weight: bold; margin-right: 8px; min-width: 18px; text-align: center;">
-        <?php echo esc_html($icon); ?>
+    <div style="display: flex; align-items: center; margin: 4px 0; padding: 6px; background: <?php echo $config['bg_color']; ?>; border-radius: 4px; border-left: 3px solid <?php echo $config['color']; ?>;">
+      <span style="color: <?php echo $config['color']; ?>; font-size: 16px; font-weight: bold; margin-right: 8px; min-width: 18px; text-align: center;">
+        <?php echo esc_html($config['icon']); ?>
       </span>
-      <span style="color: <?php echo $text_color; ?>; font-size: 13px;">
+      <span style="color: <?php echo $config['text_color']; ?>; font-size: 13px;">
         <?php echo esc_html($label); ?>
       </span>
     </div>
@@ -108,8 +167,8 @@ function project_completion_checklist_content($post)
       <?php
       $render_item('Titre du projet', $has_title);
       $render_item('Image à la une', $has_thumbnail);
-      $render_item('Description du projet', $has_content);
-      $render_item('Galerie du projet', $has_gallery);
+      $render_item('Description du projet (50-100 mots)', $content_status);
+      $render_item('Galerie du projet (3+ éléments)', $gallery_status);
       $render_item('Métadonnées (année, classe, branche)', $has_taxonomy_fields);
       ?>
     </div>
