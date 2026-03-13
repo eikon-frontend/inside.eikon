@@ -8,9 +8,8 @@ yarn-error.log*
 # Dependencies
 node_modules
 
-# Production
-build
-dist
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
 
 # Misc
 .cache-loader
