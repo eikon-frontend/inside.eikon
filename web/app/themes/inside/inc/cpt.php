@@ -377,6 +377,24 @@ function modify_page_post_type_args($args, $post_type)
 }
 add_filter('register_post_type_args', 'modify_page_post_type_args', 10, 2);
 
+/**
+ * Add a "Description" label above the editor content area for projects
+ */
+function eikon_add_description_label()
+{
+  $post = get_post();
+
+  if (!$post || $post->post_type !== 'project') {
+    return;
+  }
+
+  echo '<div style="margin-bottom: 16px; padding: 12px; background: #f0f4f8; border-radius: 4px; border-left: 4px solid #0891b2;">';
+  echo '<label style="display: block; font-weight: 600; font-size: 14px; color: #1f2937; margin-bottom: 4px;">📝 Description du projet</label>';
+  echo '<p style="margin: 0; font-size: 12px; color: #6b7280;">Décrivez votre projet en 50-100 mots pour une présentation claire.</p>';
+  echo '</div>';
+}
+add_action('edit_form_after_title', 'eikon_add_description_label');
+
 // Remove tags support from posts
 function eikon_unregister_tags()
 {
