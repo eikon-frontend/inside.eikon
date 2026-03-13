@@ -282,8 +282,10 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
         // Generate temporary password
         $temporary_password = wp_generate_password(12, true);
 
-        // Create user
+        // Create user without automatic notifications
+        add_filter('wp_send_new_user_notification_emails', '__return_false');
         $user_id = wp_create_user($username, $temporary_password, $email);
+        remove_filter('wp_send_new_user_notification_emails', '__return_false');
 
         if (is_wp_error($user_id)) {
           $error_count++;
