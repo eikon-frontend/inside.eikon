@@ -102,13 +102,29 @@ function eikonblocks_newslist_render($attributes, $content)
           $query->the_post();
         ?>
           <article class="newslist-item">
-            <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-            <div class="newslist-meta">
+            <header>
               <span class="newslist-date"><?php echo get_the_date('j F Y'); ?></span>
-            </div>
+              <h3><?php the_title(); ?></h3>
+            </header>
             <div class="newslist-excerpt">
               <?php the_excerpt(); ?>
             </div>
+            <?php
+            $buttons = get_field('buttons');
+            if ($buttons) : ?>
+              <footer class="newslist-buttons">
+                <?php foreach ($buttons as $button) :
+                  $link = $button['link'];
+                  if ($link) :
+                    $url = esc_url($link['url']);
+                    $title = esc_html($link['title']);
+                    $target = $link['target'] ? esc_attr($link['target']) : '_self';
+                ?>
+                    <a href="<?php echo $url; ?>" target="<?php echo $target; ?>" <?php echo $target === '_blank' ? 'rel="noopener noreferrer"' : ''; ?>><?php echo $title; ?></a>
+                <?php endif;
+                endforeach; ?>
+              </footer>
+            <?php endif; ?>
           </article>
         <?php
         }
