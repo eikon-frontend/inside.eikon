@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { FormTokenField, PanelBody, RangeControl, Spinner } from '@wordpress/components';
+import { FormTokenField, PanelBody, RangeControl, SelectControl, Spinner } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 
 // Normalize accents for accent-insensitive comparison
@@ -10,7 +10,7 @@ const normalizeString = (str) => {
 };
 
 export default function Edit({ attributes, setAttributes }) {
-  const { selectedTaxonomies = {}, postsPerPage = 10 } = attributes;
+  const { selectedTaxonomies = {}, postsPerPage = 10, orderBy = 'date', orderDirection = 'DESC' } = attributes;
 
   // Fetch taxonomies for post type
   const taxonomies = useSelect((select) => {
@@ -90,11 +90,29 @@ export default function Edit({ attributes, setAttributes }) {
       <InspectorControls>
         <PanelBody title="News List Settings">
           <RangeControl
-            label="Posts per page"
+            label="Number of posts"
             value={postsPerPage}
             onChange={(value) => setAttributes({ postsPerPage: value })}
             min={1}
             max={50}
+          />
+          <SelectControl
+            label="Sort by"
+            value={orderBy}
+            options={[
+              { label: 'Date', value: 'date' },
+              { label: 'Title', value: 'title' },
+            ]}
+            onChange={(value) => setAttributes({ orderBy: value })}
+          />
+          <SelectControl
+            label="Direction"
+            value={orderDirection}
+            options={[
+              { label: 'Descending', value: 'DESC' },
+              { label: 'Ascending', value: 'ASC' },
+            ]}
+            onChange={(value) => setAttributes({ orderDirection: value })}
           />
         </PanelBody>
       </InspectorControls>

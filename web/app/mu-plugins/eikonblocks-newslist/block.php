@@ -44,14 +44,21 @@ function eikonblocks_newslist_render($attributes, $content)
 {
   $selected_taxonomies = isset($attributes['selectedTaxonomies']) ? $attributes['selectedTaxonomies'] : [];
   $posts_per_page = isset($attributes['postsPerPage']) ? (int)$attributes['postsPerPage'] : 10;
+  $order_by = isset($attributes['orderBy']) ? $attributes['orderBy'] : 'date';
+  $order_direction = isset($attributes['orderDirection']) ? $attributes['orderDirection'] : 'DESC';
+
+  // Sanitize orderby/order values
+  $allowed_orderby = ['date', 'title'];
+  $order_by = in_array($order_by, $allowed_orderby, true) ? $order_by : 'date';
+  $order_direction = in_array($order_direction, ['ASC', 'DESC'], true) ? $order_direction : 'DESC';
 
   // Build query args
   $args = [
     'post_type' => 'post',
     'post_status' => 'publish',
     'posts_per_page' => $posts_per_page,
-    'orderby' => 'date',
-    'order' => 'DESC',
+    'orderby' => $order_by,
+    'order' => $order_direction,
   ];
 
   // Add taxonomy filtering if terms are selected

@@ -25,6 +25,14 @@
     "postsPerPage": {
       "type": "number",
       "default": 10
+    },
+    "orderBy": {
+      "type": "string",
+      "default": "date"
+    },
+    "orderDirection": {
+      "type": "string",
+      "default": "DESC"
     }
   }
 }
