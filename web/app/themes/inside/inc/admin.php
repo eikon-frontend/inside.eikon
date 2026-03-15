@@ -343,3 +343,108 @@ function myplugin_registration_errors($errors, $sanitized_user_login, $user_emai
   }
   return $errors;
 }
+
+/**
+ * Add "Classe" column to the users list table
+ */
+add_filter('manage_users_columns', 'eikon_add_classe_column');
+function eikon_add_classe_column($columns)
+{
+  $columns['classe'] = __('Classe');
+  return $columns;
+}
+
+add_filter('manage_users_custom_column', 'eikon_show_classe_column', 10, 3);
+function eikon_show_classe_column($value, $column_name, $user_id)
+{
+  if ('classe' === $column_name) {
+    $classe = get_user_meta($user_id, 'classe', true);
+    return $classe ? esc_html($classe) : '—';
+  }
+  return $value;
+}
+
+/**
+ * Add a "Classe" filter dropdown above the users list table
+ */
+add_action('views_users', 'eikon_add_classe_filter_links');
+function eikon_add_classe_filter_links($views)
+{
+  $role = isset($_GET['role']) ? sanitize_text_field($_GET['role']) : '';
+
+  if ('student' !== $role) {
+    return $views;
+  }
+
+  $classes = ['imd11', 'imd12', 'imd21', 'imd31', 'imd32', 'mp2', 'prepa'];
+  $selected = isset($_GET['classe_filter']) ? sanitize_text_field($_GET['classe_filter']) : '';
+
+  // Build classe links HTML
+  $classe_links = [];
+
+  // "Tous" link
+  $all_url = add_query_arg(['role' => 'student'], admin_url('users.php'));
+  $all_count = count(get_users(['role' => 'student', 'fields' => 'ID']));
+  $all_class = empty($selected) ? 'current' : '';
+  $classe_links[] = sprintf(
+    '<a href="%s" class="%s">Toutes les classes <span class="count">(%d)</span></a>',
+    esc_url($all_url),
+    esc_attr($all_class),
+    $all_count
+  );
+
+  foreach ($classes as $classe) {
+    $count = count(get_users([
+      'role'       => 'student',
+      'meta_key'   => 'classe',
+      'meta_value' => $classe,
+      'fields'     => 'ID',
+    ]));
+    if ($count === 0) {
+      continue;
+    }
+    $url = add_query_arg(['role' => 'student', 'classe_filter' => $classe], admin_url('users.php'));
+    $css_class = ($selected === $classe) ? 'current' : '';
+    $classe_links[] = sprintf(
+      '<a href="%s" class="%s">%s <span class="count">(%d)</span></a>',
+      esc_url($url),
+      esc_attr($css_class),
+      esc_html($classe),
+      $count
+    );
+  }
+
+  // Append classe links as extra HTML inside the last view item
+  $last_key = array_key_last($views);
+  $views[$last_key] .= '</ul><ul class="subsubsub" style="clear:both; width:100%;">'
+    . implode(' | ', $classe_links);
+
+  return $views;
+}
+
+/**
+ * Filter the users list by "Classe" ACF field
+ */
+add_filter('pre_get_users', 'eikon_filter_users_by_classe');
+function eikon_filter_users_by_classe($query)
+{
+  global $pagenow;
+
+  if (!is_admin() || 'users.php' !== $pagenow) {
+    return;
+  }
+
+  if (empty($_GET['classe_filter'])) {
+    return;
+  }
+
+  $classe = sanitize_text_field($_GET['classe_filter']);
+
+  $meta_query = $query->get('meta_query') ?: [];
+  $meta_query[] = [
+    'key'     => 'classe',
+    'value'   => $classe,
+    'compare' => '=',
+  ];
+  $query->set('meta_query', $meta_query);
+}

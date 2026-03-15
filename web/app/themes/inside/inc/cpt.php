@@ -341,6 +341,7 @@ function user_projects_column_value($value, $column_name, $id)
     ));
     return $count;
   }
+  return $value;
 }
 
 add_filter('manage_users_custom_column', 'user_projects_column_value', 10, 3);
