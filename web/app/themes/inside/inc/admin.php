@@ -286,7 +286,7 @@ function eikon_random_project_widget_content()
       <p style="margin: 0 0 4px 0; font-weight: 600; color: #374151;">Aucun projet publié</p>
       <p style="margin: 0; font-size: 13px;">Les projets apparaîtront ici</p>
     </div>
-<?php
+  <?php
   }
 }
 
@@ -447,4 +447,150 @@ function eikon_filter_users_by_classe($query)
     'compare' => '=',
   ];
   $query->set('meta_query', $meta_query);
+}
+
+/**
+ * Add "Changer de classe" dropdown next to bulk actions on users page
+ */
+add_action('restrict_manage_users', 'eikon_add_classe_bulk_change');
+function eikon_add_classe_bulk_change($which)
+{
+  $classes = ['imd11', 'imd12', 'imd21', 'imd31', 'imd32', 'mp2', 'prepa'];
+  ?>
+  <label class="screen-reader-text" for="eikon_classe_<?php echo esc_attr($which); ?>">Changer de classe pour&hellip;</label>
+  <select name="eikon_classe_<?php echo esc_attr($which); ?>" id="eikon_classe_<?php echo esc_attr($which); ?>">
+    <option value="">Changer de classe pour&hellip;</option>
+    <?php foreach ($classes as $classe) : ?>
+      <option value="<?php echo esc_attr($classe); ?>"><?php echo esc_html($classe); ?></option>
+    <?php endforeach; ?>
+  </select>
+  <?php submit_button('Modifier', 'secondary', 'eikon_changeit', false); ?>
+  <script>
+  (function() {
+    var select = document.getElementById('eikon_classe_<?php echo esc_js($which); ?>');
+    var tablenav = select.closest('.tablenav');
+    var wpBtn = tablenav.querySelector('#changeit');
+    if (wpBtn) wpBtn.style.display = 'none';
+    var btn = tablenav.querySelector('[name="eikon_changeit"]');
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        var roleSelect = tablenav.querySelector('[name^="new_role"]');
+        var classeSelect = document.getElementById('eikon_classe_<?php echo esc_js($which); ?>');
+        var hasRole = roleSelect && roleSelect.value !== '' && roleSelect.value !== '-1';
+        var hasClasse = classeSelect && classeSelect.value !== '';
+        if (hasRole && !hasClasse) {
+          e.preventDefault();
+          wpBtn.click();
+        }
+      });
+    }
+  })();
+  </script>
+<?php
+}
+
+/**
+ * Handle the bulk classe change
+ */
+add_action('admin_init', 'eikon_handle_bulk_classe_change');
+function eikon_handle_bulk_classe_change()
+{
+  global $pagenow;
+
+  if ('users.php' !== $pagenow) {
+    return;
+  }
+
+  // Only act when our button was clicked
+  if (!isset($_REQUEST['eikon_changeit'])) {
+    return;
+  }
+
+  if (!current_user_can('manage_users')) {
+    return;
+  }
+
+  $user_ids = isset($_REQUEST['users']) ? array_map('intval', (array) $_REQUEST['users']) : [];
+  if (empty($user_ids)) {
+    return;
+  }
+
+  check_admin_referer('bulk-users');
+
+  $classe = '';
+  if (!empty($_REQUEST['eikon_classe_top'])) {
+    $classe = sanitize_text_field($_REQUEST['eikon_classe_top']);
+  } elseif (!empty($_REQUEST['eikon_classe_bottom'])) {
+    $classe = sanitize_text_field($_REQUEST['eikon_classe_bottom']);
+  }
+
+  $new_role = '';
+  if (!empty($_REQUEST['new_role'])) {
+    $new_role = sanitize_text_field($_REQUEST['new_role']);
+  } elseif (!empty($_REQUEST['new_role2'])) {
+    $new_role = sanitize_text_field($_REQUEST['new_role2']);
+  }
+
+  if (empty($classe) && empty($new_role)) {
+    return;
+  }
+
+  $messages = [];
+
+  // Apply classe change
+  if (!empty($classe)) {
+    foreach ($user_ids as $user_id) {
+      update_user_meta($user_id, 'classe', $classe);
+    }
+    $messages[] = 'classe_changed';
+  }
+
+  // Apply role change
+  if (!empty($new_role) && $new_role !== '-1') {
+    $editable_roles = array_keys(get_editable_roles());
+    if (in_array($new_role, $editable_roles, true)) {
+      foreach ($user_ids as $user_id) {
+        $user = get_userdata($user_id);
+        if ($user) {
+          $user->set_role($new_role);
+        }
+      }
+      $messages[] = 'role_changed';
+    }
+  }
+
+  $redirect = add_query_arg([
+    'update' => implode(',', $messages),
+    'count'  => count($user_ids),
+  ], wp_get_referer() ?: admin_url('users.php'));
+  wp_safe_redirect($redirect);
+  exit;
+}
+
+/**
+ * Display admin notice after bulk classe change
+ */
+add_action('admin_notices', 'eikon_bulk_classe_change_notice');
+function eikon_bulk_classe_change_notice()
+{
+  global $pagenow;
+
+  if ('users.php' !== $pagenow || empty($_GET['update'])) {
+    return;
+  }
+
+  $updates = explode(',', sanitize_text_field($_GET['update']));
+  $count = isset($_GET['count']) ? intval($_GET['count']) : 0;
+  $messages = [];
+
+  if (in_array('classe_changed', $updates, true)) {
+    $messages[] = sprintf('Classe modifiée pour %d compte(s).', $count);
+  }
+  if (in_array('role_changed', $updates, true)) {
+    $messages[] = sprintf('Rôle modifié pour %d compte(s).', $count);
+  }
+
+  foreach ($messages as $msg) {
+    printf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html($msg));
+  }
 }
