@@ -466,25 +466,25 @@ function eikon_add_classe_bulk_change($which)
   </select>
   <?php submit_button('Modifier', 'secondary', 'eikon_changeit', false); ?>
   <script>
-  (function() {
-    var select = document.getElementById('eikon_classe_<?php echo esc_js($which); ?>');
-    var tablenav = select.closest('.tablenav');
-    var wpBtn = tablenav.querySelector('#changeit');
-    if (wpBtn) wpBtn.style.display = 'none';
-    var btn = tablenav.querySelector('[name="eikon_changeit"]');
-    if (btn) {
-      btn.addEventListener('click', function(e) {
-        var roleSelect = tablenav.querySelector('[name^="new_role"]');
-        var classeSelect = document.getElementById('eikon_classe_<?php echo esc_js($which); ?>');
-        var hasRole = roleSelect && roleSelect.value !== '' && roleSelect.value !== '-1';
-        var hasClasse = classeSelect && classeSelect.value !== '';
-        if (hasRole && !hasClasse) {
-          e.preventDefault();
-          wpBtn.click();
-        }
-      });
-    }
-  })();
+    (function() {
+      var select = document.getElementById('eikon_classe_<?php echo esc_js($which); ?>');
+      var tablenav = select.closest('.tablenav');
+      var wpBtn = tablenav.querySelector('#changeit');
+      if (wpBtn) wpBtn.style.display = 'none';
+      var btn = tablenav.querySelector('[name="eikon_changeit"]');
+      if (btn) {
+        btn.addEventListener('click', function(e) {
+          var roleSelect = tablenav.querySelector('[name^="new_role"]');
+          var classeSelect = document.getElementById('eikon_classe_<?php echo esc_js($which); ?>');
+          var hasRole = roleSelect && roleSelect.value !== '' && roleSelect.value !== '-1';
+          var hasClasse = classeSelect && classeSelect.value !== '';
+          if (hasRole && !hasClasse) {
+            e.preventDefault();
+            wpBtn.click();
+          }
+        });
+      }
+    })();
   </script>
 <?php
 }
