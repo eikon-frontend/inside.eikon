@@ -48,6 +48,34 @@ add_filter('graphql_object_visibility', function ($visibility, $model_name, $dat
 }, 10, 5);
 
 /**
+ * Make all users visible in GraphQL when referenced as project authors (ACF user field).
+ *
+ * By default WPGraphQL restricts user visibility: only users with published posts
+ * are publicly queryable. This causes ACF "user" fields to return empty nodes
+ * for students or teachers who haven't published yet.
+ */
+add_filter('graphql_object_visibility', function ($visibility, $model_name, $data) {
+  if ('UserObject' === $model_name && $data instanceof \WP_User) {
+    return 'public';
+  }
+  return $visibility;
+}, 10, 3);
+
+/**
+ * Remove `has_published_posts` restriction from user connection queries.
+ *
+ * WPGraphQL sets this on WP_User_Query for unauthenticated requests, which
+ * excludes users without published posts at the DB level — before the
+ * graphql_object_visibility filter can make them public.
+ */
+add_filter('graphql_connection_query_args', function ($query_args, $connection_resolver) {
+  if ($connection_resolver instanceof \WPGraphQL\Data\Connection\UserConnectionResolver) {
+    unset($query_args['has_published_posts']);
+  }
+  return $query_args;
+}, 10, 2);
+
+/**
  * Allow resolving draft/pending/future projects when querying a specific project by slug (direct URL on Nuxt).
  *
  * We intentionally do NOT change list queries (connections), so unpublished projects won't appear in

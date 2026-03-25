@@ -80,3 +80,19 @@ add_action('admin_head', function () {
     </script>';
   }
 });
+
+// Pre-populate project_authors repeater with the post author when empty
+add_filter('acf/load_value/name=project_authors', function ($value, $post_id, $field) {
+  if (!empty($value)) {
+    return $value;
+  }
+
+  $post = get_post($post_id);
+  if (!$post || $post->post_type !== 'project' || !$post->post_author) {
+    return $value;
+  }
+
+  return [
+    ['field_68dc5a01b7e11' => $post->post_author]
+  ];
+}, 10, 3);
