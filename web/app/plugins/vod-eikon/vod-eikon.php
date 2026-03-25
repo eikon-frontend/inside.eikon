@@ -595,7 +595,7 @@ class VOD_Eikon
       if ($existing) {
         // Update existing video - preserve published status if it exists
         $current_video = $wpdb->get_row($wpdb->prepare(
-          "SELECT published FROM {$this->table_name} WHERE vod_id = %s",
+          "SELECT published, uploader_email, user_id FROM {$this->table_name} WHERE vod_id = %s",
           $vod_id
         ));
 
@@ -604,13 +604,16 @@ class VOD_Eikon
         $has_poster = !empty($poster);
         $published = ($has_mpd && $has_poster) ? 1 : ($current_video ? $current_video->published : 0);
 
+        // Preserve existing uploader_email and user_id if the API didn't provide them
+        $final_email = !empty($uploader_email) ? $uploader_email : ($current_video->uploader_email ?? '');
+
         $result = $wpdb->update(
           $this->table_name,
           array(
             'name' => $name,
             'poster' => $poster,
             'mpd_url' => $mpd_url,
-            'uploader_email' => $uploader_email,
+            'uploader_email' => $final_email,
             'published' => $published
           ),
           array('vod_id' => $vod_id),
@@ -2041,15 +2044,23 @@ class VOD_Eikon
       // Set published if both MPD and poster are available
       $published = (!empty($mpd_url) && !empty($current_video->poster)) ? 1 : 0;
 
+      $update_data = array(
+        'mpd_url' => $mpd_url,
+        'published' => $published
+      );
+      $update_format = array('%s', '%d');
+
+      // Only update name if we have one from the callback
+      if (!empty($name)) {
+        $update_data['name'] = $name;
+        $update_format[] = '%s';
+      }
+
       $result = $wpdb->update(
         $this->table_name,
-        array(
-          'name' => $name,
-          'mpd_url' => $mpd_url,
-          'published' => $published
-        ),
+        $update_data,
         array('vod_id' => $vod_id),
-        array('%s', '%s', '%d'),
+        $update_format,
         array('%s')
       );
 
@@ -2131,15 +2142,23 @@ class VOD_Eikon
       // Set published if both poster and MPD are available
       $published = (!empty($poster) && !empty($current_video->mpd_url)) ? 1 : 0;
 
+      $update_data = array(
+        'poster' => $poster,
+        'published' => $published
+      );
+      $update_format = array('%s', '%d');
+
+      // Only update name if we have one from the callback
+      if (!empty($name)) {
+        $update_data['name'] = $name;
+        $update_format[] = '%s';
+      }
+
       $result = $wpdb->update(
         $this->table_name,
-        array(
-          'name' => $name,
-          'poster' => $poster,
-          'published' => $published
-        ),
+        $update_data,
         array('vod_id' => $vod_id),
-        array('%s', '%s', '%d'),
+        $update_format,
         array('%s')
       );
 
