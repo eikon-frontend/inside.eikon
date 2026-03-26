@@ -4,7 +4,7 @@
  * User Import from CSV
  *
  * Allows administrators to import users from a CSV file
- * CSV format: Nom, Prénom, Classe, E-Mail
+ * CSV format: Nom, Prénom, E-Mail, Classe
  */
 
 /**
@@ -49,8 +49,8 @@ function eikon_user_import_page()
         <ul style="list-style: disc; margin-left: 20px;">
           <li><code>Nom</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
           <li><code>Prénom</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
-          <li><code>Classe</code> <?php _e('(optionnel - parmi: imd11, imd22, prepa, mp2…)', 'eikon'); ?></li>
           <li><code>E-Mail</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
+          <li><code>Classe</code> <?php _e('(optionnel - parmi: imd11, imd22, prepa, mp2…)', 'eikon'); ?></li>
         </ul>
 
         <p style="background: #f0f6fc; padding: 10px; border-left: 4px solid #0073aa; margin: 20px 0;">
@@ -123,11 +123,11 @@ function eikon_user_import_page()
 
         <h3><?php _e('Exemple de fichier CSV', 'eikon'); ?></h3>
         <p><?php _e('Voici un exemple du format attendu:', 'eikon'); ?></p>
-        <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; border: 1px solid #ddd; border-radius: 3px;">Nom,Prénom,Classe,E-Mail
-Dupont,Jean,imd21,jean.dupont@studentfr.ch
-Martin,Marie,imd31,marie.martin@studentfr.ch
-Bernard,Thomas,,thomas.bernard@studentfr.ch
-Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
+        <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; border: 1px solid #ddd; border-radius: 3px;">Nom,Prénom,E-Mail,Classe
+Dupont,Jean,jean.dupont@studentfr.ch,imd21
+Martin,Marie,marie.martin@studentfr.ch,imd31
+Bernard,Thomas,thomas.bernard@studentfr.ch
+Dubois,Sophie,sophie.dubois@studentfr.ch,prepa</pre>
 
         <p>
           <a href="<?php echo esc_url(admin_url('admin.php?action=eikon_download_csv_template')); ?>" class="button">
@@ -224,8 +224,8 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
           continue;
         }
 
-        // Validate row has required columns
-        if (count($data) < 4) {
+        // Validate row has required columns (Nom, Prénom, E-Mail; Classe is optional)
+        if (count($data) < 3) {
           $error_count++;
           $messages[] = sprintf(
             __('Ligne %d: Format invalide (colonnes manquantes).', 'eikon'),
@@ -236,8 +236,8 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
 
         $nom = sanitize_text_field(trim($data[0]));
         $prenom = sanitize_text_field(trim($data[1]));
-        $classe = strtolower(sanitize_text_field(trim($data[2])));
-        $email = sanitize_email(trim($data[3]));
+        $email = sanitize_email(trim($data[2]));
+        $classe = isset($data[3]) ? strtolower(sanitize_text_field(trim($data[3]))) : '';
 
         // Validate data
         if (empty($nom) || empty($prenom) || empty($email)) {
@@ -429,11 +429,11 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="modele-utilisateurs.csv"');
 
-    $csv = "Nom,Prénom,Classe,E-Mail\n";
-    $csv .= "Dupont,Jean,imd21,jean.dupont@studentfr.ch\n";
-    $csv .= "Martin,Marie,imd31,marie.martin@studentfr.ch\n";
-    $csv .= "Bernard,Thomas,,thomas.bernard@studentfr.ch\n";
-    $csv .= "Dubois,Sophie,prepa,sophie.dubois@studentfr.ch\n";
+    $csv = "Nom,Prénom,E-Mail,Classe\n";
+    $csv .= "Dupont,Jean,jean.dupont@studentfr.ch,imd21\n";
+    $csv .= "Martin,Marie,marie.martin@studentfr.ch,imd31\n";
+    $csv .= "Bernard,Thomas,thomas.bernard@studentfr.ch\n";
+    $csv .= "Dubois,Sophie,sophie.dubois@studentfr.ch,prepa\n";
 
     echo $csv;
     exit;
