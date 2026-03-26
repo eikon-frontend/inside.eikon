@@ -124,10 +124,10 @@ function eikon_user_import_page()
         <h3><?php _e('Exemple de fichier CSV', 'eikon'); ?></h3>
         <p><?php _e('Voici un exemple du format attendu:', 'eikon'); ?></p>
         <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; border: 1px solid #ddd; border-radius: 3px;">Nom,Prénom,Classe,E-Mail
-Dupont,Jean,imd21,jean.dupont@studentfr.ch
-Martin,Marie,imd31,marie.martin@studentfr.ch
+Dupont,Jean,IMD21,jean.dupont@studentfr.ch
+Martin,Marie,IMD31,marie.martin@studentfr.ch
 Bernard,Thomas,,thomas.bernard@studentfr.ch
-Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
+Dubois,Sophie,PREPA,sophie.dubois@studentfr.ch</pre>
 
         <p>
           <a href="<?php echo esc_url(admin_url('admin.php?action=eikon_download_csv_template')); ?>" class="button">
@@ -399,13 +399,10 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
     <?php if (!empty($messages)) : ?>
       <div style="max-width: 700px; margin: 20px 0; background: #fff8f0; padding: 15px; border-left: 4px solid #ffb900; border-radius: 3px;">
         <h3><?php _e('Détails de l\'importation:', 'eikon'); ?></h3>
-        <ul style="margin: 10px 0; margin-left: 20px;">
-          <?php foreach (array_slice($messages, 0, 20) as $message) : ?>
+        <ul style="margin: 10px 0; margin-left: 20px; max-height: 400px; overflow-y: auto;">
+          <?php foreach ($messages as $message) : ?>
             <li><?php echo esc_html($message); ?></li>
           <?php endforeach; ?>
-          <?php if (count($messages) > 20) : ?>
-            <li><em><?php printf(__('... et %d autres messages', 'eikon'), count($messages) - 20); ?></em></li>
-          <?php endif; ?>
         </ul>
       </div>
   <?php endif;
@@ -428,10 +425,10 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
     header('Content-Disposition: attachment; filename="modele-utilisateurs.csv"');
 
     $csv = "Nom,Prénom,Classe,E-Mail\n";
-    $csv .= "Dupont,Jean,imd21,jean.dupont@studentfr.ch\n";
-    $csv .= "Martin,Marie,imd31,marie.martin@studentfr.ch\n";
+    $csv .= "Dupont,Jean,IMD21,jean.dupont@studentfr.ch\n";
+    $csv .= "Martin,Marie,IMD31,marie.martin@studentfr.ch\n";
     $csv .= "Bernard,Thomas,,thomas.bernard@studentfr.ch\n";
-    $csv .= "Dubois,Sophie,prepa,sophie.dubois@studentfr.ch\n";
+    $csv .= "Dubois,Sophie,PREPA,sophie.dubois@studentfr.ch\n";
 
     echo $csv;
     exit;
@@ -443,15 +440,22 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
    */
   function eikon_get_valid_classes()
   {
-    // Valid classes from ACF field group
+    $field = acf_get_field('field_69b4097379354');
+    if ($field && !empty($field['choices'])) {
+      return array_map('strtolower', array_keys($field['choices']));
+    }
+
+    // Fallback if ACF field not found
     return [
-      'imd11',
-      'imd12',
-      'imd21',
-      'imd31',
-      'imd32',
-      'mp2',
-      'prepa'
+      'IMD11',
+      'IMD12',
+      'IMD21',
+      'IMD31',
+      'IMD32',
+      'IMD41',
+      'IMD42',
+      'MP2',
+      'PREPA'
     ];
   }
 
