@@ -71,16 +71,8 @@ function project_completion_checklist_content($post)
       return 'not_good';
     }
 
-    // Count gallery layout items (mosaic and image layouts)
-    $gallery_count = 0;
-    foreach ($project_fields as $field) {
-      if (isset($field['acf_fc_layout'])) {
-        $layout = $field['acf_fc_layout'];
-        if (($layout === 'mosaic' && !empty($field['mosaic'])) || ($layout === 'image' && !empty($field['image']))) {
-          $gallery_count++;
-        }
-      }
-    }
+    // Count all flexible content layout rows
+    $gallery_count = count($project_fields);
 
     if ($gallery_count >= 3) {
       return 'perfect';
