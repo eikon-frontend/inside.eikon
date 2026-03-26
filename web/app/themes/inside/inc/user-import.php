@@ -49,7 +49,7 @@ function eikon_user_import_page()
         <ul style="list-style: disc; margin-left: 20px;">
           <li><code>Nom</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
           <li><code>Prénom</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
-          <li><code>Classe</code> <?php _e('(optionnel - parmi: imd11, imd12, imd21, imd31, imd32, mp2, prepa)', 'eikon'); ?></li>
+          <li><code>Classe</code> <?php _e('(optionnel - parmi: IMD11, IMD22, PREPA, MP2…)', 'eikon'); ?></li>
           <li><code>E-Mail</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
         </ul>
 
@@ -87,6 +87,7 @@ function eikon_user_import_page()
               required
               style="padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
               <option value=""></option>
+              <option value="none"><?php _e('— Aucun rôle —', 'eikon'); ?></option>
               <?php
               $wp_roles = wp_roles();
               foreach ($wp_roles->roles as $role_key => $role_data) {
@@ -102,7 +103,7 @@ function eikon_user_import_page()
 
           <div style="margin-bottom: 20px;">
             <label style="display: flex; align-items: center;">
-              <input type="checkbox" name="eikon_send_emails" value="1" checked>
+              <input type="checkbox" name="eikon_send_emails" value="0">
               <span style="margin-left: 10px;">
                 <?php _e('Envoyer les emails de confirmation aux utilisateurs', 'eikon'); ?>
               </span>
@@ -188,7 +189,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
     }
 
     // Check role selection
-    if (empty($_POST['eikon_user_role'])) {
+    if (!isset($_POST['eikon_user_role']) || $_POST['eikon_user_role'] === '') {
       wp_die(__('Erreur: Veuillez sélectionner un rôle pour les nouveaux utilisateurs.', 'eikon'));
     }
 
@@ -235,7 +236,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
 
         $nom = sanitize_text_field(trim($data[0]));
         $prenom = sanitize_text_field(trim($data[1]));
-        $classe = sanitize_text_field(trim($data[2]));
+        $classe = strtolower(sanitize_text_field(trim($data[2])));
         $email = sanitize_email(trim($data[3]));
 
         // Validate data
@@ -288,7 +289,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
 
           // Update role
           $user = new WP_User($existing_user_id);
-          $user->set_role($user_role);
+          $user->set_role($user_role === 'none' ? '' : $user_role);
 
           $updated_count++;
           $messages[] = sprintf(
@@ -346,7 +347,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
 
           // Set role
           $user = new WP_User($user_id);
-          $user->set_role($user_role);
+          $user->set_role($user_role === 'none' ? '' : $user_role);
 
           // Send password reset email
           if ($send_emails) {
