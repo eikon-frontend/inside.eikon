@@ -49,7 +49,7 @@ function eikon_user_import_page()
         <ul style="list-style: disc; margin-left: 20px;">
           <li><code>Nom</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
           <li><code>Prénom</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
-          <li><code>Classe</code> <?php _e('(optionnel - parmi: IMD11, IMD22, PREPA, MP2…)', 'eikon'); ?></li>
+          <li><code>Classe</code> <?php _e('(optionnel - parmi: imd11, imd22, prepa, mp2…)', 'eikon'); ?></li>
           <li><code>E-Mail</code> <?php _e('(obligatoire)', 'eikon'); ?></li>
         </ul>
 
@@ -124,10 +124,10 @@ function eikon_user_import_page()
         <h3><?php _e('Exemple de fichier CSV', 'eikon'); ?></h3>
         <p><?php _e('Voici un exemple du format attendu:', 'eikon'); ?></p>
         <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; border: 1px solid #ddd; border-radius: 3px;">Nom,Prénom,Classe,E-Mail
-Dupont,Jean,IMD21,jean.dupont@studentfr.ch
-Martin,Marie,IMD31,marie.martin@studentfr.ch
+Dupont,Jean,imd21,jean.dupont@studentfr.ch
+Martin,Marie,imd31,marie.martin@studentfr.ch
 Bernard,Thomas,,thomas.bernard@studentfr.ch
-Dubois,Sophie,PREPA,sophie.dubois@studentfr.ch</pre>
+Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
 
         <p>
           <a href="<?php echo esc_url(admin_url('admin.php?action=eikon_download_csv_template')); ?>" class="button">
@@ -425,10 +425,10 @@ Dubois,Sophie,PREPA,sophie.dubois@studentfr.ch</pre>
     header('Content-Disposition: attachment; filename="modele-utilisateurs.csv"');
 
     $csv = "Nom,Prénom,Classe,E-Mail\n";
-    $csv .= "Dupont,Jean,IMD21,jean.dupont@studentfr.ch\n";
-    $csv .= "Martin,Marie,IMD31,marie.martin@studentfr.ch\n";
+    $csv .= "Dupont,Jean,imd21,jean.dupont@studentfr.ch\n";
+    $csv .= "Martin,Marie,imd31,marie.martin@studentfr.ch\n";
     $csv .= "Bernard,Thomas,,thomas.bernard@studentfr.ch\n";
-    $csv .= "Dubois,Sophie,PREPA,sophie.dubois@studentfr.ch\n";
+    $csv .= "Dubois,Sophie,prepa,sophie.dubois@studentfr.ch\n";
 
     echo $csv;
     exit;
@@ -447,15 +447,15 @@ Dubois,Sophie,PREPA,sophie.dubois@studentfr.ch</pre>
 
     // Fallback if ACF field not found
     return [
-      'IMD11',
-      'IMD12',
-      'IMD21',
-      'IMD31',
-      'IMD32',
-      'IMD41',
-      'IMD42',
-      'MP2',
-      'PREPA'
+      'imd11',
+      'imd12',
+      'imd21',
+      'imd31',
+      'imd32',
+      'imd41',
+      'imd42',
+      'mp2',
+      'prepa'
     ];
   }
 

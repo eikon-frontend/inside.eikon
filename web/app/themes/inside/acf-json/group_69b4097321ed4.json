@@ -17,15 +17,15 @@
                 "id": ""
             },
             "choices": {
-                "IMD11": "IMD11",
-                "IMD12": "IMD12",
-                "IMD21": "IMD21",
-                "IMD31": "IMD31",
-                "IMD32": "IMD32",
-                "IMD41": "IMD41",
-                "IMD42": "IMD42",
-                "MP2": "MP2",
-                "PREPA": "PREPA"
+                "imd11": "imd11",
+                "imd12": "imd12",
+                "imd21": "imd21",
+                "imd31": "imd31",
+                "imd32": "imd32",
+                "imd41": "imd41",
+                "imd42": "imd42",
+                "mp2": "mp2",
+                "prepa": "prepa"
             },
             "default_value": false,
             "return_format": "value",
@@ -66,5 +66,5 @@
     "graphql_field_name": "comptes",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1774536641
+    "modified": 1774537758
 }
