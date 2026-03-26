@@ -450,6 +450,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
       'imd11',
       'imd12',
       'imd21',
+      'imd22',
       'imd31',
       'imd32',
       'imd41',
