@@ -122,7 +122,7 @@ add_action('graphql_register_types', function () {
             } elseif (is_object($root) && property_exists($root, 'databaseId')) {
               $post_id = $root->databaseId;
             } else {
-              $post_id = $context->nodeid ?? get_queried_object_id();
+              $post_id = get_queried_object_id();
             }
 
             // Only try to get field value from post if we have a post ID and this is not a flexible content layout
