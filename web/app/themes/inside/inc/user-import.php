@@ -146,7 +146,8 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
       <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin-top: 20px;">
         <h3><?php _e('Résultat de la dernière importation', 'eikon'); ?></h3>
         <div style="background: #f0f6fc; padding: 10px; border-left: 4px solid #0073aa; margin: 10px 0;">
-          <p><strong><?php _e('Succès:', 'eikon'); ?></strong> <?php echo esc_html($last_import['success']); ?></p>
+          <p><strong><?php _e('Créés:', 'eikon'); ?></strong> <?php echo esc_html($last_import['success']); ?></p>
+          <p><strong><?php _e('Mis à jour:', 'eikon'); ?></strong> <?php echo esc_html($last_import['updated'] ?? 0); ?></p>
           <p><strong><?php _e('Erreurs:', 'eikon'); ?></strong> <?php echo esc_html($last_import['errors']); ?></p>
           <p><strong><?php _e('Date:', 'eikon'); ?></strong> <?php echo esc_html($last_import['date']); ?></p>
         </div>
@@ -205,6 +206,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
 
     // Read and process CSV
     $success_count = 0;
+    $updated_count = 0;
     $error_count = 0;
     $messages = array();
 
@@ -258,81 +260,109 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
         }
 
         // Check if email already exists
-        if (email_exists($email)) {
-          $error_count++;
+        $existing_user_id = email_exists($email);
+
+        if ($existing_user_id) {
+          // Update existing user
+          wp_update_user([
+            'ID' => $existing_user_id,
+            'first_name' => $prenom,
+            'last_name' => $nom,
+          ]);
+
+          // Validate and update classe field
+          if (!empty($classe)) {
+            $valid_classes = eikon_get_valid_classes();
+            if (in_array($classe, $valid_classes)) {
+              update_user_meta($existing_user_id, 'classe', $classe);
+            } else {
+              $messages[] = sprintf(
+                __('Ligne %d: Classe "%s" invalide (classe non définie).', 'eikon'),
+                $row_number,
+                $classe
+              );
+            }
+          } else {
+            delete_user_meta($existing_user_id, 'classe');
+          }
+
+          // Update role
+          $user = new WP_User($existing_user_id);
+          $user->set_role($user_role);
+
+          $updated_count++;
           $messages[] = sprintf(
-            __('Ligne %d: L\'email %s existe déjà.', 'eikon'),
+            __('Ligne %d: Utilisateur %s mis à jour.', 'eikon'),
             $row_number,
             $email
           );
-          continue;
-        }
+        } else {
+          // Create new user
+          $username = sanitize_user(explode('@', $email)[0]);
+          $base_username = $username;
+          $counter = 1;
 
-        // Generate username from email
-        $username = sanitize_user(explode('@', $email)[0]);
-        $base_username = $username;
-        $counter = 1;
+          // Ensure username is unique
+          while (username_exists($username)) {
+            $username = $base_username . $counter;
+            $counter++;
+          }
 
-        // Ensure username is unique
-        while (username_exists($username)) {
-          $username = $base_username . $counter;
-          $counter++;
-        }
+          // Generate temporary password
+          $temporary_password = wp_generate_password(12, true);
 
-        // Generate temporary password
-        $temporary_password = wp_generate_password(12, true);
+          // Create user without automatic notifications
+          add_filter('wp_send_new_user_notification_emails', '__return_false');
+          $user_id = wp_create_user($username, $temporary_password, $email);
+          remove_filter('wp_send_new_user_notification_emails', '__return_false');
 
-        // Create user without automatic notifications
-        add_filter('wp_send_new_user_notification_emails', '__return_false');
-        $user_id = wp_create_user($username, $temporary_password, $email);
-        remove_filter('wp_send_new_user_notification_emails', '__return_false');
-
-        if (is_wp_error($user_id)) {
-          $error_count++;
-          $messages[] = sprintf(
-            __('Ligne %d: Erreur lors de la création de l\'utilisateur (%s).', 'eikon'),
-            $row_number,
-            $user_id->get_error_message()
-          );
-          continue;
-        }
-
-        // Update user metadata
-        update_user_meta($user_id, 'first_name', $prenom);
-        update_user_meta($user_id, 'last_name', $nom);
-
-        // Validate and set classe field if provided
-        if (!empty($classe)) {
-          $valid_classes = eikon_get_valid_classes();
-          if (in_array($classe, $valid_classes)) {
-            update_user_meta($user_id, 'classe', $classe);
-          } else {
+          if (is_wp_error($user_id)) {
+            $error_count++;
             $messages[] = sprintf(
-              __('Ligne %d: Classe "%s" invalide (classe non définie).', 'eikon'),
+              __('Ligne %d: Erreur lors de la création de l\'utilisateur (%s).', 'eikon'),
               $row_number,
-              $classe
+              $user_id->get_error_message()
             );
+            continue;
           }
-        }
 
-        // Set role
-        $user = new WP_User($user_id);
-        $user->set_role($user_role);
+          // Set user metadata
+          update_user_meta($user_id, 'first_name', $prenom);
+          update_user_meta($user_id, 'last_name', $nom);
 
-        // Send password reset email
-        if ($send_emails) {
-          $reset_key = get_password_reset_key($user);
-          if (!is_wp_error($reset_key)) {
-            eikon_send_password_reset_email($user, $reset_key);
+          // Validate and set classe field if provided
+          if (!empty($classe)) {
+            $valid_classes = eikon_get_valid_classes();
+            if (in_array($classe, $valid_classes)) {
+              update_user_meta($user_id, 'classe', $classe);
+            } else {
+              $messages[] = sprintf(
+                __('Ligne %d: Classe "%s" invalide (classe non définie).', 'eikon'),
+                $row_number,
+                $classe
+              );
+            }
           }
-        }
 
-        $success_count++;
-        $messages[] = sprintf(
-          __('Ligne %d: Utilisateur %s créé avec succès.', 'eikon'),
-          $row_number,
-          $email
-        );
+          // Set role
+          $user = new WP_User($user_id);
+          $user->set_role($user_role);
+
+          // Send password reset email
+          if ($send_emails) {
+            $reset_key = get_password_reset_key($user);
+            if (!is_wp_error($reset_key)) {
+              eikon_send_password_reset_email($user, $reset_key);
+            }
+          }
+
+          $success_count++;
+          $messages[] = sprintf(
+            __('Ligne %d: Utilisateur %s créé avec succès.', 'eikon'),
+            $row_number,
+            $email
+          );
+        }
       }
 
       fclose($handle);
@@ -344,6 +374,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
     $import_log = get_option('eikon_user_import_log', array());
     $import_log[] = array(
       'success' => $success_count,
+      'updated' => $updated_count,
       'errors' => $error_count,
       'date' => current_time('mysql'),
       'messages' => array_slice($messages, 0, 50) // Limit to last 50 messages
@@ -356,8 +387,9 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
       <p>
         <strong><?php _e('Import terminé!', 'eikon'); ?></strong><br>
         <?php printf(
-          __('Utilisateurs créés: %d | Erreurs: %d', 'eikon'),
+          __('Utilisateurs créés: %d | Mis à jour: %d | Erreurs: %d', 'eikon'),
           $success_count,
+          $updated_count,
           $error_count
         ); ?>
       </p>
