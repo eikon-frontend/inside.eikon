@@ -20,6 +20,7 @@
                 "imd11": "imd11",
                 "imd12": "imd12",
                 "imd21": "imd21",
+                "imd22": "imd22",
                 "imd31": "imd31",
                 "imd32": "imd32",
                 "imd41": "imd41",
@@ -66,5 +67,5 @@
     "graphql_field_name": "comptes",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1774537758
+    "modified": 1774538693
 }
