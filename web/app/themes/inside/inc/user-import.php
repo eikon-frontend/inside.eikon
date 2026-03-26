@@ -269,6 +269,7 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
             'ID' => $existing_user_id,
             'first_name' => $prenom,
             'last_name' => $nom,
+            'display_name' => $prenom . ' ' . $nom,
           ]);
 
           // Validate and update classe field
@@ -328,6 +329,10 @@ Dubois,Sophie,prepa,sophie.dubois@studentfr.ch</pre>
           }
 
           // Set user metadata
+          wp_update_user([
+            'ID' => $user_id,
+            'display_name' => $prenom . ' ' . $nom,
+          ]);
           update_user_meta($user_id, 'first_name', $prenom);
           update_user_meta($user_id, 'last_name', $nom);
 
