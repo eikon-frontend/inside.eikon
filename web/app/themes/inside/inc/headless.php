@@ -286,6 +286,9 @@ add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name
   $frontend_url = home_url('/');
   $project_url = trailingslashit($frontend_url) . 'projets/%postname%/';
 
+  // Use $name (user-edited slug from AJAX) if provided, otherwise fall back to saved slug
+  $slug = !empty($name) ? $name : $post->post_name;
+
   // Return array with [permalink_template, post_name]
-  return array($project_url, $post->post_name);
+  return array($project_url, $slug);
 }, 10, 5);
