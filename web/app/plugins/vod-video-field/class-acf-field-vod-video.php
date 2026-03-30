@@ -58,7 +58,7 @@ class acf_field_vod_video extends acf_field
       'select_video' => __('Sélectionner une vidéo', 'vod-video-field'),
       'search_videos' => __('Rechercher des vidéos...', 'vod-video-field'),
       'no_videos_found' => __('Aucune vidéo trouvée', 'vod-video-field'),
-      'remove_video' => __('Supprimer la vidéo', 'vod-video-field'),
+      'remove_video' => __('Retirer la vidéo', 'vod-video-field'),
       'refresh_video' => __('Actualiser la vidéo', 'vod-video-field'),
       'loading' => __('Chargement...', 'vod-video-field'),
       'error' => __('Erreur lors du chargement des vidéos', 'vod-video-field'),
@@ -189,13 +189,11 @@ class acf_field_vod_video extends acf_field
       echo '</div>';
       echo '<div class="vod-video-details">';
       echo '<h4>' . esc_html($video_data['title'] ?? '') . '</h4>';
-      if (isset($video_data['vod_id'])) {
-        echo '<p><small>VOD ID: ' . esc_html($video_data['vod_id']) . '</small></p>';
-      }
 
       echo '<div class="vod-video-actions">';
-      echo '<a href="#" class="vod-video-remove button"><span class="dashicons dashicons-trash"></span> ' . esc_html($this->l10n['remove_video']) . '</a>';
-      echo '<a href="#" class="vod-video-refresh button" style="margin-left: 5px;"><span class="dashicons dashicons-update"></span> ' . esc_html($this->l10n['refresh_video']) . '</a>';
+      echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
+      echo '<a href="#" class="vod-video-refresh button" title="' . esc_attr($this->l10n['refresh_video']) . '"><span class="dashicons dashicons-update"></span><span class="vod-button-label">' . esc_html($this->l10n['refresh_video']) . '</span></a>';
+      echo '<a href="#" class="vod-video-remove button" title="' . esc_attr($this->l10n['remove_video']) . '"><span class="dashicons dashicons-trash"></span><span class="vod-button-label">' . esc_html($this->l10n['remove_video']) . '</span></a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';
@@ -205,9 +203,9 @@ class acf_field_vod_video extends acf_field
       echo '</div>';
     }
 
-    // Selection button
+    // Selection button (visible only when no video selected)
     echo '<div class="vod-video-select">';
-    echo '<a href="#" class="vod-video-button button"><span class="dashicons dashicons-plus-alt2"></span> ' . esc_html($this->l10n['select_video']) . '</a>';
+    echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
     echo '</div>';
 
     // Modal

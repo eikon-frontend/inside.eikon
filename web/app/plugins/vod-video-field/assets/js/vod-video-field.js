@@ -371,16 +371,13 @@
         const $details = $('<div class="vod-video-details"></div>');
         $details.append('<h4>' + $('<div>').text(videoData.title).html() + '</h4>');
 
-        if (videoData.vod_id) {
-          $details.append('<p><small>VOD ID: ' + $('<div>').text(videoData.vod_id).html() + '</small></p>');
-        }
-
         // Create actions
         const $actions = $('<div class="vod-video-actions"></div>');
-        const $removeBtn = $('<a href="#" class="vod-video-remove button"><span class="dashicons dashicons-trash"></span> ' + acf_vod_video_field.i18n.remove_video + '</a>');
-        const $refreshBtn = $('<a href="#" class="vod-video-refresh button" style="margin-left: 5px;"><span class="dashicons dashicons-update"></span> ' + acf_vod_video_field.i18n.refresh_video + '</a>');
+        const $selectBtn = $('<a href="#" class="vod-video-button button" title="' + acf_vod_video_field.i18n.select_video + '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.select_video + '</span></a>');
+        const $refreshBtn = $('<a href="#" class="vod-video-refresh button" title="' + acf_vod_video_field.i18n.refresh_video + '"><span class="dashicons dashicons-update"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.refresh_video + '</span></a>');
+        const $removeBtn = $('<a href="#" class="vod-video-remove button" title="' + acf_vod_video_field.i18n.remove_video + '"><span class="dashicons dashicons-trash"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.remove_video + '</span></a>');
 
-        $actions.append($removeBtn).append($refreshBtn);
+        $actions.append($selectBtn).append($refreshBtn).append($removeBtn);
         $details.append($actions);
 
         // Assemble preview

@@ -15,6 +15,8 @@
     border-radius: 4px;
     padding: 15px;
     margin-bottom: 10px;
+    container-type: inline-size;
+    container-name: vod-container;
 }
 
 /* Video Preview */
@@ -84,14 +86,13 @@
     font-style: italic;
 }
 
-/* Selection Button */
-.vod-video-select {
-    text-align: left;
+/* Selection Button (standalone, hidden when video is selected) */
+.vod-video-preview ~ .vod-video-select {
+    display: none;
 }
 
-.vod-video-button {
-    display: inline-block;
-    margin-right: 5px;
+.vod-video-select {
+    text-align: left;
 }
 
 /* Modal */
@@ -295,18 +296,6 @@
 }
 
 /* Refresh Button Styling */
-.vod-video-refresh {
-    background-color: #0073aa;
-    color: white;
-    border-color: #0073aa;
-}
-
-.vod-video-refresh:hover {
-    background-color: #005a87;
-    border-color: #005a87;
-    color: white;
-}
-
 .vod-video-refresh:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -315,25 +304,40 @@
 /* Enhanced Actions Layout */
 .vod-video-actions {
     display: flex;
-    gap: 5px;
+    flex-wrap: wrap;
+    gap: 6px;
     margin-top: 10px;
 }
 
-.vod-video-actions .button {
+.vod-video-actions .button,
+.vod-video-select .button {
     flex: 0 0 auto;
     font-size: 12px;
     height: auto;
-    padding: 4px 8px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 3px;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 
 /* Button Icons */
 .vod-video-actions .button .dashicons,
 .vod-video-select .button .dashicons {
     font-size: 16px;
+    width: 16px;
+    height: 16px;
     line-height: 1;
-    vertical-align: middle;
-    margin-right: 4px;
-    margin-top: -2px;
+    flex-shrink: 0;
+}
+
+/* Button label (hidden in tight spaces via container query) */
+.vod-button-label {
+    display: inline;
 }
 
 .vod-video-button .dashicons {
@@ -353,6 +357,11 @@
     color: #005a87;
 }
 
+.vod-video-remove:hover {
+    border-color: #d63638;
+    color: #d63638;
+}
+
 .vod-video-remove:hover .dashicons {
     color: #b32d2e;
 }
@@ -363,6 +372,22 @@
 
 .vod-video-refresh:disabled .dashicons {
     color: #a7aaad;
+}
+
+/* Container query: icon-only buttons in tight columns */
+@container vod-container (max-width: 280px) {
+    .vod-button-label {
+        display: none;
+    }
+
+    .vod-video-actions .button,
+    .vod-video-select .button {
+        padding: 6px;
+    }
+
+    .vod-video-details h4 {
+        font-size: 13px;
+    }
 }
 
 /* Responsive Adjustments */
