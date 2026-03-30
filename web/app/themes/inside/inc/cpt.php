@@ -159,6 +159,96 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
 }
 add_action('save_post_project', 'eikon_ensure_project_slug_on_save', 10, 3);
 
+/**
+ * Enforce unique slugs for projects across ALL statuses (draft, pending, publish, etc.).
+ *
+ * WordPress core only deduplicates slugs for published posts on non-hierarchical types.
+ * Since this is a headless setup where projects are fetched by slug via GraphQL regardless
+ * of status, we must prevent duplicates across all statuses.
+ */
+function eikon_unique_project_slug($slug, $post_id, $post_status, $post_type, $post_parent, $original_slug)
+{
+  if ($post_type !== 'project') {
+    return $slug;
+  }
+
+  global $wpdb;
+
+  $check_sql = "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND ID != %d LIMIT 1";
+
+  if ($wpdb->get_var($wpdb->prepare($check_sql, $slug, $post_type, $post_id))) {
+    $suffix = 2;
+    do {
+      $alt_slug = "$slug-$suffix";
+      $suffix++;
+    } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, $post_type, $post_id)));
+    $slug = $alt_slug;
+  }
+
+  return $slug;
+}
+add_filter('wp_unique_post_slug', 'eikon_unique_project_slug', 10, 6);
+
+/**
+ * AJAX endpoint to check if a project slug already exists.
+ * Used by the permalink editor in the admin to warn users before saving.
+ */
+function eikon_check_project_slug_ajax()
+{
+  check_ajax_referer('eikon-check-slug', 'nonce');
+
+  if (!current_user_can('edit_posts')) {
+    wp_send_json_error('Unauthorized', 403);
+  }
+
+  $slug = sanitize_title($_POST['slug'] ?? '');
+  $post_id = absint($_POST['post_id'] ?? 0);
+
+  if (empty($slug)) {
+    wp_send_json_error('Empty slug');
+  }
+
+  global $wpdb;
+  $existing = $wpdb->get_var($wpdb->prepare(
+    "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = 'project' AND ID != %d LIMIT 1",
+    $slug,
+    $post_id
+  ));
+
+  wp_send_json_success(['exists' => !empty($existing)]);
+}
+add_action('wp_ajax_eikon_check_project_slug', 'eikon_check_project_slug_ajax');
+
+/**
+ * Enqueue slug validation script on project edit screens.
+ */
+function eikon_enqueue_slug_validation($hook)
+{
+  if (!in_array($hook, ['post.php', 'post-new.php'])) {
+    return;
+  }
+
+  $screen = get_current_screen();
+  if (!$screen || $screen->post_type !== 'project') {
+    return;
+  }
+
+  wp_enqueue_script(
+    'eikon-slug-validation',
+    get_template_directory_uri() . '/js/slug-validation.js',
+    ['jquery'],
+    filemtime(get_template_directory() . '/js/slug-validation.js'),
+    true
+  );
+
+  wp_localize_script('eikon-slug-validation', 'eikonSlug', [
+    'ajaxUrl' => admin_url('admin-ajax.php'),
+    'nonce'   => wp_create_nonce('eikon-check-slug'),
+    'postId'  => get_the_ID(),
+  ]);
+}
+add_action('admin_enqueue_scripts', 'eikon_enqueue_slug_validation');
+
 
 register_taxonomy('year', array('project'), array(
   'labels' => array(
