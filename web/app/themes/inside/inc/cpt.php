@@ -88,72 +88,30 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
     return;
   }
 
-  // Debug logging
-  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-    error_log('=== DEBUG: eikon_ensure_project_slug_on_save called ===');
-    error_log('Post ID: ' . $post_id);
-    error_log('Post Status: ' . $post->post_status);
-    error_log('Post Name (current): "' . $post->post_name . '"');
-    error_log('Post Title: "' . $post->post_title . '"');
-    error_log('Is Update: ' . ($update ? 'yes' : 'no'));
-  }
-
   // Don't generate slugs for placeholder posts.
   if ($post->post_status === 'auto-draft') {
-    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-      error_log('Post is auto-draft, skipping slug generation');
-    }
     return;
   }
 
   // Only set if empty; don't override manually edited slugs.
   if (!empty($post->post_name) || empty($post->post_title)) {
-    if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-      error_log('Post already has slug or title is empty, skipping. post_name empty: ' . (empty($post->post_name) ? 'yes' : 'no') . ', title empty: ' . (empty($post->post_title) ? 'yes' : 'no'));
-    }
     return;
   }
 
   $running = true;
 
-  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-    error_log('Generating slug from title: ' . $post->post_title);
-  }
-
   $slug = sanitize_title($post->post_title);
   $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
 
-  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-    error_log('Generated slug: "' . $slug . '"');
-  }
-
   // Use direct database update to avoid infinite hook loops with wp_update_post()
   global $wpdb;
-  $result = $wpdb->update(
+  $wpdb->update(
     $wpdb->posts,
     ['post_name' => $slug],
     ['ID' => $post_id],
     ['%s'],
     ['%d']
   );
-
-  if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-    if ($result === false) {
-      error_log('Slug update FAILED - DB error: ' . $wpdb->last_error);
-    } elseif ($result === 0) {
-      error_log('Slug update completed but no rows affected (value may not have changed)');
-    } else {
-      error_log('Slug update successful - rows affected: ' . $result);
-    }
-
-    // Verify the update by querying the database
-    $verify_post = $wpdb->get_row($wpdb->prepare('SELECT ID, post_name FROM ' . $wpdb->posts . ' WHERE ID = %d', $post_id));
-    if ($verify_post) {
-      error_log('Verification - Post Name in DB: "' . $verify_post->post_name . '"');
-    } else {
-      error_log('Verification failed - could not fetch post from database');
-    }
-  }
 
   $running = false;
 }
@@ -188,6 +146,42 @@ function eikon_unique_project_slug($slug, $post_id, $post_status, $post_type, $p
   return $slug;
 }
 add_filter('wp_unique_post_slug', 'eikon_unique_project_slug', 10, 6);
+
+/**
+ * Additional safeguard: intercept post data before insert/update to enforce unique slugs.
+ *
+ * wp_insert_post_data fires before the post is saved. This catches cases where
+ * wp_unique_post_slug() is bypassed or skips the duplicate check for non-published posts.
+ */
+function eikon_enforce_unique_project_slug_on_save($data, $postarr)
+{
+  if ($data['post_type'] !== 'project') {
+    return $data;
+  }
+
+  if (empty($data['post_name']) || $data['post_status'] === 'auto-draft') {
+    return $data;
+  }
+
+  $post_id = $postarr['ID'] ?? 0;
+
+  global $wpdb;
+
+  $check_sql = "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = 'project' AND ID != %d LIMIT 1";
+  $slug = $data['post_name'];
+
+  if ($wpdb->get_var($wpdb->prepare($check_sql, $slug, $post_id))) {
+    $suffix = 2;
+    do {
+      $alt_slug = "$slug-$suffix";
+      $suffix++;
+    } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, 'project', $post_id)));
+    $data['post_name'] = $alt_slug;
+  }
+
+  return $data;
+}
+add_filter('wp_insert_post_data', 'eikon_enforce_unique_project_slug_on_save', 10, 2);
 
 /**
  * AJAX endpoint to check if a project slug already exists.
