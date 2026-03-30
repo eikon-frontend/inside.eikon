@@ -236,7 +236,7 @@ Dubois,Sophie,sophie.dubois@studentfr.ch,prepa</pre>
 
         $nom = sanitize_text_field(trim($data[0]));
         $prenom = sanitize_text_field(trim($data[1]));
-        $email = sanitize_email(trim($data[2]));
+        $email = strtolower(sanitize_email(trim($data[2])));
         $classe = isset($data[3]) ? strtolower(sanitize_text_field(trim($data[3]))) : '';
 
         // Validate data
@@ -300,7 +300,7 @@ Dubois,Sophie,sophie.dubois@studentfr.ch,prepa</pre>
           );
         } else {
           // Create new user
-          $username = sanitize_user(explode('@', $email)[0]);
+          $username = strtolower(sanitize_user(explode('@', $email)[0]));
           $base_username = $username;
           $counter = 1;
 

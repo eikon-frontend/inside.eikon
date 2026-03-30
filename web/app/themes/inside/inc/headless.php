@@ -281,10 +281,11 @@ add_filter('get_sample_permalink', function ($permalink, $post_id, $title, $name
     return $permalink;
   }
 
-  // Build the frontend URL for the project
+  // Build the frontend URL for the project with %postname% placeholder
+  // The placeholder is required for WordPress to show the slug edit button
   $frontend_url = home_url('/');
-  $project_url = trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
+  $project_url = trailingslashit($frontend_url) . 'projets/%postname%/';
 
-  // Return array with [full_url, display_slug]
-  return array($project_url, $post->post_name . '/');
+  // Return array with [permalink_template, post_name]
+  return array($project_url, $post->post_name);
 }, 10, 5);
