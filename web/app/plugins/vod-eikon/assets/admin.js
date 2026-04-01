@@ -75,6 +75,16 @@ jQuery(document).ready(function ($) {
       return;
     }
 
+    // Check filename nomenclature for students/teachers
+    if (vodEikon.validate_filename) {
+      var filenameRegex = new RegExp(vodEikon.filename_regex);
+      if (!filenameRegex.test(file.name)) {
+        console.log('VOD Eikon: Validation failed - filename does not match nomenclature: ' + file.name);
+        $status.html('<div class="notice notice-error inline"><p>' + vodEikon.filename_error + '</p></div>');
+        return;
+      }
+    }
+
     console.log('VOD Eikon: Validation passed, starting upload');
 
     // Show progress and disable form

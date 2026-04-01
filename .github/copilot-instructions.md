@@ -97,8 +97,13 @@ inside/
 - **Draft visibility**: Makes draft/pending/future `project` posts fully accessible via GraphQL for preview functionality
 - **Single-item queries**: Allows fetching unpublished projects by slug without exposing them in listings
 
-#### Image Processing (images.php)
+#### Image Processing & Upload Validation (images.php)
 
+- **Filename nomenclature enforcement**: Students and teachers must use a strict naming convention for all uploads (images, PDFs). The regex is: `/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/`
+  - Example valid names: `23_24_IMD11_CIE_Titre_Nom_Prenom.pdf`, `23_24_eikonwork1_Titre_Nom_Prenom.jpg`
+  - Server-side: `wp_handle_upload_prefilter` blocks non-compliant files before they are saved
+  - Client-side: `js/filename-validation.js` intercepts the WordPress plupload `FilesAdded` event to block uploads before large files are sent
+  - Only applies to `student` and `teacher` roles (admins are exempt)
 - **Auto WebP conversion**: All uploaded images automatically converted to WebP
 - **Restricted uploads**: Only images (JPG, PNG, WebP, SVG) and PDFs allowed
 - **Filtered sizes**: Removes WordPress default sizes (medium_large, 1536x1536, 2048x2048)
@@ -170,6 +175,7 @@ node build-all-blocks.js
 **Features**:
 
 - Video upload directly from WordPress admin
+- **Filename nomenclature enforcement**: Students and teachers must use the same naming convention as media uploads. Validated both client-side (`assets/admin.js`) and server-side (`ajax_upload_video`). Admins are exempt.
 - Sync with Infomaniak VOD API
 - Webhook callbacks for video processing status
 - Custom database table for video metadata
@@ -301,6 +307,7 @@ npm run start  # Dev mode with watch
 - Menu filtering: admin_menu hook (role-based visibility)
 - Media filtering: pre_get_posts for attachments (by author)
 - Publishing prevention: user_has_cap filter (draft/pending only)
+- **Filename nomenclature**: Students and teachers must follow a strict naming convention for all file uploads (images, PDFs, videos). Non-compliant filenames are rejected both client-side (before upload) and server-side. Regex: `/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/`
 
 **Documentation**: See [eikon-roles README](../web/app/mu-plugins/eikon-roles/README.md) for complete capability reference and customization guide
 

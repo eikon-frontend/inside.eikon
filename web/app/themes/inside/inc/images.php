@@ -2,6 +2,66 @@
 
 add_theme_support('post-thumbnails');
 
+/**
+ * Filename nomenclature validation for students and teachers.
+ * Blocks uploads with non-compliant filenames before the file is saved.
+ */
+define('EIKON_FILENAME_REGEX', '/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/');
+define('EIKON_FILENAME_ERROR', 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemples valides : 23_24_IMD11_CIE_Titre_Nom_Prenom.pdf ou 23_24_eikonwork1_Titre_Nom_Prenom.jpg. Les accents et caractères spéciaux sont interdits.');
+
+/**
+ * Check if the current user must comply with filename nomenclature.
+ */
+function eikon_user_must_validate_filename()
+{
+  $current_user = wp_get_current_user();
+  if (!$current_user || !$current_user->exists()) {
+    return false;
+  }
+  return in_array('student', $current_user->roles, true) || in_array('teacher', $current_user->roles, true);
+}
+
+/**
+ * Server-side: block media uploads with invalid filenames (runs before file is moved).
+ */
+add_filter('wp_handle_upload_prefilter', function ($file) {
+  if (!eikon_user_must_validate_filename()) {
+    return $file;
+  }
+
+  $filename = $file['name'];
+  if (!preg_match(EIKON_FILENAME_REGEX, $filename)) {
+    $file['error'] = EIKON_FILENAME_ERROR;
+  }
+
+  return $file;
+});
+
+/**
+ * Client-side: enqueue JS that validates filenames in the media uploader
+ * BEFORE the upload starts (prevents large files from being sent).
+ */
+function eikon_enqueue_filename_validation($hook)
+{
+  if (!eikon_user_must_validate_filename()) {
+    return;
+  }
+
+  wp_enqueue_script(
+    'eikon-filename-validation',
+    get_template_directory_uri() . '/js/filename-validation.js',
+    ['jquery'],
+    filemtime(get_template_directory() . '/js/filename-validation.js'),
+    true
+  );
+
+  wp_localize_script('eikon-filename-validation', 'eikonFilename', [
+    'regex' => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
+    'errorMessage' => EIKON_FILENAME_ERROR,
+  ]);
+}
+add_action('admin_enqueue_scripts', 'eikon_enqueue_filename_validation');
+
 add_filter('intermediate_image_sizes', function ($sizes) {
   return array_filter($sizes, function ($val) {
     return !in_array($val, ['medium_large', '1536x1536', '2048x2048']); // Filter out 'medium_large', '1536x1536', and '2048x2048'

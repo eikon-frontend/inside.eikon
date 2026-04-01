@@ -148,18 +148,25 @@ function eikon_unique_project_slug($slug, $post_id, $post_status, $post_type, $p
 add_filter('wp_unique_post_slug', 'eikon_unique_project_slug', 10, 6);
 
 /**
- * Additional safeguard: intercept post data before insert/update to enforce unique slugs.
+ * Ensure project slugs are generated and unique BEFORE save.
  *
- * wp_insert_post_data fires before the post is saved. This catches cases where
- * wp_unique_post_slug() is bypassed or skips the duplicate check for non-published posts.
+ * WordPress skips slug generation for drafts/pending. Since projects are fetched
+ * by slug via GraphQL regardless of status, we must:
+ * 1. Generate a slug from the title if none exists (even for drafts)
+ * 2. Enforce uniqueness across ALL statuses
  */
 function eikon_enforce_unique_project_slug_on_save($data, $postarr)
 {
-  if ($data['post_type'] !== 'project') {
+  if ($data['post_type'] !== 'project' || $data['post_status'] === 'auto-draft') {
     return $data;
   }
 
-  if (empty($data['post_name']) || $data['post_status'] === 'auto-draft') {
+  // Generate slug from title if empty (WordPress skips this for drafts)
+  if (empty($data['post_name']) && !empty($data['post_title'])) {
+    $data['post_name'] = sanitize_title($data['post_title']);
+  }
+
+  if (empty($data['post_name'])) {
     return $data;
   }
 

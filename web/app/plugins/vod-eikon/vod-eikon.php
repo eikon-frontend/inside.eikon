@@ -197,11 +197,17 @@ class VOD_Eikon
       true
     );
 
+    $current_user = wp_get_current_user();
+    $must_validate_filename = in_array('student', $current_user->roles, true) || in_array('teacher', $current_user->roles, true);
+
     wp_localize_script('vod-eikon-admin', 'vodEikon', array(
       'ajax_url' => admin_url('admin-ajax.php'),
       'nonce' => wp_create_nonce('vod_eikon_nonce'),
       'max_upload_size' => $this->get_server_upload_limit(),
-      'max_upload_size_formatted' => $this->format_bytes($this->get_server_upload_limit())
+      'max_upload_size_formatted' => $this->format_bytes($this->get_server_upload_limit()),
+      'validate_filename' => $must_validate_filename,
+      'filename_regex' => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
+      'filename_error' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemples valides : 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4 ou 23_24_eikonwork1_Titre_Nom_Prenom.mov. Les accents et caractères spéciaux sont interdits.',
     ));
 
     wp_enqueue_style(
@@ -1097,6 +1103,17 @@ class VOD_Eikon
     }
 
     $file = $_FILES['video_file'];
+
+    // Validate filename nomenclature for students and teachers
+    $current_user_roles = $current_user->roles;
+    if (in_array('student', $current_user_roles, true) || in_array('teacher', $current_user_roles, true)) {
+      $filename = $file['name'];
+      if (!preg_match('/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/', $filename)) {
+        wp_send_json_error(array(
+          'message' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemples valides : 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4 ou 23_24_eikonwork1_Titre_Nom_Prenom.mov. Les accents et caractères spéciaux sont interdits.'
+        ));
+      }
+    }
 
     // Generate title from filename if not provided
     if (empty($title)) {

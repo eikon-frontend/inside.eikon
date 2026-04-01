@@ -26,7 +26,8 @@
                 "imd41": "imd41",
                 "imd42": "imd42",
                 "mp2": "mp2",
-                "prepa": "prepa"
+                "prepa": "prepa",
+                "alumni": "alumni"
             },
             "default_value": false,
             "return_format": "value",
@@ -50,6 +51,11 @@
                 "param": "user_form",
                 "operator": "==",
                 "value": "all"
+            },
+            {
+                "param": "user_role",
+                "operator": "==",
+                "value": "student"
             }
         ]
     ],
@@ -67,5 +73,5 @@
     "graphql_field_name": "comptes",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1774538693
+    "modified": 1774882209
 }
