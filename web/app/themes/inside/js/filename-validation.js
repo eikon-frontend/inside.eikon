@@ -2,6 +2,9 @@
  * Client-side filename validation for WordPress media uploader.
  * Intercepts files BEFORE they start uploading so large files
  * are never sent to the server if the name is invalid.
+ *
+ * Uses a custom plupload file filter so the normal upload pipeline
+ * is not disrupted.
  */
 (function ($) {
   'use strict';
@@ -13,61 +16,36 @@
   var regex = new RegExp(eikonFilename.regex);
   var errorMessage = eikonFilename.errorMessage;
 
-  /**
-   * Hook into wp.Uploader (plupload wrapper) to validate filenames
-   * before the upload begins.
-   */
-  if (typeof wp !== 'undefined' && wp.Uploader) {
-    $.extend(wp.Uploader.prototype, {
-      init: function () {
-        this.uploader.bind('FilesAdded', function (uploader, files) {
-          var invalidFiles = [];
-
-          // Check each file against the naming regex
-          for (var i = files.length - 1; i >= 0; i--) {
-            if (!regex.test(files[i].name)) {
-              invalidFiles.push(files[i].name);
-              uploader.removeFile(files[i]);
-            }
-          }
-
-          if (invalidFiles.length > 0) {
-            alert(errorMessage);
-          }
+  // Register a custom plupload file filter.
+  // This runs before the upload starts and can reject files cleanly.
+  if (typeof plupload !== 'undefined') {
+    plupload.addFileFilter('eikon_filename', function (value, file, callback) {
+      if (value && !regex.test(file.name)) {
+        this.trigger('Error', {
+          code: plupload.FILE_EXTENSION_ERROR,
+          message: errorMessage,
+          file: file
         });
+        callback(false);
+      } else {
+        callback(true);
       }
     });
   }
 
-  /**
-   * Fallback: also validate on drag-and-drop and file input changes
-   * in the media modal.
-   */
-  if (typeof wp !== 'undefined' && wp.media) {
-    var originalMediaFrameOpen = wp.media.view.MediaFrame.prototype.open;
-    wp.media.view.MediaFrame.prototype.open = function () {
-      var result = originalMediaFrameOpen.apply(this, arguments);
+  // Inject the custom filter into every wp.Uploader instance.
+  if (typeof wp !== 'undefined' && wp.Uploader) {
+    var originalInit = wp.Uploader.prototype.init;
 
-      // Attach validation when the uploader is ready
-      if (this.uploader && this.uploader.uploader && this.uploader.uploader.uploader) {
-        var pluploadInstance = this.uploader.uploader.uploader;
+    wp.Uploader.prototype.init = function () {
+      // Add our filter to the plupload configuration
+      this.uploader.settings.filters = this.uploader.settings.filters || {};
+      this.uploader.settings.filters.eikon_filename = true;
 
-        // Avoid double-binding
-        if (!pluploadInstance._eikonValidationBound) {
-          pluploadInstance.bind('FilesAdded', function (uploader, files) {
-            for (var i = files.length - 1; i >= 0; i--) {
-              if (!regex.test(files[i].name)) {
-                uploader.removeFile(files[i]);
-                alert(errorMessage);
-                return;
-              }
-            }
-          });
-          pluploadInstance._eikonValidationBound = true;
-        }
+      // Call the original init so the upload pipeline works normally
+      if (originalInit) {
+        originalInit.call(this);
       }
-
-      return result;
     };
   }
 
