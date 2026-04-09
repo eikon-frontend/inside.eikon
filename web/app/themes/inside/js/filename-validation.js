@@ -22,7 +22,7 @@
     plupload.addFileFilter('eikon_filename', function (value, file, callback) {
       if (value && !regex.test(file.name)) {
         this.trigger('Error', {
-          code: plupload.FILE_EXTENSION_ERROR,
+          code: -999, // Custom error code to prevent WordPress from overriding the message
           message: errorMessage,
           file: file
         });
