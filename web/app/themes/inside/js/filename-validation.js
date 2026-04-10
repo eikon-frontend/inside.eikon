@@ -16,13 +16,24 @@
   var regex = new RegExp(eikonFilename.regex);
   var errorMessage = eikonFilename.errorMessage;
 
-  // Register a custom plupload file filter.
+  // 1. Register a custom plupload file filter.
   // This runs before the upload starts and can reject files cleanly.
   if (typeof plupload !== 'undefined') {
     plupload.addFileFilter('eikon_filename', function (value, file, callback) {
       if (value && !regex.test(file.name)) {
+
+        // Ensure WordPress Attachment UI immediately gets the HTML error message
+        if (typeof wp !== 'undefined' && wp.media && wp.media.model && wp.media.model.Attachment) {
+          // Sometimes wp links attachment via plupload file id
+          var attachment = wp.media.model.Attachment.get(file.id);
+          if (attachment) {
+            attachment.set('error', errorMessage);
+          }
+        }
+
+        // Trigger Plupload Error event. Use a custom error code so WordPress doesn't overwrite it.
         this.trigger('Error', {
-          code: -999, // Custom error code to prevent WordPress from overriding the message
+          code: -999,
           message: errorMessage,
           file: file
         });
@@ -33,20 +44,11 @@
     });
   }
 
-  // Inject the custom filter into every wp.Uploader instance.
-  if (typeof wp !== 'undefined' && wp.Uploader) {
-    var originalInit = wp.Uploader.prototype.init;
-
-    wp.Uploader.prototype.init = function () {
-      // Add our filter to the plupload configuration
-      this.uploader.settings.filters = this.uploader.settings.filters || {};
-      this.uploader.settings.filters.eikon_filename = true;
-
-      // Call the original init so the upload pipeline works normally
-      if (originalInit) {
-        originalInit.call(this);
-      }
-    };
+  // 2. Safely apply this filter to all WordPress Uploader defaults.
+  // This avoids breaking the wp.Uploader init pipeline.
+  if (typeof wp !== 'undefined' && wp.Uploader && wp.Uploader.defaults) {
+    wp.Uploader.defaults.filters = wp.Uploader.defaults.filters || {};
+    wp.Uploader.defaults.filters.eikon_filename = true;
   }
 
 })(jQuery);
