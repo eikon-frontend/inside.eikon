@@ -2,9 +2,6 @@
  * Client-side filename validation for WordPress media uploader.
  * Intercepts files BEFORE they start uploading so large files
  * are never sent to the server if the name is invalid.
- *
- * Uses a custom plupload file filter so the normal upload pipeline
- * is not disrupted.
  */
 (function ($) {
   'use strict';
@@ -16,39 +13,40 @@
   var regex = new RegExp(eikonFilename.regex);
   var errorMessage = eikonFilename.errorMessage;
 
-  // 1. Register a custom plupload file filter.
-  // This runs before the upload starts and can reject files cleanly.
-  if (typeof plupload !== 'undefined') {
-    plupload.addFileFilter('eikon_filename', function (value, file, callback) {
-      if (value && !regex.test(file.name)) {
+  if (typeof wp !== 'undefined' && wp.Uploader) {
+    var originalInit = wp.Uploader.prototype.init;
 
-        // Ensure WordPress Attachment UI immediately gets the HTML error message
-        if (typeof wp !== 'undefined' && wp.media && wp.media.model && wp.media.model.Attachment) {
-          // Sometimes wp links attachment via plupload file id
-          var attachment = wp.media.model.Attachment.get(file.id);
-          if (attachment) {
-            attachment.set('error', errorMessage);
+    wp.Uploader.prototype.init = function () {
+      // 1. Let WordPress construct the Uploader to initialize the internal UI
+      if (originalInit) {
+        originalInit.apply(this, arguments);
+      }
+
+      // 2. Bind validation AFTER WordPress processes the 'FilesAdded' drop event
+      this.uploader.bind('FilesAdded', function (up, files) {
+
+        // Loop backwards to safely call removeFile during iteration
+        for (var i = files.length - 1; i >= 0; i--) {
+          var file = files[i];
+
+          if (!regex.test(file.name)) {
+            // Instantly remove from queue
+            up.removeFile(file);
+
+            // Delay the Error trigger slightly to let WP build the UI thumbnail
+            // Use a custom negative code (-9999) to force WP to output our exact errorMessage
+            setTimeout((function (f) {
+              return function () {
+                if (up) {
+                  up.trigger('Error', {
+                    code: -9999,
+                    message: errorMessage,
+                    file: f
+                  });
+                }
+              };
+            })(file), 50);
           }
         }
-
-        // Trigger Plupload Error event. Use a custom error code so WordPress doesn't overwrite it.
-        this.trigger('Error', {
-          code: -999,
-          message: errorMessage,
-          file: file
-        });
-        callback(false);
-      } else {
-        callback(true);
-      }
-    });
-  }
-
-  // 2. Safely apply this filter to all WordPress Uploader defaults.
-  // This avoids breaking the wp.Uploader init pipeline.
-  if (typeof wp !== 'undefined' && wp.Uploader && wp.Uploader.defaults) {
-    wp.Uploader.defaults.filters = wp.Uploader.defaults.filters || {};
-    wp.Uploader.defaults.filters.eikon_filename = true;
-  }
-
-})(jQuery);
+      });
+    };

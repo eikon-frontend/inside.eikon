@@ -7,7 +7,7 @@ add_theme_support('post-thumbnails');
  * Blocks uploads with non-compliant filenames before the file is saved.
  */
 define('EIKON_FILENAME_REGEX', '/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/');
-define('EIKON_FILENAME_ERROR', 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école.<br><br><b>Exemples valides :</b><br>• 23_24_IMD11_CIE_Titre_Nom_Prenom.pdf<br>• 23_24_eikonwork1_Titre_Nom_Prenom.jpg<br><br><b>Règles :</b><br>• Format général : Année_Année_Section_Cours_Titre_Nom_Prenom<br>• Les accents, espaces et caractères spéciaux sont <b>interdits</b><br>• Utilisez uniquement des majuscules, minuscules, chiffres et underscores (_)<br>• Le fichier doit se terminer par une extension valide (ex: .png, .jpg, .pdf)');
+define('EIKON_FILENAME_ERROR', 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 23_24_IMD11_CIE_Titre_Nom_Prenom.jpg');
 
 /**
  * Check if the current user must comply with filename nomenclature.

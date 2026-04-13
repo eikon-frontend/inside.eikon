@@ -207,7 +207,7 @@ class VOD_Eikon
       'max_upload_size_formatted' => $this->format_bytes($this->get_server_upload_limit()),
       'validate_filename' => $must_validate_filename,
       'filename_regex' => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
-      'filename_error' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école.<br><br><b>Exemples valides :</b><br>• 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4<br>• 23_24_eikonwork1_Titre_Nom_Prenom.mov<br><br><b>Règles :</b><br>• Format général : Année_Année_Section_Cours_Titre_Nom_Prenom<br>• Les accents, tirets (-) et espaces sont <b>interdits</b><br>• Utilisez uniquement des majuscules, minuscules, chiffres et underscores (_)',
+      'filename_error' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4',
     ));
 
     wp_enqueue_style(
@@ -1110,7 +1110,7 @@ class VOD_Eikon
       $filename = $file['name'];
       if (!preg_match('/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/', $filename)) {
         wp_send_json_error(array(
-          'message' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école.<br><br><b>Exemples valides :</b><br>• 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4<br>• 23_24_eikonwork1_Titre_Nom_Prenom.mov<br><br><b>Règles :</b><br>• Format général : Année_Année_Section_Cours_Titre_Nom_Prenom<br>• Les accents, tirets (-) et espaces sont <b>interdits</b><br>• Utilisez uniquement des majuscules, minuscules, chiffres et underscores (_)'
+          'message' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4'
         ));
       }
     }
