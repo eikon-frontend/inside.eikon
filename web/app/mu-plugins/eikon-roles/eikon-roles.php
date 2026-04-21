@@ -149,7 +149,8 @@ function eikon_create_teacher_role()
     'read'                      => true,
     'read_posts'                => true,
     'edit_posts'                => true,
-    'edit_others_posts'         => false,    // Can read but not edit others' posts
+    'edit_others_posts'         => true,     // Allows seeing all projects in admin list (editing others is blocked by cap filter)
+    'edit_published_posts'      => true,     // Can edit own published projects
     'publish_posts'             => false,    // Draft/pending only
     'delete_posts'              => true,
     'delete_published_posts'    => false,
@@ -338,6 +339,45 @@ function eikon_remove_publish_capability($caps, $cap, $user_id)
   return $caps;
 }
 add_filter('user_has_cap', 'eikon_remove_publish_capability', 10, 3);
+
+/**
+ * Prevent teachers from editing posts/projects they don't own.
+ *
+ * Teachers have edit_others_posts=true so they can see all content in the admin list,
+ * but they should not be able to actually edit content created by others.
+ */
+function eikon_restrict_teacher_edit_others($allcaps, $caps, $args, $user)
+{
+  if (!in_array('teacher', $user->roles, true)) {
+    return $allcaps;
+  }
+
+  // Only restrict when checking edit/delete capability on a specific post
+  $meta_caps = array('edit_post', 'delete_post');
+  if (!isset($args[0]) || !in_array($args[0], $meta_caps, true)) {
+    return $allcaps;
+  }
+
+  $post_id = isset($args[2]) ? (int) $args[2] : 0;
+  if (!$post_id) {
+    return $allcaps;
+  }
+
+  $post = get_post($post_id);
+  if (!$post) {
+    return $allcaps;
+  }
+
+  // If the post belongs to someone else, deny the capability
+  if ((int) $post->post_author !== (int) $user->ID) {
+    foreach ($caps as $cap) {
+      $allcaps[$cap] = false;
+    }
+  }
+
+  return $allcaps;
+}
+add_filter('user_has_cap', 'eikon_restrict_teacher_edit_others', 10, 4);
 
 /**
  * Map meta capabilities to ensure proper WordPress permission checks
