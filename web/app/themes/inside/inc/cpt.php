@@ -100,7 +100,9 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
 
   $running = true;
 
-  $slug = sanitize_title($post->post_title);
+  $author        = get_userdata($post->post_author);
+  $author_prefix = ($author && !empty($author->user_nicename)) ? $author->user_nicename . '-' : '';
+  $slug          = $author_prefix . sanitize_title($post->post_title);
   $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
 
   // Use direct database update to avoid infinite hook loops with wp_update_post()
@@ -161,9 +163,26 @@ function eikon_enforce_unique_project_slug_on_save($data, $postarr)
     return $data;
   }
 
-  // Generate slug from title if empty (WordPress skips this for drafts)
-  if (empty($data['post_name']) && !empty($data['post_title'])) {
-    $data['post_name'] = sanitize_title($data['post_title']);
+  // Ensure the slug is prefixed with the author's nicename.
+  // We apply the prefix when:
+  //   (a) post_name is empty (drafts: WordPress skips slug generation), or
+  //   (b) post_name was just auto-generated from the title without the prefix
+  //       (published posts: WordPress regenerates the slug before this filter runs
+  //        when the user clears the slug field in the admin).
+  $author_id     = !empty($postarr['post_author']) ? (int) $postarr['post_author'] : get_current_user_id();
+  $author        = get_userdata($author_id);
+  $author_prefix = ($author && !empty($author->user_nicename)) ? $author->user_nicename . '-' : '';
+
+  if (!empty($data['post_title'])) {
+    $title_slug = sanitize_title($data['post_title']);
+    $needs_prefix = empty($data['post_name'])                              // (a) draft: no slug yet
+      || $data['post_name'] === $title_slug                                // (b) bare title slug
+      || (str_starts_with($data['post_name'], $title_slug));               // (b) bare title slug + -2, -3…
+
+    if ($needs_prefix && !empty($author_prefix) && !str_starts_with($data['post_name'], $author_prefix)) {
+      $base = empty($data['post_name']) ? $title_slug : $data['post_name'];
+      $data['post_name'] = $author_prefix . $base;
+    }
   }
 
   if (empty($data['post_name'])) {
@@ -182,7 +201,7 @@ function eikon_enforce_unique_project_slug_on_save($data, $postarr)
     do {
       $alt_slug = "$slug-$suffix";
       $suffix++;
-    } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, 'project', $post_id)));
+    } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, $post_id)));
     $data['post_name'] = $alt_slug;
   }
 
