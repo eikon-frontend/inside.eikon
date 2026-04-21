@@ -68,6 +68,32 @@ function project_post_type()
 add_action('init', 'project_post_type', 5);
 
 /**
+ * Build a clean URL-safe author prefix for project slugs.
+ *
+ * Uses "prenom-nom" from first_name + last_name meta if both are set,
+ * otherwise falls back to user_nicename (which can be ugly when derived from an email).
+ *
+ * @param  WP_User|false $author
+ * @return string  e.g. "julien-minguely-" or ""
+ */
+function eikon_project_author_prefix($author): string
+{
+  if (!$author) {
+    return '';
+  }
+
+  $first = trim($author->first_name);
+  $last  = trim($author->last_name);
+
+  if ($first !== '' && $last !== '') {
+    return sanitize_title($first . '-' . $last) . '-';
+  }
+
+  // Fallback: user_nicename (safe slug, but may be email-derived)
+  return !empty($author->user_nicename) ? $author->user_nicename . '-' : '';
+}
+
+/**
  * Ensure projects have a slug (post_name) even when saved as draft/pending.
  *
  * Nuxt fetches projects by GraphQL idType: SLUG. WordPress sometimes keeps post_name empty
@@ -101,7 +127,7 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
   $running = true;
 
   $author        = get_userdata($post->post_author);
-  $author_prefix = ($author && !empty($author->user_nicename)) ? $author->user_nicename . '-' : '';
+  $author_prefix = eikon_project_author_prefix($author);
   $slug          = $author_prefix . sanitize_title($post->post_title);
   $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
 
@@ -171,7 +197,7 @@ function eikon_enforce_unique_project_slug_on_save($data, $postarr)
   //        when the user clears the slug field in the admin).
   $author_id     = !empty($postarr['post_author']) ? (int) $postarr['post_author'] : get_current_user_id();
   $author        = get_userdata($author_id);
-  $author_prefix = ($author && !empty($author->user_nicename)) ? $author->user_nicename . '-' : '';
+  $author_prefix = eikon_project_author_prefix($author);
 
   if (!empty($data['post_title'])) {
     $title_slug = sanitize_title($data['post_title']);
