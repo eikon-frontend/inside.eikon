@@ -473,6 +473,44 @@ function eikon_remove_users_menu()
 add_action('admin_menu', 'eikon_remove_users_menu', 999);
 
 /**
+ * Add a "Preview" link in the post row actions for teachers viewing others' draft/pending projects.
+ *
+ * WordPress only shows the View/Preview link when the user can edit the post.
+ * Since teachers can read but not edit others' content, we re-add the preview link manually.
+ */
+function eikon_teacher_add_preview_row_action($actions, $post)
+{
+  $current_user = wp_get_current_user();
+
+  if (!in_array('teacher', $current_user->roles, true)) {
+    return $actions;
+  }
+
+  // Only for projects owned by someone else
+  if ($post->post_type !== 'project' || (int) $post->post_author === (int) $current_user->ID) {
+    return $actions;
+  }
+
+  // Only for non-published statuses that don't already have a view link
+  $preview_statuses = array('draft', 'pending', 'future');
+  if (!in_array($post->post_status, $preview_statuses, true)) {
+    return $actions;
+  }
+
+  $preview_url = get_preview_post_link($post);
+  if ($preview_url) {
+    $actions['view'] = sprintf(
+      '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+      esc_url($preview_url),
+      __('Aperçu')
+    );
+  }
+
+  return $actions;
+}
+add_filter('post_row_actions', 'eikon_teacher_add_preview_row_action', 10, 2);
+
+/**
  * Prevent unwanted default role assignment
  * Ensures new users are not assigned editor or subscriber roles
  */
