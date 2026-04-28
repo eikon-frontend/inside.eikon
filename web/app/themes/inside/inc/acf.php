@@ -12,6 +12,24 @@ add_filter('acf/load_field/name=galerie', function ($field) {
   return $field;
 });
 
+// Keep legacy caption values in DB but hide the field from editors in ACF UI.
+add_filter('acf/prepare_field/key=field_6832ce88253d4', function ($field) {
+  if (!is_admin()) {
+    return $field;
+  }
+
+  $user = wp_get_current_user();
+  $roles = is_array($user->roles) ? $user->roles : [];
+  $is_teacher = in_array('teacher', $roles, true);
+  $is_admin = current_user_can('administrator') || current_user_can('manage_options');
+
+  if (!$is_admin && !$is_teacher) {
+    return false;
+  }
+
+  return $field;
+});
+
 // Simplify WordPress editor for project post type (bold and italic only)
 add_filter('tiny_mce_before_init', function ($settings) {
   global $post;
@@ -76,6 +94,11 @@ add_action('admin_head', function () {
         tabs.forEach(tab => {
           tab.style.display = "none";
         });
+
+        // In the media modal, keep caption + alt text and hide title + description.
+        const style = document.createElement("style");
+        style.textContent = ".media-modal .attachment-details .setting[data-setting=\"title\"], .media-modal .attachment-details .setting[data-setting=\"description\"] { display: none !important; }";
+        document.head.appendChild(style);
       });
     </script>';
   }
