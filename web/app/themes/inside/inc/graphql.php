@@ -100,3 +100,26 @@ add_action('pre_get_posts', function ($query) {
 
   $query->set('post_status', ['publish', 'draft', 'pending', 'future']);
 });
+
+/**
+ * Return plain-text media captions for GraphQL consumers.
+ *
+ * WPGraphQL's MediaItem.caption defaults to captionRendered, which runs WordPress
+ * excerpt filters and can return HTML entities (for example &rsquo;).
+ * Decode entities and remove HTML so Nuxt receives a clean string without custom JS.
+ */
+add_filter('graphql_resolve_field', function ($result, $source, $args, $context, $info, $type_name, $field_key) {
+  if ('MediaItem' !== $type_name || 'caption' !== $field_key) {
+    return $result;
+  }
+
+  if (!is_string($result) || '' === $result) {
+    return $result;
+  }
+
+  $plain_text = wp_strip_all_tags($result, true);
+  $plain_text = html_entity_decode($plain_text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+  $plain_text = trim(preg_replace('/\s+/u', ' ', $plain_text));
+
+  return '' === $plain_text ? null : $plain_text;
+}, 20, 9);
