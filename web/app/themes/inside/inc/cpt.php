@@ -127,7 +127,8 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
   $running = true;
 
   $author        = get_userdata($post->post_author);
-  $author_prefix = eikon_project_author_prefix($author);
+  $is_student    = $author && in_array('student', (array) $author->roles, true);
+  $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
   $slug          = $author_prefix . sanitize_title($post->post_title);
   $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
 
@@ -197,9 +198,10 @@ function eikon_enforce_unique_project_slug_on_save($data, $postarr)
   //        when the user clears the slug field in the admin).
   $author_id     = !empty($postarr['post_author']) ? (int) $postarr['post_author'] : get_current_user_id();
   $author        = get_userdata($author_id);
-  $author_prefix = eikon_project_author_prefix($author);
+  $is_student    = $author && in_array('student', (array) $author->roles, true);
+  $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
 
-  if (!empty($data['post_title'])) {
+  if ($is_student && !empty($data['post_title'])) {
     $title_slug = sanitize_title($data['post_title']);
     $needs_prefix = empty($data['post_name'])                              // (a) draft: no slug yet
       || $data['post_name'] === $title_slug                                // (b) bare title slug
