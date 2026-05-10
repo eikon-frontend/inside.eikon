@@ -33,7 +33,7 @@ add_filter('acf/prepare_field/key=field_6832ce88253d4', function ($field) {
 // Simplify WordPress editor for project post type (bold and italic only)
 add_filter('tiny_mce_before_init', function ($settings) {
   global $post;
-  if ($post && $post->post_type === 'project') {
+  if ($post && in_array($post->post_type, ['project', 'mandat'], true)) {
     // Only show bold and italic buttons
     $settings['toolbar1'] = 'bold,italic';
     $settings['toolbar2'] = '';
@@ -46,7 +46,7 @@ add_filter('tiny_mce_before_init', function ($settings) {
 // Remove media upload button from project post type editor - higher priority
 add_filter('media_buttons', function ($html) {
   global $post;
-  if ($post && $post->post_type === 'project') {
+  if ($post && in_array($post->post_type, ['project', 'mandat'], true)) {
     return ''; // Remove media button HTML entirely
   }
   return $html;
@@ -55,7 +55,7 @@ add_filter('media_buttons', function ($html) {
 // Remove media buttons from ACF WYSIWYG fields on project posts
 add_filter('acf/fields/wysiwyg/media_buttons', function () {
   global $post;
-  if ($post && $post->post_type === 'project') {
+  if ($post && in_array($post->post_type, ['project', 'mandat'], true)) {
     return false; // Disable media buttons in ACF WYSIWYG
   }
   return true;
@@ -81,7 +81,7 @@ add_filter('tiny_mce_before_init', function ($settings) {
 // JavaScript to remove media buttons and hide visual/code tabs from project post editor
 add_action('admin_head', function () {
   global $post;
-  if ($post && $post->post_type === 'project') {
+  if ($post && in_array($post->post_type, ['project', 'mandat'], true)) {
     echo '<script>
       document.addEventListener("DOMContentLoaded", function() {
         const mediaButtons = document.getElementById("wp-content-media-buttons");

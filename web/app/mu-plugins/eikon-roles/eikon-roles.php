@@ -157,6 +157,15 @@ function eikon_create_teacher_role()
     'manage_posts'              => true,     // Required for menu to appear
     'create_posts'              => true,
     'upload_files'              => true,
+    'edit_mandats'              => true,
+    'edit_others_mandats'       => true,
+    'edit_published_mandats'    => true,
+    'publish_mandats'           => false,
+    'delete_mandats'            => true,
+    'delete_others_mandats'     => true,
+    'delete_published_mandats'  => false,
+    'read_private_mandats'      => true,
+    'create_mandats'            => true,
   );
 
   // Check if role already exists
@@ -264,6 +273,16 @@ function eikon_configure_admin_capabilities()
   $admin->add_cap('publish_projects');
   $admin->add_cap('delete_projects');
   $admin->add_cap('delete_published_projects');
+
+  $admin->add_cap('edit_mandats');
+  $admin->add_cap('edit_others_mandats');
+  $admin->add_cap('edit_published_mandats');
+  $admin->add_cap('publish_mandats');
+  $admin->add_cap('delete_mandats');
+  $admin->add_cap('delete_others_mandats');
+  $admin->add_cap('delete_published_mandats');
+  $admin->add_cap('read_private_mandats');
+  $admin->add_cap('create_mandats');
 
   // Upload media
   $admin->add_cap('upload_files');
@@ -435,6 +454,7 @@ function eikon_remove_admin_menu_items()
     remove_menu_page('edit.php'); // Posts
     remove_menu_page('edit.php?post_type=page'); // Pages
     remove_menu_page('edit.php?post_type=department'); // Departments
+    remove_menu_page('edit.php?post_type=mandat'); // Mandats
     remove_menu_page('tools.php'); // Tools
     remove_menu_page('options-general.php'); // Settings
     remove_menu_page('users.php'); // Users

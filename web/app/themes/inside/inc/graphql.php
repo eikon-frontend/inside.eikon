@@ -123,3 +123,36 @@ add_filter('graphql_resolve_field', function ($result, $source, $args, $context,
 
   return '' === $plain_text ? null : $plain_text;
 }, 20, 9);
+
+add_action('graphql_register_types', function () {
+  register_graphql_field('Project', 'currentMandatId', [
+    'type' => 'Int',
+    'description' => __('Selected current mandate ID.', 'wp-graphql'),
+    'resolve' => function ($source) {
+      if (empty($source->databaseId)) {
+        return null;
+      }
+
+      $mandat_id = absint(get_post_meta((int) $source->databaseId, 'eikon_current_mandat_id', true));
+      return $mandat_id > 0 ? $mandat_id : null;
+    },
+  ]);
+
+  register_graphql_field('Project', 'currentMandat', [
+    'type' => 'Mandat',
+    'description' => __('Selected current mandate.', 'wp-graphql'),
+    'resolve' => function ($source) {
+      if (empty($source->databaseId)) {
+        return null;
+      }
+
+      $mandat_id = absint(get_post_meta((int) $source->databaseId, 'eikon_current_mandat_id', true));
+      if ($mandat_id <= 0) {
+        return null;
+      }
+
+      $mandat = get_post($mandat_id);
+      return $mandat instanceof \WP_Post ? $mandat : null;
+    },
+  ]);
+});
