@@ -119,3 +119,19 @@ add_filter('acf/load_value/name=project_authors', function ($value, $post_id, $f
     ['field_68dc5a01b7e11' => $post->post_author]
   ];
 }, 10, 3);
+
+// Pre-populate co_teachers repeater with the Mandat author when empty
+add_filter('acf/load_value/name=co_teachers', function ($value, $post_id, $field) {
+  if (!empty($value)) {
+    return $value;
+  }
+
+  $post = get_post($post_id);
+  if (!$post || $post->post_type !== 'mandat' || !$post->post_author) {
+    return $value;
+  }
+
+  return [
+    ['field_68b0c20000004' => $post->post_author]
+  ];
+}, 10, 3);
