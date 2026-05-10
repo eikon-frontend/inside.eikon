@@ -259,13 +259,23 @@ function eikon_render_mandat_projects_table($post)
     return;
   }
 
-  echo '<table class="widefat striped" style="margin: 0; table-layout: fixed;">';
+  echo '<style>
+    #eikon-mandat-projects-table th[data-sort] { cursor: pointer; user-select: none; white-space: nowrap; }
+    #eikon-mandat-projects-table th[data-sort]:hover { background: #f0f0f0; }
+    #eikon-mandat-projects-table th[data-sort] .sort-indicator { display: inline-block; margin-left: 5px; opacity: 0.35; font-size: 10px; }
+    #eikon-mandat-projects-table th[data-sort].sort-asc .sort-indicator,
+    #eikon-mandat-projects-table th[data-sort].sort-desc .sort-indicator { opacity: 1; }
+    #eikon-mandat-projects-table th[data-sort].sort-asc .sort-indicator::after { content: "▲"; }
+    #eikon-mandat-projects-table th[data-sort].sort-desc .sort-indicator::after { content: "▼"; }
+    #eikon-mandat-projects-table th[data-sort]:not(.sort-asc):not(.sort-desc) .sort-indicator::after { content: "⇅"; }
+  </style>';
+  echo '<table id="eikon-mandat-projects-table" class="widefat striped" style="margin: 0; table-layout: fixed;">';
   echo '<thead><tr>';
-  echo '<th scope="col">Prénom</th>';
-  echo '<th scope="col">Nom</th>';
+  echo '<th scope="col" data-sort="0">Prénom <span class="sort-indicator"></span></th>';
+  echo '<th scope="col" data-sort="1">Nom <span class="sort-indicator"></span></th>';
   echo '<th scope="col">Projet</th>';
-  echo '<th scope="col">Créé</th>';
-  echo '<th scope="col">Mis à jour</th>';
+  echo '<th scope="col" data-sort="3">Créé <span class="sort-indicator"></span></th>';
+  echo '<th scope="col" data-sort="4">Mis à jour <span class="sort-indicator"></span></th>';
   echo '<th scope="col">Liens</th>';
   echo '</tr></thead>';
   echo '<tbody>';
@@ -277,20 +287,22 @@ function eikon_render_mandat_projects_table($post)
 
     list($student_first_name, $student_last_name) = eikon_get_project_student_name_parts($project);
     $subtitle = trim((string) get_post_meta($project->ID, 'subtitle', true));
-    $visit_link = get_permalink($project);
+    $visit_link = $project->post_name ? trailingslashit(home_url('/')) . 'projets/' . $project->post_name . '/' : '';
     $edit_link = get_edit_post_link($project->ID, '');
+    $created_ts = get_post_time('U', true, $project);
+    $modified_ts = get_post_modified_time('U', true, $project);
 
     echo '<tr>';
-    echo '<td>' . esc_html($student_first_name) . '</td>';
-    echo '<td>' . esc_html($student_last_name) . '</td>';
+    echo '<td data-value="' . esc_attr(strtolower($student_first_name)) . '">' . esc_html($student_first_name) . '</td>';
+    echo '<td data-value="' . esc_attr(strtolower($student_last_name)) . '">' . esc_html($student_last_name) . '</td>';
     echo '<td>';
     echo '<div style="font-weight: 600; color: #1d2327;">' . esc_html(get_the_title($project)) . '</div>';
     if ('' !== $subtitle) {
       echo '<div style="margin-top: 4px; font-size: 12px; color: #6b7280;">' . esc_html($subtitle) . '</div>';
     }
     echo '</td>';
-    echo '<td>' . esc_html(get_the_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
-    echo '<td>' . esc_html(get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
+    echo '<td data-value="' . esc_attr((string) $created_ts) . '">' . esc_html(get_the_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
+    echo '<td data-value="' . esc_attr((string) $modified_ts) . '">' . esc_html(get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
     echo '<td>';
     if (!empty($visit_link)) {
       echo '<a href="' . esc_url($visit_link) . '" target="_blank" rel="noopener noreferrer">Voir</a>';
@@ -306,6 +318,39 @@ function eikon_render_mandat_projects_table($post)
 
   echo '</tbody>';
   echo '</table>';
+  echo '<script>
+  (function () {
+    var table = document.getElementById("eikon-mandat-projects-table");
+    if (!table) return;
+    var headers = table.querySelectorAll("th[data-sort]");
+    var sortCol = null, sortDir = 1;
+    headers.forEach(function (th) {
+      th.addEventListener("click", function () {
+        var col = parseInt(th.getAttribute("data-sort"), 10);
+        if (sortCol === col) {
+          sortDir *= -1;
+        } else {
+          sortCol = col;
+          sortDir = 1;
+        }
+        headers.forEach(function (h) { h.classList.remove("sort-asc", "sort-desc"); });
+        th.classList.add(sortDir === 1 ? "sort-asc" : "sort-desc");
+        var tbody = table.querySelector("tbody");
+        var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+        rows.sort(function (a, b) {
+          var aCell = a.querySelectorAll("td")[col];
+          var bCell = b.querySelectorAll("td")[col];
+          var aVal = aCell ? (aCell.getAttribute("data-value") || aCell.textContent.trim()) : "";
+          var bVal = bCell ? (bCell.getAttribute("data-value") || bCell.textContent.trim()) : "";
+          var aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+          if (!isNaN(aNum) && !isNaN(bNum)) return (aNum - bNum) * sortDir;
+          return aVal.localeCompare(bVal, "fr") * sortDir;
+        });
+        rows.forEach(function (row) { tbody.appendChild(row); });
+      });
+    });
+  })();
+  </script>';
   echo '</div>';
 }
 add_action('edit_form_after_editor', 'eikon_render_mandat_projects_table');
