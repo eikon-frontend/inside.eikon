@@ -44,7 +44,7 @@ function mandat_post_type()
     'label'                 => __('Mandat', 'mandat'),
     'description'           => __('Brief pédagogique', 'mandat'),
     'labels'                => $labels,
-    'supports'              => array('title', 'editor', 'author'),
+    'supports'              => array('title', 'editor', 'author', 'revisions'),
     'taxonomies'            => array('year', 'subjects', 'section'),
     'hierarchical'          => false,
     'show_in_graphql'       => true,

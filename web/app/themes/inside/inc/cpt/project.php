@@ -42,7 +42,7 @@ function project_post_type()
     'label'                 => __('Projet', 'project'),
     'description'           => __('Travaux d\'écoles', 'project'),
     'labels'                => $labels,
-    'supports'              => array('title', 'editor', 'thumbnail', 'author'),
+    'supports'              => array('title', 'editor', 'thumbnail', 'author', 'revisions'),
     'taxonomies'            => array('year', 'subjects'),
     'hierarchical'          => false,
     'show_in_graphql'       => true,
