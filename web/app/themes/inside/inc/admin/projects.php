@@ -59,7 +59,7 @@ function eikon_project_filter_by_mandat($post_type)
   ));
 
   echo '<select name="eikon_filter_mandat" id="eikon_filter_mandat">';
-  echo '<option value="">' . esc_html__('Tous les mandats') . '</option>';
+  echo '<option value="">' . esc_html__('Tous les projets') . '</option>';
   echo '<option value="none"' . selected($selected, 'none', false) . '>' . esc_html__('Sans mandat') . '</option>';
 
   foreach ($mandats as $mandat) {

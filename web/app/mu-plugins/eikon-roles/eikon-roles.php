@@ -160,6 +160,7 @@ function eikon_create_teacher_role()
     'edit_mandats'              => true,
     'edit_others_mandats'       => true,
     'edit_published_mandats'    => true,
+    'edit_private_mandats'      => true,
     'publish_mandats'           => false,
     'delete_mandats'            => true,
     'delete_others_mandats'     => true,
@@ -277,6 +278,7 @@ function eikon_configure_admin_capabilities()
   $admin->add_cap('edit_mandats');
   $admin->add_cap('edit_others_mandats');
   $admin->add_cap('edit_published_mandats');
+  $admin->add_cap('edit_private_mandats');
   $admin->add_cap('publish_mandats');
   $admin->add_cap('delete_mandats');
   $admin->add_cap('delete_others_mandats');
