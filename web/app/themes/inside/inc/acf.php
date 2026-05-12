@@ -1,7 +1,8 @@
 <?php
 
 // Only filter layouts from the ACF UI for non-admin users
-add_filter('acf/load_field/name=galerie', function ($field) {
+// Renamed from 'galerie' to 'portfolio' as part of nomenclature migration (2026-05)
+add_filter('acf/load_field/name=portfolio', function ($field) {
   // Only apply the filter in the admin interface
   if (is_admin() && !current_user_can('administrator')) {
     // Filter out both video and twitch layouts by name, but only from the UI

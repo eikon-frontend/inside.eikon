@@ -1,11 +1,11 @@
 {
   "key": "group_6188f620ce1ee",
-  "title": "Galerie du projet",
+  "title": "Portfolio",
   "fields": [
     {
       "key": "field_6188f62ec37cc",
-      "label": "Galerie",
-      "name": "galerie",
+      "label": "Portfolio",
+      "name": "portfolio",
       "aria-label": "",
       "type": "flexible_content",
       "instructions": "",
@@ -89,14 +89,14 @@
         },
         "layout_6788f3c4d5e6f": {
           "key": "layout_6788f3c4d5e6f",
-          "name": "mosaic",
-          "label": "Mosaïque",
+          "name": "imageGallery",
+          "label": "Galerie d'image",
           "display": "block",
           "sub_fields": [
             {
               "key": "field_6788f3c4d5e70",
               "label": "Mosaïque d'image",
-              "name": "mosaic",
+              "name": "images",
               "aria-label": "",
               "type": "gallery",
               "instructions": "",
@@ -122,12 +122,12 @@
               "preview_size": "medium",
               "show_in_graphql": 1,
               "graphql_description": "",
-              "graphql_field_name": "mosaic"
+              "graphql_field_name": "images"
             },
             {
               "key": "field_696b462776376",
               "label": "Type",
-              "name": "mosaic_type",
+              "name": "layout",
               "aria-label": "",
               "type": "select",
               "instructions": "",
@@ -307,7 +307,7 @@
       "button_label": "Ajouter un élément",
       "show_in_graphql": 1,
       "graphql_description": "",
-      "graphql_field_name": "galerie",
+      "graphql_field_name": "portfolio",
       "graphql_non_null": 0
     }
   ],
@@ -334,5 +334,5 @@
   "graphql_field_name": "portfolio",
   "map_graphql_types_from_location_rules": 0,
   "graphql_types": "",
-  "modified": 1768648149
+  "modified": 1768648249
 }
