@@ -157,6 +157,9 @@ function eikon_create_teacher_role()
     'manage_posts'              => true,     // Required for menu to appear
     'create_posts'              => true,
     'upload_files'              => true,
+    'edit_mandat'               => true,
+    'read_mandat'               => true,
+    'delete_mandat'             => true,
     'edit_mandats'              => true,
     'edit_others_mandats'       => true,
     'edit_published_mandats'    => true,
@@ -275,6 +278,9 @@ function eikon_configure_admin_capabilities()
   $admin->add_cap('delete_projects');
   $admin->add_cap('delete_published_projects');
 
+  $admin->add_cap('edit_mandat');
+  $admin->add_cap('read_mandat');
+  $admin->add_cap('delete_mandat');
   $admin->add_cap('edit_mandats');
   $admin->add_cap('edit_others_mandats');
   $admin->add_cap('edit_published_mandats');
