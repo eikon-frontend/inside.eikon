@@ -31,15 +31,17 @@
     $('body').append(modalHtml);
     $playerModal = $('#vod-field-player-modal');
 
-    // Close on backdrop or button
-    $playerModal.on('click', '.vod-field-player-close, .vod-field-player-backdrop', function (e) {
+    // Close on backdrop click
+    $playerModal.find('.vod-field-player-backdrop').on('click', function (e) {
       e.preventDefault();
       closePlayerModal();
     });
 
-    // Prevent content clicks from closing
-    $playerModal.find('.vod-field-player-content').on('click', function (e) {
+    // Close on close button click (bound directly so content stopPropagation doesn't block it)
+    $playerModal.find('.vod-field-player-close').on('click', function (e) {
+      e.preventDefault();
       e.stopPropagation();
+      closePlayerModal();
     });
 
     // ESC key
