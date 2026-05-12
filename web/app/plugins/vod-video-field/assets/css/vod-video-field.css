@@ -19,6 +19,113 @@
     container-name: vod-container;
 }
 
+/* Play button — primary colour, slightly more prominent */
+.vod-video-play.button-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ---------------------------------------------------------------
+ * VOD Field — global video player modal
+ * --------------------------------------------------------------- */
+.vod-field-player-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.vod-field-modal-open {
+    overflow: hidden;
+}
+
+.vod-field-player-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+}
+
+.vod-field-player-content {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.vod-field-player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.vod-field-player-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #23282d;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vod-field-player-close {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #666;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.vod-field-player-close:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.vod-field-player-close .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.vod-field-player-body {
+    padding: 16px;
+    flex: 1;
+    overflow: hidden;
+    background: #000;
+}
+
+#vod-field-player-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#vod-field-player-container video {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
 /* Video Preview */
 .vod-video-preview {
     display: flex;

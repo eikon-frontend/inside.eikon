@@ -1,6 +1,118 @@
 (function ($) {
   'use strict';
 
+  /* ---------------------------------------------------------------
+   * Global player modal (created once, shared across all fields)
+   * --------------------------------------------------------------- */
+  var $playerModal = null;
+  var currentDashPlayer = null;
+
+  function ensurePlayerModal() {
+    if ($playerModal && $playerModal.length) {
+      return;
+    }
+
+    var modalHtml =
+      '<div id="vod-field-player-modal" class="vod-field-player-modal" style="display:none;">' +
+      '<div class="vod-field-player-backdrop"></div>' +
+      '<div class="vod-field-player-content">' +
+      '<div class="vod-field-player-header">' +
+      '<h3 id="vod-field-player-title">' + (acf_vod_video_field.i18n.player_title || 'Lecture Vidéo') + '</h3>' +
+      '<button class="vod-field-player-close" type="button">' +
+      '<span class="dashicons dashicons-no-alt"></span>' +
+      '</button>' +
+      '</div>' +
+      '<div class="vod-field-player-body">' +
+      '<div id="vod-field-player-container"></div>' +
+      '</div>' +
+      '</div>' +
+      '</div>';
+
+    $('body').append(modalHtml);
+    $playerModal = $('#vod-field-player-modal');
+
+    // Close on backdrop or button
+    $playerModal.on('click', '.vod-field-player-close, .vod-field-player-backdrop', function (e) {
+      e.preventDefault();
+      closePlayerModal();
+    });
+
+    // Prevent content clicks from closing
+    $playerModal.find('.vod-field-player-content').on('click', function (e) {
+      e.stopPropagation();
+    });
+
+    // ESC key
+    $(document).on('keydown.vodFieldPlayer', function (e) {
+      if (e.keyCode === 27 && $playerModal.is(':visible')) {
+        closePlayerModal();
+      }
+    });
+  }
+
+  function openPlayerModal(mpdUrl, poster, title) {
+    ensurePlayerModal();
+
+    $('#vod-field-player-title').text(title || (acf_vod_video_field.i18n.player_title || 'Lecture Vidéo'));
+
+    // Destroy any existing player
+    if (currentDashPlayer) {
+      try { currentDashPlayer.destroy(); } catch (e) { }
+      currentDashPlayer = null;
+    }
+
+    var playerId = 'vod-field-player-video';
+    var videoHtml = '<video id="' + playerId + '" controls style="width:100%;height:100%;"';
+    if (poster) {
+      videoHtml += ' poster="' + $('<div>').text(poster).html() + '"';
+    }
+    videoHtml += '></video>';
+
+    $('#vod-field-player-container').html(videoHtml);
+
+    $playerModal.show();
+    $('body').addClass('vod-field-modal-open');
+
+    loadDashAndPlay(playerId, mpdUrl);
+  }
+
+  function closePlayerModal() {
+    if (!$playerModal) { return; }
+    $playerModal.hide();
+    $('body').removeClass('vod-field-modal-open');
+
+    if (currentDashPlayer) {
+      try { currentDashPlayer.destroy(); } catch (e) { }
+      currentDashPlayer = null;
+    }
+    $('#vod-field-player-container').empty();
+  }
+
+  function loadDashAndPlay(playerId, mpdUrl) {
+    if (typeof dashjs !== 'undefined') {
+      initDashPlayer(playerId, mpdUrl);
+    } else {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.dashjs.org/latest/dash.all.min.js';
+      script.onload = function () { initDashPlayer(playerId, mpdUrl); };
+      script.onerror = function () {
+        console.error('VOD Field: Failed to load DashJS');
+      };
+      document.head.appendChild(script);
+    }
+  }
+
+  function initDashPlayer(playerId, mpdUrl) {
+    var videoEl = document.getElementById(playerId);
+    if (!videoEl) { return; }
+    try {
+      currentDashPlayer = dashjs.MediaPlayer().create();
+      currentDashPlayer.initialize(videoEl, mpdUrl, false);
+    } catch (err) {
+      console.error('VOD Field: DashJS init error', err);
+    }
+  }
+
   /**
    * Helper function to find the input element using consis      // Refresh button click
       $container.on('click', '.vod-video-refresh', function (e) {
@@ -105,6 +217,18 @@
       $container.on('click', '.vod-video-refresh', function (e) {
         e.preventDefault();
         refreshSelectedVideo();
+      });
+
+      // Play video button
+      $container.on('click', '.vod-video-play', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var mpdUrl = $btn.data('mpd-url');
+        var poster = $btn.data('poster');
+        var title = $btn.data('title');
+        if (mpdUrl) {
+          openPlayerModal(mpdUrl, poster, title);
+        }
       });
     }
 
@@ -376,6 +500,15 @@
         const $selectBtn = $('<a href="#" class="vod-video-button button" title="' + acf_vod_video_field.i18n.select_video + '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.select_video + '</span></a>');
         const $refreshBtn = $('<a href="#" class="vod-video-refresh button" title="' + acf_vod_video_field.i18n.refresh_video + '"><span class="dashicons dashicons-update"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.refresh_video + '</span></a>');
         const $removeBtn = $('<a href="#" class="vod-video-remove button" title="' + acf_vod_video_field.i18n.remove_video + '"><span class="dashicons dashicons-trash"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.remove_video + '</span></a>');
+
+        if (videoData.mpd_url) {
+          const $playBtn = $('<a href="#" class="vod-video-play button button-primary" title="' + acf_vod_video_field.i18n.play_video + '"' +
+            ' data-mpd-url="' + $('<div>').text(videoData.mpd_url).html() + '"' +
+            ' data-poster="' + $('<div>').text(videoData.poster || '').html() + '"' +
+            ' data-title="' + $('<div>').text(videoData.title || '').html() + '"' +
+            '><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.play_video + '</span></a>');
+          $actions.append($playBtn);
+        }
 
         $actions.append($selectBtn).append($refreshBtn).append($removeBtn);
         $details.append($actions);

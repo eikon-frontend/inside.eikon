@@ -64,6 +64,8 @@ class acf_field_vod_video extends acf_field
       'error' => __('Erreur lors du chargement des vidéos', 'vod-video-field'),
       'refresh_success' => __('Vidéo actualisée avec succès', 'vod-video-field'),
       'refresh_error' => __('Erreur lors de l\'actualisation de la vidéo', 'vod-video-field'),
+      'play_video' => __('Lire la vidéo', 'vod-video-field'),
+      'player_title' => __('Lecture Vidéo', 'vod-video-field'),
     );
 
     $this->icon = 'format-video';
@@ -191,6 +193,12 @@ class acf_field_vod_video extends acf_field
       echo '<h4>' . esc_html($video_data['title'] ?? '') . '</h4>';
 
       echo '<div class="vod-video-actions">';
+      $mpd_url = isset($video_data['mpd_url']) ? $video_data['mpd_url'] : '';
+      $poster   = isset($video_data['poster'])  ? $video_data['poster']  : '';
+      $title    = isset($video_data['title'])   ? $video_data['title']   : '';
+      if ($mpd_url) {
+        echo '<a href="#" class="vod-video-play button button-primary" title="' . esc_attr($this->l10n['play_video']) . '" data-mpd-url="' . esc_attr($mpd_url) . '" data-poster="' . esc_attr($poster) . '" data-title="' . esc_attr($title) . '"><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' . esc_html($this->l10n['play_video']) . '</span></a>';
+      }
       echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
       echo '<a href="#" class="vod-video-refresh button" title="' . esc_attr($this->l10n['refresh_video']) . '"><span class="dashicons dashicons-update"></span><span class="vod-button-label">' . esc_html($this->l10n['refresh_video']) . '</span></a>';
       echo '<a href="#" class="vod-video-remove button" title="' . esc_attr($this->l10n['remove_video']) . '"><span class="dashicons dashicons-trash"></span><span class="vod-button-label">' . esc_html($this->l10n['remove_video']) . '</span></a>';
