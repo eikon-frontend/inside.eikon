@@ -47,7 +47,7 @@ function project_completion_checklist_content($post)
   $has_taxonomy_fields = $has_year && $has_section && $has_subjects;
 
   // Get ACF fields
-  $project_fields = get_field('galerie', $post->ID);
+  $project_fields = get_field('portfolio', $post->ID);
 
   // Helper function to determine content status
   $get_content_status = function () use ($post) {
@@ -160,7 +160,7 @@ function project_completion_checklist_content($post)
       $render_item('Titre du projet', $has_title);
       $render_item('Image à la une', $has_thumbnail);
       $render_item('Description du projet (50-100 mots)', $content_status);
-      $render_item('Galerie du projet (3+ éléments)', $gallery_status);
+      $render_item('Portfolio du projet (3+ éléments)', $gallery_status);
       $render_item('Métadonnées (année, classe, branche)', $has_taxonomy_fields);
       ?>
     </div>
