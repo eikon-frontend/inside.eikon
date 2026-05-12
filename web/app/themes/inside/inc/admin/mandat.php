@@ -251,7 +251,7 @@ function eikon_render_mandat_projects_table($post)
   ));
 
   echo '<div style="margin-top: 24px;">';
-  echo '<h2 style="margin: 0 0 12px 0; font-size: 18px; line-height: 1.4;">Projets liés</h2>';
+  echo '<h2 style="margin: 0; padding: 0; font-size: 18px; line-height: 1.4;">Projets liés</h2>';
   echo '<p style="margin: 0 0 12px 0; color: #6b7280;">Cochez "Highlight" pour signaler les projets retenus lors des corrections.</p>';
 
   if (empty($projects)) {
