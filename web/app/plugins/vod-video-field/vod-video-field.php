@@ -95,8 +95,17 @@ add_action('graphql_register_types', function () {
       ],
     ]);
 
-    // Register the video field with the custom object type for multiple type names
-    foreach (['PageFields', 'DepartmentFields', 'PortfolioVideoLayout', 'ProjetsFields'] as $type_name) {
+    // Register the video field with the custom object type for known ACF GraphQL types.
+    // Keep legacy names for backward compatibility across environments.
+    foreach ([
+      'PageFields',
+      'DepartmentFields',
+      'ProjectsFields',
+      'ProjetsFields',
+      'PortfolioGalerieVodLayout',
+      'PortfolioVideoLayout',
+      'PortfolioPortfolioVodLayout'
+    ] as $type_name) {
       register_graphql_field($type_name, 'vod', [
         'type' => 'VODVideo',
         'description' => __('The VOD Video field, returning video details.', 'vod-video-field'),
