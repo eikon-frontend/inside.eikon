@@ -1,6 +1,6 @@
 {
     "key": "group_673caa17dd8bd",
-    "title": "Projects sections",
+    "title": "Section",
     "fields": [
         {
             "key": "field_673caa18e60e5",
@@ -52,9 +52,12 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
     "show_in_graphql": 1,
     "graphql_field_name": "projectsSections",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1732029010
+    "modified": 1778586804
 }

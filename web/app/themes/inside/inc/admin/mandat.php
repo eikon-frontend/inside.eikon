@@ -513,3 +513,38 @@ function eikon_save_mandat_project_highlights($post_id, $post, $update)
   }
 }
 add_action('save_post_mandat', 'eikon_save_mandat_project_highlights', 20, 3);
+
+function eikon_add_mandat_projects_count_column($columns)
+{
+  $new_columns = array();
+
+  foreach ($columns as $key => $label) {
+    $new_columns[$key] = $label;
+    if ('title' === $key) {
+      $new_columns['mandat_projects_count'] = __('Projets liés');
+    }
+  }
+
+  return $new_columns;
+}
+add_filter('manage_mandat_posts_columns', 'eikon_add_mandat_projects_count_column');
+
+function eikon_render_mandat_projects_count_column($column, $post_id)
+{
+  if ('mandat_projects_count' !== $column) {
+    return;
+  }
+
+  $linked_project_ids = get_posts(array(
+    'post_type' => 'project',
+    'post_status' => array('publish', 'draft', 'pending', 'future', 'private'),
+    'posts_per_page' => -1,
+    'fields' => 'ids',
+    'no_found_rows' => true,
+    'meta_key' => 'eikon_current_mandat_id',
+    'meta_value' => (string) $post_id,
+  ));
+
+  echo esc_html((string) count($linked_project_ids));
+}
+add_action('manage_mandat_posts_custom_column', 'eikon_render_mandat_projects_count_column', 10, 2);
