@@ -80,23 +80,20 @@ function eikon_documentation_widget_content()
 {
   $current_user = wp_get_current_user();
   $user_roles = $current_user->roles;
-
-  if (in_array('student', $user_roles, true)) {
-    $doc_url = 'https://eikon-imd.notion.site/inside-eikon-ch-student';
-    $role_text = 'pour étudiants';
-  } else {
-    $doc_url = 'https://eikon-imd.notion.site';
-    $role_text = 'pour enseignants';
-  }
 ?>
   <div style="padding: 0;">
     <p style="margin-top: 0;">
-      Accédez à la documentation complète <strong><?php echo esc_html($role_text); ?></strong> :
+      Accédez à la documentation:
     </p>
     <p style="margin-bottom: 0;">
-      <a href="<?php echo esc_url($doc_url); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box;">
-        Ouvrir la documentation
+      <a href="https://eikon-imd.notion.site/inside-eikon-ch-projets" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box;">
+        Ajouter/éditer un <strong>projet</strong>
       </a>
+      <?php if (in_array('teacher', $user_roles, true) || in_array('administrator', $user_roles, true)) { ?>
+        <a href="https://eikon-imd.notion.site/inside-eikon-ch-mandat" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box; margin-top: 8px;">
+          Ajouter/éditer un <strong>mandat</strong>
+        </a>
+      <?php } ?>
     </p>
   </div>
 <?php
