@@ -292,7 +292,16 @@ function eikon_render_mandat_projects_table($post)
     $subtitle = trim((string) get_post_meta($project->ID, 'subtitle', true));
     $visit_link = $project->post_name ? trailingslashit(home_url('/')) . 'projets/' . $project->post_name . '/' : '';
     $edit_link = get_edit_post_link($project->ID, '');
-    $created_ts = get_post_time('U', true, $project);
+
+    global $wpdb;
+    $real_created_date = $wpdb->get_var($wpdb->prepare(
+      "SELECT MIN(post_date) FROM {$wpdb->posts} WHERE (post_parent = %d AND post_type IN ('revision', 'attachment')) OR ID = %d",
+      $project->ID,
+      $project->ID
+    ));
+    $created_ts = strtotime($real_created_date);
+    $formatted_created = mysql2date(get_option('date_format') . ' ' . get_option('time_format'), $real_created_date);
+
     $modified_ts = get_post_modified_time('U', true, $project);
     $is_highlighted = '1' === (string) get_post_meta($project->ID, 'eikon_mandat_highlight', true);
 
@@ -305,7 +314,7 @@ function eikon_render_mandat_projects_table($post)
       echo '<div style="margin-top: 4px; font-size: 12px; color: #6b7280;">' . esc_html($subtitle) . '</div>';
     }
     echo '</td>';
-    echo '<td data-value="' . esc_attr((string) $created_ts) . '">' . esc_html(get_the_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
+    echo '<td data-value="' . esc_attr((string) $created_ts) . '">' . esc_html($formatted_created) . '</td>';
     echo '<td data-value="' . esc_attr((string) $modified_ts) . '">' . esc_html(get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
     echo '<td>';
     if (!empty($visit_link)) {
