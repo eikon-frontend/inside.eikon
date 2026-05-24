@@ -199,6 +199,7 @@ class VOD_Eikon
 
     $current_user = wp_get_current_user();
     $must_validate_filename = in_array('student', $current_user->roles, true) || in_array('teacher', $current_user->roles, true);
+    $current_year = $this->get_current_academic_year();
 
     wp_localize_script('vod-eikon-admin', 'vodEikon', array(
       'ajax_url' => admin_url('admin-ajax.php'),
@@ -207,7 +208,9 @@ class VOD_Eikon
       'max_upload_size_formatted' => $this->format_bytes($this->get_server_upload_limit()),
       'validate_filename' => $must_validate_filename,
       'filename_regex' => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
-      'filename_error' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4',
+      'filename_error' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: ' . $current_year . '_IMD11_CIE_MonTitre_Dupont_Marie.mp4',
+      'current_year' => $current_year,
+      'placeholders' => array('titre', 'nom', 'prenom'),
     ));
 
     wp_enqueue_style(
@@ -1107,11 +1110,9 @@ class VOD_Eikon
     // Validate filename nomenclature for students and teachers
     $current_user_roles = $current_user->roles;
     if (in_array('student', $current_user_roles, true) || in_array('teacher', $current_user_roles, true)) {
-      $filename = $file['name'];
-      if (!preg_match('/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/', $filename)) {
-        wp_send_json_error(array(
-          'message' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 23_24_IMD11_CIE_Titre_Nom_Prenom.mp4'
-        ));
+      $error = $this->validate_video_filename($file['name']);
+      if ($error !== null) {
+        wp_send_json_error(array('message' => $error));
       }
     }
 
@@ -1284,6 +1285,76 @@ class VOD_Eikon
     $max_size = min($upload_max, $post_max, $wp_max);
 
     return $max_size;
+  }
+
+  /**
+   * Returns the current academic year as "YY_YY" (e.g. "25_26").
+   * The academic year starts in September.
+   */
+  private function get_current_academic_year()
+  {
+    $month = (int) date('n');
+    $year  = (int) date('y');
+    if ($month >= 9) {
+      return sprintf('%02d_%02d', $year, $year + 1);
+    }
+    return sprintf('%02d_%02d', $year - 1, $year);
+  }
+
+  /**
+   * Validates a video filename against the Eikon naming convention.
+   * Returns an error message string on failure, or null on success.
+   */
+  private function validate_video_filename($filename)
+  {
+    $regex = '/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/';
+    $current_year = $this->get_current_academic_year();
+
+    // 1. Basic format check
+    if (!preg_match($regex, $filename)) {
+      return sprintf('Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.mp4', $current_year);
+    }
+
+    $base = pathinfo($filename, PATHINFO_FILENAME);
+
+    // 2. Year validity: second segment must be first segment + 1 (catches "25_25" typos)
+    if (preg_match('/^(\d{2,4})_(\d{2,4})/', $base, $m)) {
+      $y1 = (int) $m[1];
+      $y2 = (int) $m[2];
+      if ($y2 !== $y1 + 1) {
+        return sprintf(
+          'Erreur : L\'année "%s_%s" n\'est pas valide. Utilisez l\'année académique en cours : %s. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.mp4',
+          $m[1],
+          $m[2],
+          $current_year,
+          $current_year
+        );
+      }
+    }
+
+    // 3. Current academic year check (catches old years like "23_24" or "24_25")
+    if (strncmp($base, $current_year . '_', strlen($current_year) + 1) !== 0) {
+      return sprintf(
+        'Erreur : L\'année académique doit être "%s" pour l\'année en cours. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.mp4',
+        $current_year,
+        $current_year
+      );
+    }
+
+    // 4. Placeholder word check (catches copy-pasted example filenames)
+    $segments = array_slice(explode('_', $base), 2);
+    $placeholders = ['titre', 'nom', 'prenom'];
+    foreach ($segments as $segment) {
+      if (in_array(strtolower($segment), $placeholders, true)) {
+        return sprintf(
+          'Erreur : Le nom de fichier contient des mots génériques ("%s"). Remplacez-les par vos vraies informations. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.mp4',
+          $segment,
+          $current_year
+        );
+      }
+    }
+
+    return null;
   }
 
   /**

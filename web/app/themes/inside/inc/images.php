@@ -7,7 +7,7 @@ add_theme_support('post-thumbnails');
  * Blocks uploads with non-compliant filenames before the file is saved.
  */
 define('EIKON_FILENAME_REGEX', '/^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\.[a-zA-Z0-9]+$/');
-define('EIKON_FILENAME_ERROR', 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 23_24_IMD11_CIE_Titre_Nom_Prenom.jpg');
+define('EIKON_FILENAME_ERROR', 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: 25_26_IMD11_CIE_MonTitre_Dupont_Marie.jpg');
 
 /**
  * Check if the current user must comply with filename nomenclature.
@@ -22,6 +22,74 @@ function eikon_user_must_validate_filename()
 }
 
 /**
+ * Returns the current academic year as "YY_YY" (e.g. "25_26").
+ * The academic year starts in September.
+ */
+function eikon_get_current_academic_year()
+{
+  $month = (int) date('n');
+  $year  = (int) date('y');
+  if ($month >= 9) {
+    return sprintf('%02d_%02d', $year, $year + 1);
+  }
+  return sprintf('%02d_%02d', $year - 1, $year);
+}
+
+/**
+ * Validates a filename against the Eikon naming convention.
+ * Returns an error message string on failure, or null on success.
+ */
+function eikon_validate_filename_string($filename)
+{
+  // 1. Basic format check
+  if (!preg_match(EIKON_FILENAME_REGEX, $filename)) {
+    return EIKON_FILENAME_ERROR;
+  }
+
+  $base = pathinfo($filename, PATHINFO_FILENAME);
+  $current_year = eikon_get_current_academic_year();
+
+  // 2. Year validity: second segment must be first segment + 1 (catches "25_25" typos)
+  if (preg_match('/^(\d{2,4})_(\d{2,4})/', $base, $m)) {
+    $y1 = (int) $m[1];
+    $y2 = (int) $m[2];
+    if ($y2 !== $y1 + 1) {
+      return sprintf(
+        'Erreur : L\'année "%s_%s" n\'est pas valide (le deuxième chiffre doit être le suivant). Utilisez l\'année académique en cours : %s. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.jpg',
+        $m[1],
+        $m[2],
+        $current_year,
+        $current_year
+      );
+    }
+  }
+
+  // 3. Current academic year check (catches old years like "23_24" or "24_25")
+  if (strncmp($base, $current_year . '_', strlen($current_year) + 1) !== 0) {
+    return sprintf(
+      'Erreur : L\'année académique doit être "%s" pour l\'année en cours. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.jpg',
+      $current_year,
+      $current_year
+    );
+  }
+
+  // 4. Placeholder word check (catches copy-pasted example filenames)
+  $segments = array_slice(explode('_', $base), 2); // skip the two year segments
+  $placeholders = ['titre', 'nom', 'prenom'];
+  foreach ($segments as $segment) {
+    if (in_array(strtolower($segment), $placeholders, true)) {
+      return sprintf(
+        'Erreur : Le nom de fichier contient des mots génériques ("%s"). Remplacez-les par vos vraies informations. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.jpg',
+        $segment,
+        $current_year
+      );
+    }
+  }
+
+  return null;
+}
+
+/**
  * Server-side: block media uploads with invalid filenames (runs before file is moved).
  */
 add_filter('wp_handle_upload_prefilter', function ($file) {
@@ -29,9 +97,9 @@ add_filter('wp_handle_upload_prefilter', function ($file) {
     return $file;
   }
 
-  $filename = $file['name'];
-  if (!preg_match(EIKON_FILENAME_REGEX, $filename)) {
-    $file['error'] = EIKON_FILENAME_ERROR;
+  $error = eikon_validate_filename_string($file['name']);
+  if ($error !== null) {
+    $file['error'] = $error;
   }
 
   return $file;
@@ -56,8 +124,10 @@ function eikon_enqueue_filename_validation($hook)
   );
 
   wp_localize_script('eikon-filename-validation', 'eikonFilename', [
-    'regex' => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
+    'regex'        => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
     'errorMessage' => EIKON_FILENAME_ERROR,
+    'currentYear'  => eikon_get_current_academic_year(),
+    'placeholders' => ['titre', 'nom', 'prenom'],
   ]);
 }
 add_action('admin_enqueue_scripts', 'eikon_enqueue_filename_validation');
@@ -133,16 +203,15 @@ add_filter('wp_get_attachment_url', function ($url, $post_id) {
   return $url;
 }, 10, 2);
 
-// Restrict file uploads to only images and PDFs
+// Restrict file uploads to only images
 add_filter('upload_mimes', function ($mimes) {
   // Remove all existing MIME types
   $mimes = array();
 
-  // Add only image and PDF MIME types
+  // Add only image MIME types
   $mimes['jpg|jpeg|jpe'] = 'image/jpeg';
   $mimes['png'] = 'image/png';
   $mimes['webp'] = 'image/webp';
-  $mimes['pdf'] = 'application/pdf';
   $mimes['zip'] = 'application/zip';
 
   return $mimes;
@@ -155,7 +224,7 @@ add_filter('wp_check_filetype_and_ext', function ($data, $file, $filename, $mime
   $type = $wp_filetype['type'];
 
   // List of allowed extensions
-  $allowed_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'bmp', 'tiff', 'tif', 'webp', 'ico', 'heic', 'svg', 'pdf');
+  $allowed_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'bmp', 'tiff', 'tif', 'webp', 'ico', 'heic', 'svg');
 
   if (!in_array($ext, $allowed_extensions)) {
     return array(
@@ -170,7 +239,7 @@ add_filter('wp_check_filetype_and_ext', function ($data, $file, $filename, $mime
 
 // Custom error message for rejected file types
 add_filter('upload_error_messages', function ($messages) {
-  $messages[false] = __('Sorry! This file type is not allowed. Only images (JPG, PNG, GIF, WebP, SVG, etc.) and PDF files are permitted.');
+  $messages[false] = __('Sorry! This file type is not allowed. Only image files (JPG, PNG, WebP, SVG, etc.) are permitted.');
   return $messages;
 });
 

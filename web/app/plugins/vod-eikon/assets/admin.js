@@ -1,3 +1,46 @@
+/**
+ * Validates a VOD video filename against the Eikon naming convention.
+ * Returns an error message string, or null if valid.
+ * Uses vodEikon.filename_regex, vodEikon.current_year, and vodEikon.placeholders.
+ */
+function validateVodFilename(name) {
+  var regex = new RegExp(vodEikon.filename_regex);
+  var currentYear = vodEikon.current_year || '';
+  var placeholders = vodEikon.placeholders || [];
+
+  // 1. Basic format check
+  if (!regex.test(name)) {
+    return vodEikon.filename_error;
+  }
+
+  var base = name.replace(/\.[^.]+$/, ''); // strip extension
+
+  // 2. Year validity: second segment must be first + 1 (catches "25_25" typos)
+  var yearMatch = base.match(/^(\d{2,4})_(\d{2,4})/);
+  if (yearMatch) {
+    var y1 = parseInt(yearMatch[1], 10);
+    var y2 = parseInt(yearMatch[2], 10);
+    if (y2 !== y1 + 1) {
+      return 'Erreur : L\'année "' + yearMatch[1] + '_' + yearMatch[2] + '" n\'est pas valide. Utilisez l\'année académique en cours : ' + currentYear + '. Exemple: ' + currentYear + '_IMD11_CIE_MonTitre_Dupont_Marie.mp4';
+    }
+  }
+
+  // 3. Current academic year check (catches old years like "23_24" or "24_25")
+  if (currentYear && base.indexOf(currentYear + '_') !== 0) {
+    return 'Erreur : L\'année académique doit être "' + currentYear + '" pour l\'année en cours. Exemple: ' + currentYear + '_IMD11_CIE_MonTitre_Dupont_Marie.mp4';
+  }
+
+  // 4. Placeholder word check (catches copy-pasted example filenames)
+  var segments = base.split('_').slice(2); // skip the two year segments
+  for (var i = 0; i < segments.length; i++) {
+    if (placeholders.indexOf(segments[i].toLowerCase()) !== -1) {
+      return 'Erreur : Le nom de fichier contient des mots génériques ("' + segments[i] + '"). Remplacez-les par vos vraies informations. Exemple: ' + currentYear + '_IMD11_CIE_MonTitre_Dupont_Marie.mp4';
+    }
+  }
+
+  return null;
+}
+
 jQuery(document).ready(function ($) {
 
   // Tab functionality
@@ -77,10 +120,10 @@ jQuery(document).ready(function ($) {
 
     // Check filename nomenclature for students/teachers
     if (vodEikon.validate_filename) {
-      var filenameRegex = new RegExp(vodEikon.filename_regex);
-      if (!filenameRegex.test(file.name)) {
-        console.log('VOD Eikon: Validation failed - filename does not match nomenclature: ' + file.name);
-        $status.html('<div class="notice notice-error inline"><p>' + vodEikon.filename_error + '</p></div>');
+      var filenameError = validateVodFilename(file.name);
+      if (filenameError !== null) {
+        console.log('VOD Eikon: Validation failed - ' + filenameError);
+        $status.html('<div class="notice notice-error inline"><p>' + filenameError + '</p></div>');
         return;
       }
     }
