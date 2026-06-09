@@ -1,0 +1,157 @@
+// ── Row container ──────────────────────────────────────────
+.agenda-editor-row {
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  &__counter {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
+  }
+
+  &__remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 14px;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 3px;
+
+    &:hover {
+      background: #f8d7da;
+      color: #c0392b;
+    }
+  }
+
+  &__main {
+    display: flex;
+    gap: 12px;
+    padding: 12px 12px 0;
+  }
+
+  &__link {
+    padding: 10px 12px 12px;
+    border-top: 1px dashed #e0e0e0;
+    margin-top: 10px;
+  }
+
+  &__link-options {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    align-items: flex-end;
+  }
+}
+
+// ── Field ───────────────────────────────────────────────────
+.agenda-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  &--grow {
+    flex: 1;
+  }
+
+  &--newtab {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.agenda-editor-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+
+  &--checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+}
+
+.agenda-editor-input {
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+
+  &:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+  }
+}
+
+.agenda-editor-urlinput {
+  width: 100%;
+
+  input {
+    border-radius: 3px !important;
+  }
+}
+
+// ── Icon badge ──────────────────────────────────────────────
+.agenda-editor-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+
+  &--internal {
+    background: #e8f4fd;
+    color: #0073aa;
+  }
+
+  &--external {
+    background: #fef3e2;
+    color: #b45309;
+  }
+}
+
+// ── Add button ──────────────────────────────────────────────
+.agenda-editor-add {
+  margin-top: 4px;
+  padding: 8px 18px;
+  background: #1e1e1e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: #3c3c3c;
+  }
+}

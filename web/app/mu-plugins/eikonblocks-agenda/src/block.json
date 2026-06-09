@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "eikonblocks/agenda",
+  "version": "0.1.0",
+  "title": "Agenda",
+  "category": "widgets",
+  "description": "Agenda block for displaying a list of events with date, title, and optional link.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "eikonblocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "parent": ["eikonblocks/section"],
+  "attributes": {
+    "items": {
+      "type": "array",
+      "default": []
+    }
+  },
+  "version": "0.1.1"
+}
