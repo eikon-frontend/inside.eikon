@@ -385,36 +385,6 @@ function eikon_search_mandats_ajax()
     wp_send_json_success(array());
   }
 
-  $year_ids = array_filter(array_map('intval', explode(',', sanitize_text_field($_GET['year_ids'] ?? ''))));
-  $section_ids = array_filter(array_map('intval', explode(',', sanitize_text_field($_GET['section_ids'] ?? ''))));
-  $subjects_ids = array_filter(array_map('intval', explode(',', sanitize_text_field($_GET['subjects_ids'] ?? ''))));
-
-  $tax_query = array('relation' => 'AND');
-  if (!empty($year_ids)) {
-    $tax_query[] = array(
-      'taxonomy' => 'year',
-      'field'    => 'term_id',
-      'terms'    => $year_ids,
-      'operator' => 'IN',
-    );
-  }
-  if (!empty($section_ids)) {
-    $tax_query[] = array(
-      'taxonomy' => 'section',
-      'field'    => 'term_id',
-      'terms'    => $section_ids,
-      'operator' => 'IN',
-    );
-  }
-  if (!empty($subjects_ids)) {
-    $tax_query[] = array(
-      'taxonomy' => 'subjects',
-      'field'    => 'term_id',
-      'terms'    => $subjects_ids,
-      'operator' => 'IN',
-    );
-  }
-
   $query_args = array(
     'post_type'      => 'mandat',
     'post_status'    => array('publish', 'draft', 'pending', 'future', 'private'),
@@ -423,7 +393,6 @@ function eikon_search_mandats_ajax()
     'orderby'        => 'title',
     'order'          => 'ASC',
     'no_found_rows'  => true,
-    'tax_query'      => count($tax_query) > 1 ? $tax_query : array(),
     'meta_query'     => array(
       array(
         'key'     => 'mandat_status',
