@@ -164,7 +164,7 @@ function eikon_create_teacher_role()
     'edit_others_mandats'       => true,
     'edit_published_mandats'    => true,
     'edit_private_mandats'      => true,
-    'publish_mandats'           => false,
+    'publish_mandats'           => true,
     'delete_mandats'            => true,
     'delete_others_mandats'     => true,
     'delete_published_mandats'  => false,
