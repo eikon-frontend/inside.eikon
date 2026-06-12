@@ -55,8 +55,8 @@ function project_completion_checklist_content($post)
       return 'not_good';
     }
 
-    // Count words using WordPress function
-    $word_count = str_word_count(strip_tags($post->post_content));
+    // Count words using Unicode-aware split (handles French accented characters)
+    $word_count = count(preg_split('/\s+/u', trim(strip_tags($post->post_content)), -1, PREG_SPLIT_NO_EMPTY));
 
     if ($word_count >= 50 && $word_count <= 100) {
       return 'perfect';
