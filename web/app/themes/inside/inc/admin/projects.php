@@ -226,3 +226,318 @@ function add_image_column_content($column, $post_id)
     echo '</div>';
   }
 }
+
+// ---------------------------------------------------------------------------
+// Déclarations légales (IA / droits d'auteur) — intégrées dans la meta box Publier
+// ---------------------------------------------------------------------------
+
+add_action('post_submitbox_misc_actions', 'eikon_project_legal_submitbox');
+function eikon_project_legal_submitbox(WP_Post $post)
+{
+  if ('project' !== $post->post_type) {
+    return;
+  }
+
+  wp_nonce_field('eikon_project_legal_save', 'eikon_project_legal_nonce');
+
+  $ai_value        = get_post_meta($post->ID, 'eikon_contains_ai_content', true);
+  $copyright_value = get_post_meta($post->ID, 'eikon_contains_copyright_content', true);
+?>
+  <div class="misc-pub-section eikon-legal-section">
+    <style>
+      .eikon-legal-section {
+        border-top: 1px solid #dcdcde;
+        padding-top: 10px;
+        margin-top: 4px;
+      }
+
+      .eikon-legal-section>strong {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #1d2327;
+        margin-bottom: 10px;
+      }
+
+      .eikon-legal-field {
+        margin-bottom: 10px;
+      }
+
+      .eikon-legal-field:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .eikon-legal-field .eikon-field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #1d2327;
+        line-height: 1.4;
+      }
+
+      .eikon-legal-field .eikon-required {
+        color: #d63638;
+        margin-left: 2px;
+      }
+
+      .eikon-toggle-group {
+        display: flex;
+        gap: 5px;
+      }
+
+      .eikon-toggle-group input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .eikon-toggle-group .eikon-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 14px;
+        border: 1px solid #c3c4c7;
+        border-radius: 3px;
+        background: #f6f7f7;
+        color: #50575e;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: .04em;
+        transition: background .12s, border-color .12s, color .12s;
+        user-select: none;
+      }
+
+      .eikon-toggle-group input[type="radio"]:checked+.eikon-toggle-btn {
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .eikon-toggle-group input[type="radio"][value="oui"]:checked+.eikon-toggle-btn {
+        background: #d63638;
+      }
+
+      .eikon-toggle-group input[type="radio"][value="non"]:checked+.eikon-toggle-btn {
+        background: #00a32a;
+      }
+
+      .eikon-toggle-group .eikon-toggle-btn:hover {
+        background: #dcdcde;
+        border-color: #a7aaad;
+      }
+
+      .eikon-toggle-group input[type="radio"]:checked+.eikon-toggle-btn:hover {
+        filter: brightness(.92);
+      }
+
+      .eikon-legal-error {
+        display: none;
+        margin-top: 4px;
+        font-size: 11px;
+        color: #d63638;
+        font-style: italic;
+      }
+    </style>
+
+    <strong>Déclarations légales</strong>
+
+    <div class="eikon-legal-field">
+      <span class="eikon-field-label">
+        Contenu généré par IA&nbsp;<span class="eikon-required">*</span>
+      </span>
+      <div class="eikon-toggle-group">
+        <input type="radio" name="eikon_contains_ai_content" id="eikon_ai_oui" value="oui"
+          <?php checked($ai_value, 'oui'); ?>>
+        <label class="eikon-toggle-btn" for="eikon_ai_oui">OUI</label>
+        <input type="radio" name="eikon_contains_ai_content" id="eikon_ai_non" value="non"
+          <?php checked($ai_value, 'non'); ?>>
+        <label class="eikon-toggle-btn" for="eikon_ai_non">NON</label>
+      </div>
+      <span class="eikon-legal-error" id="eikon-error-ai">Veuillez répondre à cette question.</span>
+    </div>
+
+    <div class="eikon-legal-field">
+      <span class="eikon-field-label">
+        Droits d'auteur non clarifiés&nbsp;<span class="eikon-required">*</span>
+      </span>
+      <div class="eikon-toggle-group">
+        <input type="radio" name="eikon_contains_copyright_content" id="eikon_copyright_oui" value="oui"
+          <?php checked($copyright_value, 'oui'); ?>>
+        <label class="eikon-toggle-btn" for="eikon_copyright_oui">OUI</label>
+        <input type="radio" name="eikon_contains_copyright_content" id="eikon_copyright_non" value="non"
+          <?php checked($copyright_value, 'non'); ?>>
+        <label class="eikon-toggle-btn" for="eikon_copyright_non">NON</label>
+      </div>
+      <span class="eikon-legal-error" id="eikon-error-copyright">Veuillez répondre à cette question.</span>
+    </div>
+  </div>
+<?php
+}
+
+// JS validation: block Publish button if either field is unanswered.
+add_action('admin_footer-post.php', 'eikon_project_legal_validation_script');
+add_action('admin_footer-post-new.php', 'eikon_project_legal_validation_script');
+function eikon_project_legal_validation_script()
+{
+  $screen = get_current_screen();
+  if (!$screen || 'project' !== $screen->post_type) {
+    return;
+  }
+?>
+  <script>
+    (function() {
+      var publishBtn = document.getElementById('publish');
+      if (!publishBtn) {
+        return;
+      }
+
+      publishBtn.addEventListener('click', function(e) {
+        var aiChecked = document.querySelector('input[name="eikon_contains_ai_content"]:checked');
+        var copyrightChecked = document.querySelector('input[name="eikon_contains_copyright_content"]:checked');
+        var aiError = document.getElementById('eikon-error-ai');
+        var copyrightError = document.getElementById('eikon-error-copyright');
+        var hasError = false;
+
+        if (!aiChecked) {
+          if (aiError) {
+            aiError.style.display = 'block';
+          }
+          hasError = true;
+        } else {
+          if (aiError) {
+            aiError.style.display = 'none';
+          }
+        }
+
+        if (!copyrightChecked) {
+          if (copyrightError) {
+            copyrightError.style.display = 'block';
+          }
+          hasError = true;
+        } else {
+          if (copyrightError) {
+            copyrightError.style.display = 'none';
+          }
+        }
+
+        if (hasError) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          var legalSection = document.querySelector('.eikon-legal-section');
+          if (legalSection) {
+            legalSection.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+        }
+      });
+    }());
+  </script>
+<?php
+}
+
+// Server-side guard: demote to pending if fields are missing on publish.
+add_filter('wp_insert_post_data', 'eikon_project_legal_validate_publish', 10, 2);
+function eikon_project_legal_validate_publish(array $data, array $postarr): array
+{
+  if ('project' !== $data['post_type'] || 'publish' !== $data['post_status']) {
+    return $data;
+  }
+
+  // Skip programmatic saves (WP-CLI, REST, imports) that have no form nonce.
+  if (
+    !isset($_POST['eikon_project_legal_nonce']) ||
+    !wp_verify_nonce(
+      sanitize_text_field(wp_unslash($_POST['eikon_project_legal_nonce'])),
+      'eikon_project_legal_save'
+    )
+  ) {
+    return $data;
+  }
+
+  $post_id = absint($postarr['ID'] ?? 0);
+
+  // Fall back to existing meta so already-published posts aren't blocked on update.
+  $ai = isset($_POST['eikon_contains_ai_content'])
+    ? sanitize_text_field(wp_unslash($_POST['eikon_contains_ai_content']))
+    : get_post_meta($post_id, 'eikon_contains_ai_content', true);
+
+  $copyright = isset($_POST['eikon_contains_copyright_content'])
+    ? sanitize_text_field(wp_unslash($_POST['eikon_contains_copyright_content']))
+    : get_post_meta($post_id, 'eikon_contains_copyright_content', true);
+
+  if (!in_array($ai, array('oui', 'non'), true) || !in_array($copyright, array('oui', 'non'), true)) {
+    $data['post_status'] = 'pending';
+    set_transient('eikon_legal_error_' . get_current_user_id(), true, 60);
+  }
+
+  return $data;
+}
+
+add_action('admin_notices', 'eikon_project_legal_validation_notice');
+function eikon_project_legal_validation_notice()
+{
+  $screen = get_current_screen();
+  if (!$screen || 'project' !== $screen->post_type) {
+    return;
+  }
+
+  if (!get_transient('eikon_legal_error_' . get_current_user_id())) {
+    return;
+  }
+
+  delete_transient('eikon_legal_error_' . get_current_user_id());
+  echo '<div class="notice notice-error is-dismissible"><p>';
+  echo '<strong>Publication impossible&nbsp;:</strong> Vous devez répondre aux deux déclarations légales avant de publier ce projet.';
+  echo '</p></div>';
+}
+
+add_action('save_post_project', 'eikon_project_legal_save_meta', 10, 2);
+function eikon_project_legal_save_meta(int $post_id, WP_Post $post)
+{
+  if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+    return;
+  }
+
+  if (
+    !isset($_POST['eikon_project_legal_nonce']) ||
+    !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['eikon_project_legal_nonce'])), 'eikon_project_legal_save')
+  ) {
+    return;
+  }
+
+  if (!current_user_can('edit_post', $post_id)) {
+    return;
+  }
+
+  $allowed = array('oui', 'non', '');
+
+  $ai_value = isset($_POST['eikon_contains_ai_content'])
+    ? sanitize_text_field(wp_unslash($_POST['eikon_contains_ai_content']))
+    : '';
+  if (!in_array($ai_value, $allowed, true)) {
+    $ai_value = '';
+  }
+
+  $copyright_value = isset($_POST['eikon_contains_copyright_content'])
+    ? sanitize_text_field(wp_unslash($_POST['eikon_contains_copyright_content']))
+    : '';
+  if (!in_array($copyright_value, $allowed, true)) {
+    $copyright_value = '';
+  }
+
+  if ('' === $ai_value) {
+    delete_post_meta($post_id, 'eikon_contains_ai_content');
+  } else {
+    update_post_meta($post_id, 'eikon_contains_ai_content', $ai_value);
+  }
+
+  if ('' === $copyright_value) {
+    delete_post_meta($post_id, 'eikon_contains_copyright_content');
+  } else {
+    update_post_meta($post_id, 'eikon_contains_copyright_content', $copyright_value);
+  }
+}
