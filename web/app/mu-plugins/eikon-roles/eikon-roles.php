@@ -400,10 +400,17 @@ function eikon_restrict_teacher_edit_others($allcaps, $caps, $args, $user)
     return $allcaps;
   }
 
-  // If the post belongs to someone else, deny the capability
+  // If the post belongs to someone else, deny the capability —
+  // unless it's a student's draft or pending-review post (teachers can review those).
   if ((int) $post->post_author !== (int) $user->ID) {
-    foreach ($caps as $cap) {
-      $allcaps[$cap] = false;
+    $post_author = get_userdata($post->post_author);
+    $is_student_post = $post_author && in_array('student', $post_author->roles, true);
+    $is_reviewable   = in_array($post->post_status, array('draft', 'pending'), true);
+
+    if (!($is_student_post && $is_reviewable)) {
+      foreach ($caps as $cap) {
+        $allcaps[$cap] = false;
+      }
     }
   }
 
