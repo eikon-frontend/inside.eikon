@@ -104,9 +104,14 @@ add_action('admin_head', function () {
   }
 });
 
-// Pre-populate project_authors repeater with the post author when empty
+// Pre-populate project_authors repeater with the post author when never saved
 add_filter('acf/load_value/name=project_authors', function ($value, $post_id, $field) {
   if (!empty($value)) {
+    return $value;
+  }
+
+  // If the field has been explicitly saved (even as empty), respect that value
+  if (metadata_exists('post', $post_id, 'project_authors')) {
     return $value;
   }
 
