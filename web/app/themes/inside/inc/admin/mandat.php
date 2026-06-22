@@ -19,6 +19,146 @@ function eikon_render_mandat_permalink_editor($post)
 }
 add_action('edit_form_after_title', 'eikon_render_mandat_permalink_editor', 9);
 
+function eikon_enqueue_mandat_permalink_editor_fallback($hook)
+{
+  if (!in_array($hook, array('post.php', 'post-new.php'), true)) {
+    return;
+  }
+
+  $screen = get_current_screen();
+  if (!$screen || $screen->post_type !== 'mandat') {
+    return;
+  }
+
+  wp_add_inline_script('jquery', "
+    (function($){
+      'use strict';
+
+      if (typeof window.editPermalink === 'function' && typeof window.savePermalink === 'function' && typeof window.revertPermalink === 'function') {
+        return;
+      }
+
+      var originalSlug = null;
+
+      function ensurePostNameInput() {
+        var input = document.getElementById('post_name');
+        if (input) {
+          return input;
+        }
+
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.id = 'post_name';
+        input.name = 'post_name';
+
+        var form = document.getElementById('post');
+        if (form) {
+          form.appendChild(input);
+        }
+
+        return input;
+      }
+
+      function sanitizeSlug(value) {
+        return String(value || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9\\s_-]/g, '')
+          .trim()
+          .replace(/[\\s_]+/g, '-')
+          .replace(/-+/g, '-');
+      }
+
+      window.editPermalink = function() {
+        var editable = document.getElementById('editable-post-name');
+        var editableFull = document.getElementById('editable-post-name-full');
+        var newSlugInput = document.getElementById('new-post-slug');
+        var editButton = document.querySelector('#edit-slug-buttons .edit-slug');
+        var saveButton = document.querySelector('#edit-slug-buttons .save');
+        var cancelButton = document.querySelector('#edit-slug-buttons .cancel');
+
+        if (!editable || !editableFull || !newSlugInput) {
+          return false;
+        }
+
+        originalSlug = editable.textContent.trim();
+        newSlugInput.value = originalSlug;
+        editable.style.display = 'none';
+        editableFull.style.display = 'inline';
+
+        if (editButton) {
+          editButton.style.display = 'none';
+        }
+        if (saveButton) {
+          saveButton.style.display = 'inline-block';
+        }
+        if (cancelButton) {
+          cancelButton.style.display = 'inline-block';
+        }
+
+        setTimeout(function() {
+          newSlugInput.focus();
+          newSlugInput.select();
+        }, 0);
+
+        return false;
+      };
+
+      window.revertPermalink = function() {
+        var editable = document.getElementById('editable-post-name');
+        var editableFull = document.getElementById('editable-post-name-full');
+        var editButton = document.querySelector('#edit-slug-buttons .edit-slug');
+        var saveButton = document.querySelector('#edit-slug-buttons .save');
+        var cancelButton = document.querySelector('#edit-slug-buttons .cancel');
+
+        if (editable && originalSlug !== null) {
+          editable.textContent = originalSlug;
+        }
+
+        if (editable) {
+          editable.style.display = 'inline';
+        }
+        if (editableFull) {
+          editableFull.style.display = 'none';
+        }
+        if (editButton) {
+          editButton.style.display = 'inline-block';
+        }
+        if (saveButton) {
+          saveButton.style.display = 'none';
+        }
+        if (cancelButton) {
+          cancelButton.style.display = 'none';
+        }
+
+        return false;
+      };
+
+      window.savePermalink = function() {
+        var editable = document.getElementById('editable-post-name');
+        var newSlugInput = document.getElementById('new-post-slug');
+
+        if (!editable || !newSlugInput) {
+          return false;
+        }
+
+        var slug = sanitizeSlug(newSlugInput.value);
+        newSlugInput.value = slug;
+        editable.textContent = slug;
+
+        var postNameInput = ensurePostNameInput();
+        if (postNameInput) {
+          postNameInput.value = slug;
+        }
+
+        return window.revertPermalink();
+      };
+    })(jQuery);
+  ");
+}
+add_action('admin_enqueue_scripts', 'eikon_enqueue_mandat_permalink_editor_fallback');
+
 function eikon_add_mandat_description_label()
 {
   $post = get_post();
