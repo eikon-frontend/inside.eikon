@@ -130,6 +130,16 @@ add_filter('graphql_resolve_field', function ($result, $source, $args, $context,
 }, 20, 9);
 
 add_action('graphql_register_types', function () {
+  register_graphql_input_type('MandatLinkedProjectsWhereArgs', [
+    'description' => __('Filter arguments for mandat linked projects.', 'wp-graphql'),
+    'fields' => [
+      'highlight' => [
+        'type' => 'Boolean',
+        'description' => __('Filter by mandate highlight flag.', 'wp-graphql'),
+      ],
+    ],
+  ]);
+
   register_graphql_field('Project', 'currentMandatId', [
     'type' => 'Int',
     'description' => __('Selected current mandate ID.', 'wp-graphql'),
@@ -176,9 +186,44 @@ add_action('graphql_register_types', function () {
   register_graphql_field('Mandat', 'linkedProjects', [
     'type'        => ['list_of' => 'Project'],
     'description' => __('Projects linked to this mandate via eikon_current_mandat_id.', 'wp-graphql'),
-    'resolve'     => function ($source) {
+    'args'        => [
+      'where' => [
+        'type' => 'MandatLinkedProjectsWhereArgs',
+      ],
+    ],
+    'resolve'     => function ($source, $args) {
       if (empty($source->databaseId)) {
         return [];
+      }
+
+      $meta_query = [[
+        'key'     => 'eikon_current_mandat_id',
+        'value'   => (int) $source->databaseId,
+        'compare' => '=',
+        'type'    => 'NUMERIC',
+      ]];
+
+      if (isset($args['where']['highlight'])) {
+        if (true === $args['where']['highlight']) {
+          $meta_query[] = [
+            'key'     => 'eikon_mandat_highlight',
+            'value'   => '1',
+            'compare' => '=',
+          ];
+        } else {
+          $meta_query[] = [
+            'relation' => 'OR',
+            [
+              'key'     => 'eikon_mandat_highlight',
+              'compare' => 'NOT EXISTS',
+            ],
+            [
+              'key'     => 'eikon_mandat_highlight',
+              'value'   => '1',
+              'compare' => '!=',
+            ],
+          ];
+        }
       }
 
       $posts = get_posts([
@@ -187,12 +232,7 @@ add_action('graphql_register_types', function () {
         'orderby'        => 'date',
         'order'          => 'DESC',
         'post_status'    => ['publish', 'draft', 'pending', 'future'],
-        'meta_query'     => [[
-          'key'     => 'eikon_current_mandat_id',
-          'value'   => (int) $source->databaseId,
-          'compare' => '=',
-          'type'    => 'NUMERIC',
-        ]],
+        'meta_query'     => $meta_query,
       ]);
 
       if (empty($posts)) {
