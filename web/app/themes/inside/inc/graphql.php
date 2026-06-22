@@ -161,6 +161,18 @@ add_action('graphql_register_types', function () {
     },
   ]);
 
+  register_graphql_field('Project', 'mandatHighlight', [
+    'type' => 'Boolean',
+    'description' => __('Whether this project is highlighted in its current mandate.', 'wp-graphql'),
+    'resolve' => function ($source) {
+      if (empty($source->databaseId)) {
+        return false;
+      }
+
+      return '1' === (string) get_post_meta((int) $source->databaseId, 'eikon_mandat_highlight', true);
+    },
+  ]);
+
   register_graphql_field('Mandat', 'linkedProjects', [
     'type'        => ['list_of' => 'Project'],
     'description' => __('Projects linked to this mandate via eikon_current_mandat_id.', 'wp-graphql'),
