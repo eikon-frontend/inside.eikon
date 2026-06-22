@@ -25,7 +25,7 @@ function eikon_render_current_mandat_selector()
 
   $mandat_id = (int) get_post_meta($post->ID, 'eikon_current_mandat_id', true);
   $mandat = $mandat_id ? get_post($mandat_id) : null;
-  $mandat_title = $mandat instanceof WP_Post ? $mandat->post_title : '';
+  $mandat_title = $mandat instanceof WP_Post ? eikon_get_mandat_display_title($mandat->ID) : '';
   $mandat_summary = $mandat instanceof WP_Post ? eikon_get_mandat_summary($mandat->ID) : '';
   $nonce = wp_create_nonce('eikon-search-mandats');
   $current_years = wp_get_post_terms($post->ID, 'year', array('fields' => 'ids'));
@@ -213,6 +213,64 @@ function eikon_get_mandat_summary($mandat_id)
   return !empty($summary_parts) ? implode(' | ', $summary_parts) : '';
 }
 
+/**
+ * Titles from legacy imports can contain HTML entities (for example, &rsquo;).
+ * Decode them once before using the title in an attribute or JSON response.
+ */
+function eikon_get_mandat_display_title($mandat_id)
+{
+  $title = get_the_title($mandat_id);
+
+  return html_entity_decode(wp_strip_all_tags($title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
+function eikon_normalize_mandat_search_text($value)
+{
+  $value = html_entity_decode(wp_strip_all_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  $value = remove_accents($value);
+  $value = strtolower($value);
+
+  return trim(preg_replace('/[^a-z0-9]+/', ' ', $value));
+}
+
+function eikon_get_mandat_search_score($title, $term)
+{
+  $normalized_title = eikon_normalize_mandat_search_text($title);
+  $normalized_term = eikon_normalize_mandat_search_text($term);
+
+  if ('' === $normalized_title || '' === $normalized_term) {
+    return false;
+  }
+
+  if (0 === strpos($normalized_title, $normalized_term)) {
+    return 3;
+  }
+
+  if (false !== strpos($normalized_title, $normalized_term)) {
+    return 2;
+  }
+
+  $title_words = explode(' ', $normalized_title);
+  $term_words = explode(' ', $normalized_term);
+
+  foreach ($term_words as $term_word) {
+    $matched = false;
+
+    foreach ($title_words as $title_word) {
+      if (0 === strpos($title_word, $term_word) || false !== strpos($title_word, $term_word)) {
+        $matched = true;
+        break;
+      }
+    }
+
+    if (!$matched) {
+      return false;
+    }
+  }
+
+  return 1;
+}
+
 function eikon_get_project_student_name_parts($project)
 {
   $author = get_userdata($project->post_author);
@@ -388,8 +446,9 @@ function eikon_search_mandats_ajax()
   $query_args = array(
     'post_type'      => 'mandat',
     'post_status'    => array('publish', 'draft', 'pending', 'future', 'private'),
-    'posts_per_page' => 10,
-    's'              => $term,
+    // Match in PHP so partial words, accents, punctuation, and legacy HTML
+    // entities do not depend on WordPress' stricter full-text search behaviour.
+    'posts_per_page' => -1,
     'orderby'        => 'title',
     'order'          => 'ASC',
     'no_found_rows'  => true,
@@ -403,19 +462,40 @@ function eikon_search_mandats_ajax()
   );
 
   $query = new WP_Query($query_args);
-  $results = array();
+  $matches = array();
 
   foreach ($query->posts as $mandat) {
     if (!$mandat instanceof WP_Post) {
       continue;
     }
 
-    $results[] = array(
+    $title = eikon_get_mandat_display_title($mandat->ID);
+    $score = eikon_get_mandat_search_score($title, $term);
+
+    if (false === $score) {
+      continue;
+    }
+
+    $matches[] = array(
+      'score' => $score,
       'id' => $mandat->ID,
-      'title' => get_the_title($mandat),
+      'title' => $title,
       'meta' => eikon_get_mandat_summary($mandat->ID),
     );
   }
+
+  usort($matches, function ($first, $second) {
+    if ($first['score'] !== $second['score']) {
+      return $second['score'] <=> $first['score'];
+    }
+
+    return strcasecmp($first['title'], $second['title']);
+  });
+
+  $results = array_map(function ($match) {
+    unset($match['score']);
+    return $match;
+  }, array_slice($matches, 0, 10));
 
   wp_send_json_success($results);
 }
