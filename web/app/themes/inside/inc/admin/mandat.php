@@ -1,5 +1,24 @@
 <?php
 
+function eikon_render_mandat_permalink_editor($post)
+{
+  if (!$post || $post->post_type !== 'mandat') {
+    return;
+  }
+
+  if (empty($post->ID) || $post->post_status === 'auto-draft') {
+    return;
+  }
+
+  $permalink_html = get_sample_permalink_html($post->ID, $post->post_title, $post->post_name);
+  if (empty($permalink_html)) {
+    return;
+  }
+
+  echo '<div id="edit-slug-box" class="hide-if-no-js" style="margin: 10px 0 12px 0;">' . $permalink_html . '</div>';
+}
+add_action('edit_form_after_title', 'eikon_render_mandat_permalink_editor', 9);
+
 function eikon_add_mandat_description_label()
 {
   $post = get_post();

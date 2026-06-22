@@ -169,7 +169,7 @@ add_action('graphql_register_types', function () {
         return [];
       }
 
-      return get_posts([
+      $posts = get_posts([
         'post_type'      => 'project',
         'posts_per_page' => -1,
         'orderby'        => 'date',
@@ -181,7 +181,19 @@ add_action('graphql_register_types', function () {
           'compare' => '=',
           'type'    => 'NUMERIC',
         ]],
-      ]) ?: [];
+      ]);
+
+      if (empty($posts)) {
+        return [];
+      }
+
+      // Explicitly wrap in the Post model so WPGraphQL applies the
+      // graphql_object_visibility filter (which makes draft/pending/future
+      // projects publicly readable — matching the behaviour for direct URI queries).
+      return array_map(
+        fn($post) => new \WPGraphQL\Model\Post($post),
+        $posts
+      );
     },
   ]);
 });
