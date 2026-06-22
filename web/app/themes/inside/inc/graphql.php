@@ -160,4 +160,28 @@ add_action('graphql_register_types', function () {
       return $mandat instanceof \WP_Post ? $mandat : null;
     },
   ]);
+
+  register_graphql_field('Mandat', 'linkedProjects', [
+    'type'        => ['list_of' => 'Project'],
+    'description' => __('Projects linked to this mandate via eikon_current_mandat_id.', 'wp-graphql'),
+    'resolve'     => function ($source) {
+      if (empty($source->databaseId)) {
+        return [];
+      }
+
+      return get_posts([
+        'post_type'      => 'project',
+        'posts_per_page' => -1,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'post_status'    => ['publish', 'draft', 'pending', 'future'],
+        'meta_query'     => [[
+          'key'     => 'eikon_current_mandat_id',
+          'value'   => (int) $source->databaseId,
+          'compare' => '=',
+          'type'    => 'NUMERIC',
+        ]],
+      ]) ?: [];
+    },
+  ]);
 });
