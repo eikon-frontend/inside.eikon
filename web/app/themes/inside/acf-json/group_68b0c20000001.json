@@ -1,191 +1,200 @@
 {
-  "key": "group_68b0c20000001",
-  "title": "Mandats",
-  "fields": [
-    {
-      "key": "field_68b0c20000005",
-      "label": "Année de production",
-      "name": "year",
-      "aria-label": "",
-      "type": "taxonomy",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "show_in_graphql": 0,
-      "taxonomy": "year",
-      "field_type": "multi_select",
-      "allow_null": 0,
-      "add_term": 0,
-      "save_terms": 1,
-      "load_terms": 1,
-      "return_format": "id",
-      "multiple": 0,
-      "bidirectional_target": []
-    },
-    {
-      "key": "field_68b0c20000006",
-      "label": "Classe",
-      "name": "section",
-      "aria-label": "",
-      "type": "taxonomy",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "show_in_graphql": 1,
-      "taxonomy": "section",
-      "field_type": "multi_select",
-      "allow_null": 0,
-      "add_term": 0,
-      "save_terms": 1,
-      "load_terms": 1,
-      "return_format": "id",
-      "multiple": 0,
-      "bidirectional_target": []
-    },
-    {
-      "key": "field_68b0c20000007",
-      "label": "Branche",
-      "name": "subjects",
-      "aria-label": "",
-      "type": "taxonomy",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "show_in_graphql": 1,
-      "taxonomy": "subjects",
-      "field_type": "multi_select",
-      "allow_null": 0,
-      "add_term": 0,
-      "save_terms": 1,
-      "load_terms": 1,
-      "return_format": "id",
-      "multiple": 0,
-      "bidirectional_target": []
-    },
-    {
-      "key": "field_68b0c20000002",
-      "label": "Statut du mandat",
-      "name": "mandat_status",
-      "aria-label": "",
-      "type": "select",
-      "instructions": "",
-      "required": 1,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "choices": {
-        "en_cours": "En cours",
-        "termine": "Terminé"
-      },
-      "default_value": "en_cours",
-      "return_format": "value",
-      "multiple": 0,
-      "allow_null": 0,
-      "allow_in_bindings": 0,
-      "ui": 1,
-      "show_in_graphql": 1,
-      "graphql_description": "",
-      "graphql_field_name": "mandatStatus",
-      "graphql_non_null": 0,
-      "ajax": 0,
-      "placeholder": "",
-      "create_options": 0,
-      "save_options": 0
-    },
-    {
-      "key": "field_68b0c20000003",
-      "label": "Co-enseignant·e·s",
-      "name": "co_teachers",
-      "aria-label": "",
-      "type": "repeater",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "layout": "block",
-      "pagination": 0,
-      "min": 0,
-      "max": 0,
-      "collapsed": "",
-      "button_label": "Ajouter un·e co-enseignant·e",
-      "show_in_graphql": 1,
-      "graphql_description": "",
-      "graphql_field_name": "coTeachers",
-      "graphql_non_null": 0,
-      "rows_per_page": 20,
-      "sub_fields": [
+    "key": "group_68b0c20000001",
+    "title": "Mandats",
+    "fields": [
         {
-          "key": "field_68b0c20000004",
-          "label": "Co-enseignant·e",
-          "name": "co_teacher",
-          "aria-label": "",
-          "type": "user",
-          "instructions": "",
-          "required": 1,
-          "conditional_logic": 0,
-          "wrapper": {
-            "width": "",
-            "class": "",
-            "id": ""
-          },
-          "show_in_graphql": 1,
-          "graphql_description": "",
-          "graphql_field_name": "coTeacher",
-          "graphql_non_null": 0,
-          "role": "teacher",
-          "return_format": "array",
-          "multiple": 0,
-          "allow_null": 0,
-          "bidirectional_target": [],
-          "parent_repeater": "field_68b0c20000003"
+            "key": "field_68b0c20000005",
+            "label": "Année de production",
+            "name": "year",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 0,
+            "taxonomy": "year",
+            "field_type": "multi_select",
+            "allow_null": 0,
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_68b0c20000006",
+            "label": "Classe",
+            "name": "section",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "taxonomy": "section",
+            "field_type": "multi_select",
+            "allow_null": 0,
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_68b0c20000007",
+            "label": "Branche",
+            "name": "subjects",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "taxonomy": "subjects",
+            "field_type": "multi_select",
+            "allow_null": 0,
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_68b0c20000002",
+            "label": "Statut du mandat",
+            "name": "mandat_status",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "en_cours": "En cours",
+                "termine": "Terminé"
+            },
+            "default_value": "en_cours",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "ui": 1,
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "mandatStatus",
+            "graphql_non_null": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_68b0c20000003",
+            "label": "Co-enseignant·e·s",
+            "name": "co_teachers",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Ajouter un·e co-enseignant·e",
+            "show_in_graphql": 1,
+            "graphql_description": "",
+            "graphql_field_name": "coTeachers",
+            "graphql_non_null": 0,
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_68b0c20000004",
+                    "label": "Co-enseignant·e",
+                    "name": "co_teacher",
+                    "aria-label": "",
+                    "type": "user",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "role": [
+                        "teacher",
+                        "editor",
+                        "administrator"
+                    ],
+                    "return_format": "array",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 1,
+                    "bidirectional": 0,
+                    "show_in_graphql": 1,
+                    "graphql_description": "",
+                    "graphql_field_name": "coTeacher",
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_68b0c20000003"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "location": [
-    [
-      {
-        "param": "post_type",
-        "operator": "==",
-        "value": "mandat"
-      }
-    ]
-  ],
-  "menu_order": 0,
-  "position": "side",
-  "style": "default",
-  "label_placement": "top",
-  "instruction_placement": "label",
-  "hide_on_screen": "",
-  "active": true,
-  "description": "",
-  "show_in_rest": 0,
-  "display_title": "",
-  "show_in_graphql": 1,
-  "graphql_field_name": "mandatFields",
-  "map_graphql_types_from_location_rules": 1,
-  "graphql_types": ["Mandat"],
-  "modified": 1778150000
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "mandat"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "show_in_graphql": 1,
+    "graphql_field_name": "mandatFields",
+    "map_graphql_types_from_location_rules": 1,
+    "graphql_types": [
+        "Mandat"
+    ],
+    "modified": 1782132548
 }
