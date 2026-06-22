@@ -32,6 +32,11 @@ add_filter('graphql_object_visibility', function ($visibility, $model_name, $dat
     return 'public';
   }
 
+  // Make published mandats public (CPT is non-public but must be queryable via GraphQL).
+  if ('mandat' === $data->post_type && 'publish' === $data->post_status) {
+    return 'public';
+  }
+
   // Also make attachments of unpublished projects public (otherwise featuredImage can be null).
   if ('attachment' === $data->post_type && !empty($data->post_parent)) {
     $parent = get_post((int) $data->post_parent);
