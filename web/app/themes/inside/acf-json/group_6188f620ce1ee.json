@@ -217,40 +217,6 @@
                             "graphql_description": "",
                             "graphql_field_name": "caption",
                             "graphql_non_null": 0
-                        },
-                        {
-                            "key": "field_6a3a4d93c5032",
-                            "label": "Style d'affichage",
-                            "name": "style",
-                            "aria-label": "",
-                            "type": "select",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "choices": {
-                                "normal": "Normal",
-                                "border": "Bordure",
-                                "shadow": "Ombre portée"
-                            },
-                            "default_value": "normal",
-                            "return_format": "value",
-                            "multiple": 0,
-                            "allow_null": 0,
-                            "allow_in_bindings": 0,
-                            "ui": 0,
-                            "show_in_graphql": 1,
-                            "graphql_description": "",
-                            "graphql_field_name": "affichage",
-                            "graphql_non_null": 0,
-                            "ajax": 0,
-                            "placeholder": "",
-                            "create_options": 0,
-                            "save_options": 0
                         }
                     ],
                     "min": "",
@@ -374,5 +340,5 @@
     "graphql_field_name": "portfolio",
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
-    "modified": 1782205943
+    "modified": 1782207673
 }
