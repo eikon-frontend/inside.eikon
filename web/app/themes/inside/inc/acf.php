@@ -12,22 +12,13 @@ add_filter('acf/load_field/name=portfolio', function ($field) {
   return $field;
 });
 
-// Keep legacy caption values in DB but hide the field from editors in ACF UI.
+// Keep legacy caption field for admin in DB but hide the field from editors in ACF UI.
 add_filter('acf/prepare_field/key=field_6832ce88253d4', function ($field) {
   if (!is_admin()) {
     return $field;
   }
 
-  $user = wp_get_current_user();
-  $roles = is_array($user->roles) ? $user->roles : [];
-  $is_teacher = in_array('teacher', $roles, true);
-  $is_admin = current_user_can('administrator') || current_user_can('manage_options');
-
-  if (!$is_admin && !$is_teacher) {
-    return false;
-  }
-
-  return $field;
+  return false;
 });
 
 // Simplify WordPress editor for project post type (bold and italic only)
