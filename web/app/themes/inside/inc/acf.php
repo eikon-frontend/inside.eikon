@@ -14,7 +14,7 @@ add_filter('acf/load_field/name=portfolio', function ($field) {
 
 // Keep legacy caption field for admin in DB but hide the field from editors in ACF UI.
 add_filter('acf/prepare_field/key=field_6832ce88253d4', function ($field) {
-  if (!is_admin()) {
+  if (current_user_can('administrator')) {
     return $field;
   }
 
