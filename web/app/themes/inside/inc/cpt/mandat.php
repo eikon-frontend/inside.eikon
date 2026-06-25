@@ -78,3 +78,13 @@ function remove_mandat_taxonomies_metabox()
   remove_meta_box('tagsdiv-subjects', 'mandat', 'side');
 }
 add_action('admin_menu', 'remove_mandat_taxonomies_metabox');
+
+// Hide slug and author metaboxes from non-super-admin users
+function hide_mandat_slug_author_metabox()
+{
+  if (!is_super_admin()) {
+    remove_meta_box('slugdiv', 'mandat', 'normal');
+    remove_meta_box('authordiv', 'mandat', 'normal');
+  }
+}
+add_action('admin_menu', 'hide_mandat_slug_author_metabox');
