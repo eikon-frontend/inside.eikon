@@ -114,7 +114,7 @@ function eikonblocks_newslist_render($attributes, $content)
               <h3><?php the_title(); ?></h3>
             </header>
             <div class="newslist-excerpt">
-              <?php the_excerpt(); ?>
+              <?php the_content(); ?>
             </div>
             <?php
             $buttons = get_field('buttons');
