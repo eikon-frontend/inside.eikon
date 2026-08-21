@@ -19,6 +19,15 @@ export default function Edit({ attributes, setAttributes }) {
     setAttributes({ items: newItems });
   };
 
+  const moveItem = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= items.length) return;
+    const newItems = [...items];
+    const element = newItems[fromIndex];
+    newItems.splice(fromIndex, 1);
+    newItems.splice(toIndex, 0, element);
+    setAttributes({ items: newItems });
+  };
+
   const addItem = () => {
     setAttributes({
       items: [...items, { date: '', title: '', link: { url: '', label: '', opensInNewTab: false } }],
@@ -40,8 +49,28 @@ export default function Edit({ attributes, setAttributes }) {
         return (
           <div key={index} className="agenda-editor-row">
             <div className="agenda-editor-row__header">
-              <span className="agenda-editor-row__counter">{__('Event', 'eikonblocks')} {index + 1}</span>
+              <div className="agenda-editor-row__actions">
+                <button
+                  type="button"
+                  className="agenda-editor-row__move-up"
+                  onClick={() => moveItem(index, index - 1)}
+                  disabled={index === 0}
+                  aria-label={__('Move event up', 'eikonblocks')}
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="agenda-editor-row__move-down"
+                  onClick={() => moveItem(index, index + 1)}
+                  disabled={index === items.length - 1}
+                  aria-label={__('Move event down', 'eikonblocks')}
+                >
+                  ↓
+                </button>
+              </div>
               <button
+                type="button"
                 className="agenda-editor-row__remove"
                 onClick={() => removeItem(index)}
                 aria-label={__('Remove event', 'eikonblocks')}
