@@ -21,7 +21,7 @@ function eikon_customize_dashboard()
   // Add custom documentation widget
   wp_add_dashboard_widget(
     'eikon_documentation',
-    'Documentation Inside.eikon.ch',
+    'Accédez à la documentation sur Notion:',
     'eikon_documentation_widget_content'
   );
 
@@ -78,22 +78,12 @@ function eikon_add_dashicons_to_titles()
  */
 function eikon_documentation_widget_content()
 {
-  $current_user = wp_get_current_user();
-  $user_roles = $current_user->roles;
 ?>
   <div style="padding: 0;">
-    <p style="margin-top: 0;">
-      Accédez à la documentation:
-    </p>
     <p style="margin-bottom: 0;">
-      <a href="https://eikon-imd.notion.site/inside-eikon-ch-projets" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box;">
-        Ajouter/éditer un <strong>projet</strong>
+      <a href="https://eikon-imd.notion.site/eikon-ch" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box;">
+        Guide d'utilisation inside.eikon
       </a>
-      <?php if (in_array('teacher', $user_roles, true) || in_array('administrator', $user_roles, true)) { ?>
-        <a href="https://eikon-imd.notion.site/inside-eikon-ch-mandat" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box; margin-top: 8px;">
-          Ajouter/éditer un <strong>mandat</strong>
-        </a>
-      <?php } ?>
     </p>
   </div>
 <?php
