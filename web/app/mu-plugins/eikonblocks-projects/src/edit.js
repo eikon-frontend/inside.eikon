@@ -18,18 +18,28 @@ function Edit(props) {
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // projects</div>
-      <FormTokenField
-        label="Sélectionnez l'année:"
-        value={selectedYears}
-        suggestions={years ? years.map((year) => year.name) : []}
-        onChange={handleYearsChange}
-      />
-      <FormTokenField
-        label="Sélectionnez la section:"
-        value={selectedSections}
-        suggestions={sections ? sections.map((section) => section.name) : []}
-        onChange={handleSectionsChange}
-      />
+      <div className="ekn-card">
+        <div className="ekn-card__main">
+          <div className="ekn-fields-row">
+            <div className="ekn-field ekn-field--grow">
+              <FormTokenField
+                label={__('Sélectionner l\'année :', 'eikonblocks')}
+                value={selectedYears}
+                suggestions={years ? years.map((year) => year.name) : []}
+                onChange={handleYearsChange}
+              />
+            </div>
+            <div className="ekn-field ekn-field--grow">
+              <FormTokenField
+                label={__('Sélectionner la section :', 'eikonblocks')}
+                value={selectedSections}
+                suggestions={sections ? sections.map((section) => section.name) : []}
+                onChange={handleSectionsChange}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
       <div
         className="wp-block-eikonblocks-projects"
         data-year={selectedYears.join(',')}

@@ -88,29 +88,29 @@ export default function Edit({ attributes, setAttributes }) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title="News List Settings">
+        <PanelBody title={__('Paramètres de la liste d\'actualités', 'eikonblocks')}>
           <RangeControl
-            label="Number of posts"
+            label={__('Nombre de publications', 'eikonblocks')}
             value={postsPerPage}
             onChange={(value) => setAttributes({ postsPerPage: value })}
             min={1}
             max={50}
           />
           <SelectControl
-            label="Sort by"
+            label={__('Trier par', 'eikonblocks')}
             value={orderBy}
             options={[
-              { label: 'Date', value: 'date' },
-              { label: 'Title', value: 'title' },
+              { label: __('Date', 'eikonblocks'), value: 'date' },
+              { label: __('Titre', 'eikonblocks'), value: 'title' },
             ]}
             onChange={(value) => setAttributes({ orderBy: value })}
           />
           <SelectControl
-            label="Direction"
+            label={__('Direction', 'eikonblocks')}
             value={orderDirection}
             options={[
-              { label: 'Descending', value: 'DESC' },
-              { label: 'Ascending', value: 'ASC' },
+              { label: __('Décroissant', 'eikonblocks'), value: 'DESC' },
+              { label: __('Croissant', 'eikonblocks'), value: 'ASC' },
             ]}
             onChange={(value) => setAttributes({ orderDirection: value })}
           />
@@ -120,15 +120,19 @@ export default function Edit({ attributes, setAttributes }) {
         <div className="eikonblock-title">eikonblock // news list</div>
 
         {/* Taxonomy Selection */}
-        <div style={{ marginBottom: '16px' }}>
-          <FormTokenField
-            label="Select Taxonomies to filter:"
-            value={Object.keys(selectedTaxonomies)}
-            suggestions={taxonomySuggestions}
-            onChange={handleTaxonomyChange}
-            placeholder="Search taxonomies..."
-            __experimentalShowHowTo={false}
-          />
+        <div className="ekn-card">
+          <div className="ekn-card__main">
+            <div className="ekn-field ekn-field--grow">
+              <FormTokenField
+                label={__('Sélectionner les taxonomies à filtrer :', 'eikonblocks')}
+                value={Object.keys(selectedTaxonomies)}
+                suggestions={taxonomySuggestions}
+                onChange={handleTaxonomyChange}
+                placeholder={__('Rechercher des taxonomies...', 'eikonblocks')}
+                __experimentalShowHowTo={false}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Term Selection for each selected taxonomy */}
@@ -138,40 +142,46 @@ export default function Edit({ attributes, setAttributes }) {
           const termSuggestions = (allTerms[taxonomySlug] || []).map((t) => t.name);
 
           return (
-            <div key={taxonomySlug}>
-              <strong>{taxLabel}</strong>
-              <FormTokenField
-                label={`Select terms from ${taxLabel}:`}
-                value={selectedTerms}
-                suggestions={termSuggestions}
-                onChange={(tokens) => handleTermChange(taxonomySlug, tokens)}
-                placeholder={`Search ${taxLabel}...`}
-                __experimentalShowHowTo={false}
-              />
+            <div className="ekn-card" key={taxonomySlug}>
+              <div className="ekn-card__header">
+                <span className="ekn-label">{taxLabel}</span>
+              </div>
+              <div className="ekn-card__main">
+                <div className="ekn-field ekn-field--grow">
+                  <FormTokenField
+                    label={__('Sélectionner des termes dans ', 'eikonblocks') + taxLabel + ':'}
+                    value={selectedTerms}
+                    suggestions={termSuggestions}
+                    onChange={(tokens) => handleTermChange(taxonomySlug, tokens)}
+                    placeholder={__('Rechercher dans ', 'eikonblocks') + taxLabel + '...'}
+                    __experimentalShowHowTo={false}
+                  />
+                </div>
+              </div>
             </div>
           );
         })}
 
         {/* Posts Preview */}
-        <div style={{ marginTop: '20px' }}>
-          <p>
-            <strong>
-              Preview ({previewPosts ? previewPosts.length : 0} posts):
-            </strong>
-          </p>
-          {previewPosts === undefined ? (
-            <Spinner />
-          ) : previewPosts.length > 0 ? (
-            <ul style={{ maxHeight: '300px', overflowY: 'auto', margin: '8px 0', paddingLeft: '20px' }}>
-              {previewPosts.slice(0, postsPerPage).map((post) => (
-                <li key={post.id} style={{ marginBottom: '4px', fontSize: '14px' }}>
-                  {post.title.rendered || '(Untitled)'}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p style={{ fontSize: '14px' }}>No posts match your filters</p>
-          )}
+        <div className="ekn-card">
+          <div className="ekn-card__header">
+            <span className="ekn-label">{__('Aperçu (', 'eikonblocks')}{previewPosts ? previewPosts.length : 0}{__(' publications)', 'eikonblocks')}</span>
+          </div>
+          <div className="ekn-card__main">
+            {previewPosts === undefined ? (
+              <Spinner />
+            ) : previewPosts.length > 0 ? (
+              <ul style={{ maxHeight: '300px', overflowY: 'auto', margin: '0', paddingLeft: '20px', width: '100%' }}>
+                {previewPosts.slice(0, postsPerPage).map((post) => (
+                  <li key={post.id} style={{ marginBottom: '4px', fontSize: '14px', color: '#374151' }}>
+                    {post.title.rendered || __('(Sans titre)', 'eikonblocks')}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={{ fontSize: '14px', margin: '0', color: '#6b7280' }}>{__('Aucune publication ne correspond à vos filtres', 'eikonblocks')}</p>
+            )}
+          </div>
         </div>
       </div>
     </>

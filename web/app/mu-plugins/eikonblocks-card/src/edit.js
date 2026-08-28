@@ -28,7 +28,7 @@ export default function Edit(props) {
               allowedTypes={['image']}
               render={({ open }) => (
                 <ToolbarButton onClick={open}>
-                  Replace Image
+                  {__('Remplacer l\'image', 'eikonblocks')}
                 </ToolbarButton>
               )}
             />
@@ -36,19 +36,19 @@ export default function Edit(props) {
               onClick={() => setAttributes({ imageUrl: '' })}
               isDestructive
             >
-              Remove Image
+              {__('Supprimer l\'image', 'eikonblocks')}
             </ToolbarButton>
           </ToolbarGroup>
         </BlockControls>
       )}
       <InspectorControls>
-        <PanelBody title="Image Position">
+        <PanelBody title={__('Position de l\'image', 'eikonblocks')}>
           <SelectControl
-            label="Select Image Position"
+            label={__('Sélectionner la position de l\'image', 'eikonblocks')}
             value={imagePosition}
             options={[
-              { label: 'Left', value: 'left' },
-              { label: 'Right', value: 'right' }
+              { label: __('Gauche', 'eikonblocks'), value: 'left' },
+              { label: __('Droite', 'eikonblocks'), value: 'right' }
             ]}
             onChange={(value) => setAttributes({ imagePosition: value })}
           />
@@ -60,18 +60,18 @@ export default function Edit(props) {
         </div>
         <div className={`card-image card-image-${imagePosition}`}>
           {imageUrl ? (
-            <img src={imageUrl} alt="Card Image" />
+            <img src={imageUrl} alt={__('Image de la carte', 'eikonblocks')} />
           ) : (
             <Placeholder
-              label="Card Image"
-              instructions="Select an image for the card."
+              label={__('Image de la carte', 'eikonblocks')}
+              instructions={__('Sélectionnez une image pour la carte.', 'eikonblocks')}
             >
               <MediaUpload
                 onSelect={onSelectImage}
                 allowedTypes={['image']}
                 render={({ open }) => (
                   <Button onClick={open} isPrimary>
-                    Select Image
+                    {__('Sélectionner l\'image', 'eikonblocks')}
                   </Button>
                 )}
               />

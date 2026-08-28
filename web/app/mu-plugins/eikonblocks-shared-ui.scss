@@ -1,0 +1,184 @@
+// Eikonblocks Unified UI Design System
+// Shared SCSS for Gutenberg Editor interfaces
+
+// Typography & Colors
+$ekn-color-text: #374151;
+$ekn-color-label: #6b7280;
+$ekn-color-border: #e5e7eb;
+$ekn-color-border-hover: #9ca3af;
+$ekn-color-border-focus: #3b82f6;
+$ekn-color-bg-row: #ffffff;
+$ekn-color-bg-header: #f9fafb;
+$ekn-color-primary: #111827;
+$ekn-color-danger: #ef4444;
+$ekn-color-danger-hover: #fee2e2;
+
+// Standard Block Title
+.eikonblock-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: inherit;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid $ekn-color-border;
+}
+
+// Repeating Rows / Cards
+.ekn-row, .ekn-card {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  margin-bottom: 16px;
+  border: 1px solid $ekn-color-border;
+  border-radius: 8px;
+  background: $ekn-color-bg-row;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: $ekn-color-bg-header;
+    border-bottom: 1px solid $ekn-color-border;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  &__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+
+// Form Fields & Layout
+.ekn-fields-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+.ekn-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin-bottom: 12px;
+
+  &--grow {
+    flex: 1;
+  }
+}
+
+// Typography: Labels
+.ekn-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $ekn-color-label;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// Inputs
+.ekn-input, .ekn-select {
+  width: 100%;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 1px solid $ekn-color-border;
+  border-radius: 4px;
+  font-size: 14px;
+  color: $ekn-color-text;
+  transition: all 0.15s ease-in-out;
+  background: #ffffff;
+
+  &:hover {
+    border-color: $ekn-color-border-hover;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $ekn-color-border-focus;
+    box-shadow: 0 0 0 1px $ekn-color-border-focus;
+  }
+}
+
+.ekn-url-input {
+  width: 100%;
+  input {
+    border-radius: 4px !important;
+  }
+}
+
+// Buttons
+.ekn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.15s ease-in-out;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    margin-top: 8px;
+    padding: 10px 20px;
+    background: $ekn-color-primary;
+    color: #ffffff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+      background: lighten($ekn-color-primary, 15%);
+    }
+  }
+
+  &--danger {
+    padding: 4px 8px;
+    color: $ekn-color-danger;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 4px;
+
+    &:hover:not(:disabled) {
+      background: $ekn-color-danger-hover;
+    }
+  }
+
+  &--action {
+    background: #ffffff;
+    border: 1px solid $ekn-color-border;
+    color: $ekn-color-text;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+
+    &:hover:not(:disabled) {
+      background: $ekn-color-bg-header;
+      border-color: $ekn-color-border-hover;
+      color: #000;
+    }
+
+    &:disabled {
+      background: $ekn-color-bg-header;
+      border-color: $ekn-color-border;
+    }
+  }
+}

@@ -65,10 +65,10 @@ const Edit = ({ attributes, setAttributes }) => {
               label={__('Padding', 'eikonblocks')}
               value={paddingTop}
               options={[
-                { label: 'None', value: 'none' },
-                { label: 'Small', value: 'small' },
-                { label: 'Medium', value: 'medium' },
-                { label: 'Big', value: 'big' },
+                { label: __('Aucun', 'eikonblocks'), value: 'none' },
+                { label: __('Petit', 'eikonblocks'), value: 'small' },
+                { label: __('Moyen', 'eikonblocks'), value: 'medium' },
+                { label: __('Grand', 'eikonblocks'), value: 'big' },
               ]}
               onChange={(size) => setAttributes({ paddingTop: size, paddingBottom: size })}
             />
@@ -78,10 +78,10 @@ const Edit = ({ attributes, setAttributes }) => {
                 label={__('Padding Top', 'eikonblocks')}
                 value={paddingTop}
                 options={[
-                  { label: 'None', value: 'none' },
-                  { label: 'Small', value: 'small' },
-                  { label: 'Medium', value: 'medium' },
-                  { label: 'Big', value: 'big' },
+                  { label: __('Aucun', 'eikonblocks'), value: 'none' },
+                  { label: __('Petit', 'eikonblocks'), value: 'small' },
+                  { label: __('Moyen', 'eikonblocks'), value: 'medium' },
+                  { label: __('Grand', 'eikonblocks'), value: 'big' },
                 ]}
                 onChange={(size) => setAttributes({ paddingTop: size })}
               />
@@ -89,10 +89,10 @@ const Edit = ({ attributes, setAttributes }) => {
                 label={__('Padding Bottom', 'eikonblocks')}
                 value={paddingBottom}
                 options={[
-                  { label: 'None', value: 'none' },
-                  { label: 'Small', value: 'small' },
-                  { label: 'Medium', value: 'medium' },
-                  { label: 'Big', value: 'big' },
+                  { label: __('Aucun', 'eikonblocks'), value: 'none' },
+                  { label: __('Petit', 'eikonblocks'), value: 'small' },
+                  { label: __('Moyen', 'eikonblocks'), value: 'medium' },
+                  { label: __('Grand', 'eikonblocks'), value: 'big' },
                 ]}
                 onChange={(size) => setAttributes({ paddingBottom: size })}
               />

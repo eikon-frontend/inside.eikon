@@ -28,56 +28,67 @@ export default function Edit(props) {
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // numbers</div>
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor="title" style={{ display: 'block', marginBottom: '5px' }}>
-          {__('Titre', 'eikonblocks')}
-        </label>
-        <input
-          id="title"
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          placeholder={__('Add your title', 'eikonblocks')}
-          style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-        />
+      <div className="ekn-card">
+        <div className="ekn-card__main">
+          <div className="ekn-field ekn-field--grow">
+            <label htmlFor="title" className="ekn-label">{__('Titre', 'eikonblocks')}</label>
+            <input
+              id="title"
+              type="text"
+              className="ekn-input"
+              value={title}
+              onChange={handleTitleChange}
+              placeholder={__('Ajouter votre titre', 'eikonblocks')}
+            />
+          </div>
+        </div>
       </div>
       {items.map((item, index) => (
-        <div key={index} style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '10px' }}>
-          <div style={{ marginRight: '10px', flex: '1' }}>
-            <label htmlFor={`number-${index}`} style={{ display: 'block', marginBottom: '5px' }}>
-              {__('Nombre', 'eikonblocks')}
-            </label>
-            <input
-              id={`number-${index}`}
-              type="number"
-              value={item.number}
-              onChange={(event) => handleItemChange(index, 'number', event.target.value)}
-              placeholder={__('Number', 'eikonblocks')}
-              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-            />
+        <div key={index} className="ekn-row">
+          <div className="ekn-row__header">
+            <span className="ekn-label">{__('Élément', 'eikonblocks')} {index + 1}</span>
+            <div className="ekn-row__actions">
+              <button
+                type="button"
+                onClick={() => removeItem(index)}
+                className="ekn-btn ekn-btn--action"
+                aria-label={__('Supprimer', 'eikonblocks')}
+              >
+                ✕
+              </button>
+            </div>
           </div>
-          <div style={{ flex: '1' }}>
-            <label htmlFor={`text-${index}`} style={{ display: 'block', marginBottom: '5px' }}>
-              {__('Texte', 'eikonblocks')}
-            </label>
-            <input
-              id={`text-${index}`}
-              type="text"
-              value={item.text}
-              onChange={(event) => handleItemChange(index, 'text', event.target.value)}
-              placeholder={__('Text', 'eikonblocks')}
-              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-            />
+          <div className="ekn-row__main">
+            <div className="ekn-fields-row">
+              <div className="ekn-field ekn-field--grow">
+                <label htmlFor={`number-${index}`} className="ekn-label">{__('Nombre', 'eikonblocks')}</label>
+                <input
+                  id={`number-${index}`}
+                  type="number"
+                  className="ekn-input"
+                  value={item.number}
+                  onChange={(event) => handleItemChange(index, 'number', event.target.value)}
+                  placeholder={__('Nombre', 'eikonblocks')}
+                />
+              </div>
+              <div className="ekn-field ekn-field--grow">
+                <label htmlFor={`text-${index}`} className="ekn-label">{__('Texte', 'eikonblocks')}</label>
+                <input
+                  id={`text-${index}`}
+                  type="text"
+                  className="ekn-input"
+                  value={item.text}
+                  onChange={(event) => handleItemChange(index, 'text', event.target.value)}
+                  placeholder={__('Texte', 'eikonblocks')}
+                />
+              </div>
+            </div>
           </div>
-          <button
-            onClick={() => removeItem(index)}
-            style={{ marginLeft: '10px', padding: '8px', height: '40px' }}
-          >
-            {__('Remove', 'eikonblocks')}
-          </button>
         </div>
       ))}
-      <button onClick={addItem}>{__('Add Item', 'eikonblocks')}</button>
+      <button type="button" className="ekn-btn ekn-btn--primary" onClick={addItem}>
+        {__('+ Ajouter un élément', 'eikonblocks')}
+      </button>
     </div>
   );
 }

@@ -45,13 +45,17 @@ function Edit({ attributes, setAttributes, posts }) {
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // teaser department</div>
-      <div>
-        <FormTokenField
-          label="Select Departments:"
-          value={selectedPosts.map(post => post.title?.rendered)}
-          suggestions={postSuggestions}
-          onChange={addDepartment}
-        />
+      <div className="ekn-card">
+        <div className="ekn-card__main">
+          <div className="ekn-field ekn-field--grow">
+            <FormTokenField
+              label={__('Sélectionner les départements :', 'eikonblocks')}
+              value={selectedPosts.map(post => post.title?.rendered)}
+              suggestions={postSuggestions}
+              onChange={addDepartment}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

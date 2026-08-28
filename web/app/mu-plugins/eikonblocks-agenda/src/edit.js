@@ -47,94 +47,95 @@ export default function Edit({ attributes, setAttributes }) {
         const isExternal = hasLink && item.link.opensInNewTab;
 
         return (
-          <div key={index} className="agenda-editor-row">
-            <div className="agenda-editor-row__header">
-              <div className="agenda-editor-row__actions">
+          <div key={index} className="ekn-row">
+            <div className="ekn-row__header">
+              <span className="ekn-label">{__('Événement', 'eikonblocks')} {index + 1}</span>
+              <div className="ekn-row__actions">
                 <button
                   type="button"
-                  className="agenda-editor-row__move-up"
+                  className="ekn-btn ekn-btn--action"
                   onClick={() => moveItem(index, index - 1)}
                   disabled={index === 0}
-                  aria-label={__('Move event up', 'eikonblocks')}
+                  aria-label={__('Déplacer l\'événement vers le haut', 'eikonblocks')}
                 >
                   ↑
                 </button>
                 <button
                   type="button"
-                  className="agenda-editor-row__move-down"
+                  className="ekn-btn ekn-btn--action"
                   onClick={() => moveItem(index, index + 1)}
                   disabled={index === items.length - 1}
-                  aria-label={__('Move event down', 'eikonblocks')}
+                  aria-label={__('Déplacer l\'événement vers le bas', 'eikonblocks')}
                 >
                   ↓
                 </button>
+                <button
+                  type="button"
+                  className="ekn-btn ekn-btn--action"
+                  onClick={() => removeItem(index)}
+                  aria-label={__('Supprimer l\'événement', 'eikonblocks')}
+                >
+                  ✕
+                </button>
               </div>
-              <button
-                type="button"
-                className="agenda-editor-row__remove"
-                onClick={() => removeItem(index)}
-                aria-label={__('Remove event', 'eikonblocks')}
-              >
-                ✕
-              </button>
             </div>
 
-            <div className="agenda-editor-row__main">
-              <div className="agenda-editor-field">
-                <label className="agenda-editor-label">{__('Date', 'eikonblocks')}</label>
+            <div className="ekn-row__main">
+              <div className="ekn-field">
+                <label className="ekn-label">{__('Date', 'eikonblocks')}</label>
                 <input
                   type="text"
-                  className="agenda-editor-input"
+                  className="ekn-input"
                   value={item.date}
                   onChange={(e) => handleFieldChange(index, 'date', e.target.value)}
-                  placeholder={__('e.g. 12.06.2026', 'eikonblocks')}
+                  placeholder={__('ex. 12.06.2026', 'eikonblocks')}
                 />
               </div>
 
-              <div className="agenda-editor-field agenda-editor-field--grow">
-                <label className="agenda-editor-label">{__('Title', 'eikonblocks')}</label>
+              <div className="ekn-field ekn-field--grow">
+                <label className="ekn-label">{__('Titre', 'eikonblocks')}</label>
                 <input
                   type="text"
-                  className="agenda-editor-input"
+                  className="ekn-input"
                   value={item.title}
                   onChange={(e) => handleFieldChange(index, 'title', e.target.value)}
-                  placeholder={__('Event title', 'eikonblocks')}
+                  placeholder={__('Titre de l\'événement', 'eikonblocks')}
                 />
               </div>
             </div>
 
-            <div className="agenda-editor-row__link">
-              <div className="agenda-editor-field">
-                <label className="agenda-editor-label">{__('Link (optional)', 'eikonblocks')}</label>
+            <div style={{ padding: '0 16px 16px', borderTop: '1px dashed #e5e7eb', marginTop: '16px' }}>
+              <div className="ekn-field" style={{ marginTop: '16px' }}>
+                <label className="ekn-label">{__('Lien (optionnel)', 'eikonblocks')}</label>
                 <URLInput
-                  className="agenda-editor-urlinput"
+                  className="ekn-url-input"
                   value={item.link?.url || ''}
                   onChange={(url) => handleLinkChange(index, { url })}
-                  placeholder={__('Paste URL or search for a page…', 'eikonblocks')}
+                  placeholder={__('Coller l\'URL ou rechercher une page…', 'eikonblocks')}
                 />
               </div>
 
               {hasLink && (
-                <div className="agenda-editor-row__link-options">
-                  <div className="agenda-editor-field agenda-editor-field--grow">
-                    <label className="agenda-editor-label">{__('Button label', 'eikonblocks')}</label>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+                  <div className="ekn-field ekn-field--grow">
+                    <label className="ekn-label">{__('Libellé du bouton', 'eikonblocks')}</label>
                     <input
                       type="text"
-                      className="agenda-editor-input"
+                      className="ekn-input"
                       value={item.link?.label || ''}
                       onChange={(e) => handleLinkChange(index, { label: e.target.value })}
                       placeholder={DEFAULT_LINK_LABEL}
                     />
                   </div>
 
-                  <div className="agenda-editor-field agenda-editor-field--newtab">
-                    <label className="agenda-editor-label agenda-editor-label--checkbox">
+                  <div className="ekn-field" style={{ flexShrink: 0 }}>
+                    <label className="ekn-label" style={{ cursor: 'pointer' }}>
                       <input
                         type="checkbox"
                         checked={item.link?.opensInNewTab || false}
                         onChange={(e) => handleLinkChange(index, { opensInNewTab: e.target.checked })}
                       />
-                      {__('New tab', 'eikonblocks')}
+                      {__('Nouvel onglet', 'eikonblocks')}
                     </label>
                     <span className={`agenda-editor-icon-badge agenda-editor-icon-badge--${isExternal ? 'external' : 'internal'}`}>
                       {isExternal ? '↗' : '→'}
@@ -147,8 +148,8 @@ export default function Edit({ attributes, setAttributes }) {
         );
       })}
 
-      <button className="agenda-editor-add" onClick={addItem}>
-        {__('+ Add event', 'eikonblocks')}
+      <button type="button" className="ekn-btn ekn-btn--primary" onClick={addItem}>
+        {__('+ Ajouter un événement', 'eikonblocks')}
       </button>
     </div>
   );

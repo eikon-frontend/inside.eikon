@@ -18,7 +18,7 @@ export default function Edit(props) {
         <ToolbarGroup
           isCollapsed={true}
           icon="heading"
-          label={__('Change heading level', 'eikonblocks')}
+          label={__('Modifier le niveau du titre', 'eikonblocks')}
           controls={['2', '3', '4'].map((index) => ({
             icon: 'heading',
             title: 'H' + index,
@@ -39,7 +39,7 @@ export default function Edit(props) {
           tagName={`h${level}`}
           value={content}
           onChange={(content) => setAttributes({ content })}
-          placeholder={__('Write heading…', 'eikonblocks')}
+          placeholder={__('Écrire le titre…', 'eikonblocks')}
           allowedFormats={['core/italic']}
         />
       </div>

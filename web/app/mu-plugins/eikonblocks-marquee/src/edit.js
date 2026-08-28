@@ -13,7 +13,7 @@ export default function Edit(props) {
         tagName="p"
         value={content}
         onChange={(content) => setAttributes({ content: content })}
-        placeholder={__('Add your custom text', 'eikonblocks')}
+        placeholder={__('Ajouter votre texte personnalisé', 'eikonblocks')}
         allowedFormats={['core/italic']}
         style={{ fontSize: '60px', padding: '0', margin: '0' }}
       />

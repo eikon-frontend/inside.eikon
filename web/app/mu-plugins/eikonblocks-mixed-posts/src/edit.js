@@ -55,59 +55,63 @@ function Edit(props) {
   return (
     <div {...useBlockProps()}>
       <div className='eikonblock-title'>eikonblock // mixed posts</div>
-      <div>
-        <FormTokenField
-          label="Select Post Types:"
-          value={Object.keys(selectedCPTsData)}
-          suggestions={cptSuggestions}
-          onChange={handleCPTChange}
-        />
+      <div className="ekn-card">
+        <div className="ekn-card__main">
+          <div className="ekn-field ekn-field--grow">
+            <FormTokenField
+              label={__('Sélectionner les types de publication :', 'eikonblocks')}
+              value={Object.keys(selectedCPTsData)}
+              suggestions={cptSuggestions}
+              onChange={handleCPTChange}
+            />
+          </div>
+        </div>
       </div>
       {Object.entries(selectedCPTsData).map(([cptName, cptData]) => (
-        <div className="cpt-card" key={cptName} style={{ backgroundColor: "white", borderRadius: "8px", padding: "16px", marginBottom: "16px" }}>
-          <Fragment>
-            <div>
-              <strong>{availableCPTs.find((cpt) => cpt.slug === cptName)?.name}</strong>
-            </div>
-            <FormTokenField
-              label="Select Taxonomies:"
-              value={Object.keys(cptData.taxonomies)}
-              suggestions={taxonomySuggestions[cptName] || []}
-              onChange={(tokens) => {
-                const updatedCPTsData = { ...selectedCPTsData };
-                updatedCPTsData[cptName].taxonomies = {};
-                tokens.forEach((taxonomy) => {
-                  updatedCPTsData[cptName].taxonomies[taxonomy] =
-                    cptData.taxonomies[taxonomy] || [];
-                });
-                setAttributes({ selectedCPTsData: updatedCPTsData });
-              }}
-            />
-            {Object.entries(cptData.taxonomies).map(([taxonomyName, terms]) => (
-              <Fragment key={taxonomyName}>
-                <div>
-                  <strong>{availableTaxonomies[cptName]
-                    ?.find((tax) => tax.slug === taxonomyName)
-                    ?.name}</strong>
-                </div>
+        <div className="ekn-card" key={cptName}>
+          <div className="ekn-card__header">
+            <span className="ekn-label">{availableCPTs.find((cpt) => cpt.slug === cptName)?.name}</span>
+          </div>
+          <div className="ekn-card__main">
+            <div className="ekn-fields-row">
+              <div className="ekn-field ekn-field--grow">
                 <FormTokenField
-                  label={`Select Terms for ${availableTaxonomies[cptName]
-                    ?.find((tax) => tax.slug === taxonomyName)
-                    ?.name
-                    }:`}
-                  value={terms}
-                  suggestions={termSuggestions[`${cptName}-${taxonomyName}`] || []}
-                  onChange={(tokens) =>
-                    handleTaxonomyTermChange(
-                      cptName,
-                      taxonomyName,
-                      tokens
-                    )
-                  }
+                  label={__('Sélectionner les taxonomies :', 'eikonblocks')}
+                  value={Object.keys(cptData.taxonomies)}
+                  suggestions={taxonomySuggestions[cptName] || []}
+                  onChange={(tokens) => {
+                    const updatedCPTsData = { ...selectedCPTsData };
+                    updatedCPTsData[cptName].taxonomies = {};
+                    tokens.forEach((taxonomy) => {
+                      updatedCPTsData[cptName].taxonomies[taxonomy] =
+                        cptData.taxonomies[taxonomy] || [];
+                    });
+                    setAttributes({ selectedCPTsData: updatedCPTsData });
+                  }}
                 />
-              </Fragment>
+              </div>
+            </div>
+            {Object.entries(cptData.taxonomies).map(([taxonomyName, terms]) => (
+              <div className="ekn-fields-row" key={taxonomyName}>
+                <div className="ekn-field ekn-field--grow">
+                  <FormTokenField
+                    label={__('Sélectionner les termes pour ', 'eikonblocks') + (availableTaxonomies[cptName]
+                      ?.find((tax) => tax.slug === taxonomyName)
+                      ?.name || '') + ' :'}
+                    value={terms}
+                    suggestions={termSuggestions[`${cptName}-${taxonomyName}`] || []}
+                    onChange={(tokens) =>
+                      handleTaxonomyTermChange(
+                        cptName,
+                        taxonomyName,
+                        tokens
+                      )
+                    }
+                  />
+                </div>
+              </div>
             ))}
-          </Fragment>
+          </div>
         </div>
       ))}
       <div className="mixed-posts" data-cpt={JSON.stringify(selectedCPTsData)}></div>

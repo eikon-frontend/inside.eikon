@@ -32,58 +32,57 @@ export default function Edit(props) {
       <div {...useBlockProps()}>
         <div className='eikonblock-title'>eikonblock // accordion</div>
         {items.map((item, index) => (
-          <div key={index} style={{ marginBottom: '20px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>
-              {__('Title', 'eikonblocks')}
-              <RichText
-                tagName="div"
-                value={item.title}
-                onChange={(value) => handleTitleChange(index, value)}
-                placeholder={__('Enter title', 'eikonblocks')}
-                style={{ padding: '8px', marginBottom: '10px', borderRadius: '3px', border: '1px solid #ccc' }}
-                allowedFormats={['core/italic']}
-              />
-            </label>
-            <label style={{ display: 'block', marginBottom: '5px' }}>
-              {__('Text', 'eikonblocks')}
-              <RichText
-                tagName="div"
-                value={item.text}
-                onChange={(value) => handleTextChange(index, value)}
-                placeholder={__('Enter text', 'eikonblocks')}
-                style={{ padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
-                allowedFormats={['core/italic', 'core/link']}
-              />
-            </label>
-            <button
-              onClick={() => handleRemoveItem(index)}
-              style={{
-                marginTop: '10px',
-                padding: '8px 16px',
-                backgroundColor: '#d9534f',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              {__('Supprimer', 'eikonblocks')}
-            </button>
+          <div key={index} className="ekn-row">
+            <div className="ekn-row__header">
+              <span className="ekn-label">{__('Élément', 'eikonblocks')} {index + 1}</span>
+              <div className="ekn-row__actions">
+                <button
+                  type="button"
+                  onClick={() => handleRemoveItem(index)}
+                  className="ekn-btn ekn-btn--action"
+                  aria-label={__('Supprimer', 'eikonblocks')}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            
+            <div className="ekn-row__main">
+              <div className="ekn-fields-row">
+                <div className="ekn-field ekn-field--grow">
+                  <label className="ekn-label">{__('Titre', 'eikonblocks')}</label>
+                  <RichText
+                    tagName="div"
+                    value={item.title}
+                    onChange={(value) => handleTitleChange(index, value)}
+                    placeholder={__('Saisir le titre', 'eikonblocks')}
+                    className="ekn-input"
+                    allowedFormats={['core/italic']}
+                  />
+                </div>
+              </div>
+              <div className="ekn-fields-row">
+                <div className="ekn-field ekn-field--grow">
+                  <label className="ekn-label">{__('Texte', 'eikonblocks')}</label>
+                  <RichText
+                    tagName="div"
+                    value={item.text}
+                    onChange={(value) => handleTextChange(index, value)}
+                    placeholder={__('Saisir le texte', 'eikonblocks')}
+                    className="ekn-input"
+                    allowedFormats={['core/italic', 'core/link']}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         ))}
         <button
+          type="button"
           onClick={addItem}
-          style={{
-            marginTop: '10px',
-            padding: '8px 16px',
-            backgroundColor: '#333',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
+          className="ekn-btn ekn-btn--primary"
         >
-          {__('Ajouter un élément', 'eikonblocks')}
+          {__('+ Ajouter un élément', 'eikonblocks')}
         </button>
       </div>
     </>

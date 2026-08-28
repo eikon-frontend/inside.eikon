@@ -67,109 +67,85 @@ export default function Edit(props) {
       <div {...useBlockProps()}>
         <div className='eikonblock-title'>eikonblock // buttons</div>
         {items.map((item, index) => (
-          <div key={index} style={{ marginBottom: '5px', padding: '10px', background: 'white', color: 'black', border: '1px solid #ddd', borderRadius: '5px' }}>
-            <table style={{ width: '90%' }}>
-              <tbody>
-                <tr>
-                  <td style={{ width: '30%', verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
-                    <label>{__('Label', 'eikonblocks')}</label>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={item.title || ''}
-                      onChange={(e) => handleTitleChange(index, e.target.value)}
-                      placeholder={__('Enter title', 'eikonblocks')}
-                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
-                    <label>{__('Lien', 'eikonblocks')}</label>
-                  </td>
-                  <td>
-                    <URLInput
-                      value={item.url || ''}
-                      onChange={(url, link) => handleUrlChange(index, link || { url })}
-                      placeholder={__('Enter URL', 'eikonblocks')}
-                      className="eikonblocks-url-input"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
-                    <label>{__('Open in new tab', 'eikonblocks')}</label>
-                  </td>
-                  <td style={{ textAlign: 'left' }}>
+          <div key={index} className="ekn-row">
+            <div className="ekn-row__header">
+              <span className="ekn-label">{__('Bouton', 'eikonblocks')} {index + 1}</span>
+              <div className="ekn-row__actions">
+                <button
+                  type="button"
+                  onClick={() => removeItem(index)}
+                  className="ekn-btn ekn-btn--action"
+                  aria-label={__('Supprimer le bouton', 'eikonblocks')}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            <div className="ekn-row__main">
+              <div className="ekn-fields-row">
+                <div className="ekn-field ekn-field--grow">
+                  <label className="ekn-label">{__('Label', 'eikonblocks')}</label>
+                  <input
+                    type="text"
+                    value={item.title || ''}
+                    onChange={(e) => handleTitleChange(index, e.target.value)}
+                    placeholder={__('Saisir le titre', 'eikonblocks')}
+                    className="ekn-input"
+                  />
+                </div>
+                <div className="ekn-field ekn-field--grow">
+                  <label className="ekn-label">{__('Lien', 'eikonblocks')}</label>
+                  <URLInput
+                    value={item.url || ''}
+                    onChange={(url, link) => handleUrlChange(index, link || { url })}
+                    placeholder={__('Saisir l\'URL', 'eikonblocks')}
+                    className="ekn-url-input"
+                  />
+                </div>
+              </div>
+              <div className="ekn-fields-row">
+                <div className="ekn-field ekn-field--grow">
+                  <label className="ekn-label">{__('Style', 'eikonblocks')}</label>
+                  <select
+                    value={item.style}
+                    onChange={(e) => handleStyleChange(index, e.target.value)}
+                    className="ekn-select"
+                  >
+                    <option value="plain">{__('Plein', 'eikonblocks')}</option>
+                    <option value="outline">{__('Contour', 'eikonblocks')}</option>
+                  </select>
+                </div>
+                <div className="ekn-field ekn-field--grow">
+                  <label className="ekn-label">{__('Icône', 'eikonblocks')}</label>
+                  <select
+                    value={item.icon}
+                    onChange={(e) => handleIconChange(index, e.target.value)}
+                    className="ekn-select"
+                  >
+                    <option value="none">{__('Aucune', 'eikonblocks')}</option>
+                    <option value="arrow">{__('Flèche', 'eikonblocks')}</option>
+                    <option value="download">{__('Téléchargement', 'eikonblocks')}</option>
+                    <option value="external">{__('Externe', 'eikonblocks')}</option>
+                  </select>
+                </div>
+                <div className="ekn-field">
+                  <label className="ekn-label" style={{ cursor: 'pointer', height: '100%', justifyContent: 'flex-start', paddingTop: '10px' }}>
                     <input
                       type="checkbox"
                       checked={item.opensInNewTab}
                       onChange={(e) => handleOpenInNewTabChange(index, e.target.checked)}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
-                    <label>{__('Style', 'eikonblocks')}</label>
-                  </td>
-                  <td>
-                    <select
-                      value={item.style}
-                      onChange={(e) => handleStyleChange(index, e.target.value)}
-                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
-                    >
-                      <option value="plain">{__('Plain', 'eikonblocks')}</option>
-                      <option value="outline">{__('Outline', 'eikonblocks')}</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: '10px', paddingTop: '6px' }}>
-                    <label>{__('Icon', 'eikonblocks')}</label>
-                  </td>
-                  <td>
-                    <select
-                      value={item.icon}
-                      onChange={(e) => handleIconChange(index, e.target.value)}
-                      style={{ width: '90%', padding: '8px', borderRadius: '3px', border: '1px solid #ccc' }}
-                    >
-                      <option value="none">{__('None', 'eikonblocks')}</option>
-                      <option value="arrow">{__('Arrow', 'eikonblocks')}</option>
-                      <option value="download">{__('Download', 'eikonblocks')}</option>
-                      <option value="external">{__('External', 'eikonblocks')}</option>
-                    </select>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <button
-              onClick={() => removeItem(index)}
-              style={{
-                marginTop: '10px',
-                padding: '8px 16px',
-                backgroundColor: '#d63638',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              {__('Supprimer le bouton', 'eikonblocks')}
-            </button>
+                    {__('Ouvrir dans un nouvel onglet', 'eikonblocks')}
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
         ))}
         <button
+          type="button"
           onClick={addItem}
-          style={{
-            marginTop: '10px',
-            padding: '8px 16px',
-            backgroundColor: '#333',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
+          className="ekn-btn ekn-btn--primary"
         >
           {__('Ajouter un bouton', 'eikonblocks')}
         </button>
