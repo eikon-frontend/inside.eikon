@@ -261,3 +261,39 @@ function eikon_bulk_classe_change_notice()
     printf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html($msg));
   }
 }
+
+/**
+ * Disable changing class, first name, last name, and email for students on their own profile
+ */
+add_action('admin_footer-profile.php', 'eikon_disable_student_profile_fields');
+function eikon_disable_student_profile_fields()
+{
+  $user = wp_get_current_user();
+  if (in_array('student', (array) $user->roles)) {
+?>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var fieldsToReadonly = ['first_name', 'last_name', 'email'];
+        fieldsToReadonly.forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) {
+            el.setAttribute('readonly', 'readonly');
+            el.style.backgroundColor = '#f0f0f1';
+            el.style.color = '#8c8f94';
+            el.style.cursor = 'not-allowed';
+          }
+        });
+
+        // For ACF Classe (Select)
+        var acfClasse = document.querySelector('.acf-field[data-name="classe"] select');
+        if (acfClasse) {
+          acfClasse.style.pointerEvents = 'none';
+          acfClasse.style.backgroundColor = '#f0f0f1';
+          acfClasse.style.color = '#8c8f94';
+          acfClasse.setAttribute('tabindex', '-1');
+        }
+      });
+    </script>
+<?php
+  }
+}

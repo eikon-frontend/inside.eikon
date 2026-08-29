@@ -32,7 +32,7 @@
             "default_value": false,
             "return_format": "value",
             "multiple": 0,
-            "allow_null": 0,
+            "allow_null": 1,
             "allow_in_bindings": 0,
             "ui": 0,
             "show_in_graphql": 1,
@@ -51,11 +51,6 @@
                 "param": "user_form",
                 "operator": "==",
                 "value": "all"
-            },
-            {
-                "param": "user_role",
-                "operator": "==",
-                "value": "student"
             }
         ]
     ],
