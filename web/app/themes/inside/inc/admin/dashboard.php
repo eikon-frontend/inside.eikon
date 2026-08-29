@@ -41,14 +41,77 @@ function eikon_customize_dashboard()
 }
 
 /**
- * Add dashicon styling to dashboard widget titles
+ * Add custom styling to dashboard widgets
  */
-add_action('admin_print_styles', 'eikon_dashboard_dashicons_style');
-function eikon_dashboard_dashicons_style()
+add_action('admin_print_styles', 'eikon_dashboard_custom_style');
+function eikon_dashboard_custom_style()
 {
+  $font_url = get_template_directory_uri() . '/assets/fonts/NoiGrotesk-Medium.woff2';
   echo '<style>
+    @font-face {
+      font-family: "NoiGrotesk";
+      src: url("' . esc_url($font_url) . '") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+    }
+    
+    #dashboard-widgets .postbox h2 {
+      font-family: "NoiGrotesk", sans-serif;
+    }
+
     #eikon_stats .dashicons-chart-bar::before { content: "\f185"; }
     #eikon_random_project .dashicons-format-gallery::before { content: "\f145"; }
+
+    .eikon-dashboard-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      font-family: "NoiGrotesk", sans-serif;
+      font-size: 16px;
+      text-decoration: none;
+      border-radius: 9999px;
+      transition: all 0.2s ease;
+      background: transparent;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    
+    .eikon-dashboard-btn.outline-blue {
+      border: 2px solid #0000ff;
+      color: #0000ff;
+    }
+    
+    .eikon-dashboard-btn.outline-blue:hover {
+      background: #0000ff;
+      color: white;
+    }
+    
+    .eikon-dashboard-btn.outline-white {
+      border: 2px solid white;
+      color: white;
+    }
+    
+    .eikon-dashboard-btn.outline-white:hover {
+      background: white;
+      color: black;
+    }
+    
+    .eikon-stat-card {
+      padding: 20px;
+      color: white;
+      font-family: "NoiGrotesk", sans-serif;
+    }
+    
+    .eikon-stat-number {
+      font-size: 48px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    
+    .eikon-stat-label {
+      font-size: 18px;
+    }
   </style>';
 }
 
@@ -79,10 +142,10 @@ function eikon_add_dashicons_to_titles()
 function eikon_documentation_widget_content()
 {
 ?>
-  <div style="padding: 0;">
+  <div style="font-family: 'NoiGrotesk', sans-serif; text-align: center;">
     <p style="margin-bottom: 0;">
-      <a href="https://eikon-imd.notion.site/eikon-ch" target="_blank" rel="noopener noreferrer" class="button button-primary" style="width: 100%; text-align: center; box-sizing: border-box;">
-        Guide d'utilisation inside.eikon
+      <a href="https://eikon-imd.notion.site/eikon-ch" target="_blank" rel="noopener noreferrer" class="eikon-dashboard-btn outline-blue">
+        Guide d'utilisation inside.eikon &rarr;
       </a>
     </p>
   </div>
@@ -106,57 +169,57 @@ function eikon_stats_widget_content()
 
 ?>
   <div style="padding: 0;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+      <div class="eikon-stat-card" style="background: #9700ff;">
+        <div class="eikon-stat-number">
           <?php echo esc_html($total_projects); ?>
         </div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+        <div class="eikon-stat-label">
           Projets totaux
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;">
+      <div class="eikon-stat-card" style="background: #ff3a00;">
+        <div class="eikon-stat-number">
           <?php echo esc_html($published_projects); ?>
         </div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+        <div class="eikon-stat-label">
           Projets publiés
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;">
+      <div class="eikon-stat-card" style="background: #ff6a13;">
+        <div class="eikon-stat-number">
           <?php echo esc_html($draft_projects); ?>
         </div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+        <div class="eikon-stat-label">
           En brouillon
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;">
+      <div class="eikon-stat-card" style="background: #0000ff;">
+        <div class="eikon-stat-number">
           <?php echo esc_html($total_users_count); ?>
         </div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+        <div class="eikon-stat-label">
           Utilisateurs
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;">
+      <div class="eikon-stat-card" style="background: #ff007b;">
+        <div class="eikon-stat-number">
           <?php echo esc_html($teacher_count); ?>
         </div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+        <div class="eikon-stat-label">
           Enseignants
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #30b0fe 0%, #4834d4 100%); padding: 16px; border-radius: 8px; color: white; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;">
+      <div class="eikon-stat-card" style="background: #00c3ff;">
+        <div class="eikon-stat-number">
           <?php echo esc_html($student_count); ?>
         </div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+        <div class="eikon-stat-label">
           Étudiants
         </div>
       </div>
@@ -189,48 +252,46 @@ function eikon_random_project_widget_content()
     $section_terms = get_the_terms($project->ID, 'section');
     $subjects_terms = get_the_terms($project->ID, 'subjects');
   ?>
-    <div style="padding: 0; overflow: hidden;">
+    <div style="padding: 0; overflow: hidden; font-family: 'NoiGrotesk', sans-serif; background: #9700ff; color: white;">
       <?php if ($project_thumbnail) : ?>
-        <div style="position: relative; margin: 0 0 16px 0; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-          <img src="<?php echo esc_url($project_thumbnail); ?>" alt="<?php echo esc_attr($project->post_title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 100%);"></div>
+        <div style="position: relative; overflow: hidden; aspect-ratio: 16/9;">
+          <img src="<?php echo esc_url($project_thumbnail); ?>" alt="<?php echo esc_attr($project->post_title); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block;">
         </div>
       <?php endif; ?>
 
-      <div style="padding: 0;">
-        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1f2937; line-height: 1.4;">
+      <div style="padding: 24px;">
+        <h3 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 500; color: white; line-height: 1.2;">
           <?php echo esc_html($project->post_title); ?>
         </h3>
 
         <div style="margin-bottom: 12px;">
-          <p style="margin: 6px 0; font-size: 12px; color: #6b7280; display: flex; align-items: center;">
-            <span style="display: inline-block; margin-right: 4px;">👤</span>
+          <p style="margin: 6px 0; font-size: 14px; display: flex; align-items: center;">
             <?php echo esc_html($author->display_name); ?>
           </p>
         </div>
 
-        <div style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px;">
+        <div style="margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 8px;">
           <?php if ($year_terms) : ?>
-            <span style="background: #f3f4f6; color: #374151; padding: 4px 10px; border-radius: 14px; font-size: 11px; font-weight: 500;">
-              📅 <?php echo esc_html($year_terms[0]->name); ?>
+            <span style="border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 9999px; font-size: 12px;">
+              <?php echo esc_html($year_terms[0]->name); ?>
             </span>
           <?php endif; ?>
 
           <?php if ($section_terms) : ?>
-            <span style="background: #ede9fe; color: #6d28d9; padding: 4px 10px; border-radius: 14px; font-size: 11px; font-weight: 500;">
-              🎓 <?php echo esc_html($section_terms[0]->name); ?>
+            <span style="border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 9999px; font-size: 12px;">
+              <?php echo esc_html($section_terms[0]->name); ?>
             </span>
           <?php endif; ?>
 
           <?php if ($subjects_terms) : ?>
-            <span style="background: #fce7f3; color: #831843; padding: 4px 10px; border-radius: 14px; font-size: 11px; font-weight: 500;">
-              🎨 <?php echo esc_html($subjects_terms[0]->name); ?>
+            <span style="border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 9999px; font-size: 12px;">
+              <?php echo esc_html($subjects_terms[0]->name); ?>
             </span>
           <?php endif; ?>
         </div>
 
-        <a href="<?php echo esc_url($project_url); ?>" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3); transition: all 0.2s ease; box-sizing: border-box;">
-          Découvrir le projet <span style="margin-left: 6px;">→</span>
+        <a href="<?php echo esc_url($project_url); ?>" target="_blank" rel="noopener noreferrer" class="eikon-dashboard-btn outline-white">
+          Découvrir le projet &rarr;
         </a>
       </div>
     </div>
