@@ -116,7 +116,7 @@ export default function Edit({ attributes, setAttributes }) {
               </div>
 
               {hasLink && (
-                <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginTop: '12px' }}>
                   <div className="ekn-field ekn-field--grow">
                     <label className="ekn-label">{__('Libellé du bouton', 'eikonblocks')}</label>
                     <input
@@ -128,18 +128,20 @@ export default function Edit({ attributes, setAttributes }) {
                     />
                   </div>
 
-                  <div className="ekn-field" style={{ flexShrink: 0 }}>
-                    <label className="ekn-label" style={{ cursor: 'pointer' }}>
-                      <input
-                        type="checkbox"
-                        checked={item.link?.opensInNewTab || false}
-                        onChange={(e) => handleLinkChange(index, { opensInNewTab: e.target.checked })}
-                      />
-                      {__('Nouvel onglet', 'eikonblocks')}
-                    </label>
-                    <span className={`agenda-editor-icon-badge agenda-editor-icon-badge--${isExternal ? 'external' : 'internal'}`}>
-                      {isExternal ? '↗' : '→'}
-                    </span>
+                  <div className="ekn-field" style={{ flexShrink: 0, minHeight: '38px', justifyContent: 'center', paddingBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <label className="ekn-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={item.link?.opensInNewTab || false}
+                          onChange={(e) => handleLinkChange(index, { opensInNewTab: e.target.checked })}
+                        />
+                        {__('Nouvel onglet', 'eikonblocks')}
+                      </label>
+                      <span className={`agenda-editor-icon-badge agenda-editor-icon-badge--${isExternal ? 'external' : 'internal'}`}>
+                        {isExternal ? '↗' : '→'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}

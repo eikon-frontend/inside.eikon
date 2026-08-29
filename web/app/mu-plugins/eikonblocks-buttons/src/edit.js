@@ -128,8 +128,8 @@ export default function Edit(props) {
                     <option value="external">{__('Externe', 'eikonblocks')}</option>
                   </select>
                 </div>
-                <div className="ekn-field">
-                  <label className="ekn-label" style={{ cursor: 'pointer', height: '100%', justifyContent: 'flex-start', paddingTop: '10px' }}>
+                <div className="ekn-field" style={{ minHeight: '38px', justifyContent: 'flex-end', paddingBottom: '10px' }}>
+                  <label className="ekn-checkbox">
                     <input
                       type="checkbox"
                       checked={item.opensInNewTab}

@@ -4,7 +4,6 @@
 
 .wp-block h2 {
   margin: 0;
-  font-size: 14px;
 }
 
 .wp-block a {
@@ -46,12 +45,21 @@
   font-family: "eikon", sans-serif;
 }
 
-.wp-block input {
+.wp-block input:not([type="checkbox"]):not([type="radio"]) {
   font-family: "eikon", sans-serif;
   width: 100% !important;
   border: 1px solid #999 !important;
   border-radius: 4px !important;
   padding: 2px 6px !important;
+}
+
+.wp-block input[type="checkbox"],
+.wp-block input[type="radio"] {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer;
 }
 
 .list-items-container {

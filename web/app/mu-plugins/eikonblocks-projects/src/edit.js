@@ -2,6 +2,7 @@ import { withSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { FormTokenField } from '@wordpress/components'; // Ajouté pour les champs à tags
+import './editor.scss';
 
 function Edit(props) {
   const { attributes, setAttributes, years, sections } = props;

@@ -1,7 +1,9 @@
+import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { FormTokenField, PanelBody, RangeControl, SelectControl, Spinner } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
+import './editor.scss';
 
 // Normalize accents for accent-insensitive comparison
 const normalizeString = (str) => {
@@ -50,7 +52,11 @@ export default function Edit({ attributes, setAttributes }) {
       for (const [taxonomySlug, termNames] of Object.entries(selectedTaxonomies)) {
         if (termNames.length === 0) continue;
 
-        const termsInPost = post[taxonomySlug] || [];
+        const termsInPost = Array.isArray(post[taxonomySlug])
+          ? post[taxonomySlug]
+          : post[taxonomySlug]
+          ? [post[taxonomySlug]]
+          : [];
 
         const hasMatch = termNames.some((termName) => {
           const termsForTax = allTerms[taxonomySlug] || [];
@@ -174,7 +180,7 @@ export default function Edit({ attributes, setAttributes }) {
               <ul style={{ maxHeight: '300px', overflowY: 'auto', margin: '0', paddingLeft: '20px', width: '100%' }}>
                 {previewPosts.slice(0, postsPerPage).map((post) => (
                   <li key={post.id} style={{ marginBottom: '4px', fontSize: '14px', color: '#374151' }}>
-                    {post.title.rendered || __('(Sans titre)', 'eikonblocks')}
+                    {post.title?.rendered || (typeof post?.title === 'string' ? post.title : __('(Sans titre)', 'eikonblocks'))}
                   </li>
                 ))}
               </ul>

@@ -78,7 +78,7 @@ $ekn-color-danger-hover: #fee2e2;
   }
 }
 
-// Typography: Labels
+// Typography: Labels & Toggles
 .ekn-label {
   font-size: 11px;
   font-weight: 600;
@@ -88,6 +88,47 @@ $ekn-color-danger-hover: #fee2e2;
   display: flex;
   align-items: center;
   gap: 6px;
+  user-select: none;
+
+  input[type="checkbox"] {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    max-width: 15px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+.ekn-checkbox, .ekn-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $ekn-color-label;
+  white-space: nowrap;
+
+  input[type="checkbox"] {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    max-width: 15px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    color: $ekn-color-text;
+  }
 }
 
 // Inputs
@@ -98,7 +139,6 @@ $ekn-color-danger-hover: #fee2e2;
   border: 1px solid $ekn-color-border;
   border-radius: 4px;
   font-size: 14px;
-  color: $ekn-color-text;
   transition: all 0.15s ease-in-out;
   background: #ffffff;
 
@@ -165,7 +205,6 @@ $ekn-color-danger-hover: #fee2e2;
   &--action {
     background: #ffffff;
     border: 1px solid $ekn-color-border;
-    color: $ekn-color-text;
     font-size: 12px;
     padding: 4px 8px;
     border-radius: 4px;
