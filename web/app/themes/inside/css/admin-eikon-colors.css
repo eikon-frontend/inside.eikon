@@ -1,0 +1,76 @@
+/* Eikon Admin Color Scheme */
+:root {
+  --wp-admin-theme-color: #0000DE;
+  --wp-admin-theme-color-darker-10: #0000B0;
+  --wp-admin-theme-color-darker-20: #000080;
+}
+
+#adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+  background-color: #000000;
+}
+
+#adminmenu a {
+  color: #FFFFFF;
+}
+
+#adminmenu .wp-has-current-submenu .wp-submenu,
+#adminmenu .wp-has-current-submenu .wp-submenu.sub-open,
+#adminmenu .wp-has-current-submenu.opensub .wp-submenu,
+#adminmenu a.wp-has-current-submenu:focus+.wp-submenu,
+.no-js li.wp-has-current-submenu:hover .wp-submenu {
+  background-color: #1a1a1a;
+}
+
+#adminmenu li.current a.menu-top,
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+#adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
+.folded #adminmenu li.current.menu-top {
+  color: #FFFFFF;
+  background: #0000DE;
+}
+
+#adminmenu li a:focus,
+#adminmenu li a:hover,
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub>a.menu-top,
+#adminmenu li>a.menu-top:focus {
+  color: #FF2C00;
+  background-color: #1a1a1a;
+}
+
+.wp-core-ui .button-primary {
+  background: #0000DE;
+  border-color: #0000DE;
+  color: #FFFFFF;
+}
+
+.wp-core-ui .button-primary:hover,
+.wp-core-ui .button-primary:focus {
+  background: #FF2C00;
+  border-color: #FF2C00;
+  color: #FFFFFF;
+}
+
+#wpadminbar {
+  background: #000000;
+}
+
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item,
+#wpadminbar>#wp-toolbar span.ab-label,
+#wpadminbar>#wp-toolbar span.noticon {
+  color: #FFFFFF;
+}
+
+#wpadminbar .ab-top-menu>li.hover>.ab-item,
+#wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus,
+#wpadminbar:not(.mobile) .ab-top-menu>li:hover>.ab-item,
+#wpadminbar:not(.mobile) .ab-top-menu>li>.ab-item:focus {
+  background: #1a1a1a;
+  color: #FF2C00;
+}
+
+#wpadminbar .menupop .ab-sub-wrapper,
+#wpadminbar .shortlink-input {
+  background: #1a1a1a;
+}

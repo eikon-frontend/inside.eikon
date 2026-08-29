@@ -50,7 +50,7 @@ function mandat_post_type()
     'show_in_graphql'       => true,
     'graphql_single_name'   => 'mandat',
     'graphql_plural_name'   => 'mandats',
-    'public'                => false,
+    'public'                => true,
     'show_ui'               => true,
     'show_in_rest'          => true,
     'show_in_menu'          => true,
@@ -82,7 +82,7 @@ add_action('admin_menu', 'remove_mandat_taxonomies_metabox');
 // Hide slug and author metaboxes from non-super-admin users
 function hide_mandat_slug_author_metabox()
 {
-  if (!is_super_admin()) {
+  if (!current_user_can('manage_options')) {
     remove_meta_box('slugdiv', 'mandat', 'normal');
     remove_meta_box('authordiv', 'mandat', 'normal');
   }

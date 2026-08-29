@@ -75,7 +75,7 @@ function eikon_validate_filename_string($filename)
 
   // 4. Placeholder word check (catches copy-pasted example filenames)
   $segments = array_slice(explode('_', $base), 2); // skip the two year segments
-  $placeholders = ['titre', 'nom', 'prenom'];
+  $placeholders = ['titre', 'nom', 'prenom', 'montitre', 'dupont', 'marie'];
   foreach ($segments as $segment) {
     if (in_array(strtolower($segment), $placeholders, true)) {
       return sprintf(
@@ -127,7 +127,7 @@ function eikon_enqueue_filename_validation($hook)
     'regex'        => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
     'errorMessage' => EIKON_FILENAME_ERROR,
     'currentYear'  => eikon_get_current_academic_year(),
-    'placeholders' => ['titre', 'nom', 'prenom'],
+    'placeholders' => ['titre', 'nom', 'prenom', 'montitre', 'dupont', 'marie'],
   ]);
 }
 add_action('admin_enqueue_scripts', 'eikon_enqueue_filename_validation');

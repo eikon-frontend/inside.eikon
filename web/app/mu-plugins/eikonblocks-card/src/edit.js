@@ -7,6 +7,7 @@ import {
   InspectorControls
 } from '@wordpress/block-editor';
 import { Button, Placeholder, ToolbarGroup, ToolbarButton, PanelBody, SelectControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
 export default function Edit(props) {

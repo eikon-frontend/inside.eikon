@@ -141,6 +141,7 @@ $ekn-color-danger-hover: #fee2e2;
   font-size: 14px;
   transition: all 0.15s ease-in-out;
   background: #ffffff;
+  color: $ekn-color-text;
 
   &:hover {
     border-color: $ekn-color-border-hover;
