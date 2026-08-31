@@ -35,7 +35,7 @@ function eikon_customize_dashboard()
   // Add random featured project widget
   wp_add_dashboard_widget(
     'eikon_random_project',
-    'Projet aléatoire du jour',
+    'Projet aléatoire',
     'eikon_random_project_widget_content'
   );
 }
@@ -60,7 +60,6 @@ function eikon_dashboard_custom_style()
     }
 
     #eikon_stats .dashicons-chart-bar::before { content: "\f185"; }
-    #eikon_random_project .dashicons-format-gallery::before { content: "\f145"; }
 
     .eikon-dashboard-btn {
       display: inline-flex;
@@ -113,27 +112,6 @@ function eikon_dashboard_custom_style()
       font-size: 18px;
     }
   </style>';
-}
-
-/**
- * Filter dashboard widget title to add dashicons
- */
-add_filter('wp_dashboard_setup', 'eikon_add_dashicons_to_titles', 50);
-function eikon_add_dashicons_to_titles()
-{
-  // We'll add the dashicons via JavaScript since we need to modify AFTER the widget is registered
-  echo '<script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var statsTitle = document.querySelector("#eikon_stats h2");
-      if (statsTitle) {
-        statsTitle.innerHTML = \'<span class="dashicons dashicons-chart-bar"></span> \' + statsTitle.innerText;
-      }
-      var projectTitle = document.querySelector("#eikon_random_project h2");
-      if (projectTitle) {
-        projectTitle.innerHTML = \'<span class="dashicons dashicons-format-gallery"></span> \' + projectTitle.innerText;
-      }
-    });
-  </script>';
 }
 
 /**
