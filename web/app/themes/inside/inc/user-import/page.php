@@ -27,8 +27,10 @@ function eikon_user_import_page()
         </ul>
 
         <p style="background: #f0f6fc; padding: 10px; border-left: 4px solid #0073aa; margin: 20px 0;">
-          <strong><?php _e('Note:', 'eikon'); ?></strong>
-          <?php _e('Un mot de passe temporaire sera généré pour chaque utilisateur. Un email de confirmation avec un lien pour définir le mot de passe final sera envoyé à chaque utilisateur.', 'eikon'); ?>
+          <strong><?php _e('Note:', 'eikon'); ?></strong><br>
+          <?php _e('Un mot de passe temporaire sera généré pour chaque utilisateur. Un email de confirmation avec un lien pour définir le mot de passe final sera envoyé à chaque utilisateur.', 'eikon'); ?><br><br>
+          <strong><?php _e('Nettoyage automatique:', 'eikon'); ?></strong><br>
+          <?php _e('Les utilisateurs existants qui ne sont pas présents dans le fichier CSV seront automatiquement désactivés si le rôle correspondant est sélectionné. Les étudiants non présents perdront leur rôle et seront classés en "alumni". Les enseignants non présents perdront leur rôle. Les administrateurs et éditeurs ne sont pas affectés par ce nettoyage.', 'eikon'); ?>
         </p>
 
         <form method="post" enctype="multipart/form-data" style="margin-top: 20px;">

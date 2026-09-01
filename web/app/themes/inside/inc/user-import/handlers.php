@@ -39,6 +39,7 @@ function eikon_process_user_import()
   if (($handle = fopen($file, 'r')) !== false) {
     $header_row = true;
     $row_number = 0;
+    $processed_user_ids = array();
 
     while (($data = fgetcsv($handle, 1000, ',', '"', '\\')) !== false) {
       $row_number++;
@@ -107,9 +108,12 @@ function eikon_process_user_import()
         }
 
         $user = new WP_User($existing_user_id);
-        $user->set_role($user_role === 'none' ? '' : $user_role);
+        if (!in_array('administrator', $user->roles) && !in_array('editor', $user->roles)) {
+          $user->set_role($user_role === 'none' ? '' : $user_role);
+        }
 
         $updated_count++;
+        $processed_user_ids[] = $existing_user_id;
         $messages[] = sprintf(
           __('Ligne %d: Utilisateur %s mis à jour.', 'eikon'),
           $row_number,
@@ -172,6 +176,7 @@ function eikon_process_user_import()
         }
 
         $success_count++;
+        $processed_user_ids[] = $user_id;
         $messages[] = sprintf(
           __('Ligne %d: Utilisateur %s créé avec succès.', 'eikon'),
           $row_number,
@@ -181,6 +186,41 @@ function eikon_process_user_import()
     }
 
     fclose($handle);
+
+    // Nettoyage des anciens utilisateurs (désactivation)
+    if ( $user_role === 'student' || $user_role === 'teacher' ) {
+      $all_users_in_role = get_users(array(
+        'role' => $user_role,
+        'fields' => 'ID'
+      ));
+
+      $deactivated_count = 0;
+      foreach ($all_users_in_role as $u_id) {
+        if (!in_array($u_id, $processed_user_ids)) {
+          $u = new WP_User($u_id);
+          // Ne pas toucher aux admins ou éditeurs
+          if (in_array('administrator', $u->roles) || in_array('editor', $u->roles)) {
+            continue;
+          }
+          
+          // Retirer le rôle et définir 'alumni' si c'est un étudiant
+          $u->set_role('');
+          
+          if ($user_role === 'student') {
+            update_user_meta($u_id, 'classe', 'alumni');
+          }
+          $deactivated_count++;
+        }
+      }
+      
+      if ($deactivated_count > 0) {
+        $messages[] = sprintf(
+          __('%d utilisateurs (%s) non présents dans le CSV ont été désactivés.', 'eikon'),
+          $deactivated_count,
+          $user_role === 'student' ? 'étudiants' : 'enseignants'
+        );
+      }
+    }
   } else {
     wp_die(__('Impossible de lire le fichier CSV.', 'eikon'));
   }
