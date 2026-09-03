@@ -64,14 +64,6 @@ function eikon_validate_filename_string($filename)
     }
   }
 
-  // 3. Current academic year check (catches old years like "23_24" or "24_25")
-  if (strncmp($base, $current_year . '_', strlen($current_year) + 1) !== 0) {
-    return sprintf(
-      'Erreur : L\'année académique doit être "%s" pour l\'année en cours. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.jpg',
-      $current_year,
-      $current_year
-    );
-  }
 
   // 4. Placeholder word check (catches copy-pasted example filenames)
   $segments = array_slice(explode('_', $base), 2); // skip the two year segments

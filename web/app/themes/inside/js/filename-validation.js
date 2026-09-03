@@ -35,10 +35,6 @@
       }
     }
 
-    // 3. Current academic year check (catches old years like "23_24" or "24_25")
-    if (currentYear && base.indexOf(currentYear + '_') !== 0) {
-      return 'Erreur : L\'année académique doit être "' + currentYear + '" pour l\'année en cours. Exemple: ' + currentYear + '_IMD11_CIE_MonTitre_Dupont_Marie.jpg';
-    }
 
     // 4. Placeholder word check (catches copy-pasted example filenames)
     var segments = base.split('_').slice(2); // skip the two year segments
