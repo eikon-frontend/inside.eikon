@@ -550,13 +550,11 @@ class VOD_Eikon
         }
       }
 
-      // Filter out videos that are not in the root folder (path != "/")
-      // Only sync videos that are in the root folder
-      // DISABLED: Sync all videos regardless of folder
-      // $folder_path = $video_data['folder']['path'] ?? '';
-      // if ($folder_path !== '/') {
-      //   continue;
-      // }
+      // Only sync videos from the eikon.ch folder
+      $folder_id = $video_data['folder']['id'] ?? '';
+      if ($folder_id !== '1jijk03unihfz') {
+        continue;
+      }
 
       // Filter out videos that are in the trash (have a discarded_at timestamp)
       $discarded_at = $video_data['discarded_at'] ?? null;
@@ -1183,7 +1181,8 @@ class VOD_Eikon
 
     $post_fields = array(
       'file' => $cfile,
-      'title' => $title
+      'title' => $title,
+      'folder_id' => '1jijk03unihfz'
     );
 
     if (!empty($description)) {
