@@ -2100,6 +2100,13 @@ class VOD_Eikon
     $vod_id = sanitize_text_field($video_data['id']);
     $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
 
+    // Only process videos from the eikon.ch folder
+    $folder_id = $video_data['folder']['id'] ?? '';
+    if ($folder_id !== '1jijk03unihfz') {
+      error_log('VOD Callback: Ignoring encoding_finished for video not in eikon.ch folder. Folder ID: ' . $folder_id);
+      return;
+    }
+
     error_log('VOD Callback: Processing encoding_finished event for video: ' . $vod_id);
     error_log('VOD Callback: Video name: ' . $name);
 
@@ -2191,6 +2198,13 @@ class VOD_Eikon
 
     $vod_id = sanitize_text_field($video_data['id']);
     $name = sanitize_text_field($video_data['title'] ?? $video_data['name'] ?? '');
+
+    // Only process videos from the eikon.ch folder
+    $folder_id = $video_data['folder']['id'] ?? '';
+    if ($folder_id !== '1jijk03unihfz') {
+      error_log('VOD Callback: Ignoring thumbnail_finished for video not in eikon.ch folder. Folder ID: ' . $folder_id);
+      return;
+    }
 
     error_log('VOD Callback: Processing thumbnail_finished event for video: ' . $vod_id);
     error_log('VOD Callback: Video name: ' . $name);
