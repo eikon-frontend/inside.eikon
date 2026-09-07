@@ -1174,14 +1174,15 @@ class VOD_Eikon
    */
   private function upload_to_infomaniak($file, $title, $description, $channel_id, $api_token)
   {
-    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/upload?folder_id=1jijk03unihfz";
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/upload";
 
     // Prepare the file for upload
     $cfile = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
 
     $post_fields = array(
       'file' => $cfile,
-      'title' => $title
+      'title' => $title,
+      'folder' => '1jijk03unihfz'
     );
 
     if (!empty($description)) {
