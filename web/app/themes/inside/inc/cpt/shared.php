@@ -31,6 +31,10 @@ function user_projects_column_value($value, $column_name, $id)
       "SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type = 'project' AND post_author = %d",
       $id
     ));
+    if ($count > 0) {
+      $url = admin_url('edit.php?post_type=project&author=' . $id);
+      return sprintf('<a href="%s">%d</a>', esc_url($url), $count);
+    }
     return $count;
   }
   return $value;
