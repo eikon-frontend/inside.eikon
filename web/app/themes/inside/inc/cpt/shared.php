@@ -87,3 +87,55 @@ function set_default_page_order($query)
   }
 }
 add_action('pre_get_posts', 'set_default_page_order');
+
+/**
+ * Register Custom Post Status "Archive"
+ */
+function eikon_register_archive_post_status() {
+    register_post_status( 'archive', array(
+        'label'                     => _x( 'Archivé', 'post status', 'inside' ),
+        'public'                    => false, // Pas affiché publiquement (ni dans GraphQL par défaut)
+        'exclude_from_search'       => true,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'label_count'               => _n_noop( 'Archivé <span class="count">(%s)</span>', 'Archivés <span class="count">(%s)</span>' ),
+        'show_in_graphql'           => false, // Exclure de GraphQL
+    ) );
+}
+add_action( 'init', 'eikon_register_archive_post_status' );
+
+/**
+ * Add "Archive" status to the classic editor dropdown
+ */
+function eikon_append_archive_post_status() {
+    global $post;
+    
+    // Seulement pour les types de posts où l'éditeur classique est utilisé et qu'on veut archiver
+    if ( ! in_array( $post->post_type, array( 'project', 'mandat', 'post' ) ) ) {
+        return;
+    }
+    
+    $label = _x( 'Archivé', 'post status', 'inside' );
+    $is_archive = ( $post->post_status === 'archive' ) ? 'true' : 'false';
+    
+    ?>
+    <script>
+    jQuery(document).ready(function($){
+        var is_archive = <?php echo $is_archive; ?>;
+        var label = '<?php echo esc_js( $label ); ?>';
+        
+        // Ajouter l'option dans le menu déroulant
+        if ($('select#post_status').length > 0) {
+            $('select#post_status').append('<option value="archive"' + (is_archive ? ' selected="selected"' : '') + '>' + label + '</option>');
+        }
+        
+        // Mettre à jour le texte affiché si l'article est actuellement archivé
+        if (is_archive) {
+            $('#post-status-display').text(label);
+        }
+    });
+    </script>
+    <?php
+}
+add_action( 'admin_footer-post.php', 'eikon_append_archive_post_status' );
+add_action( 'admin_footer-post-new.php', 'eikon_append_archive_post_status' );
