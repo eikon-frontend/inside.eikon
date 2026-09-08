@@ -111,7 +111,7 @@ function eikon_append_archive_post_status() {
     global $post;
     
     // Seulement pour les types de posts où l'éditeur classique est utilisé et qu'on veut archiver
-    if ( ! in_array( $post->post_type, array( 'project', 'mandat', 'post' ) ) ) {
+    if ( ! in_array( $post->post_type, array( 'project', 'post' ) ) ) {
         return;
     }
     
@@ -139,3 +139,30 @@ function eikon_append_archive_post_status() {
 }
 add_action( 'admin_footer-post.php', 'eikon_append_archive_post_status' );
 add_action( 'admin_footer-post-new.php', 'eikon_append_archive_post_status' );
+
+/**
+ * Add "Archive" status to Quick Edit
+ */
+function eikon_append_archive_post_status_quick_edit() {
+    global $post_type;
+    
+    // Seulement pour project et post (désactivé pour mandat)
+    if ( ! in_array( $post_type, array( 'project', 'post' ) ) ) {
+        return;
+    }
+    
+    $label = _x( 'Archivé', 'post status', 'inside' );
+    
+    ?>
+    <script>
+    jQuery(document).ready(function($){
+        var label = '<?php echo esc_js( $label ); ?>';
+        // Add to Quick Edit dropdown if not already present
+        if ($('select[name="_status"] option[value="archive"]').length === 0) {
+            $('select[name="_status"]').append('<option value="archive">' + label + '</option>');
+        }
+    });
+    </script>
+    <?php
+}
+add_action( 'admin_footer-edit.php', 'eikon_append_archive_post_status_quick_edit' );
