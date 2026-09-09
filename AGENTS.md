@@ -577,6 +577,7 @@ query {
 - ✅ Follow existing patterns (modular inc/ files)
 - ✅ Use theme.json colors/spacing
 - ❌ Don't create PHP templates (no frontend)
+- ❌ **STRICT RULE**: Do NOT generate any frontend GUI code (Vue/React/HTML/CSS), because this repository is strictly an API (Headless).
 - ❌ Don't expose sensitive student data
 - ❌ Don't break draft preview functionality
 

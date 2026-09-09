@@ -15,7 +15,7 @@ define('EIKON_FILENAME_ERROR', 'Erreur : Le nom de votre fichier ne respecte pas
 function eikon_user_must_validate_filename()
 {
   $current_user = wp_get_current_user();
-  if (!$current_user || !$current_user->exists()) {
+  if (!$current_user->exists()) {
     return false;
   }
   return in_array('student', $current_user->roles, true) || in_array('teacher', $current_user->roles, true);

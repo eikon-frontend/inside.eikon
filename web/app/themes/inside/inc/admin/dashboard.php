@@ -150,7 +150,7 @@ function eikon_stats_widget_content()
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
       <div class="eikon-stat-card" style="background: #9700ff;">
         <div class="eikon-stat-number">
-          <?php echo esc_html($total_projects); ?>
+          <?php echo esc_html((string) $total_projects); ?>
         </div>
         <div class="eikon-stat-label">
           Projets totaux
@@ -177,7 +177,7 @@ function eikon_stats_widget_content()
 
       <div class="eikon-stat-card" style="background: #0000ff;">
         <div class="eikon-stat-number">
-          <?php echo esc_html($total_users_count); ?>
+          <?php echo esc_html((string) $total_users_count); ?>
         </div>
         <div class="eikon-stat-label">
           Utilisateurs
@@ -186,7 +186,7 @@ function eikon_stats_widget_content()
 
       <div class="eikon-stat-card" style="background: #ff007b;">
         <div class="eikon-stat-number">
-          <?php echo esc_html($teacher_count); ?>
+          <?php echo esc_html((string) $teacher_count); ?>
         </div>
         <div class="eikon-stat-label">
           Enseignants
@@ -195,7 +195,7 @@ function eikon_stats_widget_content()
 
       <div class="eikon-stat-card" style="background: #00c3ff;">
         <div class="eikon-stat-number">
-          <?php echo esc_html($student_count); ?>
+          <?php echo esc_html((string) $student_count); ?>
         </div>
         <div class="eikon-stat-label">
           Étudiants
@@ -225,7 +225,7 @@ function eikon_random_project_widget_content()
     $project = get_post();
     $project_url = get_permalink($project->ID);
     $project_thumbnail = get_the_post_thumbnail_url($project->ID, 'medium');
-    $author = get_userdata($project->post_author);
+    $author = get_userdata((int) $project->post_author);
     $year_terms = get_the_terms($project->ID, 'year');
     $section_terms = get_the_terms($project->ID, 'section');
     $subjects_terms = get_the_terms($project->ID, 'subjects');

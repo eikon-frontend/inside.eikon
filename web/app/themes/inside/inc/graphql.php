@@ -127,7 +127,7 @@ add_filter('graphql_resolve_field', function ($result, $source, $args, $context,
   $plain_text = trim(preg_replace('/\s+/u', ' ', $plain_text));
 
   return '' === $plain_text ? null : $plain_text;
-}, 20, 9);
+}, 20, 7);
 
 add_action('graphql_register_types', function () {
   register_graphql_input_type('MandatLinkedProjectsWhereArgs', [

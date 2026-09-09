@@ -41,7 +41,7 @@ function eikon_render_current_mandat_selector()
   <div style="margin: 12px 0 0 0; padding: 0; border: 0; background: transparent; position: relative;">
     <label for="eikon_current_mandat_search" style="display: block; font-weight: 600; font-size: 16px; margin: 0 0 4px 0;">Mandat courant</label>
     <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">Si ce projet a été fait dans le cadre d'un mandat, spécifiez ici Choisissez un mandat en cours pour ce projet.</p>
-    <input type="hidden" id="eikon_current_mandat_id" name="eikon_current_mandat_id" value="<?php echo esc_attr($mandat_id); ?>">
+    <input type="hidden" id="eikon_current_mandat_id" name="eikon_current_mandat_id" value="<?php echo esc_attr((string) $mandat_id); ?>">
     <div style="display: flex; align-items: stretch; gap: 0; position: relative;">
       <div style="position: relative; flex: 1 1 auto; min-width: 0; width: 100%;">
         <input
@@ -343,9 +343,6 @@ function eikon_render_mandat_projects_table($post)
   echo '<tbody>';
 
   foreach ($projects as $project) {
-    if (!$project instanceof WP_Post) {
-      continue;
-    }
 
     list($student_first_name, $student_last_name) = eikon_get_project_student_name_parts($project);
     $subtitle = trim((string) get_post_meta($project->ID, 'subtitle', true));

@@ -35,9 +35,10 @@ add_action('init', 'eikonblocks_accordion_init');
  * Adds the eikonblocks/accordion block to the allowed block types list.
  *
  * @param array|bool $allowed_block_types Array of allowed block types or boolean.
+ * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
  * @return array|bool Modified array of allowed block types or boolean.
  */
-function eikonblocks_add_accordion($allowed_block_types)
+function eikonblocks_add_accordion($allowed_block_types, $block_editor_context)
 {
   if (is_array($allowed_block_types)) {
     $allowed_block_types[] = 'eikonblocks/accordion';

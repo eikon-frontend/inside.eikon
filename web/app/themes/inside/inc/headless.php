@@ -76,11 +76,9 @@ function project_completion_checklist_content($post)
 
     if ($gallery_count >= 3) {
       return 'perfect';
-    } else if ($gallery_count >= 1) {
-      return 'okay';
     }
 
-    return 'not_good';
+    return 'okay';
   };
 
   // Get statuses
@@ -262,13 +260,9 @@ add_filter('preview_post_link', function ($link, $post) {
   // For other post types, fall back to default permalink but ensure it uses the slug
   // However, get_permalink() for drafts usually adds ?p=ID parameters if not published.
   // We force slug usage if available.
-  if ($post->post_name) {
-    // Assuming standard structure for other types, or allow WP to handle if not project
-    // But user specifically mentioned 'project' in the example URL
-    return get_permalink($post);
-  }
-
-  return $link;
+  // Assuming standard structure for other types, or allow WP to handle if not project
+  // But user specifically mentioned 'project' in the example URL
+  return get_permalink($post);
 }, 10, 2);
 
 /**

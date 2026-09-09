@@ -63,9 +63,6 @@ function eikon_project_filter_by_mandat($post_type)
   echo '<option value="none"' . selected($selected, 'none', false) . '>' . esc_html__('Sans mandat') . '</option>';
 
   foreach ($mandats as $mandat) {
-    if (!$mandat instanceof WP_Post) {
-      continue;
-    }
     $value = (string) $mandat->ID;
 
     $year_terms = wp_get_post_terms($mandat->ID, 'year', array('fields' => 'names'));

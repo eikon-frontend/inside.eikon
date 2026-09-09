@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="Inside Eikon Rules">
+    <description>PSR-12 standard</description>
+    <file>web/app/themes/inside</file>
+    <file>web/app/mu-plugins</file>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>web/wp/*</exclude-pattern>
+    
+    <rule ref="PSR12"/>
+</ruleset>

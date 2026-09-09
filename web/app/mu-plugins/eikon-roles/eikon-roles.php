@@ -119,11 +119,7 @@ function eikon_create_editor_role()
   if ($editor_role) {
     // Role exists, update its capabilities
     foreach ($editor_caps as $cap => $grant) {
-      if ($grant) {
-        $editor_role->add_cap($cap);
-      } else {
-        $editor_role->remove_cap($cap);
-      }
+      $editor_role->add_cap($cap);
     }
   } else {
     // Create new role with specified capabilities
@@ -403,7 +399,7 @@ function eikon_restrict_teacher_edit_others($allcaps, $caps, $args, $user)
   // If the post belongs to someone else, deny the capability —
   // unless it's a student's draft or pending-review post (teachers can review those).
   if ((int) $post->post_author !== (int) $user->ID) {
-    $post_author = get_userdata($post->post_author);
+    $post_author = get_userdata((int) $post->post_author);
     $is_student_post = $post_author && in_array('student', $post_author->roles, true);
     $is_reviewable   = in_array($post->post_status, array('draft', 'pending'), true);
 
