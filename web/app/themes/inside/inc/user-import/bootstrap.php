@@ -12,12 +12,12 @@
  */
 function eikon_add_user_import_menu()
 {
-  add_users_page(
-    __('Importer', 'eikon'),
-    __('Importer', 'eikon'),
-    'manage_options',
-    'eikon-user-import',
-    'eikon_user_import_page'
-  );
+    add_users_page(
+        __('Importer', 'eikon'),
+        __('Importer', 'eikon'),
+        'manage_options',
+        'eikon-user-import',
+        'eikon_user_import_page'
+    );
 }
 add_action('admin_menu', 'eikon_add_user_import_menu');

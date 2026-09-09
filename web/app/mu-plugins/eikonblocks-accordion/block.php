@@ -15,7 +15,7 @@
  */
 
 if (!defined('ABSPATH')) {
-  exit; // Exit if accessed directly.
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -27,7 +27,7 @@ if (!defined('ABSPATH')) {
  */
 function eikonblocks_accordion_init()
 {
-  register_block_type(__DIR__ . '/build');
+    register_block_type(__DIR__ . '/build');
 }
 add_action('init', 'eikonblocks_accordion_init');
 
@@ -40,9 +40,9 @@ add_action('init', 'eikonblocks_accordion_init');
  */
 function eikonblocks_add_accordion($allowed_block_types, $block_editor_context)
 {
-  if (is_array($allowed_block_types)) {
-    $allowed_block_types[] = 'eikonblocks/accordion';
-  }
-  return $allowed_block_types;
+    if (is_array($allowed_block_types)) {
+        $allowed_block_types[] = 'eikonblocks/accordion';
+    }
+    return $allowed_block_types;
 }
 add_filter('allowed_block_types_all', 'eikonblocks_add_accordion', 30, 2);

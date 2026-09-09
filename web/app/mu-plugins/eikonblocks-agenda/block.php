@@ -15,11 +15,11 @@
  */
 
 if (!defined('ABSPATH')) {
-  exit; // Exit if accessed directly.
+    exit; // Exit if accessed directly.
 }
 
 function eikonblocks_agenda_init()
 {
-  register_block_type(__DIR__ . '/build');
+    register_block_type(__DIR__ . '/build');
 }
 add_action('init', 'eikonblocks_agenda_init');

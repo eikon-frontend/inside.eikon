@@ -1,16 +1,16 @@
 <?php
 
 add_filter(
-  'graphql_PostObjectsConnectionOrderbyEnum_values',
-  function ($values) {
+    'graphql_PostObjectsConnectionOrderbyEnum_values',
+    function ($values) {
 
-    $values['RAND'] = [
-      'value' => 'rand',
-      'description' => __('Order randomly', 'wp-graphql'),
-    ];
+        $values['RAND'] = [
+        'value' => 'rand',
+        'description' => __('Order randomly', 'wp-graphql'),
+        ];
 
-    return $values;
-  }
+        return $values;
+    }
 );
 
 /**
@@ -20,36 +20,36 @@ add_filter(
  * Setting visibility to "public" ensures the full fields (content, ACF, etc.) are returned.
  */
 add_filter('graphql_object_visibility', function ($visibility, $model_name, $data, $owner, $current_user) {
-  if ('PostObject' !== $model_name || !($data instanceof \WP_Post)) {
-    return $visibility;
-  }
+    if ('PostObject' !== $model_name || !($data instanceof \WP_Post)) {
+        return $visibility;
+    }
 
   // Make unpublished projects public.
-  if (
-    'project' === $data->post_type &&
-    in_array($data->post_status, ['draft', 'pending', 'future'], true)
-  ) {
-    return 'public';
-  }
+    if (
+        'project' === $data->post_type &&
+        in_array($data->post_status, ['draft', 'pending', 'future'], true)
+    ) {
+        return 'public';
+    }
 
   // Make published mandats public (CPT is non-public but must be queryable via GraphQL).
-  if ('mandat' === $data->post_type && 'publish' === $data->post_status) {
-    return 'public';
-  }
+    if ('mandat' === $data->post_type && 'publish' === $data->post_status) {
+        return 'public';
+    }
 
   // Also make attachments of unpublished projects public (otherwise featuredImage can be null).
-  if ('attachment' === $data->post_type && !empty($data->post_parent)) {
-    $parent = get_post((int) $data->post_parent);
-    if (
-      $parent instanceof \WP_Post &&
-      'project' === $parent->post_type &&
-      in_array($parent->post_status, ['draft', 'pending', 'future'], true)
-    ) {
-      return 'public';
+    if ('attachment' === $data->post_type && !empty($data->post_parent)) {
+        $parent = get_post((int) $data->post_parent);
+        if (
+            $parent instanceof \WP_Post &&
+            'project' === $parent->post_type &&
+            in_array($parent->post_status, ['draft', 'pending', 'future'], true)
+        ) {
+            return 'public';
+        }
     }
-  }
 
-  return $visibility;
+    return $visibility;
 }, 10, 5);
 
 /**
@@ -60,10 +60,10 @@ add_filter('graphql_object_visibility', function ($visibility, $model_name, $dat
  * for students or teachers who haven't published yet.
  */
 add_filter('graphql_object_visibility', function ($visibility, $model_name, $data) {
-  if ('UserObject' === $model_name && $data instanceof \WP_User) {
-    return 'public';
-  }
-  return $visibility;
+    if ('UserObject' === $model_name && $data instanceof \WP_User) {
+        return 'public';
+    }
+    return $visibility;
 }, 10, 3);
 
 /**
@@ -74,10 +74,10 @@ add_filter('graphql_object_visibility', function ($visibility, $model_name, $dat
  * graphql_object_visibility filter can make them public.
  */
 add_filter('graphql_connection_query_args', function ($query_args, $connection_resolver) {
-  if ($connection_resolver instanceof \WPGraphQL\Data\Connection\UserConnectionResolver) {
-    unset($query_args['has_published_posts']);
-  }
-  return $query_args;
+    if ($connection_resolver instanceof \WPGraphQL\Data\Connection\UserConnectionResolver) {
+        unset($query_args['has_published_posts']);
+    }
+    return $query_args;
 }, 10, 2);
 
 /**
@@ -88,22 +88,22 @@ add_filter('graphql_connection_query_args', function ($query_args, $connection_r
  */
 add_action('pre_get_posts', function ($query) {
   // Only for GraphQL requests
-  if (!defined('GRAPHQL_REQUEST') || !GRAPHQL_REQUEST) {
-    return;
-  }
+    if (!defined('GRAPHQL_REQUEST') || !GRAPHQL_REQUEST) {
+        return;
+    }
 
-  $post_type = $query->get('post_type');
-  $is_project = $post_type === 'project' || (is_array($post_type) && in_array('project', $post_type, true));
-  if (!$is_project) {
-    return;
-  }
+    $post_type = $query->get('post_type');
+    $is_project = $post_type === 'project' || (is_array($post_type) && in_array('project', $post_type, true));
+    if (!$is_project) {
+        return;
+    }
 
   // Only widen statuses for single-item lookups (slug or ID).
-  if (empty($query->get('name')) && empty($query->get('p'))) {
-    return;
-  }
+    if (empty($query->get('name')) && empty($query->get('p'))) {
+        return;
+    }
 
-  $query->set('post_status', ['publish', 'draft', 'pending', 'future']);
+    $query->set('post_status', ['publish', 'draft', 'pending', 'future']);
 });
 
 /**
@@ -114,23 +114,23 @@ add_action('pre_get_posts', function ($query) {
  * Decode entities and remove HTML so Nuxt receives a clean string without custom JS.
  */
 add_filter('graphql_resolve_field', function ($result, $source, $args, $context, $info, $type_name, $field_key) {
-  if ('MediaItem' !== $type_name || 'caption' !== $field_key) {
-    return $result;
-  }
+    if ('MediaItem' !== $type_name || 'caption' !== $field_key) {
+        return $result;
+    }
 
-  if (!is_string($result) || '' === $result) {
-    return $result;
-  }
+    if (!is_string($result) || '' === $result) {
+        return $result;
+    }
 
-  $plain_text = wp_strip_all_tags($result, true);
-  $plain_text = html_entity_decode($plain_text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
-  $plain_text = trim(preg_replace('/\s+/u', ' ', $plain_text));
+    $plain_text = wp_strip_all_tags($result, true);
+    $plain_text = html_entity_decode($plain_text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+    $plain_text = trim(preg_replace('/\s+/u', ' ', $plain_text));
 
-  return '' === $plain_text ? null : $plain_text;
+    return '' === $plain_text ? null : $plain_text;
 }, 20, 7);
 
 add_action('graphql_register_types', function () {
-  register_graphql_input_type('MandatLinkedProjectsWhereArgs', [
+    register_graphql_input_type('MandatLinkedProjectsWhereArgs', [
     'description' => __('Filter arguments for mandat linked projects.', 'wp-graphql'),
     'fields' => [
       'highlight' => [
@@ -138,52 +138,52 @@ add_action('graphql_register_types', function () {
         'description' => __('Filter by mandate highlight flag.', 'wp-graphql'),
       ],
     ],
-  ]);
+    ]);
 
-  register_graphql_field('Project', 'currentMandatId', [
+    register_graphql_field('Project', 'currentMandatId', [
     'type' => 'Int',
     'description' => __('Selected current mandate ID.', 'wp-graphql'),
     'resolve' => function ($source) {
-      if (empty($source->databaseId)) {
-        return null;
-      }
+        if (empty($source->databaseId)) {
+            return null;
+        }
 
-      $mandat_id = absint(get_post_meta((int) $source->databaseId, 'eikon_current_mandat_id', true));
-      return $mandat_id > 0 ? $mandat_id : null;
+        $mandat_id = absint(get_post_meta((int) $source->databaseId, 'eikon_current_mandat_id', true));
+        return $mandat_id > 0 ? $mandat_id : null;
     },
-  ]);
+    ]);
 
-  register_graphql_field('Project', 'currentMandat', [
+    register_graphql_field('Project', 'currentMandat', [
     'type' => 'Mandat',
     'description' => __('Selected current mandate.', 'wp-graphql'),
     'resolve' => function ($source) {
-      if (empty($source->databaseId)) {
-        return null;
-      }
+        if (empty($source->databaseId)) {
+            return null;
+        }
 
-      $mandat_id = absint(get_post_meta((int) $source->databaseId, 'eikon_current_mandat_id', true));
-      if ($mandat_id <= 0) {
-        return null;
-      }
+        $mandat_id = absint(get_post_meta((int) $source->databaseId, 'eikon_current_mandat_id', true));
+        if ($mandat_id <= 0) {
+            return null;
+        }
 
-      $mandat = get_post($mandat_id);
-      return $mandat instanceof \WP_Post ? $mandat : null;
+        $mandat = get_post($mandat_id);
+        return $mandat instanceof \WP_Post ? $mandat : null;
     },
-  ]);
+    ]);
 
-  register_graphql_field('Project', 'mandatHighlight', [
+    register_graphql_field('Project', 'mandatHighlight', [
     'type' => 'Boolean',
     'description' => __('Whether this project is highlighted in its current mandate.', 'wp-graphql'),
     'resolve' => function ($source) {
-      if (empty($source->databaseId)) {
-        return false;
-      }
+        if (empty($source->databaseId)) {
+            return false;
+        }
 
-      return '1' === (string) get_post_meta((int) $source->databaseId, 'eikon_mandat_highlight', true);
+        return '1' === (string) get_post_meta((int) $source->databaseId, 'eikon_mandat_highlight', true);
     },
-  ]);
+    ]);
 
-  register_graphql_field('Mandat', 'linkedProjects', [
+    register_graphql_field('Mandat', 'linkedProjects', [
     'type'        => ['list_of' => 'Project'],
     'description' => __('Projects linked to this mandate via eikon_current_mandat_id.', 'wp-graphql'),
     'args'        => [
@@ -192,60 +192,60 @@ add_action('graphql_register_types', function () {
       ],
     ],
     'resolve'     => function ($source, $args) {
-      if (empty($source->databaseId)) {
-        return [];
-      }
+        if (empty($source->databaseId)) {
+            return [];
+        }
 
-      $meta_query = [[
+        $meta_query = [[
         'key'     => 'eikon_current_mandat_id',
         'value'   => (int) $source->databaseId,
         'compare' => '=',
         'type'    => 'NUMERIC',
-      ]];
+        ]];
 
-      if (isset($args['where']['highlight'])) {
-        if (true === $args['where']['highlight']) {
-          $meta_query[] = [
-            'key'     => 'eikon_mandat_highlight',
-            'value'   => '1',
-            'compare' => '=',
-          ];
-        } else {
-          $meta_query[] = [
-            'relation' => 'OR',
-            [
-              'key'     => 'eikon_mandat_highlight',
-              'compare' => 'NOT EXISTS',
-            ],
-            [
-              'key'     => 'eikon_mandat_highlight',
-              'value'   => '1',
-              'compare' => '!=',
-            ],
-          ];
+        if (isset($args['where']['highlight'])) {
+            if (true === $args['where']['highlight']) {
+                $meta_query[] = [
+                'key'     => 'eikon_mandat_highlight',
+                'value'   => '1',
+                'compare' => '=',
+                ];
+            } else {
+                $meta_query[] = [
+                'relation' => 'OR',
+                [
+                'key'     => 'eikon_mandat_highlight',
+                'compare' => 'NOT EXISTS',
+                ],
+                [
+                'key'     => 'eikon_mandat_highlight',
+                'value'   => '1',
+                'compare' => '!=',
+                ],
+                ];
+            }
         }
-      }
 
-      $posts = get_posts([
+        $posts = get_posts([
         'post_type'      => 'project',
         'posts_per_page' => -1,
         'orderby'        => 'date',
         'order'          => 'DESC',
         'post_status'    => ['publish', 'draft', 'pending', 'future'],
         'meta_query'     => $meta_query,
-      ]);
+        ]);
 
-      if (empty($posts)) {
-        return [];
-      }
+        if (empty($posts)) {
+            return [];
+        }
 
       // Explicitly wrap in the Post model so WPGraphQL applies the
       // graphql_object_visibility filter (which makes draft/pending/future
       // projects publicly readable — matching the behaviour for direct URI queries).
-      return array_map(
-        fn($post) => new \WPGraphQL\Model\Post($post),
-        $posts
-      );
+        return array_map(
+            fn($post) => new \WPGraphQL\Model\Post($post),
+            $posts
+        );
     },
-  ]);
+    ]);
 });

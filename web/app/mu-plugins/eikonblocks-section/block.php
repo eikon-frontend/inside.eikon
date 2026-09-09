@@ -15,7 +15,7 @@
  */
 
 if (!defined('ABSPATH')) {
-  exit; // Exit if accessed directly.
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -27,7 +27,7 @@ if (!defined('ABSPATH')) {
  */
 function eikonblocks_section_init()
 {
-  register_block_type(__DIR__ . '/build');
+    register_block_type(__DIR__ . '/build');
 }
 add_action('init', 'eikonblocks_section_init');
 
@@ -36,11 +36,11 @@ add_action('init', 'eikonblocks_section_init');
  */
 function eikonblocks_section_render_filter($block_content, $block)
 {
-  if ($block['blockName'] === 'eikonblocks/section') {
-    if (isset($block['attrs']['isActive']) && $block['attrs']['isActive'] === false) {
-      return '';
+    if ($block['blockName'] === 'eikonblocks/section') {
+        if (isset($block['attrs']['isActive']) && $block['attrs']['isActive'] === false) {
+            return '';
+        }
     }
-  }
-  return $block_content;
+    return $block_content;
 }
 add_filter('render_block', 'eikonblocks_section_render_filter', 10, 2);

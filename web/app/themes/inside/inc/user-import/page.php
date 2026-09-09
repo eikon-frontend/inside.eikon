@@ -2,15 +2,15 @@
 
 function eikon_user_import_page()
 {
-  if (!current_user_can('manage_options')) {
-    wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'eikon'));
-  }
+    if (!current_user_can('manage_options')) {
+        wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'eikon'));
+    }
 
-  if (isset($_POST['eikon_import_users_nonce'])) {
-    eikon_process_user_import();
-  }
+    if (isset($_POST['eikon_import_users_nonce'])) {
+        eikon_process_user_import();
+    }
 
-?>
+    ?>
   <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
@@ -54,14 +54,14 @@ function eikon_user_import_page()
               <option value=""></option>
               <option value="none"><?php _e('— Aucun rôle —', 'eikon'); ?></option>
               <?php
-              $wp_roles = wp_roles();
-              foreach ($wp_roles->roles as $role_key => $role_data) {
-                if ($role_key === 'administrator') {
-                  continue;
+                $wp_roles = wp_roles();
+                foreach ($wp_roles->roles as $role_key => $role_data) {
+                    if ($role_key === 'administrator') {
+                        continue;
+                    }
+                    echo '<option value="' . esc_attr($role_key) . '">' . esc_html($role_data['name']) . '</option>';
                 }
-                echo '<option value="' . esc_attr($role_key) . '">' . esc_html($role_data['name']) . '</option>';
-              }
-              ?>
+                ?>
             </select>
           </div>
 
@@ -100,9 +100,9 @@ Dubois,Sophie,sophie.dubois@studentfr.ch,prepa</pre>
     <?php
     $import_log = get_option('eikon_user_import_log', array());
     if (!empty($import_log)) {
-      $last_import = array_pop($import_log);
-      update_option('eikon_user_import_log', $import_log);
-    ?>
+        $last_import = array_pop($import_log);
+        update_option('eikon_user_import_log', $import_log);
+        ?>
       <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin-top: 20px;">
         <h3><?php _e('Résultat de la dernière importation', 'eikon'); ?></h3>
         <div style="background: #f0f6fc; padding: 10px; border-left: 4px solid #0073aa; margin: 10px 0;">
@@ -120,9 +120,9 @@ Dubois,Sophie,sophie.dubois@studentfr.ch,prepa</pre>
           </ul>
         <?php endif; ?>
       </div>
-    <?php
+        <?php
     }
     ?>
   </div>
-<?php
+    <?php
 }

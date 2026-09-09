@@ -16,7 +16,7 @@ add_action('wp_insert_post_data', function ($data, $postarr) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return $data;
     }
-    
+
     if (in_array($data['post_status'], ['trash', 'auto-draft'])) {
         return $data;
     }
@@ -58,11 +58,11 @@ add_action('acf/validate_save_post', function () {
     if (!isset($_POST['post_type']) || $_POST['post_type'] !== 'project') {
         return;
     }
-    
+
     if (current_user_can('manage_options')) {
         return;
     }
-    
+
     // Exemple : validation d'un champ s'il existe dans $_POST['acf']
     // if (empty($_POST['acf']['field_xxxx'])) {
     //     acf_add_validation_error('acf[field_xxxx]', 'Ce champ est obligatoire.');

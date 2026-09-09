@@ -16,13 +16,13 @@
  */
 
 if (!defined('ABSPATH')) {
-  return;
+    return;
 }
 
 global $wp_roles;
 
 if (!$wp_roles) {
-  $wp_roles = new WP_Roles();
+    $wp_roles = new WP_Roles();
 }
 
 // List of roles to completely remove from the database
@@ -36,5 +36,5 @@ $roles_to_remove = array(
 );
 
 foreach ($roles_to_remove as $role_name) {
-  remove_role($role_name);
+    remove_role($role_name);
 }

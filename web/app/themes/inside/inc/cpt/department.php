@@ -3,7 +3,7 @@
 // Register Custom Post Type DEPARTMENT and his taxonomies
 function department_post_type()
 {
-  $labels = array(
+    $labels = array(
     'name'                  => _x('Départements', 'Post Type General Name', 'department'),
     'singular_name'         => _x('Département', 'Post Type Singular Name', 'department'),
     'menu_name'             => __('Départements', 'department'),
@@ -31,12 +31,12 @@ function department_post_type()
     'items_list'            => __('List des départements', 'department'),
     'items_list_navigation' => __('Navigation des départements', 'department'),
     'filter_items_list'     => __('Filtrer les départements', 'department'),
-  );
-  $rewrite = array(
+    );
+    $rewrite = array(
     'slug' => '/departments',
     'with_front' => false
-  );
-  $args = array(
+    );
+    $args = array(
     'label'                 => __('Département', 'department'),
     'description'           => __('Travaux d\'écoles', 'department'),
     'labels'                => $labels,
@@ -60,7 +60,7 @@ function department_post_type()
     'publicly_queryable'    => true,
     'rewrite'               => $rewrite,
     'capability_type'       => 'page',
-  );
-  register_post_type('department', $args);
+    );
+    register_post_type('department', $args);
 }
 add_action('init', 'department_post_type', 0);

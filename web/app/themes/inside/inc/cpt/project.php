@@ -3,7 +3,7 @@
 // Register Custom Post Type PROJECT and his taxonomies
 function project_post_type()
 {
-  $labels = array(
+    $labels = array(
     'name'                  => _x('Projets', 'Post Type General Name', 'project'),
     'singular_name'         => _x('Projet', 'Post Type Singular Name', 'project'),
     'menu_name'             => __('Projets', 'project'),
@@ -31,14 +31,14 @@ function project_post_type()
     'items_list'            => __('List des projets', 'project'),
     'items_list_navigation' => __('Navigation des projets', 'project'),
     'filter_items_list'     => __('Filtrer les projets', 'project'),
-  );
-  $rewrite = array(
+    );
+    $rewrite = array(
     'slug'                  => 'projets',
     'with_front'            => true,
     'pages'                 => true,
     'feeds'                 => true,
-  );
-  $args = array(
+    );
+    $args = array(
     'label'                 => __('Projet', 'project'),
     'description'           => __('Travaux d\'écoles', 'project'),
     'labels'                => $labels,
@@ -62,8 +62,8 @@ function project_post_type()
     'publicly_queryable'    => true,
     'rewrite'               => $rewrite,
     'capability_type'       => 'post',
-  );
-  register_post_type('project', $args);
+    );
+    register_post_type('project', $args);
 }
 add_action('init', 'project_post_type', 5);
 
@@ -78,19 +78,19 @@ add_action('init', 'project_post_type', 5);
  */
 function eikon_project_author_prefix($author): string
 {
-  if (!$author) {
-    return '';
-  }
+    if (!$author) {
+        return '';
+    }
 
-  $first = trim($author->first_name);
-  $last  = trim($author->last_name);
+    $first = trim($author->first_name);
+    $last  = trim($author->last_name);
 
-  if ($first !== '' && $last !== '') {
-    return sanitize_title($first . '-' . $last) . '-';
-  }
+    if ($first !== '' && $last !== '') {
+        return sanitize_title($first . '-' . $last) . '-';
+    }
 
   // Fallback: user_nicename (safe slug, but may be email-derived)
-  return !empty($author->user_nicename) ? $author->user_nicename . '-' : '';
+    return !empty($author->user_nicename) ? $author->user_nicename . '-' : '';
 }
 
 /**
@@ -101,48 +101,48 @@ function eikon_project_author_prefix($author): string
  */
 function eikon_ensure_project_slug_on_save($post_id, $post, $update)
 {
-  static $running = false;
-  if ($running) {
-    return;
-  }
+    static $running = false;
+    if ($running) {
+        return;
+    }
 
-  if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-    return;
-  }
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
 
-  if (empty($post) || $post->post_type !== 'project') {
-    return;
-  }
+    if (empty($post) || $post->post_type !== 'project') {
+        return;
+    }
 
   // Don't generate slugs for placeholder posts.
-  if ($post->post_status === 'auto-draft') {
-    return;
-  }
+    if ($post->post_status === 'auto-draft') {
+        return;
+    }
 
   // Only set if empty; don't override manually edited slugs.
-  if (!empty($post->post_name) || empty($post->post_title)) {
-    return;
-  }
+    if (!empty($post->post_name) || empty($post->post_title)) {
+        return;
+    }
 
-  $running = true;
+    $running = true;
 
-  $author        = get_userdata($post->post_author);
-  $is_student    = $author && in_array('student', (array) $author->roles, true);
-  $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
-  $slug          = $author_prefix . sanitize_title($post->post_title);
-  $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
+    $author        = get_userdata($post->post_author);
+    $is_student    = $author && in_array('student', (array) $author->roles, true);
+    $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
+    $slug          = $author_prefix . sanitize_title($post->post_title);
+    $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
 
   // Use direct database update to avoid infinite hook loops with wp_update_post()
-  global $wpdb;
-  $wpdb->update(
-    $wpdb->posts,
-    ['post_name' => $slug],
-    ['ID' => $post_id],
-    ['%s'],
-    ['%d']
-  );
+    global $wpdb;
+    $wpdb->update(
+        $wpdb->posts,
+        ['post_name' => $slug],
+        ['ID' => $post_id],
+        ['%s'],
+        ['%d']
+    );
 
-  $running = false;
+    $running = false;
 }
 add_action('save_post_project', 'eikon_ensure_project_slug_on_save', 10, 3);
 
@@ -155,24 +155,24 @@ add_action('save_post_project', 'eikon_ensure_project_slug_on_save', 10, 3);
  */
 function eikon_unique_project_slug($slug, $post_id, $post_status, $post_type, $post_parent, $original_slug)
 {
-  if ($post_type !== 'project') {
+    if ($post_type !== 'project') {
+        return $slug;
+    }
+
+    global $wpdb;
+
+    $check_sql = "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND ID != %d LIMIT 1";
+
+    if ($wpdb->get_var($wpdb->prepare($check_sql, $slug, $post_type, $post_id))) {
+        $suffix = 2;
+        do {
+            $alt_slug = "$slug-$suffix";
+            $suffix++;
+        } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, $post_type, $post_id)));
+        $slug = $alt_slug;
+    }
+
     return $slug;
-  }
-
-  global $wpdb;
-
-  $check_sql = "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND ID != %d LIMIT 1";
-
-  if ($wpdb->get_var($wpdb->prepare($check_sql, $slug, $post_type, $post_id))) {
-    $suffix = 2;
-    do {
-      $alt_slug = "$slug-$suffix";
-      $suffix++;
-    } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, $post_type, $post_id)));
-    $slug = $alt_slug;
-  }
-
-  return $slug;
 }
 add_filter('wp_unique_post_slug', 'eikon_unique_project_slug', 10, 6);
 
@@ -186,9 +186,9 @@ add_filter('wp_unique_post_slug', 'eikon_unique_project_slug', 10, 6);
  */
 function eikon_enforce_unique_project_slug_on_save($data, $postarr)
 {
-  if ($data['post_type'] !== 'project' || $data['post_status'] === 'auto-draft') {
-    return $data;
-  }
+    if ($data['post_type'] !== 'project' || $data['post_status'] === 'auto-draft') {
+        return $data;
+    }
 
   // Ensure the slug is prefixed with the author's nicename.
   // We apply the prefix when:
@@ -196,44 +196,44 @@ function eikon_enforce_unique_project_slug_on_save($data, $postarr)
   //   (b) post_name was just auto-generated from the title without the prefix
   //       (published posts: WordPress regenerates the slug before this filter runs
   //        when the user clears the slug field in the admin).
-  $author_id     = !empty($postarr['post_author']) ? (int) $postarr['post_author'] : get_current_user_id();
-  $author        = get_userdata($author_id);
-  $is_student    = $author && in_array('student', (array) $author->roles, true);
-  $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
+    $author_id     = !empty($postarr['post_author']) ? (int) $postarr['post_author'] : get_current_user_id();
+    $author        = get_userdata($author_id);
+    $is_student    = $author && in_array('student', (array) $author->roles, true);
+    $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
 
-  if ($is_student && !empty($data['post_title'])) {
-    $title_slug = sanitize_title($data['post_title']);
-    $needs_prefix = empty($data['post_name'])                              // (a) draft: no slug yet
-      || $data['post_name'] === $title_slug                                // (b) bare title slug
-      || (str_starts_with($data['post_name'], $title_slug));               // (b) bare title slug + -2, -3…
+    if ($is_student && !empty($data['post_title'])) {
+        $title_slug = sanitize_title($data['post_title']);
+        $needs_prefix = empty($data['post_name'])                              // (a) draft: no slug yet
+        || $data['post_name'] === $title_slug                                // (b) bare title slug
+        || (str_starts_with($data['post_name'], $title_slug));               // (b) bare title slug + -2, -3…
 
-    if ($needs_prefix && !empty($author_prefix) && !str_starts_with($data['post_name'], $author_prefix)) {
-      $base = empty($data['post_name']) ? $title_slug : $data['post_name'];
-      $data['post_name'] = $author_prefix . $base;
+        if ($needs_prefix && !empty($author_prefix) && !str_starts_with($data['post_name'], $author_prefix)) {
+            $base = empty($data['post_name']) ? $title_slug : $data['post_name'];
+            $data['post_name'] = $author_prefix . $base;
+        }
     }
-  }
 
-  if (empty($data['post_name'])) {
+    if (empty($data['post_name'])) {
+        return $data;
+    }
+
+    $post_id = $postarr['ID'] ?? 0;
+
+    global $wpdb;
+
+    $check_sql = "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = 'project' AND ID != %d LIMIT 1";
+    $slug = $data['post_name'];
+
+    if ($wpdb->get_var($wpdb->prepare($check_sql, $slug, $post_id))) {
+        $suffix = 2;
+        do {
+            $alt_slug = "$slug-$suffix";
+            $suffix++;
+        } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, $post_id)));
+        $data['post_name'] = $alt_slug;
+    }
+
     return $data;
-  }
-
-  $post_id = $postarr['ID'] ?? 0;
-
-  global $wpdb;
-
-  $check_sql = "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = 'project' AND ID != %d LIMIT 1";
-  $slug = $data['post_name'];
-
-  if ($wpdb->get_var($wpdb->prepare($check_sql, $slug, $post_id))) {
-    $suffix = 2;
-    do {
-      $alt_slug = "$slug-$suffix";
-      $suffix++;
-    } while ($wpdb->get_var($wpdb->prepare($check_sql, $alt_slug, $post_id)));
-    $data['post_name'] = $alt_slug;
-  }
-
-  return $data;
 }
 add_filter('wp_insert_post_data', 'eikon_enforce_unique_project_slug_on_save', 10, 2);
 
@@ -243,27 +243,27 @@ add_filter('wp_insert_post_data', 'eikon_enforce_unique_project_slug_on_save', 1
  */
 function eikon_check_project_slug_ajax()
 {
-  check_ajax_referer('eikon-check-slug', 'nonce');
+    check_ajax_referer('eikon-check-slug', 'nonce');
 
-  if (!current_user_can('edit_posts')) {
-    wp_send_json_error('Unauthorized', 403);
-  }
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Unauthorized', 403);
+    }
 
-  $slug = sanitize_title($_POST['slug'] ?? '');
-  $post_id = absint($_POST['post_id'] ?? 0);
+    $slug = sanitize_title($_POST['slug'] ?? '');
+    $post_id = absint($_POST['post_id'] ?? 0);
 
-  if (empty($slug)) {
-    wp_send_json_error('Empty slug');
-  }
+    if (empty($slug)) {
+        wp_send_json_error('Empty slug');
+    }
 
-  global $wpdb;
-  $existing = $wpdb->get_var($wpdb->prepare(
-    "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = 'project' AND ID != %d LIMIT 1",
-    $slug,
-    $post_id
-  ));
+    global $wpdb;
+    $existing = $wpdb->get_var($wpdb->prepare(
+        "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = 'project' AND ID != %d LIMIT 1",
+        $slug,
+        $post_id
+    ));
 
-  wp_send_json_success(['exists' => !empty($existing)]);
+    wp_send_json_success(['exists' => !empty($existing)]);
 }
 add_action('wp_ajax_eikon_check_project_slug', 'eikon_check_project_slug_ajax');
 
@@ -272,28 +272,28 @@ add_action('wp_ajax_eikon_check_project_slug', 'eikon_check_project_slug_ajax');
  */
 function eikon_enqueue_slug_validation($hook)
 {
-  if (!in_array($hook, ['post.php', 'post-new.php'])) {
-    return;
-  }
+    if (!in_array($hook, ['post.php', 'post-new.php'])) {
+        return;
+    }
 
-  $screen = get_current_screen();
-  if (!$screen || $screen->post_type !== 'project') {
-    return;
-  }
+    $screen = get_current_screen();
+    if (!$screen || $screen->post_type !== 'project') {
+        return;
+    }
 
-  wp_enqueue_script(
-    'eikon-slug-validation',
-    get_template_directory_uri() . '/js/slug-validation.js',
-    ['jquery'],
-    filemtime(get_template_directory() . '/js/slug-validation.js'),
-    true
-  );
+    wp_enqueue_script(
+        'eikon-slug-validation',
+        get_template_directory_uri() . '/js/slug-validation.js',
+        ['jquery'],
+        filemtime(get_template_directory() . '/js/slug-validation.js'),
+        true
+    );
 
-  wp_localize_script('eikon-slug-validation', 'eikonSlug', [
+    wp_localize_script('eikon-slug-validation', 'eikonSlug', [
     'ajaxUrl' => admin_url('admin-ajax.php'),
     'nonce'   => wp_create_nonce('eikon-check-slug'),
     'postId'  => get_the_ID(),
-  ]);
+    ]);
 }
 add_action('admin_enqueue_scripts', 'eikon_enqueue_slug_validation');
 
@@ -372,8 +372,8 @@ register_taxonomy('subjects', array('project', 'mandat'), array(
 
 function remove_project_taxonomies_metabox()
 {
-  remove_meta_box('tagsdiv-year', 'project', 'side');
-  remove_meta_box('tagsdiv-section', 'project', 'side');
-  remove_meta_box('tagsdiv-subjects', 'project', 'side');
+    remove_meta_box('tagsdiv-year', 'project', 'side');
+    remove_meta_box('tagsdiv-section', 'project', 'side');
+    remove_meta_box('tagsdiv-subjects', 'project', 'side');
 }
 add_action('admin_menu', 'remove_project_taxonomies_metabox');

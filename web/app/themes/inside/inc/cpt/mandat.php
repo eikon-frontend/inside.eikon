@@ -3,7 +3,7 @@
 // Register Custom Post Type MANDAT and its taxonomies
 function mandat_post_type()
 {
-  $labels = array(
+    $labels = array(
     'name'                  => _x('Mandats', 'Post Type General Name', 'mandat'),
     'singular_name'         => _x('Mandat', 'Post Type Singular Name', 'mandat'),
     'menu_name'             => __('Mandats', 'mandat'),
@@ -31,16 +31,16 @@ function mandat_post_type()
     'items_list'            => __('List des mandats', 'mandat'),
     'items_list_navigation' => __('Navigation des mandats', 'mandat'),
     'filter_items_list'     => __('Filtrer les mandats', 'mandat'),
-  );
+    );
 
-  $rewrite = array(
+    $rewrite = array(
     'slug'       => 'mandats',
     'with_front' => true,
     'pages'      => true,
     'feeds'      => true,
-  );
+    );
 
-  $args = array(
+    $args = array(
     'label'                 => __('Mandat', 'mandat'),
     'description'           => __('Brief pédagogique', 'mandat'),
     'labels'                => $labels,
@@ -65,26 +65,26 @@ function mandat_post_type()
     'rewrite'               => $rewrite,
     'capability_type'       => array('mandat', 'mandats'),
     'map_meta_cap'          => true,
-  );
+    );
 
-  register_post_type('mandat', $args);
+    register_post_type('mandat', $args);
 }
 add_action('init', 'mandat_post_type', 4);
 
 function remove_mandat_taxonomies_metabox()
 {
-  remove_meta_box('tagsdiv-year', 'mandat', 'side');
-  remove_meta_box('tagsdiv-section', 'mandat', 'side');
-  remove_meta_box('tagsdiv-subjects', 'mandat', 'side');
+    remove_meta_box('tagsdiv-year', 'mandat', 'side');
+    remove_meta_box('tagsdiv-section', 'mandat', 'side');
+    remove_meta_box('tagsdiv-subjects', 'mandat', 'side');
 }
 add_action('admin_menu', 'remove_mandat_taxonomies_metabox');
 
 // Hide slug and author metaboxes from non-super-admin users
 function hide_mandat_slug_author_metabox()
 {
-  if (!current_user_can('manage_options')) {
-    remove_meta_box('slugdiv', 'mandat', 'normal');
-    remove_meta_box('authordiv', 'mandat', 'normal');
-  }
+    if (!current_user_can('manage_options')) {
+        remove_meta_box('slugdiv', 'mandat', 'normal');
+        remove_meta_box('authordiv', 'mandat', 'normal');
+    }
 }
 add_action('admin_menu', 'hide_mandat_slug_author_metabox');

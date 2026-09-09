@@ -3,41 +3,41 @@
 
 function eikon_add_mandat_description_label()
 {
-  $post = get_post();
+    $post = get_post();
 
-  if (!$post || $post->post_type !== 'mandat') {
-    return;
-  }
+    if (!$post || $post->post_type !== 'mandat') {
+        return;
+    }
 
-  echo '<div style="margin-top: 16px; margin-bottom: 0; padding: 0;">';
-  echo '<label style="display: block; font-weight: 600; font-size: 16px; margin-bottom: 4px;">Description du mandat</label>';
-  echo '<p style="margin: 0; font-size: 12px; color: #6b7280;">Décrivez le brief en quelques paragraphes.</p>';
-  echo '</div>';
+    echo '<div style="margin-top: 16px; margin-bottom: 0; padding: 0;">';
+    echo '<label style="display: block; font-weight: 600; font-size: 16px; margin-bottom: 4px;">Description du mandat</label>';
+    echo '<p style="margin: 0; font-size: 12px; color: #6b7280;">Décrivez le brief en quelques paragraphes.</p>';
+    echo '</div>';
 }
 add_action('edit_form_after_title', 'eikon_add_mandat_description_label', 10);
 
 function eikon_render_current_mandat_selector()
 {
-  $post = get_post();
+    $post = get_post();
 
-  if (!$post || $post->post_type !== 'project') {
-    return;
-  }
+    if (!$post || $post->post_type !== 'project') {
+        return;
+    }
 
-  $mandat_id = (int) get_post_meta($post->ID, 'eikon_current_mandat_id', true);
-  $mandat = $mandat_id ? get_post($mandat_id) : null;
-  $mandat_title = $mandat instanceof WP_Post ? eikon_get_mandat_display_title($mandat->ID) : '';
-  $mandat_summary = $mandat instanceof WP_Post ? eikon_get_mandat_summary($mandat->ID) : '';
-  $nonce = wp_create_nonce('eikon-search-mandats');
-  $current_years = wp_get_post_terms($post->ID, 'year', array('fields' => 'ids'));
-  $current_sections = wp_get_post_terms($post->ID, 'section', array('fields' => 'ids'));
-  $current_subjects = wp_get_post_terms($post->ID, 'subjects', array('fields' => 'ids'));
-  $taxonomy_filters = array(
+    $mandat_id = (int) get_post_meta($post->ID, 'eikon_current_mandat_id', true);
+    $mandat = $mandat_id ? get_post($mandat_id) : null;
+    $mandat_title = $mandat instanceof WP_Post ? eikon_get_mandat_display_title($mandat->ID) : '';
+    $mandat_summary = $mandat instanceof WP_Post ? eikon_get_mandat_summary($mandat->ID) : '';
+    $nonce = wp_create_nonce('eikon-search-mandats');
+    $current_years = wp_get_post_terms($post->ID, 'year', array('fields' => 'ids'));
+    $current_sections = wp_get_post_terms($post->ID, 'section', array('fields' => 'ids'));
+    $current_subjects = wp_get_post_terms($post->ID, 'subjects', array('fields' => 'ids'));
+    $taxonomy_filters = array(
     'year' => array_map('intval', is_array($current_years) ? $current_years : array()),
     'section' => array_map('intval', is_array($current_sections) ? $current_sections : array()),
     'subjects' => array_map('intval', is_array($current_subjects) ? $current_subjects : array()),
-  );
-?>
+    );
+    ?>
   <div style="margin: 12px 0 0 0; padding: 0; border: 0; background: transparent; position: relative;">
     <label for="eikon_current_mandat_search" style="display: block; font-weight: 600; font-size: 16px; margin: 0 0 4px 0;">Mandat courant</label>
     <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">Si ce projet a été fait dans le cadre d'un mandat, spécifiez ici Choisissez un mandat en cours pour ce projet.</p>
@@ -190,28 +190,28 @@ function eikon_render_current_mandat_selector()
       })();
     </script>
   </div>
-<?php
+    <?php
 }
 add_action('edit_form_after_title', 'eikon_render_current_mandat_selector', 5);
 
 function eikon_get_mandat_summary($mandat_id)
 {
-  $year_terms = wp_get_post_terms($mandat_id, 'year', array('fields' => 'names'));
-  $section_terms = wp_get_post_terms($mandat_id, 'section', array('fields' => 'names'));
-  $subject_terms = wp_get_post_terms($mandat_id, 'subjects', array('fields' => 'names'));
-  $summary_parts = array();
+    $year_terms = wp_get_post_terms($mandat_id, 'year', array('fields' => 'names'));
+    $section_terms = wp_get_post_terms($mandat_id, 'section', array('fields' => 'names'));
+    $subject_terms = wp_get_post_terms($mandat_id, 'subjects', array('fields' => 'names'));
+    $summary_parts = array();
 
-  if (!empty($year_terms) && !is_wp_error($year_terms)) {
-    $summary_parts[] = 'Année: ' . implode(', ', $year_terms);
-  }
-  if (!empty($section_terms) && !is_wp_error($section_terms)) {
-    $summary_parts[] = 'Classe: ' . implode(', ', $section_terms);
-  }
-  if (!empty($subject_terms) && !is_wp_error($subject_terms)) {
-    $summary_parts[] = 'Branche: ' . implode(', ', $subject_terms);
-  }
+    if (!empty($year_terms) && !is_wp_error($year_terms)) {
+        $summary_parts[] = 'Année: ' . implode(', ', $year_terms);
+    }
+    if (!empty($section_terms) && !is_wp_error($section_terms)) {
+        $summary_parts[] = 'Classe: ' . implode(', ', $section_terms);
+    }
+    if (!empty($subject_terms) && !is_wp_error($subject_terms)) {
+        $summary_parts[] = 'Branche: ' . implode(', ', $subject_terms);
+    }
 
-  return !empty($summary_parts) ? implode(' | ', $summary_parts) : '';
+    return !empty($summary_parts) ? implode(' | ', $summary_parts) : '';
 }
 
 /**
@@ -220,86 +220,86 @@ function eikon_get_mandat_summary($mandat_id)
  */
 function eikon_get_mandat_display_title($mandat_id)
 {
-  $title = get_the_title($mandat_id);
+    $title = get_the_title($mandat_id);
 
-  return html_entity_decode(wp_strip_all_tags($title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    return html_entity_decode(wp_strip_all_tags($title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 }
 
 function eikon_normalize_mandat_search_text($value)
 {
-  $value = html_entity_decode(wp_strip_all_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-  $value = remove_accents($value);
-  $value = strtolower($value);
+    $value = html_entity_decode(wp_strip_all_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $value = remove_accents($value);
+    $value = strtolower($value);
 
-  return trim(preg_replace('/[^a-z0-9]+/', ' ', $value));
+    return trim(preg_replace('/[^a-z0-9]+/', ' ', $value));
 }
 
 function eikon_get_mandat_search_score($title, $term)
 {
-  $normalized_title = eikon_normalize_mandat_search_text($title);
-  $normalized_term = eikon_normalize_mandat_search_text($term);
+    $normalized_title = eikon_normalize_mandat_search_text($title);
+    $normalized_term = eikon_normalize_mandat_search_text($term);
 
-  if ('' === $normalized_title || '' === $normalized_term) {
-    return false;
-  }
-
-  if (0 === strpos($normalized_title, $normalized_term)) {
-    return 3;
-  }
-
-  if (false !== strpos($normalized_title, $normalized_term)) {
-    return 2;
-  }
-
-  $title_words = explode(' ', $normalized_title);
-  $term_words = explode(' ', $normalized_term);
-
-  foreach ($term_words as $term_word) {
-    $matched = false;
-
-    foreach ($title_words as $title_word) {
-      if (0 === strpos($title_word, $term_word) || false !== strpos($title_word, $term_word)) {
-        $matched = true;
-        break;
-      }
+    if ('' === $normalized_title || '' === $normalized_term) {
+        return false;
     }
 
-    if (!$matched) {
-      return false;
+    if (0 === strpos($normalized_title, $normalized_term)) {
+        return 3;
     }
-  }
 
-  return 1;
+    if (false !== strpos($normalized_title, $normalized_term)) {
+        return 2;
+    }
+
+    $title_words = explode(' ', $normalized_title);
+    $term_words = explode(' ', $normalized_term);
+
+    foreach ($term_words as $term_word) {
+        $matched = false;
+
+        foreach ($title_words as $title_word) {
+            if (0 === strpos($title_word, $term_word) || false !== strpos($title_word, $term_word)) {
+                $matched = true;
+                break;
+            }
+        }
+
+        if (!$matched) {
+            return false;
+        }
+    }
+
+    return 1;
 }
 
 function eikon_get_project_student_name_parts($project)
 {
-  $author = get_userdata($project->post_author);
-  if (!$author) {
-    return array('', '');
-  }
+    $author = get_userdata($project->post_author);
+    if (!$author) {
+        return array('', '');
+    }
 
-  $first_name = trim((string) $author->first_name);
-  $last_name = trim((string) $author->last_name);
+    $first_name = trim((string) $author->first_name);
+    $last_name = trim((string) $author->last_name);
 
-  if ('' === $first_name && '' === $last_name) {
-    return array(trim((string) $author->display_name), '');
-  }
+    if ('' === $first_name && '' === $last_name) {
+        return array(trim((string) $author->display_name), '');
+    }
 
-  return array($first_name, $last_name);
+    return array($first_name, $last_name);
 }
 
 function eikon_render_mandat_projects_table($post)
 {
-  if (!$post || $post->post_type !== 'mandat') {
-    return;
-  }
+    if (!$post || $post->post_type !== 'mandat') {
+        return;
+    }
 
-  if (empty($post->ID) || 'auto-draft' === $post->post_status) {
-    return;
-  }
+    if (empty($post->ID) || 'auto-draft' === $post->post_status) {
+        return;
+    }
 
-  $projects = get_posts(array(
+    $projects = get_posts(array(
     'post_type' => 'project',
     'post_status' => array('publish', 'draft', 'pending', 'future', 'private'),
     'posts_per_page' => -1,
@@ -307,19 +307,19 @@ function eikon_render_mandat_projects_table($post)
     'order' => 'DESC',
     'meta_key' => 'eikon_current_mandat_id',
     'meta_value' => (string) $post->ID,
-  ));
+    ));
 
-  echo '<div style="margin-top: 24px;">';
-  echo '<h2 style="margin: 0; padding: 0; font-size: 18px; line-height: 1.4;">Projets liés</h2>';
-  echo '<p style="margin: 0 0 12px 0; color: #6b7280;">Cochez "Highlight" pour signaler les projets retenus lors des corrections.</p>';
+    echo '<div style="margin-top: 24px;">';
+    echo '<h2 style="margin: 0; padding: 0; font-size: 18px; line-height: 1.4;">Projets liés</h2>';
+    echo '<p style="margin: 0 0 12px 0; color: #6b7280;">Cochez "Highlight" pour signaler les projets retenus lors des corrections.</p>';
 
-  if (empty($projects)) {
-    echo '<p style="margin: 0; color: #6b7280;">Aucun projet n\'est actuellement rattaché à ce mandat.</p>';
-    echo '</div>';
-    return;
-  }
+    if (empty($projects)) {
+        echo '<p style="margin: 0; color: #6b7280;">Aucun projet n\'est actuellement rattaché à ce mandat.</p>';
+        echo '</div>';
+        return;
+    }
 
-  echo '<style>
+    echo '<style>
     #eikon-mandat-projects-table th[data-sort] { cursor: pointer; user-select: none; white-space: nowrap; }
     #eikon-mandat-projects-table th[data-sort]:hover { background: #f0f0f0; }
     #eikon-mandat-projects-table th[data-sort] .sort-indicator { display: inline-block; margin-left: 5px; opacity: 0.35; font-size: 10px; }
@@ -330,68 +330,67 @@ function eikon_render_mandat_projects_table($post)
     #eikon-mandat-projects-table th[data-sort]:not(.sort-asc):not(.sort-desc) .sort-indicator::after { content: "⇅"; }
     #eikon-mandat-projects-table tr.eikon-highlight-row td { background: #fff8db; }
   </style>';
-  echo '<table id="eikon-mandat-projects-table" class="widefat striped" style="margin: 0; table-layout: fixed;">';
-  echo '<thead><tr>';
-  echo '<th scope="col" data-sort="0">Prénom <span class="sort-indicator"></span></th>';
-  echo '<th scope="col" data-sort="1">Nom <span class="sort-indicator"></span></th>';
-  echo '<th scope="col">Projet</th>';
-  echo '<th scope="col" data-sort="3">Créé <span class="sort-indicator"></span></th>';
-  echo '<th scope="col" data-sort="4">Mis à jour <span class="sort-indicator"></span></th>';
-  echo '<th scope="col">Liens</th>';
-  echo '<th scope="col">Highlight</th>';
-  echo '</tr></thead>';
-  echo '<tbody>';
+    echo '<table id="eikon-mandat-projects-table" class="widefat striped" style="margin: 0; table-layout: fixed;">';
+    echo '<thead><tr>';
+    echo '<th scope="col" data-sort="0">Prénom <span class="sort-indicator"></span></th>';
+    echo '<th scope="col" data-sort="1">Nom <span class="sort-indicator"></span></th>';
+    echo '<th scope="col">Projet</th>';
+    echo '<th scope="col" data-sort="3">Créé <span class="sort-indicator"></span></th>';
+    echo '<th scope="col" data-sort="4">Mis à jour <span class="sort-indicator"></span></th>';
+    echo '<th scope="col">Liens</th>';
+    echo '<th scope="col">Highlight</th>';
+    echo '</tr></thead>';
+    echo '<tbody>';
 
-  foreach ($projects as $project) {
+    foreach ($projects as $project) {
+        list($student_first_name, $student_last_name) = eikon_get_project_student_name_parts($project);
+        $subtitle = trim((string) get_post_meta($project->ID, 'subtitle', true));
+        $visit_link = $project->post_name ? trailingslashit(home_url('/')) . 'projets/' . $project->post_name . '/' : '';
+        $edit_link = get_edit_post_link($project->ID, '');
 
-    list($student_first_name, $student_last_name) = eikon_get_project_student_name_parts($project);
-    $subtitle = trim((string) get_post_meta($project->ID, 'subtitle', true));
-    $visit_link = $project->post_name ? trailingslashit(home_url('/')) . 'projets/' . $project->post_name . '/' : '';
-    $edit_link = get_edit_post_link($project->ID, '');
+        global $wpdb;
+        $real_created_date = $wpdb->get_var($wpdb->prepare(
+            "SELECT MIN(post_date) FROM {$wpdb->posts} WHERE (post_parent = %d AND post_type IN ('revision', 'attachment')) OR ID = %d",
+            $project->ID,
+            $project->ID
+        ));
+        $created_ts = strtotime($real_created_date);
+        $formatted_created = mysql2date(get_option('date_format') . ' ' . get_option('time_format'), $real_created_date);
 
-    global $wpdb;
-    $real_created_date = $wpdb->get_var($wpdb->prepare(
-      "SELECT MIN(post_date) FROM {$wpdb->posts} WHERE (post_parent = %d AND post_type IN ('revision', 'attachment')) OR ID = %d",
-      $project->ID,
-      $project->ID
-    ));
-    $created_ts = strtotime($real_created_date);
-    $formatted_created = mysql2date(get_option('date_format') . ' ' . get_option('time_format'), $real_created_date);
+        $modified_ts = get_post_modified_time('U', true, $project);
+        $is_highlighted = '1' === (string) get_post_meta($project->ID, 'eikon_mandat_highlight', true);
 
-    $modified_ts = get_post_modified_time('U', true, $project);
-    $is_highlighted = '1' === (string) get_post_meta($project->ID, 'eikon_mandat_highlight', true);
-
-    echo '<tr' . ($is_highlighted ? ' class="eikon-highlight-row"' : '') . '>';
-    echo '<td data-value="' . esc_attr(strtolower($student_first_name)) . '">' . esc_html($student_first_name) . '</td>';
-    echo '<td data-value="' . esc_attr(strtolower($student_last_name)) . '">' . esc_html($student_last_name) . '</td>';
-    echo '<td>';
-    echo '<div style="font-weight: 600; color: #1d2327;">' . esc_html(get_the_title($project)) . '</div>';
-    if ('' !== $subtitle) {
-      echo '<div style="margin-top: 4px; font-size: 12px; color: #6b7280;">' . esc_html($subtitle) . '</div>';
+        echo '<tr' . ($is_highlighted ? ' class="eikon-highlight-row"' : '') . '>';
+        echo '<td data-value="' . esc_attr(strtolower($student_first_name)) . '">' . esc_html($student_first_name) . '</td>';
+        echo '<td data-value="' . esc_attr(strtolower($student_last_name)) . '">' . esc_html($student_last_name) . '</td>';
+        echo '<td>';
+        echo '<div style="font-weight: 600; color: #1d2327;">' . esc_html(get_the_title($project)) . '</div>';
+        if ('' !== $subtitle) {
+            echo '<div style="margin-top: 4px; font-size: 12px; color: #6b7280;">' . esc_html($subtitle) . '</div>';
+        }
+        echo '</td>';
+        echo '<td data-value="' . esc_attr((string) $created_ts) . '">' . esc_html($formatted_created) . '</td>';
+        echo '<td data-value="' . esc_attr((string) $modified_ts) . '">' . esc_html(get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
+        echo '<td>';
+        if (!empty($visit_link)) {
+            echo '<a href="' . esc_url($visit_link) . '" target="_blank" rel="noopener noreferrer">Voir</a>';
+        } else {
+            echo '<span style="color: #6b7280;">Voir</span>';
+        }
+        if (!empty($edit_link)) {
+            echo ' | <a href="' . esc_url($edit_link) . '">Modifier</a>';
+        }
+        echo '</td>';
+        echo '<td>';
+        echo '<input type="hidden" name="eikon_mandat_project_ids[]" value="' . (int) $project->ID . '">';
+        echo '<input type="checkbox" style="display: inline-block; margin: 0;" aria-label="Mettre en highlight" name="eikon_mandat_highlight_projects[]" value="' . (int) $project->ID . '"' . checked($is_highlighted, true, false) . '>';
+        echo '</td>';
+        echo '</tr>';
     }
-    echo '</td>';
-    echo '<td data-value="' . esc_attr((string) $created_ts) . '">' . esc_html($formatted_created) . '</td>';
-    echo '<td data-value="' . esc_attr((string) $modified_ts) . '">' . esc_html(get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
-    echo '<td>';
-    if (!empty($visit_link)) {
-      echo '<a href="' . esc_url($visit_link) . '" target="_blank" rel="noopener noreferrer">Voir</a>';
-    } else {
-      echo '<span style="color: #6b7280;">Voir</span>';
-    }
-    if (!empty($edit_link)) {
-      echo ' | <a href="' . esc_url($edit_link) . '">Modifier</a>';
-    }
-    echo '</td>';
-    echo '<td>';
-    echo '<input type="hidden" name="eikon_mandat_project_ids[]" value="' . (int) $project->ID . '">';
-    echo '<input type="checkbox" style="display: inline-block; margin: 0;" aria-label="Mettre en highlight" name="eikon_mandat_highlight_projects[]" value="' . (int) $project->ID . '"' . checked($is_highlighted, true, false) . '>';
-    echo '</td>';
-    echo '</tr>';
-  }
 
-  echo '</tbody>';
-  echo '</table>';
-  echo '<script>
+    echo '</tbody>';
+    echo '</table>';
+    echo '<script>
   (function () {
     var table = document.getElementById("eikon-mandat-projects-table");
     if (!table) return;
@@ -424,24 +423,24 @@ function eikon_render_mandat_projects_table($post)
     });
   })();
   </script>';
-  echo '</div>';
+    echo '</div>';
 }
 add_action('edit_form_after_editor', 'eikon_render_mandat_projects_table');
 
 function eikon_search_mandats_ajax()
 {
-  check_ajax_referer('eikon-search-mandats', 'nonce');
+    check_ajax_referer('eikon-search-mandats', 'nonce');
 
-  if (!current_user_can('edit_posts')) {
-    wp_send_json_error('Unauthorized', 403);
-  }
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Unauthorized', 403);
+    }
 
-  $term = sanitize_text_field($_GET['term'] ?? '');
-  if (strlen($term) < 2) {
-    wp_send_json_success(array());
-  }
+    $term = sanitize_text_field($_GET['term'] ?? '');
+    if (strlen($term) < 2) {
+        wp_send_json_success(array());
+    }
 
-  $query_args = array(
+    $query_args = array(
     'post_type'      => 'mandat',
     'post_status'    => array('publish', 'draft', 'pending', 'future', 'private'),
     // Match in PHP so partial words, accents, punctuation, and legacy HTML
@@ -457,141 +456,141 @@ function eikon_search_mandats_ajax()
         'compare' => '=',
       ),
     ),
-  );
-
-  $query = new WP_Query($query_args);
-  $matches = array();
-
-  foreach ($query->posts as $mandat) {
-    if (!$mandat instanceof WP_Post) {
-      continue;
-    }
-
-    $title = eikon_get_mandat_display_title($mandat->ID);
-    $score = eikon_get_mandat_search_score($title, $term);
-
-    if (false === $score) {
-      continue;
-    }
-
-    $matches[] = array(
-      'score' => $score,
-      'id' => $mandat->ID,
-      'title' => $title,
-      'meta' => eikon_get_mandat_summary($mandat->ID),
     );
-  }
 
-  usort($matches, function ($first, $second) {
-    if ($first['score'] !== $second['score']) {
-      return $second['score'] <=> $first['score'];
+    $query = new WP_Query($query_args);
+    $matches = array();
+
+    foreach ($query->posts as $mandat) {
+        if (!$mandat instanceof WP_Post) {
+            continue;
+        }
+
+        $title = eikon_get_mandat_display_title($mandat->ID);
+        $score = eikon_get_mandat_search_score($title, $term);
+
+        if (false === $score) {
+            continue;
+        }
+
+        $matches[] = array(
+        'score' => $score,
+        'id' => $mandat->ID,
+        'title' => $title,
+        'meta' => eikon_get_mandat_summary($mandat->ID),
+        );
     }
 
-    return strcasecmp($first['title'], $second['title']);
-  });
+    usort($matches, function ($first, $second) {
+        if ($first['score'] !== $second['score']) {
+            return $second['score'] <=> $first['score'];
+        }
 
-  $results = array_map(function ($match) {
-    unset($match['score']);
-    return $match;
-  }, array_slice($matches, 0, 10));
+        return strcasecmp($first['title'], $second['title']);
+    });
 
-  wp_send_json_success($results);
+    $results = array_map(function ($match) {
+        unset($match['score']);
+        return $match;
+    }, array_slice($matches, 0, 10));
+
+    wp_send_json_success($results);
 }
 add_action('wp_ajax_eikon_search_mandats', 'eikon_search_mandats_ajax');
 
 function eikon_save_project_current_mandat($post_id, $post, $update)
 {
-  if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-    return;
-  }
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
 
-  if (empty($post) || $post->post_type !== 'project') {
-    return;
-  }
+    if (empty($post) || $post->post_type !== 'project') {
+        return;
+    }
 
-  if (!isset($_POST['eikon_current_mandat_id'])) {
-    return;
-  }
+    if (!isset($_POST['eikon_current_mandat_id'])) {
+        return;
+    }
 
-  $previous_mandat_id = (int) get_post_meta($post_id, 'eikon_current_mandat_id', true);
-  $mandat_id = absint($_POST['eikon_current_mandat_id']);
-  if ($mandat_id > 0) {
-    update_post_meta($post_id, 'eikon_current_mandat_id', $mandat_id);
-  } else {
-    delete_post_meta($post_id, 'eikon_current_mandat_id');
-  }
+    $previous_mandat_id = (int) get_post_meta($post_id, 'eikon_current_mandat_id', true);
+    $mandat_id = absint($_POST['eikon_current_mandat_id']);
+    if ($mandat_id > 0) {
+        update_post_meta($post_id, 'eikon_current_mandat_id', $mandat_id);
+    } else {
+        delete_post_meta($post_id, 'eikon_current_mandat_id');
+    }
 
   // Highlight is mandate-specific; clear it only when mandate relation changes.
-  if ($previous_mandat_id !== $mandat_id) {
-    delete_post_meta($post_id, 'eikon_mandat_highlight');
-  }
+    if ($previous_mandat_id !== $mandat_id) {
+        delete_post_meta($post_id, 'eikon_mandat_highlight');
+    }
 }
 add_action('save_post_project', 'eikon_save_project_current_mandat', 20, 3);
 
 function eikon_save_mandat_project_highlights($post_id, $post, $update)
 {
-  if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-    return;
-  }
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
 
-  if (empty($post) || $post->post_type !== 'mandat') {
-    return;
-  }
+    if (empty($post) || $post->post_type !== 'mandat') {
+        return;
+    }
 
-  if (!current_user_can('edit_post', $post_id)) {
-    return;
-  }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
 
-  if (!isset($_POST['eikon_mandat_project_ids']) || !is_array($_POST['eikon_mandat_project_ids'])) {
-    return;
-  }
+    if (!isset($_POST['eikon_mandat_project_ids']) || !is_array($_POST['eikon_mandat_project_ids'])) {
+        return;
+    }
 
-  $project_ids = array_unique(array_filter(array_map('absint', $_POST['eikon_mandat_project_ids'])));
-  $highlighted_ids = isset($_POST['eikon_mandat_highlight_projects']) && is_array($_POST['eikon_mandat_highlight_projects'])
+    $project_ids = array_unique(array_filter(array_map('absint', $_POST['eikon_mandat_project_ids'])));
+    $highlighted_ids = isset($_POST['eikon_mandat_highlight_projects']) && is_array($_POST['eikon_mandat_highlight_projects'])
     ? array_unique(array_filter(array_map('absint', $_POST['eikon_mandat_highlight_projects'])))
     : array();
 
-  foreach ($project_ids as $project_id) {
-    if ('project' !== get_post_type($project_id)) {
-      continue;
-    }
+    foreach ($project_ids as $project_id) {
+        if ('project' !== get_post_type($project_id)) {
+            continue;
+        }
 
-    $linked_mandat_id = (int) get_post_meta($project_id, 'eikon_current_mandat_id', true);
-    if ((int) $post_id !== $linked_mandat_id) {
-      continue;
-    }
+        $linked_mandat_id = (int) get_post_meta($project_id, 'eikon_current_mandat_id', true);
+        if ((int) $post_id !== $linked_mandat_id) {
+            continue;
+        }
 
-    if (in_array($project_id, $highlighted_ids, true)) {
-      update_post_meta($project_id, 'eikon_mandat_highlight', '1');
-    } else {
-      delete_post_meta($project_id, 'eikon_mandat_highlight');
+        if (in_array($project_id, $highlighted_ids, true)) {
+            update_post_meta($project_id, 'eikon_mandat_highlight', '1');
+        } else {
+            delete_post_meta($project_id, 'eikon_mandat_highlight');
+        }
     }
-  }
 }
 add_action('save_post_mandat', 'eikon_save_mandat_project_highlights', 20, 3);
 
 function eikon_add_mandat_projects_count_column($columns)
 {
-  $new_columns = array();
+    $new_columns = array();
 
-  foreach ($columns as $key => $label) {
-    $new_columns[$key] = $label;
-    if ('title' === $key) {
-      $new_columns['mandat_projects_count'] = __('Projets liés');
+    foreach ($columns as $key => $label) {
+        $new_columns[$key] = $label;
+        if ('title' === $key) {
+            $new_columns['mandat_projects_count'] = __('Projets liés');
+        }
     }
-  }
 
-  return $new_columns;
+    return $new_columns;
 }
 add_filter('manage_mandat_posts_columns', 'eikon_add_mandat_projects_count_column');
 
 function eikon_render_mandat_projects_count_column($column, $post_id)
 {
-  if ('mandat_projects_count' !== $column) {
-    return;
-  }
+    if ('mandat_projects_count' !== $column) {
+        return;
+    }
 
-  $linked_project_ids = get_posts(array(
+    $linked_project_ids = get_posts(array(
     'post_type' => 'project',
     'post_status' => array('publish', 'draft', 'pending', 'future', 'private'),
     'posts_per_page' => -1,
@@ -599,8 +598,8 @@ function eikon_render_mandat_projects_count_column($column, $post_id)
     'no_found_rows' => true,
     'meta_key' => 'eikon_current_mandat_id',
     'meta_value' => (string) $post_id,
-  ));
+    ));
 
-  echo esc_html((string) count($linked_project_ids));
+    echo esc_html((string) count($linked_project_ids));
 }
 add_action('manage_mandat_posts_custom_column', 'eikon_render_mandat_projects_count_column', 10, 2);

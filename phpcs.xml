@@ -6,6 +6,12 @@
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>node_modules/*</exclude-pattern>
     <exclude-pattern>web/wp/*</exclude-pattern>
+    <exclude-pattern>web/app/mu-plugins/*/build/*</exclude-pattern>
+    <exclude-pattern>web/app/mu-plugins/*/src/*</exclude-pattern>
+    <arg name="extensions" value="php"/>
+    <arg value="n"/>
     
-    <rule ref="PSR12"/>
+    <rule ref="PSR12">
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+    </rule>
 </ruleset>

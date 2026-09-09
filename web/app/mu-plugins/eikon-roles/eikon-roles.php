@@ -11,7 +11,7 @@
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
-  exit;
+    exit;
 }
 
 /**
@@ -21,19 +21,19 @@ if (!defined('ABSPATH')) {
 function eikon_init_roles()
 {
   // Create Editor role (full content management, no settings access)
-  eikon_create_editor_role();
+    eikon_create_editor_role();
 
   // Create Teacher role
-  eikon_create_teacher_role();
+    eikon_create_teacher_role();
 
   // Create Student role
-  eikon_create_student_role();
+    eikon_create_student_role();
 
   // Update Admin capabilities
-  eikon_configure_admin_capabilities();
+    eikon_configure_admin_capabilities();
 
   // Permanently remove all unwanted roles - try multiple naming conventions
-  eikon_cleanup_unwanted_roles();
+    eikon_cleanup_unwanted_roles();
 }
 add_action('init', 'eikon_init_roles', 5);
 
@@ -42,7 +42,7 @@ add_action('init', 'eikon_init_roles', 5);
  */
 function eikon_cleanup_unwanted_roles()
 {
-  $roles_to_remove = array(
+    $roles_to_remove = array(
     'supervisor',
     'subscriber',
     'responsable_de_branche',
@@ -50,25 +50,25 @@ function eikon_cleanup_unwanted_roles()
     'responsable',
     'branch_manager',
     'branch-manager',
-  );
+    );
 
-  foreach ($roles_to_remove as $role_name) {
-    remove_role($role_name);
-  }
+    foreach ($roles_to_remove as $role_name) {
+        remove_role($role_name);
+    }
 
   // Clean up any lingering roles with 'responsable' or 'branch' in the name
-  global $wp_roles;
-  if ($wp_roles) {
-    $all_roles = $wp_roles->get_names();
-    $protected_roles = array('teacher', 'student', 'editor', 'administrator', 'super_admin');
-    foreach ($all_roles as $role_name) {
-      if (!in_array($role_name, $protected_roles, true)) {
-        if (stripos($role_name, 'responsable') !== false || stripos($role_name, 'branch') !== false) {
-          remove_role($role_name);
+    global $wp_roles;
+    if ($wp_roles) {
+        $all_roles = $wp_roles->get_names();
+        $protected_roles = array('teacher', 'student', 'editor', 'administrator', 'super_admin');
+        foreach ($all_roles as $role_name) {
+            if (!in_array($role_name, $protected_roles, true)) {
+                if (stripos($role_name, 'responsable') !== false || stripos($role_name, 'branch') !== false) {
+                    remove_role($role_name);
+                }
+            }
         }
-      }
     }
-  }
 }
 
 /**
@@ -88,7 +88,7 @@ function eikon_cleanup_unwanted_roles()
  */
 function eikon_create_editor_role()
 {
-  $editor_caps = array(
+    $editor_caps = array(
     'read'                      => true,
     'read_posts'                => true,
     'read_pages'                => true,
@@ -112,19 +112,19 @@ function eikon_create_editor_role()
     'create_pages'              => true,
     'upload_files'              => true,
     'edit_files'                => true,
-  );
+    );
 
   // Check if role already exists
-  $editor_role = get_role('editor');
-  if ($editor_role) {
-    // Role exists, update its capabilities
-    foreach ($editor_caps as $cap => $grant) {
-      $editor_role->add_cap($cap);
+    $editor_role = get_role('editor');
+    if ($editor_role) {
+      // Role exists, update its capabilities
+        foreach ($editor_caps as $cap => $grant) {
+            $editor_role->add_cap($cap);
+        }
+    } else {
+      // Create new role with specified capabilities
+        add_role('editor', 'Editor', $editor_caps);
     }
-  } else {
-    // Create new role with specified capabilities
-    add_role('editor', 'Editor', $editor_caps);
-  }
 }
 
 /**
@@ -141,7 +141,7 @@ function eikon_create_editor_role()
  */
 function eikon_create_teacher_role()
 {
-  $teacher_caps = array(
+    $teacher_caps = array(
     'read'                      => true,
     'read_posts'                => true,
     'edit_posts'                => true,
@@ -166,23 +166,23 @@ function eikon_create_teacher_role()
     'delete_published_mandats'  => false,
     'read_private_mandats'      => true,
     'create_mandats'            => true,
-  );
+    );
 
   // Check if role already exists
-  $teacher_role = get_role('teacher');
-  if ($teacher_role) {
-    // Role exists, update its capabilities
-    foreach ($teacher_caps as $cap => $grant) {
-      if ($grant) {
-        $teacher_role->add_cap($cap);
-      } else {
-        $teacher_role->remove_cap($cap);
-      }
+    $teacher_role = get_role('teacher');
+    if ($teacher_role) {
+      // Role exists, update its capabilities
+        foreach ($teacher_caps as $cap => $grant) {
+            if ($grant) {
+                $teacher_role->add_cap($cap);
+            } else {
+                $teacher_role->remove_cap($cap);
+            }
+        }
+    } else {
+      // Create new role with only specified capabilities
+        add_role('teacher', 'Enseignant / enseignante', $teacher_caps);
     }
-  } else {
-    // Create new role with only specified capabilities
-    add_role('teacher', 'Enseignant / enseignante', $teacher_caps);
-  }
 }
 
 /**
@@ -204,7 +204,7 @@ function eikon_create_teacher_role()
 function eikon_create_student_role()
 {
   // Note: Project CPT uses capability_type='post', so we use post capabilities
-  $student_caps = array(
+    $student_caps = array(
     'read'                      => true,
     'read_posts'                => true,      // Required for REST API and menu visibility
     'edit_posts'                => true,      // Edit own projects
@@ -217,23 +217,23 @@ function eikon_create_student_role()
     'manage_posts'              => true,      // Required for menu to appear in admin
     'upload_files'              => true,
     'edit_files'                => true,
-  );
+    );
 
   // Check if role already exists
-  $student_role = get_role('student');
-  if ($student_role) {
-    // Role exists, update its capabilities
-    foreach ($student_caps as $cap => $grant) {
-      if ($grant) {
-        $student_role->add_cap($cap);
-      } else {
-        $student_role->remove_cap($cap);
-      }
+    $student_role = get_role('student');
+    if ($student_role) {
+      // Role exists, update its capabilities
+        foreach ($student_caps as $cap => $grant) {
+            if ($grant) {
+                $student_role->add_cap($cap);
+            } else {
+                $student_role->remove_cap($cap);
+            }
+        }
+    } else {
+      // Create the role
+        add_role('student', 'Étudiant / étudiante', $student_caps);
     }
-  } else {
-    // Create the role
-    add_role('student', 'Étudiant / étudiante', $student_caps);
-  }
 }
 
 /**
@@ -248,48 +248,48 @@ function eikon_create_student_role()
  */
 function eikon_configure_admin_capabilities()
 {
-  $admin = get_role('administrator');
-  if (!$admin) {
-    return;
-  }
+    $admin = get_role('administrator');
+    if (!$admin) {
+        return;
+    }
 
   // Ensure administrator has user management capabilities
-  $admin->add_cap('manage_users');
-  $admin->add_cap('list_users');
-  $admin->add_cap('create_users');
-  $admin->add_cap('edit_users');
-  $admin->add_cap('delete_users');
-  $admin->add_cap('promote_users');
+    $admin->add_cap('manage_users');
+    $admin->add_cap('list_users');
+    $admin->add_cap('create_users');
+    $admin->add_cap('edit_users');
+    $admin->add_cap('delete_users');
+    $admin->add_cap('promote_users');
 
   // Ensure administrator can manage all content
-  $admin->add_cap('edit_posts');
-  $admin->add_cap('edit_published_posts');
-  $admin->add_cap('publish_posts');
-  $admin->add_cap('delete_posts');
-  $admin->add_cap('delete_published_posts');
+    $admin->add_cap('edit_posts');
+    $admin->add_cap('edit_published_posts');
+    $admin->add_cap('publish_posts');
+    $admin->add_cap('delete_posts');
+    $admin->add_cap('delete_published_posts');
 
-  $admin->add_cap('edit_projects');
-  $admin->add_cap('edit_published_projects');
-  $admin->add_cap('publish_projects');
-  $admin->add_cap('delete_projects');
-  $admin->add_cap('delete_published_projects');
+    $admin->add_cap('edit_projects');
+    $admin->add_cap('edit_published_projects');
+    $admin->add_cap('publish_projects');
+    $admin->add_cap('delete_projects');
+    $admin->add_cap('delete_published_projects');
 
-  $admin->add_cap('edit_mandat');
-  $admin->add_cap('read_mandat');
-  $admin->add_cap('delete_mandat');
-  $admin->add_cap('edit_mandats');
-  $admin->add_cap('edit_others_mandats');
-  $admin->add_cap('edit_published_mandats');
-  $admin->add_cap('edit_private_mandats');
-  $admin->add_cap('publish_mandats');
-  $admin->add_cap('delete_mandats');
-  $admin->add_cap('delete_others_mandats');
-  $admin->add_cap('delete_published_mandats');
-  $admin->add_cap('read_private_mandats');
-  $admin->add_cap('create_mandats');
+    $admin->add_cap('edit_mandat');
+    $admin->add_cap('read_mandat');
+    $admin->add_cap('delete_mandat');
+    $admin->add_cap('edit_mandats');
+    $admin->add_cap('edit_others_mandats');
+    $admin->add_cap('edit_published_mandats');
+    $admin->add_cap('edit_private_mandats');
+    $admin->add_cap('publish_mandats');
+    $admin->add_cap('delete_mandats');
+    $admin->add_cap('delete_others_mandats');
+    $admin->add_cap('delete_published_mandats');
+    $admin->add_cap('read_private_mandats');
+    $admin->add_cap('create_mandats');
 
   // Upload media
-  $admin->add_cap('upload_files');
+    $admin->add_cap('upload_files');
 }
 
 /**
@@ -300,37 +300,37 @@ function eikon_configure_admin_capabilities()
  */
 function eikon_restrict_manage_posts($query)
 {
-  if (!is_admin() || !$query->is_main_query()) {
-    return;
-  }
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
+    }
 
-  $current_user = wp_get_current_user();
+    $current_user = wp_get_current_user();
 
   // If user is super admin or administrator, show all posts
-  if (in_array('administrator', $current_user->roles, true)) {
-    return;
-  }
+    if (in_array('administrator', $current_user->roles, true)) {
+        return;
+    }
 
   // Students can only see their own projects
-  if (in_array('student', $current_user->roles, true)) {
-    $post_types = $query->get('post_type');
+    if (in_array('student', $current_user->roles, true)) {
+        $post_types = $query->get('post_type');
 
-    // If trying to view posts (default post type), restrict to projects only
-    if (empty($post_types) || $post_types === 'post') {
-      $query->set('post_type', 'project');
-      $query->set('author', $current_user->ID);
-      return;
-    }
+      // If trying to view posts (default post type), restrict to projects only
+        if (empty($post_types) || $post_types === 'post') {
+            $query->set('post_type', 'project');
+            $query->set('author', $current_user->ID);
+            return;
+        }
 
-    // If explicitly requesting projects, filter by author
-    if (!is_array($post_types)) {
-      $post_types = array($post_types);
-    }
+      // If explicitly requesting projects, filter by author
+        if (!is_array($post_types)) {
+            $post_types = array($post_types);
+        }
 
-    if (in_array('project', $post_types, true)) {
-      $query->set('author', $current_user->ID);
+        if (in_array('project', $post_types, true)) {
+            $query->set('author', $current_user->ID);
+        }
     }
-  }
 }
 add_action('pre_get_posts', 'eikon_restrict_manage_posts');
 
@@ -342,24 +342,24 @@ add_action('pre_get_posts', 'eikon_restrict_manage_posts');
 function eikon_remove_publish_capability($caps, $cap, $user_id)
 {
   // Get the user
-  $user = get_userdata($user_id);
-  if (!$user) {
-    return $caps;
-  }
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return $caps;
+    }
 
   // Check if user is teacher or student
-  $is_teacher = in_array('teacher', $user->roles, true);
-  $is_student = in_array('student', $user->roles, true);
+    $is_teacher = in_array('teacher', $user->roles, true);
+    $is_student = in_array('student', $user->roles, true);
 
-  if ($is_teacher || $is_student) {
-    // For publish_posts capability (covers both posts and projects since project uses capability_type='post')
-    if ($cap === 'publish_posts') {
-      // Deny publish capability - they can only save as draft/pending
-      $caps[] = 'do_not_allow';
+    if ($is_teacher || $is_student) {
+      // For publish_posts capability (covers both posts and projects since project uses capability_type='post')
+        if ($cap === 'publish_posts') {
+          // Deny publish capability - they can only save as draft/pending
+            $caps[] = 'do_not_allow';
+        }
     }
-  }
 
-  return $caps;
+    return $caps;
 }
 add_filter('user_has_cap', 'eikon_remove_publish_capability', 10, 3);
 
@@ -371,46 +371,46 @@ add_filter('user_has_cap', 'eikon_remove_publish_capability', 10, 3);
  */
 function eikon_restrict_teacher_edit_others($allcaps, $caps, $args, $user)
 {
-  if (!in_array('teacher', $user->roles, true)) {
-    return $allcaps;
-  }
+    if (!in_array('teacher', $user->roles, true)) {
+        return $allcaps;
+    }
 
   // Only restrict when checking edit/delete capability on a specific post
-  $meta_caps = array('edit_post', 'delete_post');
-  if (!isset($args[0]) || !in_array($args[0], $meta_caps, true)) {
-    return $allcaps;
-  }
+    $meta_caps = array('edit_post', 'delete_post');
+    if (!isset($args[0]) || !in_array($args[0], $meta_caps, true)) {
+        return $allcaps;
+    }
 
-  $post_id = isset($args[2]) ? (int) $args[2] : 0;
-  if (!$post_id) {
-    return $allcaps;
-  }
+    $post_id = isset($args[2]) ? (int) $args[2] : 0;
+    if (!$post_id) {
+        return $allcaps;
+    }
 
-  $post = get_post($post_id);
-  if (!$post) {
-    return $allcaps;
-  }
+    $post = get_post($post_id);
+    if (!$post) {
+        return $allcaps;
+    }
 
   // Mandats are shared across teachers, so they stay editable.
-  if ('mandat' === $post->post_type) {
-    return $allcaps;
-  }
+    if ('mandat' === $post->post_type) {
+        return $allcaps;
+    }
 
   // If the post belongs to someone else, deny the capability —
   // unless it's a student's draft or pending-review post (teachers can review those).
-  if ((int) $post->post_author !== (int) $user->ID) {
-    $post_author = get_userdata((int) $post->post_author);
-    $is_student_post = $post_author && in_array('student', $post_author->roles, true);
-    $is_reviewable   = in_array($post->post_status, array('draft', 'pending'), true);
+    if ((int) $post->post_author !== (int) $user->ID) {
+        $post_author = get_userdata((int) $post->post_author);
+        $is_student_post = $post_author && in_array('student', $post_author->roles, true);
+        $is_reviewable   = in_array($post->post_status, array('draft', 'pending'), true);
 
-    if (!($is_student_post && $is_reviewable)) {
-      foreach ($caps as $cap) {
-        $allcaps[$cap] = false;
-      }
+        if (!($is_student_post && $is_reviewable)) {
+            foreach ($caps as $cap) {
+                $allcaps[$cap] = false;
+            }
+        }
     }
-  }
 
-  return $allcaps;
+    return $allcaps;
 }
 add_filter('user_has_cap', 'eikon_restrict_teacher_edit_others', 10, 4);
 
@@ -420,17 +420,17 @@ add_filter('user_has_cap', 'eikon_restrict_teacher_edit_others', 10, 4);
  */
 function eikon_map_meta_cap($caps, $cap, $user_id, $args)
 {
-  $user = get_user_by('id', $user_id);
-  if (!$user || !in_array('student', $user->roles, true)) {
-    return $caps;
-  }
+    $user = get_user_by('id', $user_id);
+    if (!$user || !in_array('student', $user->roles, true)) {
+        return $caps;
+    }
 
   // For students, map edit_posts and manage_posts for menu visibility
-  if ('edit_posts' === $cap || 'manage_posts' === $cap) {
-    return array('read_posts', 'edit_posts', 'manage_posts');
-  }
+    if ('edit_posts' === $cap || 'manage_posts' === $cap) {
+        return array('read_posts', 'edit_posts', 'manage_posts');
+    }
 
-  return $caps;
+    return $caps;
 }
 add_filter('map_meta_cap', 'eikon_map_meta_cap', 10, 4);
 
@@ -442,58 +442,58 @@ add_filter('map_meta_cap', 'eikon_map_meta_cap', 10, 4);
  */
 function eikon_remove_admin_menu_items()
 {
-  $current_user = wp_get_current_user();
+    $current_user = wp_get_current_user();
 
   // If user is administrator or super admin, show everything
-  if (in_array('administrator', $current_user->roles, true)) {
-    return;
-  }
+    if (in_array('administrator', $current_user->roles, true)) {
+        return;
+    }
 
   // For editors: remove settings, users, tools, and theme-related items
-  if (in_array('editor', $current_user->roles, true)) {
-    remove_menu_page('index.php'); // Dashboard
-    remove_menu_page('tools.php'); // Tools
-    remove_menu_page('options-general.php'); // Settings
-    remove_menu_page('themes.php'); // Appearance
-    remove_menu_page('plugins.php'); // Plugins
+    if (in_array('editor', $current_user->roles, true)) {
+        remove_menu_page('index.php'); // Dashboard
+        remove_menu_page('tools.php'); // Tools
+        remove_menu_page('options-general.php'); // Settings
+        remove_menu_page('themes.php'); // Appearance
+        remove_menu_page('plugins.php'); // Plugins
 
-    // Keep: edit.php (Posts)
-    // Keep: edit.php?post_type=page (Pages)
-    // Keep: edit.php?post_type=project (Projects)
-    // Keep: edit.php?post_type=department (Departments)
-    // Keep: upload.php (Media)
-  }
+      // Keep: edit.php (Posts)
+      // Keep: edit.php?post_type=page (Pages)
+      // Keep: edit.php?post_type=project (Projects)
+      // Keep: edit.php?post_type=department (Departments)
+      // Keep: upload.php (Media)
+    }
 
   // For students: remove everything except projects, media, and profile
-  if (in_array('student', $current_user->roles, true)) {
-    remove_menu_page('index.php'); // Dashboard
-    remove_menu_page('edit.php'); // Posts
-    remove_menu_page('edit.php?post_type=page'); // Pages
-    remove_menu_page('edit.php?post_type=department'); // Departments
-    remove_menu_page('edit.php?post_type=mandat'); // Mandats
-    remove_menu_page('tools.php'); // Tools
-    remove_menu_page('options-general.php'); // Settings
-    remove_menu_page('users.php'); // Users
+    if (in_array('student', $current_user->roles, true)) {
+        remove_menu_page('index.php'); // Dashboard
+        remove_menu_page('edit.php'); // Posts
+        remove_menu_page('edit.php?post_type=page'); // Pages
+        remove_menu_page('edit.php?post_type=department'); // Departments
+        remove_menu_page('edit.php?post_type=mandat'); // Mandats
+        remove_menu_page('tools.php'); // Tools
+        remove_menu_page('options-general.php'); // Settings
+        remove_menu_page('users.php'); // Users
 
-    // Keep: edit.php?post_type=project (Projects)
-    // Keep: upload.php (Media)
-  }
+      // Keep: edit.php?post_type=project (Projects)
+      // Keep: upload.php (Media)
+    }
 
   // For teachers: remove settings and theme-related items
-  if (in_array('teacher', $current_user->roles, true)) {
-    remove_menu_page('index.php'); // Dashboard
-    remove_menu_page('edit.php?post_type=page'); // Pages
-    remove_menu_page('edit.php?post_type=department'); // Departments
-    remove_menu_page('tools.php'); // Tools
-    remove_menu_page('options-general.php'); // Settings
-    remove_menu_page('themes.php'); // Appearance
-    remove_menu_page('plugins.php'); // Plugins
+    if (in_array('teacher', $current_user->roles, true)) {
+        remove_menu_page('index.php'); // Dashboard
+        remove_menu_page('edit.php?post_type=page'); // Pages
+        remove_menu_page('edit.php?post_type=department'); // Departments
+        remove_menu_page('tools.php'); // Tools
+        remove_menu_page('options-general.php'); // Settings
+        remove_menu_page('themes.php'); // Appearance
+        remove_menu_page('plugins.php'); // Plugins
 
-    // Keep: edit.php (Posts)
-    // Keep: edit.php?post_type=project (Projects)
-    // Keep: upload.php (Media)
-    // Keep: profile.php is in Users submenu
-  }
+      // Keep: edit.php (Posts)
+      // Keep: edit.php?post_type=project (Projects)
+      // Keep: upload.php (Media)
+      // Keep: profile.php is in Users submenu
+    }
 }
 add_action('admin_menu', 'eikon_remove_admin_menu_items', 999);
 
@@ -502,9 +502,9 @@ add_action('admin_menu', 'eikon_remove_admin_menu_items', 999);
  */
 function eikon_remove_users_menu()
 {
-  if (!current_user_can('manage_users')) {
-    remove_menu_page('users.php');
-  }
+    if (!current_user_can('manage_users')) {
+        remove_menu_page('users.php');
+    }
 }
 add_action('admin_menu', 'eikon_remove_users_menu', 999);
 
@@ -516,33 +516,33 @@ add_action('admin_menu', 'eikon_remove_users_menu', 999);
  */
 function eikon_teacher_add_preview_row_action($actions, $post)
 {
-  $current_user = wp_get_current_user();
+    $current_user = wp_get_current_user();
 
-  if (!in_array('teacher', $current_user->roles, true)) {
-    return $actions;
-  }
+    if (!in_array('teacher', $current_user->roles, true)) {
+        return $actions;
+    }
 
   // Only for projects owned by someone else
-  if ($post->post_type !== 'project' || (int) $post->post_author === (int) $current_user->ID) {
-    return $actions;
-  }
+    if ($post->post_type !== 'project' || (int) $post->post_author === (int) $current_user->ID) {
+        return $actions;
+    }
 
   // Only for non-published statuses that don't already have a view link
-  $preview_statuses = array('draft', 'pending', 'future');
-  if (!in_array($post->post_status, $preview_statuses, true)) {
+    $preview_statuses = array('draft', 'pending', 'future');
+    if (!in_array($post->post_status, $preview_statuses, true)) {
+        return $actions;
+    }
+
+    $preview_url = get_preview_post_link($post);
+    if ($preview_url) {
+        $actions['view'] = sprintf(
+            '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+            esc_url($preview_url),
+            __('Aperçu')
+        );
+    }
+
     return $actions;
-  }
-
-  $preview_url = get_preview_post_link($post);
-  if ($preview_url) {
-    $actions['view'] = sprintf(
-      '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
-      esc_url($preview_url),
-      __('Aperçu')
-    );
-  }
-
-  return $actions;
 }
 add_filter('post_row_actions', 'eikon_teacher_add_preview_row_action', 10, 2);
 
@@ -553,7 +553,7 @@ add_filter('post_row_actions', 'eikon_teacher_add_preview_row_action', 10, 2);
 function eikon_set_default_user_role()
 {
   // Set the default role for new user registrations to 'student'
-  update_option('default_role', 'student');
+    update_option('default_role', 'student');
 }
 add_action('init', 'eikon_set_default_user_role', 10);
 
@@ -563,20 +563,20 @@ add_action('init', 'eikon_set_default_user_role', 10);
  */
 function eikon_sanitize_user_roles($user_id)
 {
-  $user = get_user_by('id', $user_id);
-  if (!$user) {
-    return;
-  }
+    $user = get_user_by('id', $user_id);
+    if (!$user) {
+        return;
+    }
 
-  $unwanted_roles = array('subscriber', 'responsable_de_branche', 'branch_manager');
-  $user_roles = $user->roles;
+    $unwanted_roles = array('subscriber', 'responsable_de_branche', 'branch_manager');
+    $user_roles = $user->roles;
 
   // If user has unwanted roles, remove them
-  foreach ($unwanted_roles as $role) {
-    if (in_array($role, $user_roles, true)) {
-      $user->remove_role($role);
+    foreach ($unwanted_roles as $role) {
+        if (in_array($role, $user_roles, true)) {
+            $user->remove_role($role);
+        }
     }
-  }
 }
 // Hook to clean up user roles on save/registration
 add_action('user_register', 'eikon_sanitize_user_roles', 10, 1);
@@ -591,26 +591,26 @@ add_action('save_user_data', 'eikon_sanitize_user_roles', 10, 1);
 function eikon_restrict_media_library($query)
 {
   // Only apply in admin
-  if (!is_admin()) {
-    return;
-  }
+    if (!is_admin()) {
+        return;
+    }
 
-  $current_user = wp_get_current_user();
+    $current_user = wp_get_current_user();
 
   // If user is super admin or administrator, show all media
-  if (!$current_user->ID || in_array('administrator', $current_user->roles, true)) {
-    return;
-  }
+    if (!$current_user->ID || in_array('administrator', $current_user->roles, true)) {
+        return;
+    }
 
   // Only filter attachment queries
-  if ($query->get('post_type') !== 'attachment') {
-    return;
-  }
+    if ($query->get('post_type') !== 'attachment') {
+        return;
+    }
 
   // For teacher/student roles, restrict to own uploads only
-  if (in_array('teacher', $current_user->roles, true) || in_array('student', $current_user->roles, true)) {
-    $query->set('author', $current_user->ID);
-  }
+    if (in_array('teacher', $current_user->roles, true) || in_array('student', $current_user->roles, true)) {
+        $query->set('author', $current_user->ID);
+    }
 }
 
 /**
@@ -622,43 +622,43 @@ function eikon_restrict_media_library($query)
 function eikon_allow_draft_post_reading($caps, $cap, $user_id, $args)
 {
   // Only handle read_post capability mapping
-  if ($cap !== 'read_post') {
-    return $caps;
-  }
+    if ($cap !== 'read_post') {
+        return $caps;
+    }
 
-  $user = get_userdata($user_id);
-  if (!$user) {
-    return $caps;
-  }
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return $caps;
+    }
 
   // Check if user is student or teacher
-  $is_student = in_array('student', $user->roles, true);
-  $is_teacher = in_array('teacher', $user->roles, true);
+    $is_student = in_array('student', $user->roles, true);
+    $is_teacher = in_array('teacher', $user->roles, true);
 
-  if (!$is_student && !$is_teacher) {
-    return $caps;
-  }
+    if (!$is_student && !$is_teacher) {
+        return $caps;
+    }
 
   // Get the post from args (typically args[0] is the post ID)
-  $post_id = isset($args[0]) ? (int) $args[0] : 0;
-  if ($post_id === 0) {
-    return $caps;
-  }
+    $post_id = isset($args[0]) ? (int) $args[0] : 0;
+    if ($post_id === 0) {
+        return $caps;
+    }
 
-  $post = get_post($post_id);
-  if (!$post || $post->post_type !== 'project') {
-    return $caps;
-  }
+    $post = get_post($post_id);
+    if (!$post || $post->post_type !== 'project') {
+        return $caps;
+    }
 
   // Allow students/teachers to read their own draft/pending/future projects
-  if (in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
-    if ((int) $post->post_author === $user_id) {
-      // Map to read_posts capability since they own the post
-      return array('read_posts');
+    if (in_array($post->post_status, ['draft', 'pending', 'future'], true)) {
+        if ((int) $post->post_author === $user_id) {
+          // Map to read_posts capability since they own the post
+            return array('read_posts');
+        }
     }
-  }
 
-  return $caps;
+    return $caps;
 }
 add_filter('map_meta_cap', 'eikon_allow_draft_post_reading', 10, 4);
 

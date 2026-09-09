@@ -15,7 +15,7 @@
  */
 
 if (!defined('ABSPATH')) {
-  exit; // Exit if accessed directly.
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -27,6 +27,6 @@ if (!defined('ABSPATH')) {
  */
 function eikonblocks_buttons_init()
 {
-  register_block_type(__DIR__ . '/build');
+    register_block_type(__DIR__ . '/build');
 }
 add_action('init', 'eikonblocks_buttons_init');
