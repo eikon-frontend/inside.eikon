@@ -198,6 +198,12 @@ class acf_field_vod_video extends acf_field
       $title    = isset($video_data['title'])   ? $video_data['title']   : '';
       if ($mpd_url) {
         echo '<a href="#" class="vod-video-play button button-primary" title="' . esc_attr($this->l10n['play_video']) . '" data-mpd-url="' . esc_attr($mpd_url) . '" data-poster="' . esc_attr($poster) . '" data-title="' . esc_attr($title) . '"><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' . esc_html($this->l10n['play_video']) . '</span></a>';
+        
+        $vod_id = isset($video_data['vod_id']) ? $video_data['vod_id'] : '';
+        if ($vod_id) {
+          $download_url = admin_url('admin-ajax.php?action=download_vod_original&vod_id=' . $vod_id);
+          echo '<a href="' . esc_url($download_url) . '" class="vod-video-download button" title="Télécharger l\'original" target="_blank"><span class="dashicons dashicons-download"></span><span class="vod-button-label">Télécharger l\'original</span></a>';
+        }
       }
       echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
       echo '<a href="#" class="vod-video-refresh button" title="' . esc_attr($this->l10n['refresh_video']) . '"><span class="dashicons dashicons-update"></span><span class="vod-button-label">' . esc_html($this->l10n['refresh_video']) . '</span></a>';

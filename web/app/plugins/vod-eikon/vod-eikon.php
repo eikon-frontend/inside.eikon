@@ -58,6 +58,7 @@ class VOD_Eikon
     add_action('wp_ajax_upload_vod_video', array($this, 'ajax_upload_video'));
     add_action('wp_ajax_test_api_logging', array($this, 'ajax_test_api_logging'));
     add_action('wp_ajax_test_callback_endpoint', array($this, 'ajax_test_callback_endpoint'));
+    add_action('wp_ajax_download_vod_original', array($this, 'ajax_download_vod_original'));
 
     // Add callback endpoint for Infomaniak VOD events
     add_action('init', array($this, 'register_callback_endpoint'));
@@ -2407,6 +2408,69 @@ class VOD_Eikon
       'callback_url' => $callback_url,
       'rewrite_rule_exists' => $callback_rule_exists
     ));
+  }
+
+  public function ajax_download_vod_original() {
+    if (!current_user_can('upload_files')) {
+      wp_die('Unauthorized');
+    }
+    
+    $vod_id = isset($_GET['vod_id']) ? sanitize_text_field($_GET['vod_id']) : '';
+    if (!$vod_id) wp_die('No VOD ID');
+
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+    
+    if (!$channel_id || !$api_token) {
+      wp_die('API non configurée');
+    }
+
+    $api_url = "https://api.infomaniak.com/1/vod/channel/{$channel_id}/media/{$vod_id}?with=streams,encoded_medias";
+    
+    $response = wp_remote_get($api_url, array(
+      'headers' => array(
+        'Authorization' => 'Bearer ' . $api_token,
+        'Accept' => 'application/json'
+      ),
+      'timeout' => 15
+    ));
+
+    if (is_wp_error($response)) {
+      wp_die('Erreur API');
+    }
+
+    $data = json_decode(wp_remote_retrieve_body($response), true);
+    if (empty($data['data'])) {
+      wp_die('Vidéo introuvable');
+    }
+
+    $video = $data['data'];
+    $mp4_url = '';
+
+    // Chercher l'URL de téléchargement direct
+    if (!empty($video['download_url'])) {
+      $mp4_url = $video['download_url'];
+    }
+
+    if (empty($mp4_url) && !empty($video['encoded_medias']) && is_array($video['encoded_medias'])) {
+      // Trier par taille (qualité max)
+      usort($video['encoded_medias'], function($a, $b) {
+        return ($b['size'] ?? 0) - ($a['size'] ?? 0);
+      });
+      foreach ($video['encoded_medias'] as $media) {
+        if (!empty($media['url']) && strpos($media['url'], '.mp4') !== false) {
+          $mp4_url = $media['url'];
+          break;
+        }
+      }
+    }
+
+    if ($mp4_url) {
+      wp_redirect($mp4_url);
+      exit;
+    } else {
+      wp_die('URL de téléchargement original introuvable.');
+    }
   }
 }
 

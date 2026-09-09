@@ -72,3 +72,33 @@ add_action('admin_init', function () {
 add_filter('get_user_option_admin_color', function ($color_scheme) {
   return 'eikon';
 });
+
+// Add download original image button in WP Media Modal
+add_action('admin_footer', function() {
+  ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const observer = new MutationObserver(function() {
+        const copyBtns = document.querySelectorAll('.copy-attachment-url');
+        copyBtns.forEach(function(btn) {
+          if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('eikon-download-btn')) {
+            const urlInput = btn.parentElement.querySelector('input[type="text"]');
+            if (urlInput && urlInput.value) {
+              const downloadBtn = document.createElement('a');
+              downloadBtn.href = urlInput.value;
+              downloadBtn.download = '';
+              downloadBtn.target = '_blank';
+              downloadBtn.className = 'button button-secondary eikon-download-btn';
+              downloadBtn.style.marginTop = '10px';
+              downloadBtn.style.display = 'inline-block';
+              downloadBtn.innerText = 'Télécharger l\'original';
+              btn.parentNode.insertBefore(downloadBtn, btn.nextSibling);
+            }
+          }
+        });
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  </script>
+  <?php
+});
