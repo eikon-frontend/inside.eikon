@@ -54,23 +54,6 @@ jobs:
       - name: Run PHPUnit
         run: vendor/bin/phpunit
 
-  schema-sync:
-    name: Generate & Sync Schema
-    runs-on: ubuntu-latest
-    needs: [lint, test]
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-
-      # A setup with a running WordPress (like wp-env) would be required here to run `wp graphql schema dump`.
-      # Since we don't have the full DB in CI, we simulate the step or use an existing staging endpoint.
-      - name: Dispatch to frontend repository
-        run: |
-          curl -X POST https://api.github.com/repos/eikon-frontend/eikon.ch/dispatches \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{ secrets.FRONTEND_REPO_PAT }}" \
-          -d '{"event_type": "update-graphql-schema"}'
-
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
