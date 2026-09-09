@@ -52,11 +52,11 @@
     "roots/wp-config": "1.0.0",
     "wpengine/advanced-custom-fields-pro": "^6.5",
     "wpackagist-plugin/wp-graphql": "^2.3",
-    "wpackagist-plugin/wpgraphql-acf": "^2.4",
+    "wpackagist-plugin/wpgraphql-acf": "^3.0",
     "wpackagist-plugin/wp-mail-smtp": "^4.0",
     "jysperu/php-qr-code": "^2",
     "guzzlehttp/guzzle": "^7.9",
-    "wp-graphql/wp-graphql-smart-cache": "^2.0"
+    "wpackagist-plugin/wpgraphql-smart-cache": "^2.3"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.6.0",
