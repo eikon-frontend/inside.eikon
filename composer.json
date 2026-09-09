@@ -55,7 +55,8 @@
     "wpackagist-plugin/wpgraphql-acf": "^2.4",
     "wpackagist-plugin/wp-mail-smtp": "^4.0",
     "jysperu/php-qr-code": "^2",
-    "guzzlehttp/guzzle": "^7.9"
+    "guzzlehttp/guzzle": "^7.9",
+    "wp-graphql/wp-graphql-smart-cache": "^2.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.6.0",
