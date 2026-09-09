@@ -192,22 +192,26 @@ class acf_field_vod_video extends acf_field
       echo '<div class="vod-video-details">';
       echo '<h4>' . esc_html($video_data['title'] ?? '') . '</h4>';
 
-      echo '<div class="vod-video-actions">';
+      echo '<div class="vod-video-actions wp-core-ui button-group">';
+      
       $mpd_url = isset($video_data['mpd_url']) ? $video_data['mpd_url'] : '';
       $poster   = isset($video_data['poster'])  ? $video_data['poster']  : '';
       $title    = isset($video_data['title'])   ? $video_data['title']   : '';
+      $btn_style = 'display:inline-flex;align-items:center;gap:4px;line-height:1;padding-top:0;padding-bottom:0;';
       if ($mpd_url) {
-        echo '<a href="#" class="vod-video-play button button-primary" title="' . esc_attr($this->l10n['play_video']) . '" data-mpd-url="' . esc_attr($mpd_url) . '" data-poster="' . esc_attr($poster) . '" data-title="' . esc_attr($title) . '"><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' . esc_html($this->l10n['play_video']) . '</span></a>';
+        echo '<a href="#" class="vod-video-play button button-primary" title="' . esc_attr($this->l10n['play_video']) . '" data-mpd-url="' . esc_attr($mpd_url) . '" data-poster="' . esc_attr($poster) . '" data-title="' . esc_attr($title) . '" style="' . $btn_style . '"><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' . esc_html($this->l10n['play_video']) . '</span></a>';
         
         $vod_id = isset($video_data['vod_id']) ? $video_data['vod_id'] : '';
-        if ($vod_id) {
-          $download_url = admin_url('admin-ajax.php?action=download_vod_original&vod_id=' . $vod_id);
-          echo '<a href="' . esc_url($download_url) . '" class="vod-video-download button" title="Télécharger l\'original" target="_blank"><span class="dashicons dashicons-download"></span><span class="vod-button-label">Télécharger l\'original</span></a>';
+        if ($vod_id && current_user_can('manage_options')) {
+          $account_id = getenv('INFOMANIAK_ACCOUNT_ID') ?: '702969';
+          $channel_id = getenv('INFOMANIAK_CHANNEL_ID') ?: '14234';
+          $manager_url = "https://manager.infomaniak.com/v3/{$account_id}/ng/vod-aod/pack/{$channel_id}/media/{$vod_id}/dashboard";
+          echo '<a href="' . esc_url($manager_url) . '" class="vod-video-source button" title="Accéder à la source" target="_blank" style="' . $btn_style . '"><span class="dashicons dashicons-external"></span><span class="vod-button-label">Accéder à la source</span></a>';
         }
       }
-      echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
-      echo '<a href="#" class="vod-video-refresh button" title="' . esc_attr($this->l10n['refresh_video']) . '"><span class="dashicons dashicons-update"></span><span class="vod-button-label">' . esc_html($this->l10n['refresh_video']) . '</span></a>';
-      echo '<a href="#" class="vod-video-remove button" title="' . esc_attr($this->l10n['remove_video']) . '"><span class="dashicons dashicons-trash"></span><span class="vod-button-label">' . esc_html($this->l10n['remove_video']) . '</span></a>';
+      echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '" style="' . $btn_style . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
+      
+      echo '<a href="#" class="vod-video-remove button" title="' . esc_attr($this->l10n['remove_video']) . '" style="' . $btn_style . '"><span class="dashicons dashicons-trash"></span><span class="vod-button-label">' . esc_html($this->l10n['remove_video']) . '</span></a>';
       echo '</div>';
       echo '</div>';
       echo '</div>';

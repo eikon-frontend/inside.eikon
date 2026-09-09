@@ -79,20 +79,40 @@ add_action('admin_footer', function() {
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const observer = new MutationObserver(function() {
-        const copyBtns = document.querySelectorAll('.copy-attachment-url');
-        copyBtns.forEach(function(btn) {
-          if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('eikon-download-btn')) {
-            const urlInput = btn.parentElement.querySelector('input[type="text"]');
-            if (urlInput && urlInput.value) {
+        const editLinks = document.querySelectorAll('.edit-attachment');
+        editLinks.forEach(function(link) {
+          if (!link.previousElementSibling || !link.previousElementSibling.classList.contains('eikon-download-btn')) {
+            // Find the URL from the readonly input field containing the file URL
+            const inputs = document.querySelectorAll('.attachment-details input[type="text"]');
+            let originalUrl = '';
+            
+            inputs.forEach(input => {
+              if (input.value && input.value.includes('/uploads/')) {
+                originalUrl = input.value;
+              }
+            });
+
+            if (originalUrl) {
+              // Get original filename to replace the .webp version if needed
+              const filenameElem = link.closest('.details').querySelector('.filename');
+              if (filenameElem && filenameElem.textContent) {
+                const originalFilename = filenameElem.textContent.trim();
+                const parts = originalUrl.split('/');
+                parts[parts.length - 1] = originalFilename;
+                originalUrl = parts.join('/');
+              }
+
               const downloadBtn = document.createElement('a');
-              downloadBtn.href = urlInput.value;
+              downloadBtn.href = originalUrl;
               downloadBtn.download = '';
               downloadBtn.target = '_blank';
-              downloadBtn.className = 'button button-secondary eikon-download-btn';
-              downloadBtn.style.marginTop = '10px';
-              downloadBtn.style.display = 'inline-block';
+              downloadBtn.className = 'eikon-download-btn';
+              downloadBtn.style.display = 'block';
+              downloadBtn.style.marginBottom = '3px';
+              downloadBtn.style.textDecoration = 'none';
               downloadBtn.innerText = 'Télécharger l\'original';
-              btn.parentNode.insertBefore(downloadBtn, btn.nextSibling);
+              
+              link.parentNode.insertBefore(downloadBtn, link);
             }
           }
         });
