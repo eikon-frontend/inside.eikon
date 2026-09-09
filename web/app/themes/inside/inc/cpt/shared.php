@@ -32,11 +32,20 @@ function users_projects_column($cols)
 function user_projects_column_value($value, $column_name, $id)
 {
     if ($column_name == 'user_projects') {
-        global $wpdb;
-        $count = (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type = 'project' AND post_author = %d",
-            $id
-        ));
+        static $project_counts = null;
+        if ($project_counts === null) {
+            global $wpdb;
+            $results = $wpdb->get_results(
+                "SELECT post_author, COUNT(ID) as count FROM {$wpdb->posts} WHERE post_type = 'project' GROUP BY post_author",
+                OBJECT_K
+            );
+            $project_counts = array_map(function ($r) {
+                return $r->count;
+            }, $results);
+        }
+
+        $count = isset($project_counts[$id]) ? (int) $project_counts[$id] : 0;
+
         if ($count > 0) {
             $url = admin_url('edit.php?post_type=project&author=' . $id);
             return sprintf('<a href="%s">%d</a>', esc_url($url), $count);

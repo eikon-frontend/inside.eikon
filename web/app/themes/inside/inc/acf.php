@@ -59,10 +59,6 @@ add_filter('acf/fields/wysiwyg/toolbars', function ($toolbars) {
     return $toolbars;
 });
 
-// Restrict format dropdown to only paragraph and h3
-add_filter('acf/fields/wysiwyg/toolbars', function ($toolbars) {
-    return $toolbars;
-}, 20);
 
 add_filter('tiny_mce_before_init', function ($settings) {
     $settings['block_formats'] = 'Paragraph=p;Heading 3=h3';
