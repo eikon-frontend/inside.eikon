@@ -74,7 +74,7 @@ class Eikon_Images
         }
 
         $segments = array_slice(explode('_', $base), 2);
-        $placeholders = ['titre', 'nom', 'prenom', 'montitre', 'dupont', 'marie'];
+        $placeholders = ['titre', 'nom', 'prenom', 'montitre'];
         foreach ($segments as $segment) {
             if (in_array(strtolower($segment), $placeholders, true)) {
                 return sprintf(
@@ -120,7 +120,7 @@ class Eikon_Images
         'regex'        => '^' . ltrim(rtrim(self::FILENAME_REGEX, '/'), '/') . '$', // Format for JS
         'errorMessage' => self::FILENAME_ERROR,
         'currentYear'  => $this->get_current_academic_year(),
-        'placeholders' => ['titre', 'nom', 'prenom', 'montitre', 'dupont', 'marie'],
+        'placeholders' => ['titre', 'nom', 'prenom', 'montitre'],
         ]);
     }
 

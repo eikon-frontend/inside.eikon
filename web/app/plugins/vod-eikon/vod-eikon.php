@@ -210,7 +210,7 @@ class VOD_Eikon
       'filename_regex' => '^[0-9]{2,4}_[0-9]{2,4}_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+){3,8}(?:_(Re|Ex)(?:_[0-9]+)?)?(?:_[0-9]+)?\\.[a-zA-Z0-9]+$',
       'filename_error' => 'Erreur : Le nom de votre fichier ne respecte pas la nomenclature de l\'école. Exemple: ' . $current_year . '_IMD11_CIE_MonTitre_Dupont_Marie.mp4',
       'current_year' => $current_year,
-      'placeholders' => array('titre', 'nom', 'prenom'),
+      'placeholders' => array('titre', 'nom', 'prenom', 'montitre'),
     ));
 
     wp_enqueue_style(
@@ -1331,18 +1331,10 @@ class VOD_Eikon
       }
     }
 
-    // 3. Current academic year check (catches old years like "23_24" or "24_25")
-    if (strncmp($base, $current_year . '_', strlen($current_year) + 1) !== 0) {
-      return sprintf(
-        'Erreur : L\'année académique doit être "%s" pour l\'année en cours. Exemple: %s_IMD11_CIE_MonTitre_Dupont_Marie.mp4',
-        $current_year,
-        $current_year
-      );
-    }
 
     // 4. Placeholder word check (catches copy-pasted example filenames)
     $segments = array_slice(explode('_', $base), 2);
-    $placeholders = ['titre', 'nom', 'prenom'];
+    $placeholders = ['titre', 'nom', 'prenom', 'montitre'];
     foreach ($segments as $segment) {
       if (in_array(strtolower($segment), $placeholders, true)) {
         return sprintf(
