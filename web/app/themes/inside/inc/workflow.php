@@ -380,12 +380,14 @@ function eikon_render_workflow_metabox($post)
             border-color: transparent;
         }
 
-        .eikon-toggle-group input[type="radio"][value="oui"]:checked+.eikon-toggle-btn {
-            background: #d63638;
+        .eikon-toggle-group input[name="eikon_contains_ai_content"][value="oui"]:checked+.eikon-toggle-btn,
+        .eikon-toggle-group input[name="eikon_copyright_cleared"][value="non"]:checked+.eikon-toggle-btn {
+            background: #d63638; /* Red for warning */
         }
 
-        .eikon-toggle-group input[type="radio"][value="non"]:checked+.eikon-toggle-btn {
-            background: #00a32a;
+        .eikon-toggle-group input[name="eikon_contains_ai_content"][value="non"]:checked+.eikon-toggle-btn,
+        .eikon-toggle-group input[name="eikon_copyright_cleared"][value="oui"]:checked+.eikon-toggle-btn {
+            background: #00a32a; /* Green for safe */
         }
 
         .eikon-toggle-group .eikon-toggle-btn:hover {
