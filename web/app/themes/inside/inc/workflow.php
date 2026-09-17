@@ -171,7 +171,7 @@ function eikon_render_workflow_metabox($post)
     if ($show_legal) {
         wp_nonce_field('eikon_project_legal_save', 'eikon_project_legal_nonce');
         $ai_value        = get_post_meta($post->ID, 'eikon_contains_ai_content', true);
-        $copyright_value = get_post_meta($post->ID, 'eikon_contains_copyright_content', true);
+        $copyright_value = get_post_meta($post->ID, 'eikon_copyright_cleared', true);
     }
     ?>
     <style>
@@ -525,13 +525,13 @@ function eikon_render_workflow_metabox($post)
 
             <div class="eikon-legal-field">
                 <span class="eikon-field-label">
-                    Droits d'auteur non clarifiés&nbsp;<span class="eikon-required">*</span>
+                    Droits d'auteur clarifiés&nbsp;<span class="eikon-required">*</span>
                 </span>
                 <div class="eikon-toggle-group">
-                    <input type="radio" name="eikon_contains_copyright_content" id="eikon_copyright_oui" value="oui"
+                    <input type="radio" name="eikon_copyright_cleared" id="eikon_copyright_oui" value="oui"
                         <?php checked($copyright_value, 'oui'); ?>>
                     <label class="eikon-toggle-btn" for="eikon_copyright_oui">OUI</label>
-                    <input type="radio" name="eikon_contains_copyright_content" id="eikon_copyright_non" value="non"
+                    <input type="radio" name="eikon_copyright_cleared" id="eikon_copyright_non" value="non"
                         <?php checked($copyright_value, 'non'); ?>>
                     <label class="eikon-toggle-btn" for="eikon_copyright_non">NON</label>
                 </div>
@@ -609,7 +609,7 @@ function eikon_render_workflow_metabox($post)
                     }
 
                     var aiChecked = document.querySelector('input[name="eikon_contains_ai_content"]:checked');
-                    var copyrightChecked = document.querySelector('input[name="eikon_contains_copyright_content"]:checked');
+                    var copyrightChecked = document.querySelector('input[name="eikon_copyright_cleared"]:checked');
                     var aiError = document.getElementById('eikon-error-ai');
                     var copyrightError = document.getElementById('eikon-error-copyright');
                     var hasError = false;

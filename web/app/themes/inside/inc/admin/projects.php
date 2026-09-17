@@ -253,9 +253,9 @@ function eikon_project_legal_validate_publish(array $data, array $postarr): arra
     ? sanitize_text_field(wp_unslash($_POST['eikon_contains_ai_content']))
     : get_post_meta($post_id, 'eikon_contains_ai_content', true);
 
-    $copyright = isset($_POST['eikon_contains_copyright_content'])
-    ? sanitize_text_field(wp_unslash($_POST['eikon_contains_copyright_content']))
-    : get_post_meta($post_id, 'eikon_contains_copyright_content', true);
+    $copyright = isset($_POST['eikon_copyright_cleared'])
+    ? sanitize_text_field(wp_unslash($_POST['eikon_copyright_cleared']))
+    : get_post_meta($post_id, 'eikon_copyright_cleared', true);
 
     if (!in_array($ai, array('oui', 'non'), true) || !in_array($copyright, array('oui', 'non'), true)) {
         $data['post_status'] = 'pending';
@@ -310,8 +310,8 @@ function eikon_project_legal_save_meta(int $post_id, WP_Post $post)
         $ai_value = '';
     }
 
-    $copyright_value = isset($_POST['eikon_contains_copyright_content'])
-    ? sanitize_text_field(wp_unslash($_POST['eikon_contains_copyright_content']))
+    $copyright_value = isset($_POST['eikon_copyright_cleared'])
+    ? sanitize_text_field(wp_unslash($_POST['eikon_copyright_cleared']))
     : '';
     if (!in_array($copyright_value, $allowed, true)) {
         $copyright_value = '';
@@ -324,8 +324,39 @@ function eikon_project_legal_save_meta(int $post_id, WP_Post $post)
     }
 
     if ('' === $copyright_value) {
-        delete_post_meta($post_id, 'eikon_contains_copyright_content');
+        delete_post_meta($post_id, 'eikon_copyright_cleared');
     } else {
-        update_post_meta($post_id, 'eikon_contains_copyright_content', $copyright_value);
+        update_post_meta($post_id, 'eikon_copyright_cleared', $copyright_value);
     }
+}
+
+// --- Migration: eikon_contains_copyright_content → eikon_copyright_cleared (one-shot, inverted) ---
+add_action('init', 'eikon_migrate_copyright_meta');
+function eikon_migrate_copyright_meta()
+{
+    if (get_option('eikon_copyright_migrated')) {
+        return;
+    }
+
+    $projects = get_posts([
+        'post_type'      => 'project',
+        'post_status'    => 'any',
+        'posts_per_page' => -1,
+        'meta_key'       => 'eikon_contains_copyright_content',
+        'fields'         => 'ids',
+    ]);
+
+    foreach ($projects as $pid) {
+        $old = get_post_meta($pid, 'eikon_contains_copyright_content', true);
+        if ('' === $old) {
+            continue;
+        }
+        // Invert: old "oui" (= problem) → new "non" (= not cleared)
+        //         old "non" (= OK)      → new "oui" (= cleared)
+        $new_value = ('oui' === $old) ? 'non' : 'oui';
+        update_post_meta($pid, 'eikon_copyright_cleared', $new_value);
+        delete_post_meta($pid, 'eikon_contains_copyright_content');
+    }
+
+    update_option('eikon_copyright_migrated', true);
 }
