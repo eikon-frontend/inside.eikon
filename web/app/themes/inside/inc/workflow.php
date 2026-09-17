@@ -471,11 +471,11 @@ function eikon_render_workflow_metabox($post)
         // Get last revision author
         $revisions = wp_get_post_revisions($post->ID, array('numberposts' => 1));
         $revision_count = wp_get_post_revisions($post->ID, array('numberposts' => -1));
-        $revision_count = is_array($revision_count) ? count($revision_count) : 0;
+        $revision_count = count($revision_count);
 
         if (!empty($revisions)) {
             $last_revision = reset($revisions);
-            $revision_author = get_userdata($last_revision->post_author);
+            $revision_author = get_userdata((int) $last_revision->post_author);
             if ($revision_author) {
                 $last_modified_author = trim($revision_author->first_name . ' ' . $revision_author->last_name);
                 if (empty($last_modified_author)) {
@@ -497,7 +497,7 @@ function eikon_render_workflow_metabox($post)
             <p class="eikon-wf-meta" style="margin-top: 6px;">
                 <strong>Révisions :</strong>
                 <a href="<?php echo esc_url(admin_url('revision.php?revision=' . (reset($revisions) ? reset($revisions)->ID : $post->ID))); ?>">
-                    <?php echo esc_html($revision_count); ?> révision<?php echo $revision_count > 1 ? 's' : ''; ?>
+                    <?php echo (int) $revision_count; ?> révision<?php echo $revision_count > 1 ? 's' : ''; ?>
                 </a>
             </p>
         <?php endif; ?>
