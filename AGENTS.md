@@ -91,6 +91,17 @@ inside/
   - GraphQL enabled: `department/departments`
   - Uses Gutenberg blocks
 
+#### Publication Workflow & Legal Declarations (`workflow.php`, `admin/projects.php`, `admin/publication-dashboard.php`)
+
+- **Status Workflow**: Custom post statuses (`open`, `in_review`, `archive`) manage the publication lifecycle of `mandat` and `project` post types.
+- **Publication Dashboard**: A custom admin page provides a Notion-inspired UI for reviewers to publish/archive content.
+  - **Mandates**: A mandate can only be published once all its "highlight" projects are published. Publishing a mandate automatically archives its non-highlight projects.
+- **Legal Declarations**: Projects require two legal checks before publication:
+  - `eikon_contains_ai_content` (OUI/NON)
+  - `eikon_copyright_cleared` (OUI/NON) - *Note: OUI means cleared/safe.*
+  - The dashboard displays a ⚠️ warning badge for projects with AI content or uncleared copyright.
+  - These meta fields are internal to the backend workflow and are NOT exposed to WP GraphQL.
+
 #### GraphQL Customizations (graphql.php)
 
 - **Random ordering**: Adds `RAND` to order enum

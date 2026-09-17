@@ -330,33 +330,3 @@ function eikon_project_legal_save_meta(int $post_id, WP_Post $post)
     }
 }
 
-// --- Migration: eikon_contains_copyright_content → eikon_copyright_cleared (one-shot, inverted) ---
-add_action('init', 'eikon_migrate_copyright_meta');
-function eikon_migrate_copyright_meta()
-{
-    if (get_option('eikon_copyright_migrated')) {
-        return;
-    }
-
-    $projects = get_posts([
-        'post_type'      => 'project',
-        'post_status'    => 'any',
-        'posts_per_page' => -1,
-        'meta_key'       => 'eikon_contains_copyright_content',
-        'fields'         => 'ids',
-    ]);
-
-    foreach ($projects as $pid) {
-        $old = get_post_meta($pid, 'eikon_contains_copyright_content', true);
-        if ('' === $old) {
-            continue;
-        }
-        // Invert: old "oui" (= problem) → new "non" (= not cleared)
-        //         old "non" (= OK)      → new "oui" (= cleared)
-        $new_value = ('oui' === $old) ? 'non' : 'oui';
-        update_post_meta($pid, 'eikon_copyright_cleared', $new_value);
-        delete_post_meta($pid, 'eikon_contains_copyright_content');
-    }
-
-    update_option('eikon_copyright_migrated', true);
-}
