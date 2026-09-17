@@ -173,8 +173,7 @@ function eikon_render_workflow_metabox($post)
         $ai_value        = get_post_meta($post->ID, 'eikon_contains_ai_content', true);
         $copyright_value = get_post_meta($post->ID, 'eikon_contains_copyright_content', true);
     }
-}
-?>
+    ?>
     <style>
         #eikon_workflow_metabox .inside {
             padding: 0;
@@ -562,16 +561,12 @@ function eikon_render_workflow_metabox($post)
             var statusInput = document.getElementById('eikon_workflow_status');
             var buttons = document.querySelectorAll('.eikon-wf-status-btn');
             var descriptionEl = document.getElementById('eikon-wf-status-description');
-            var statusDescriptions = <?php echo wp_json_encode(
-                array_map(function ($s) {
-                    return $s['description'];
-                }, $statuses)
-            ); ?>;
-            var statusColors = <?php echo wp_json_encode(
-                array_map(function ($s) {
-                    return $s['color'];
-                }, $statuses)
-            ); ?>;
+            var statusDescriptions = <?php echo wp_json_encode(array_map(function ($s) {
+    return $s['description'];
+                                     }, $statuses)); ?>;
+            var statusColors = <?php echo wp_json_encode(array_map(function ($s) {
+    return $s['color'];
+                               }, $statuses)); ?>;
 
             buttons.forEach(function(btn) {
                 btn.addEventListener('click', function() {
@@ -649,7 +644,7 @@ function eikon_render_workflow_metabox($post)
         })();
     </script>
     <?php
-    }
+}
 
 // ==========================================================================
 // 3. STATUS TRANSITION — Apply the workflow status on save
@@ -661,48 +656,48 @@ function eikon_render_workflow_metabox($post)
  * Intercepts wp_insert_post_data to set post_status from our hidden field,
  * with role-based permission checks.
  */
-    function eikon_workflow_apply_status($data, $postarr)
-    {
-        $post_type = $data['post_type'];
+function eikon_workflow_apply_status($data, $postarr)
+{
+    $post_type = $data['post_type'];
 
-        if (!in_array($post_type, array('mandat', 'project'), true)) {
-            return $data;
-        }
-
-        // Skip if our nonce is not set (REST API, WP-CLI, imports)
-        if (
-            !isset($_POST['eikon_workflow_nonce']) ||
-            !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['eikon_workflow_nonce'])), 'eikon_workflow_save')
-        ) {
-            return $data;
-        }
-
-        if (!isset($_POST['eikon_workflow_status'])) {
-            return $data;
-        }
-
-        $requested_status = sanitize_key($_POST['eikon_workflow_status']);
-        $statuses         = eikon_get_workflow_statuses($post_type);
-
-        // Validate the status exists in our definitions
-        if (!isset($statuses[$requested_status])) {
-            return $data;
-        }
-
-        // Check if user has permission for this status
-        $current_user = wp_get_current_user();
-        $user_roles   = (array) $current_user->roles;
-        $allowed_roles = $statuses[$requested_status]['roles'];
-
-        if (!array_intersect($user_roles, $allowed_roles) && !is_super_admin()) {
-            return $data;
-        }
-
-        $data['post_status'] = $requested_status;
-
+    if (!in_array($post_type, array('mandat', 'project'), true)) {
         return $data;
     }
-    add_filter('wp_insert_post_data', 'eikon_workflow_apply_status', 5, 2);
+
+    // Skip if our nonce is not set (REST API, WP-CLI, imports)
+    if (
+        !isset($_POST['eikon_workflow_nonce']) ||
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['eikon_workflow_nonce'])), 'eikon_workflow_save')
+    ) {
+        return $data;
+    }
+
+    if (!isset($_POST['eikon_workflow_status'])) {
+        return $data;
+    }
+
+    $requested_status = sanitize_key($_POST['eikon_workflow_status']);
+    $statuses         = eikon_get_workflow_statuses($post_type);
+
+    // Validate the status exists in our definitions
+    if (!isset($statuses[$requested_status])) {
+        return $data;
+    }
+
+    // Check if user has permission for this status
+    $current_user = wp_get_current_user();
+    $user_roles   = (array) $current_user->roles;
+    $allowed_roles = $statuses[$requested_status]['roles'];
+
+    if (!array_intersect($user_roles, $allowed_roles) && !is_super_admin()) {
+        return $data;
+    }
+
+    $data['post_status'] = $requested_status;
+
+    return $data;
+}
+add_filter('wp_insert_post_data', 'eikon_workflow_apply_status', 5, 2);
 
 // ==========================================================================
 // 4. AUTOMATIC TRANSITIONS — Mandat in_review triggers project pending
@@ -712,68 +707,68 @@ function eikon_render_workflow_metabox($post)
  * When a mandat transitions to "in_review", automatically set all linked
  * draft projects to "pending" (Remis).
  */
-    function eikon_mandat_auto_transition_projects($post_id, $post, $update)
-    {
-        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-            return;
-        }
+function eikon_mandat_auto_transition_projects($post_id, $post, $update)
+{
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
 
-        if (empty($post) || 'mandat' !== $post->post_type) {
-            return;
-        }
+    if (empty($post) || 'mandat' !== $post->post_type) {
+        return;
+    }
 
-        if ('in_review' !== $post->post_status) {
-            return;
-        }
+    if ('in_review' !== $post->post_status) {
+        return;
+    }
 
-        // Only trigger on actual status change
-        $old_status = get_post_meta($post_id, '_eikon_previous_status', true);
-        if ('in_review' === $old_status) {
-            return;
-        }
+    // Only trigger on actual status change
+    $old_status = get_post_meta($post_id, '_eikon_previous_status', true);
+    if ('in_review' === $old_status) {
+        return;
+    }
 
-        // Find all linked projects still in draft
-        $draft_projects = get_posts(array(
-        'post_type'      => 'project',
-        'post_status'    => 'draft',
-        'posts_per_page' => -1,
-        'fields'         => 'ids',
-        'no_found_rows'  => true,
-        'meta_key'       => 'eikon_current_mandat_id',
-        'meta_value'     => (string) $post_id,
-        ));
+    // Find all linked projects still in draft
+    $draft_projects = get_posts(array(
+    'post_type'      => 'project',
+    'post_status'    => 'draft',
+    'posts_per_page' => -1,
+    'fields'         => 'ids',
+    'no_found_rows'  => true,
+    'meta_key'       => 'eikon_current_mandat_id',
+    'meta_value'     => (string) $post_id,
+    ));
 
-        if (!empty($draft_projects)) {
-            global $wpdb;
-            $ids_placeholder = implode(',', array_map('intval', $draft_projects));
-            $wpdb->query(
-                "UPDATE {$wpdb->posts} SET post_status = 'pending' WHERE ID IN ({$ids_placeholder})"
-            );
+    if (!empty($draft_projects)) {
+        global $wpdb;
+        $ids_placeholder = implode(',', array_map('intval', $draft_projects));
+        $wpdb->query(
+            "UPDATE {$wpdb->posts} SET post_status = 'pending' WHERE ID IN ({$ids_placeholder})"
+        );
 
-            // Clean object cache for each updated project
-            foreach ($draft_projects as $project_id) {
-                    clean_post_cache($project_id);
-            }
+        // Clean object cache for each updated project
+        foreach ($draft_projects as $project_id) {
+                clean_post_cache($project_id);
         }
     }
-    add_action('save_post_mandat', 'eikon_mandat_auto_transition_projects', 30, 3);
+}
+add_action('save_post_mandat', 'eikon_mandat_auto_transition_projects', 30, 3);
 
 /**
  * Track previous status to detect transitions.
  */
-    function eikon_track_previous_status($post_id, $post, $update)
-    {
-        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-            return;
-        }
-
-        if (!in_array($post->post_type, array('mandat', 'project'), true)) {
-            return;
-        }
-
-        update_post_meta($post_id, '_eikon_previous_status', $post->post_status);
+function eikon_track_previous_status($post_id, $post, $update)
+{
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
     }
-    add_action('save_post', 'eikon_track_previous_status', 99, 3);
+
+    if (!in_array($post->post_type, array('mandat', 'project'), true)) {
+        return;
+    }
+
+    update_post_meta($post_id, '_eikon_previous_status', $post->post_status);
+}
+add_action('save_post', 'eikon_track_previous_status', 99, 3);
 
 // ==========================================================================
 // 5. LABEL OVERRIDES — Rename "pending" to "Remis" for projects
@@ -783,35 +778,35 @@ function eikon_render_workflow_metabox($post)
  * Rename the "pending" status label to "Remis" for the project CPT
  * in admin screens (list view, status counts, etc.)
  */
-    function eikon_rename_pending_for_projects($translation, $text, $domain)
-    {
-        if (!is_admin()) {
-            return $translation;
-        }
-
-        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
-        if (!$screen) {
-            return $translation;
-        }
-
-        // Only rename for project screens
-        if ('project' !== $screen->post_type) {
-            return $translation;
-        }
-
-        $replacements = array(
-        'Pending'               => 'Remis',
-        'En attente de relecture' => 'Remis',
-        'Pending Review'        => 'Remis',
-        );
-
-        if (isset($replacements[$text])) {
-            return $replacements[$text];
-        }
-
+function eikon_rename_pending_for_projects($translation, $text, $domain)
+{
+    if (!is_admin()) {
         return $translation;
     }
-    add_filter('gettext', 'eikon_rename_pending_for_projects', 10, 3);
+
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if (!$screen) {
+        return $translation;
+    }
+
+    // Only rename for project screens
+    if ('project' !== $screen->post_type) {
+        return $translation;
+    }
+
+    $replacements = array(
+    'Pending'               => 'Remis',
+    'En attente de relecture' => 'Remis',
+    'Pending Review'        => 'Remis',
+    );
+
+    if (isset($replacements[$text])) {
+        return $replacements[$text];
+    }
+
+    return $translation;
+}
+add_filter('gettext', 'eikon_rename_pending_for_projects', 10, 3);
 
 // ==========================================================================
 // 6. STATUS BADGES — Admin list columns
@@ -820,35 +815,35 @@ function eikon_render_workflow_metabox($post)
 /**
  * Add status badge styles globally for admin.
  */
-    function eikon_workflow_admin_styles()
-    {
-        $screen = get_current_screen();
-        if (!$screen || !in_array($screen->post_type, array('mandat', 'project'), true)) {
-            return;
-        }
-
-        echo '<style>
-        .eikon-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #fff;
-            line-height: 1.6;
-            white-space: nowrap;
-        }
-        .eikon-status-badge .eikon-badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.7);
-        }
-    </style>';
+function eikon_workflow_admin_styles()
+{
+    $screen = get_current_screen();
+    if (!$screen || !in_array($screen->post_type, array('mandat', 'project'), true)) {
+        return;
     }
-    add_action('admin_head', 'eikon_workflow_admin_styles');
+
+    echo '<style>
+    .eikon-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.6;
+        white-space: nowrap;
+    }
+    .eikon-status-badge .eikon-badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.7);
+    }
+</style>';
+}
+add_action('admin_head', 'eikon_workflow_admin_styles');
 
 /**
  * Render a status badge HTML snippet.
@@ -857,89 +852,89 @@ function eikon_render_workflow_metabox($post)
  * @param string $post_type
  * @return string
  */
-    function eikon_render_status_badge($status, $post_type)
-    {
-        $label = eikon_get_status_label($status, $post_type);
-        $color = eikon_get_status_color($status, $post_type);
+function eikon_render_status_badge($status, $post_type)
+{
+    $label = eikon_get_status_label($status, $post_type);
+    $color = eikon_get_status_color($status, $post_type);
 
-        return sprintf(
-            '<span class="eikon-status-badge" style="background:%s;"><span class="eikon-badge-dot"></span>%s</span>',
-            esc_attr($color),
-            esc_html($label)
-        );
-    }
+    return sprintf(
+        '<span class="eikon-status-badge" style="background:%s;"><span class="eikon-badge-dot"></span>%s</span>',
+        esc_attr($color),
+        esc_html($label)
+    );
+}
 
 /**
  * Add a "Statut" column to the mandat admin list.
  */
-    function eikon_mandat_status_column($columns)
-    {
-        $new_columns = array();
+function eikon_mandat_status_column($columns)
+{
+    $new_columns = array();
 
-        foreach ($columns as $key => $label) {
-            $new_columns[$key] = $label;
-            if ('title' === $key) {
-                $new_columns['mandat_status'] = __('Statut');
-            }
+    foreach ($columns as $key => $label) {
+        $new_columns[$key] = $label;
+        if ('title' === $key) {
+            $new_columns['mandat_status'] = __('Statut');
         }
-
-        return $new_columns;
     }
-    add_filter('manage_mandat_posts_columns', 'eikon_mandat_status_column');
+
+    return $new_columns;
+}
+add_filter('manage_mandat_posts_columns', 'eikon_mandat_status_column');
 
 /**
  * Render the status badge in the mandat admin list.
  */
-    function eikon_mandat_status_column_content($column, $post_id)
-    {
-        if ('mandat_status' !== $column) {
-            return;
-        }
-
-        $post = get_post($post_id);
-        if (!$post) {
-            return;
-        }
-
-        echo eikon_render_status_badge($post->post_status, 'mandat');
+function eikon_mandat_status_column_content($column, $post_id)
+{
+    if ('mandat_status' !== $column) {
+        return;
     }
-    add_action('manage_mandat_posts_custom_column', 'eikon_mandat_status_column_content', 10, 2);
+
+    $post = get_post($post_id);
+    if (!$post) {
+        return;
+    }
+
+    echo eikon_render_status_badge($post->post_status, 'mandat');
+}
+add_action('manage_mandat_posts_custom_column', 'eikon_mandat_status_column_content', 10, 2);
 
 /**
  * Add a "Statut" column to the project admin list.
  */
-    function eikon_project_status_column($columns)
-    {
-        $new_columns = array();
+function eikon_project_status_column($columns)
+{
+    $new_columns = array();
 
-        foreach ($columns as $key => $label) {
-            $new_columns[$key] = $label;
-            if ('title' === $key) {
-                $new_columns['project_status'] = __('Statut');
-            }
+    foreach ($columns as $key => $label) {
+        $new_columns[$key] = $label;
+        if ('title' === $key) {
+            $new_columns['project_status'] = __('Statut');
         }
-
-        return $new_columns;
     }
-    add_filter('manage_project_posts_columns', 'eikon_project_status_column');
+
+    return $new_columns;
+}
+add_filter('manage_project_posts_columns', 'eikon_project_status_column');
 
 /**
  * Render the status badge in the project admin list.
  */
-    function eikon_project_status_column_content($column, $post_id)
-    {
-        if ('project_status' !== $column) {
-            return;
-        }
-
-        $post = get_post($post_id);
-        if (!$post) {
-            return;
-        }
-
-        echo eikon_render_status_badge($post->post_status, 'project');
+function eikon_project_status_column_content($column, $post_id)
+{
+    if ('project_status' !== $column) {
+        return;
     }
-    add_action('manage_project_posts_custom_column', 'eikon_project_status_column_content', 10, 2);
+
+    $post = get_post($post_id);
+    if (!$post) {
+        return;
+    }
+
+    echo eikon_render_status_badge($post->post_status, 'project');
+}
+add_action('manage_project_posts_custom_column', 'eikon_project_status_column_content', 10, 2);
 
 // ==========================================================================
 // 7. STATUS FILTER DROPDOWNS — Admin list filters
@@ -948,154 +943,154 @@ function eikon_render_workflow_metabox($post)
 /**
  * Add a status filter dropdown to the mandat admin list.
  */
-    function eikon_mandat_status_filter($post_type)
-    {
-        if ('mandat' !== $post_type) {
-            return;
-        }
-
-        $selected = sanitize_text_field($_GET['eikon_mandat_status'] ?? '');
-        $statuses = eikon_get_workflow_statuses('mandat');
-
-        echo '<select name="eikon_mandat_status" id="eikon_mandat_status">';
-        echo '<option value="">' . esc_html__('Tous les statuts') . '</option>';
-
-        foreach ($statuses as $slug => $config) {
-            echo '<option value="' . esc_attr($slug) . '"' . selected($selected, $slug, false) . '>'
-            . esc_html($config['label'])
-            . '</option>';
-        }
-
-        echo '</select>';
+function eikon_mandat_status_filter($post_type)
+{
+    if ('mandat' !== $post_type) {
+        return;
     }
-    add_action('restrict_manage_posts', 'eikon_mandat_status_filter');
+
+    $selected = sanitize_text_field($_GET['eikon_mandat_status'] ?? '');
+    $statuses = eikon_get_workflow_statuses('mandat');
+
+    echo '<select name="eikon_mandat_status" id="eikon_mandat_status">';
+    echo '<option value="">' . esc_html__('Tous les statuts') . '</option>';
+
+    foreach ($statuses as $slug => $config) {
+        echo '<option value="' . esc_attr($slug) . '"' . selected($selected, $slug, false) . '>'
+        . esc_html($config['label'])
+        . '</option>';
+    }
+
+    echo '</select>';
+}
+add_action('restrict_manage_posts', 'eikon_mandat_status_filter');
 
 /**
  * Apply the status filter to the mandat admin list query.
  */
-    function eikon_mandat_status_filter_query($query)
-    {
-        if (!is_admin() || !$query->is_main_query()) {
-            return;
-        }
-
-        if ('mandat' !== $query->get('post_type')) {
-            return;
-        }
-
-        $status = sanitize_key($_GET['eikon_mandat_status'] ?? '');
-        if ('' === $status) {
-            return;
-        }
-
-        $valid_statuses = array_keys(eikon_get_workflow_statuses('mandat'));
-        if (in_array($status, $valid_statuses, true)) {
-            $query->set('post_status', $status);
-        }
+function eikon_mandat_status_filter_query($query)
+{
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
     }
-    add_action('pre_get_posts', 'eikon_mandat_status_filter_query');
+
+    if ('mandat' !== $query->get('post_type')) {
+        return;
+    }
+
+    $status = sanitize_key($_GET['eikon_mandat_status'] ?? '');
+    if ('' === $status) {
+        return;
+    }
+
+    $valid_statuses = array_keys(eikon_get_workflow_statuses('mandat'));
+    if (in_array($status, $valid_statuses, true)) {
+        $query->set('post_status', $status);
+    }
+}
+add_action('pre_get_posts', 'eikon_mandat_status_filter_query');
 
 /**
  * Ensure custom statuses appear in the "All" view of admin lists.
  */
-    function eikon_include_custom_statuses_in_admin($query)
-    {
-        if (!is_admin() || !$query->is_main_query()) {
-            return;
-        }
-
-        $post_type = $query->get('post_type');
-
-        if (!in_array($post_type, array('mandat', 'project'), true)) {
-            return;
-        }
-
-        // Don't override if a specific status is already requested
-        $requested_status = $query->get('post_status');
-        if (!empty($requested_status) && 'all' !== $requested_status) {
-            return;
-        }
-
-        if ('mandat' === $post_type) {
-            $query->set('post_status', array('draft', 'open', 'in_review', 'publish', 'archive', 'trash'));
-        }
+function eikon_include_custom_statuses_in_admin($query)
+{
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
     }
-    add_action('pre_get_posts', 'eikon_include_custom_statuses_in_admin');
+
+    $post_type = $query->get('post_type');
+
+    if (!in_array($post_type, array('mandat', 'project'), true)) {
+        return;
+    }
+
+    // Don't override if a specific status is already requested
+    $requested_status = $query->get('post_status');
+    if (!empty($requested_status) && 'all' !== $requested_status) {
+        return;
+    }
+
+    if ('mandat' === $post_type) {
+        $query->set('post_status', array('draft', 'open', 'in_review', 'publish', 'archive', 'trash'));
+    }
+}
+add_action('pre_get_posts', 'eikon_include_custom_statuses_in_admin');
 
 /**
  * Add custom status counts to the admin views (status links at top of list table).
  */
-    function eikon_mandat_admin_views($views)
-    {
-        global $wpdb;
+function eikon_mandat_admin_views($views)
+{
+    global $wpdb;
 
-        $statuses = eikon_get_workflow_statuses('mandat');
-        $current_status = sanitize_key($_GET['post_status'] ?? '');
+    $statuses = eikon_get_workflow_statuses('mandat');
+    $current_status = sanitize_key($_GET['post_status'] ?? '');
 
-        foreach ($statuses as $slug => $config) {
-            // Skip native statuses that WordPress already handles
-            if (in_array($slug, array('draft', 'publish'), true)) {
-                continue;
-            }
-
-            $count = (int) $wpdb->get_var($wpdb->prepare(
-                "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'mandat' AND post_status = %s",
-                $slug
-            ));
-
-            if ($count > 0) {
-                $class = ($current_status === $slug) ? ' class="current"' : '';
-                $url = admin_url('edit.php?post_type=mandat&post_status=' . $slug);
-                $views[$slug] = sprintf(
-                    '<a href="%s"%s>%s <span class="count">(%d)</span></a>',
-                    esc_url($url),
-                    $class,
-                    esc_html($config['label']),
-                    $count
-                );
-            }
+    foreach ($statuses as $slug => $config) {
+        // Skip native statuses that WordPress already handles
+        if (in_array($slug, array('draft', 'publish'), true)) {
+            continue;
         }
 
-        return $views;
+        $count = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'mandat' AND post_status = %s",
+            $slug
+        ));
+
+        if ($count > 0) {
+            $class = ($current_status === $slug) ? ' class="current"' : '';
+            $url = admin_url('edit.php?post_type=mandat&post_status=' . $slug);
+            $views[$slug] = sprintf(
+                '<a href="%s"%s>%s <span class="count">(%d)</span></a>',
+                esc_url($url),
+                $class,
+                esc_html($config['label']),
+                $count
+            );
+        }
     }
-    add_filter('views_edit-mandat', 'eikon_mandat_admin_views');
+
+    return $views;
+}
+add_filter('views_edit-mandat', 'eikon_mandat_admin_views');
 
 /**
  * Add custom status counts for projects admin views.
  */
-    function eikon_project_admin_views($views)
-    {
-        global $wpdb;
+function eikon_project_admin_views($views)
+{
+    global $wpdb;
 
-        // Rename "Pending" to "Remis" in views
-        if (isset($views['pending'])) {
-            $views['pending'] = str_replace(
-                array('Pending', 'En attente de relecture'),
-                'Remis',
-                $views['pending']
-            );
-        }
-
-        // Add archive status view
-        $count = (int) $wpdb->get_var(
-            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'project' AND post_status = 'archive'"
+    // Rename "Pending" to "Remis" in views
+    if (isset($views['pending'])) {
+        $views['pending'] = str_replace(
+            array('Pending', 'En attente de relecture'),
+            'Remis',
+            $views['pending']
         );
-
-        if ($count > 0) {
-            $current_status = sanitize_key($_GET['post_status'] ?? '');
-            $class = ($current_status === 'archive') ? ' class="current"' : '';
-            $url = admin_url('edit.php?post_type=project&post_status=archive');
-            $views['archive'] = sprintf(
-                '<a href="%s"%s>Archivé <span class="count">(%d)</span></a>',
-                esc_url($url),
-                $class,
-                $count
-            );
-        }
-
-        return $views;
     }
-    add_filter('views_edit-project', 'eikon_project_admin_views');
+
+    // Add archive status view
+    $count = (int) $wpdb->get_var(
+        "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'project' AND post_status = 'archive'"
+    );
+
+    if ($count > 0) {
+        $current_status = sanitize_key($_GET['post_status'] ?? '');
+        $class = ($current_status === 'archive') ? ' class="current"' : '';
+        $url = admin_url('edit.php?post_type=project&post_status=archive');
+        $views['archive'] = sprintf(
+            '<a href="%s"%s>Archivé <span class="count">(%d)</span></a>',
+            esc_url($url),
+            $class,
+            $count
+        );
+    }
+
+    return $views;
+}
+add_filter('views_edit-project', 'eikon_project_admin_views');
 
 // ==========================================================================
 // 8. VISIBILITY — Remove the standard WP Visibility option
@@ -1105,18 +1100,18 @@ function eikon_render_workflow_metabox($post)
  * Hide the visibility option from the classic editor.
  * Since we use a headless setup, visibility (public/private/password) is irrelevant.
  */
-    function eikon_hide_visibility_option()
-    {
-        $screen = get_current_screen();
-        if (!$screen || !in_array($screen->post_type, array('mandat', 'project', 'post', 'page', 'department'), true)) {
-            return;
-        }
-
-        echo '<style>
-        #visibility-radio-public,
-        #visibility-radio-password,
-        #visibility-radio-private,
-        .misc-pub-visibility { display: none !important; }
-    </style>';
+function eikon_hide_visibility_option()
+{
+    $screen = get_current_screen();
+    if (!$screen || !in_array($screen->post_type, array('mandat', 'project', 'post', 'page', 'department'), true)) {
+        return;
     }
-    add_action('admin_head', 'eikon_hide_visibility_option');
+
+    echo '<style>
+    #visibility-radio-public,
+    #visibility-radio-password,
+    #visibility-radio-private,
+    .misc-pub-visibility { display: none !important; }
+</style>';
+}
+add_action('admin_head', 'eikon_hide_visibility_option');
