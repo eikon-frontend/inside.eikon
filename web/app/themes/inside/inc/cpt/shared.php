@@ -108,83 +108,42 @@ function set_default_page_order($query)
 add_action('pre_get_posts', 'set_default_page_order');
 
 /**
- * Register Custom Post Status "Archive"
+ * Register Custom Post Statuses for the workflow
+ *
+ * - "open" : Mandat is available for students to link their projects
+ * - "in_review" : Mandat is closed, teacher reviews highlights
+ * - "archive" : Content is archived, no longer visible publicly
  */
-function eikon_register_archive_post_status()
+function eikon_register_custom_post_statuses()
 {
+    // Ouvert — Mandat is available for students
+    register_post_status('open', array(
+        'label'                     => _x('Ouvert', 'post status', 'inside'),
+        'public'                    => true,
+        'exclude_from_search'       => false,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'label_count'               => _n_noop('Ouvert <span class="count">(%s)</span>', 'Ouverts <span class="count">(%s)</span>'),
+    ));
+
+    // En relecture — Mandat is closed, teacher reviews
+    register_post_status('in_review', array(
+        'label'                     => _x('En relecture', 'post status', 'inside'),
+        'public'                    => true,
+        'exclude_from_search'       => false,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'label_count'               => _n_noop('En relecture <span class="count">(%s)</span>', 'En relecture <span class="count">(%s)</span>'),
+    ));
+
+    // Archivé — Content is archived
     register_post_status('archive', array(
         'label'                     => _x('Archivé', 'post status', 'inside'),
-        'public'                    => false, // Pas affiché publiquement (ni dans GraphQL par défaut)
+        'public'                    => false,
         'exclude_from_search'       => true,
         'show_in_admin_all_list'    => true,
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop('Archivé <span class="count">(%s)</span>', 'Archivés <span class="count">(%s)</span>'),
-        'show_in_graphql'           => false, // Exclure de GraphQL
     ));
 }
-add_action('init', 'eikon_register_archive_post_status');
-
-/**
- * Add "Archive" status to the classic editor dropdown
- */
-function eikon_append_archive_post_status()
-{
-    global $post;
-
-    // Seulement pour les types de posts où l'éditeur classique est utilisé et qu'on veut archiver
-    if (! in_array($post->post_type, array( 'project', 'post' ))) {
-        return;
-    }
-
-    $label = _x('Archivé', 'post status', 'inside');
-    $is_archive = ( $post->post_status === 'archive' ) ? 'true' : 'false';
-
-    ?>
-    <script>
-    jQuery(document).ready(function($){
-        var is_archive = <?php echo $is_archive; ?>;
-        var label = '<?php echo esc_js($label); ?>';
-        
-        // Ajouter l'option dans le menu déroulant
-        if ($('select#post_status').length > 0) {
-            $('select#post_status').append('<option value="archive"' + (is_archive ? ' selected="selected"' : '') + '>' + label + '</option>');
-        }
-        
-        // Mettre à jour le texte affiché si l'article est actuellement archivé
-        if (is_archive) {
-            $('#post-status-display').text(label);
-        }
-    });
-    </script>
-    <?php
-}
-add_action('admin_footer-post.php', 'eikon_append_archive_post_status');
-add_action('admin_footer-post-new.php', 'eikon_append_archive_post_status');
-
-/**
- * Add "Archive" status to Quick Edit
- */
-function eikon_append_archive_post_status_quick_edit()
-{
-    global $post_type;
-
-    // Seulement pour project et post (désactivé pour mandat)
-    if (! in_array($post_type, array( 'project', 'post' ))) {
-        return;
-    }
-
-    $label = _x('Archivé', 'post status', 'inside');
-
-    ?>
-    <script>
-    jQuery(document).ready(function($){
-        var label = '<?php echo esc_js($label); ?>';
-        // Add to Quick Edit dropdown if not already present
-        if ($('select[name="_status"] option[value="archive"]').length === 0) {
-            $('select[name="_status"]').append('<option value="archive">' + label + '</option>');
-        }
-    });
-    </script>
-    <?php
-}
-add_action('admin_footer-edit.php', 'eikon_append_archive_post_status_quick_edit');
+add_action('init', 'eikon_register_custom_post_statuses');

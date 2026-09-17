@@ -78,39 +78,6 @@
             "bidirectional_target": []
         },
         {
-            "key": "field_68b0c20000002",
-            "label": "Statut du mandat",
-            "name": "mandat_status",
-            "aria-label": "",
-            "type": "select",
-            "instructions": "",
-            "required": 1,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "en_cours": "En cours",
-                "termine": "Terminé"
-            },
-            "default_value": "en_cours",
-            "return_format": "value",
-            "multiple": 0,
-            "allow_null": 0,
-            "allow_in_bindings": 0,
-            "ui": 1,
-            "show_in_graphql": 1,
-            "graphql_description": "",
-            "graphql_field_name": "mandatStatus",
-            "graphql_non_null": 0,
-            "ajax": 0,
-            "placeholder": "",
-            "create_options": 0,
-            "save_options": 0
-        },
-        {
             "key": "field_68b0c20000003",
             "label": "Co-enseignant·e·s",
             "name": "co_teachers",

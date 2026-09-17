@@ -40,7 +40,7 @@ function eikon_render_current_mandat_selector()
     ?>
   <div style="margin: 12px 0 0 0; padding: 0; border: 0; background: transparent; position: relative;">
     <label for="eikon_current_mandat_search" style="display: block; font-weight: 600; font-size: 16px; margin: 0 0 4px 0;">Mandat courant</label>
-    <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">Si ce projet a été fait dans le cadre d'un mandat, spécifiez ici Choisissez un mandat en cours pour ce projet.</p>
+    <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">Si ce projet a été fait dans le cadre d'un mandat, choisissez-le ici.</p>
     <input type="hidden" id="eikon_current_mandat_id" name="eikon_current_mandat_id" value="<?php echo esc_attr((string) $mandat_id); ?>">
     <div style="display: flex; align-items: stretch; gap: 0; position: relative;">
       <div style="position: relative; flex: 1 1 auto; min-width: 0; width: 100%;">
@@ -442,20 +442,13 @@ function eikon_search_mandats_ajax()
 
     $query_args = array(
     'post_type'      => 'mandat',
-    'post_status'    => array('publish', 'draft', 'pending', 'future', 'private'),
+    'post_status'    => array('open'),
     // Match in PHP so partial words, accents, punctuation, and legacy HTML
     // entities do not depend on WordPress' stricter full-text search behaviour.
     'posts_per_page' => -1,
     'orderby'        => 'title',
     'order'          => 'ASC',
     'no_found_rows'  => true,
-    'meta_query'     => array(
-      array(
-        'key'     => 'mandat_status',
-        'value'   => 'en_cours',
-        'compare' => '=',
-      ),
-    ),
     );
 
     $query = new WP_Query($query_args);

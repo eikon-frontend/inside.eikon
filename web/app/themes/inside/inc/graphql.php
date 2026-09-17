@@ -40,7 +40,7 @@ class Eikon_GraphQL
             return 'public';
         }
 
-        if ('mandat' === $data->post_type && 'publish' === $data->post_status) {
+        if ('mandat' === $data->post_type && in_array($data->post_status, ['publish', 'open', 'in_review'], true)) {
             return 'public';
         }
 
