@@ -274,6 +274,44 @@ function eikon_get_mandat_search_score($title, $term)
 
 function eikon_get_project_student_name_parts($project)
 {
+    if (function_exists('get_field')) {
+        $project_authors = get_field('project_authors', $project->ID);
+        if (!empty($project_authors) && is_array($project_authors)) {
+            $first_names = array();
+            $last_names = array();
+            $has_valid_author = false;
+
+            foreach ($project_authors as $row) {
+                $author = $row['author'] ?? null;
+                if ($author) {
+                    $user_id = is_array($author) ? ($author['ID'] ?? 0) : (is_object($author) ? $author->ID : (int)$author);
+                    if ($user_id) {
+                        $user = get_userdata($user_id);
+                        if ($user) {
+                            $first_name = trim((string) $user->first_name);
+                            $last_name = trim((string) $user->last_name);
+
+                            if ('' === $first_name && '' === $last_name) {
+                                $first_names[] = trim((string) $user->display_name);
+                            } else {
+                                $first_names[] = $first_name;
+                                $last_names[] = $last_name;
+                            }
+                            $has_valid_author = true;
+                        }
+                    }
+                }
+            }
+
+            if ($has_valid_author) {
+                return array(
+                    implode(', ', array_filter($first_names)),
+                    implode(', ', array_filter($last_names))
+                );
+            }
+        }
+    }
+
     $author = get_userdata($project->post_author);
     if (!$author) {
         return array('', '');
