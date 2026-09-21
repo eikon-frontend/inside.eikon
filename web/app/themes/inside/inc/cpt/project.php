@@ -127,8 +127,7 @@ function eikon_ensure_project_slug_on_save($post_id, $post, $update)
     $running = true;
 
     $author        = get_userdata($post->post_author);
-    $is_student    = $author && in_array('student', (array) $author->roles, true);
-    $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
+    $author_prefix = eikon_project_author_prefix($author);
     $slug          = $author_prefix . sanitize_title($post->post_title);
     $slug = wp_unique_post_slug($slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
 
@@ -190,27 +189,58 @@ function eikon_enforce_unique_project_slug_on_save($data, $postarr)
         return $data;
     }
 
-  // Ensure the slug is prefixed with the author's nicename.
-  // We apply the prefix when:
-  //   (a) post_name is empty (drafts: WordPress skips slug generation), or
-  //   (b) post_name was just auto-generated from the title without the prefix
-  //       (published posts: WordPress regenerates the slug before this filter runs
-  //        when the user clears the slug field in the admin).
+  // We universally apply the prefix for all users (students, teachers, admins)
+  // to avoid duplicate slugs when a teacher creates multiple projects.
     $author_id     = !empty($postarr['post_author']) ? (int) $postarr['post_author'] : get_current_user_id();
     $author        = get_userdata($author_id);
-    $is_student    = $author && in_array('student', (array) $author->roles, true);
-    $author_prefix = $is_student ? eikon_project_author_prefix($author) : '';
+    $author_prefix = eikon_project_author_prefix($author);
 
-    if ($is_student && !empty($data['post_title'])) {
+    if (!empty($data['post_title'])) {
         $title_slug = sanitize_title($data['post_title']);
-        $needs_prefix = empty($data['post_name'])                              // (a) draft: no slug yet
-        || $data['post_name'] === $title_slug                                // (b) bare title slug
-        || (str_starts_with($data['post_name'], $title_slug));               // (b) bare title slug + -2, -3…
+        $post_id    = $postarr['ID'] ?? 0;
 
-        if ($needs_prefix && !empty($author_prefix) && !str_starts_with($data['post_name'], $author_prefix)) {
-            $base = empty($data['post_name']) ? $title_slug : $data['post_name'];
-            $data['post_name'] = $author_prefix . $base;
+        // Check for multiple authors via ACF repeater 'project_authors' (field_68dc5a01b7e10)
+        $is_multiple = false;
+        if (isset($_POST['acf']['field_68dc5a01b7e10'])) {
+            $authors_field = $_POST['acf']['field_68dc5a01b7e10'];
+            if (is_array($authors_field) && count($authors_field) > 1) {
+                $is_multiple = true;
+            }
+        } elseif ($post_id) {
+            $existing_count = get_post_meta($post_id, 'project_authors', true);
+            if (is_numeric($existing_count) && (int)$existing_count > 1) {
+                $is_multiple = true;
+            }
         }
+
+        // If multiple authors, we DO NOT prefix the slug
+        if ($is_multiple) {
+            $author_prefix = '';
+        }
+
+        // Fetch the previous author's prefix to detect author changes
+        $old_author_prefix = '';
+        if ($post_id) {
+            $old_post = get_post($post_id);
+            if ($old_post && !empty($old_post->post_author)) {
+                $old_author = get_userdata($old_post->post_author);
+                $old_author_prefix = eikon_project_author_prefix($old_author);
+            }
+        }
+
+        // Get the current base slug (strip the old author prefix if it exists)
+        $base_slug = $data['post_name'];
+        if (!empty($old_author_prefix) && str_starts_with($base_slug, $old_author_prefix)) {
+            $base_slug = substr($base_slug, strlen($old_author_prefix));
+        }
+
+        // Reset base slug to pure title if it's empty, matches title, or is title + numeric suffix (e.g. -2)
+        if (empty($base_slug) || $base_slug === $title_slug || preg_match('/^' . preg_quote($title_slug, '/') . '-\d+$/', $base_slug)) {
+            $base_slug = $title_slug;
+        }
+
+        // Generate the new ideal slug
+        $data['post_name'] = $author_prefix . $base_slug;
     }
 
     if (empty($data['post_name'])) {
