@@ -329,4 +329,3 @@ function eikon_project_legal_save_meta(int $post_id, WP_Post $post)
         update_post_meta($post_id, 'eikon_copyright_cleared', $copyright_value);
     }
 }
-
