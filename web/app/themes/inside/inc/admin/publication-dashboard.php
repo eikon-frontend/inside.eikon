@@ -132,7 +132,7 @@ function eikon_render_publication_dashboard()
     $stats_mandats = $mandats_query->found_posts;
     $stats_projects = $standalone_projects_query->found_posts;
 
-    ?>
+?>
     <div class="wrap epd-wrap">
 
         <!-- Tabs -->
@@ -149,7 +149,10 @@ function eikon_render_publication_dashboard()
 
         <!-- Tab: Mandats -->
         <div class="epd-panel" id="epd-panel-mandats">
-            <p class="epd-hint">Validez d'abord les projets highlights, puis publiez le mandat. Les projets non-highlights seront automatiquement archivés.</p>
+            <p class="epd-hint">
+                Cette page contient le listing des mandats en attente de publication.<br>
+                Validez d'abord les projets highlights, puis publiez le mandat. Les projets non-highlights seront automatiquement archivés.
+            </p>
 
             <?php if ($mandats_query->have_posts()) : ?>
                 <table class="epd-table">
@@ -331,7 +334,9 @@ function eikon_render_publication_dashboard()
 
         <!-- Tab: Projets libres -->
         <div class="epd-panel" id="epd-panel-projets" style="display: none;">
-            <p class="epd-hint">Projets d'élèves remis sans être liés à un mandat.</p>
+            <p class="epd-hint">
+                Cette page contient le listing des projets en attente de publication qui ne sont pas liés à un mandat.<br>
+            </p>
 
             <?php if ($standalone_projects_query->have_posts()) : ?>
                 <table class="epd-table">
@@ -396,7 +401,10 @@ function eikon_render_publication_dashboard()
             max-width: 1100px;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        .epd-wrap * { box-sizing: border-box; }
+
+        .epd-wrap * {
+            box-sizing: border-box;
+        }
 
 
         /* ── Tabs ── */
@@ -406,6 +414,7 @@ function eikon_render_publication_dashboard()
             border-bottom: 1px solid #e2e4e7;
             margin-bottom: 0;
         }
+
         .epd-tab {
             background: none;
             border: none;
@@ -420,11 +429,16 @@ function eikon_render_publication_dashboard()
             gap: 8px;
             transition: color .15s, border-color .15s;
         }
-        .epd-tab:hover { color: #1d2327; }
+
+        .epd-tab:hover {
+            color: #1d2327;
+        }
+
         .epd-tab--active {
             color: #1d2327;
             border-bottom-color: #1d2327;
         }
+
         .epd-tab-count {
             background: #f0f0f1;
             color: #50575e;
@@ -433,15 +447,18 @@ function eikon_render_publication_dashboard()
             font-size: 11px;
             font-weight: 600;
         }
+
         .epd-tab--active .epd-tab-count {
             background: #1d2327;
             color: #fff;
         }
 
         /* ── Panel ── */
-        .epd-panel { margin-top: 0; }
+        .epd-panel {
+            margin-top: 0;
+        }
+
         .epd-hint {
-            color: #8c8f94;
             font-size: 13px;
             margin: 16px 0 12px;
         }
@@ -452,6 +469,7 @@ function eikon_render_publication_dashboard()
             border-collapse: collapse;
             font-size: 13px;
         }
+
         .epd-table thead th {
             text-align: left;
             font-weight: 500;
@@ -463,39 +481,50 @@ function eikon_render_publication_dashboard()
             border-bottom: 1px solid #e2e4e7;
             background: none;
         }
+
         .epd-table tbody tr {
             border-bottom: 1px solid #f0f0f1;
             transition: background .1s;
         }
+
         .epd-table tbody tr:hover {
             background: #fafbfc;
         }
+
         .epd-table tbody td {
             padding: 12px;
             vertical-align: middle;
         }
+
         .epd-title {
             font-weight: 600;
             color: #1d2327;
             text-decoration: none;
         }
+
         .epd-title:hover {
             color: #2271b1;
         }
+
         .epd-title-wrapper {
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
+
         .epd-warning-badge {
             cursor: help;
             font-size: 14px;
             line-height: 1;
         }
+
         .epd-row-mandat--expanded {
             background: #fff !important;
         }
-        .epd-meta-cell { color: #646970; }
+
+        .epd-meta-cell {
+            color: #646970;
+        }
 
         /* ── Expand / Chevron ── */
         .epd-expand-toggle {
@@ -503,29 +532,34 @@ function eikon_render_publication_dashboard()
             text-align: center;
             user-select: none;
         }
+
         .epd-chevron {
             display: inline-block;
             font-size: 10px;
             color: #8c8f94;
             transition: transform .2s;
         }
+
         .epd-chevron--open {
             transform: rotate(90deg);
         }
 
         /* ── Sub-table (Highlights) ── */
-        .epd-row-highlights > td {
+        .epd-row-highlights>td {
             padding: 0 !important;
             background: #fafbfc;
         }
+
         .epd-sub-table-wrap {
             padding: 4px 12px 12px 40px;
         }
+
         .epd-sub-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
+
         .epd-sub-table thead th {
             text-align: left;
             font-weight: 500;
@@ -537,13 +571,16 @@ function eikon_render_publication_dashboard()
             border-bottom: 1px solid #e2e4e7;
             background: none;
         }
+
         .epd-sub-table tbody td {
             padding: 8px 10px;
             vertical-align: middle;
         }
+
         .epd-sub-table tbody tr {
             border-bottom: 1px solid #f0f0f1;
         }
+
         .epd-sub-table tbody tr:last-child {
             border-bottom: none;
         }
@@ -558,11 +595,33 @@ function eikon_render_publication_dashboard()
             line-height: 18px;
             white-space: nowrap;
         }
-        .epd-badge--blue { background: #e8f0fe; color: #1a56db; }
-        .epd-badge--green { background: #d1fae5; color: #065f46; }
-        .epd-badge--yellow { background: #fef3c7; color: #92400e; }
-        .epd-badge--neutral { background: #f0f0f1; color: #646970; }
-        .epd-badges-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+        .epd-badge--blue {
+            background: #e8f0fe;
+            color: #1a56db;
+        }
+
+        .epd-badge--green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .epd-badge--yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .epd-badge--neutral {
+            background: #f0f0f1;
+            color: #646970;
+        }
+
+        .epd-badges-cell {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
 
         /* ── Buttons ── */
         .epd-btn {
@@ -579,19 +638,27 @@ function eikon_render_publication_dashboard()
             white-space: nowrap;
             line-height: 1.4;
         }
-        .epd-btn--sm { padding: 4px 10px; font-size: 12px; }
+
+        .epd-btn--sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
         .epd-btn--primary {
             background: #1d2327;
             color: #fff;
             border-color: #1d2327;
         }
+
         .epd-btn--primary:hover:not(:disabled) {
             background: #2c3338;
         }
+
         .epd-btn--primary:disabled {
             opacity: 0.35;
             cursor: not-allowed;
         }
+
         .epd-btn--ghost {
             background: none;
             color: #8c8f94;
@@ -601,7 +668,11 @@ function eikon_render_publication_dashboard()
             line-height: 1;
             font-weight: 700;
         }
-        .epd-btn--ghost:hover { background: #f0f0f1; color: #1d2327; }
+
+        .epd-btn--ghost:hover {
+            background: #f0f0f1;
+            color: #1d2327;
+        }
 
         /* ── Actions cell ── */
         .epd-actions-cell {
@@ -616,6 +687,7 @@ function eikon_render_publication_dashboard()
             position: relative;
             display: inline-block;
         }
+
         .epd-dropdown-menu {
             display: none;
             position: absolute;
@@ -624,12 +696,16 @@ function eikon_render_publication_dashboard()
             background: #fff;
             border: 1px solid #e2e4e7;
             border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
             min-width: 140px;
             z-index: 100;
             overflow: hidden;
         }
-        .epd-dropdown.open .epd-dropdown-menu { display: block; }
+
+        .epd-dropdown.open .epd-dropdown-menu {
+            display: block;
+        }
+
         .epd-dropdown-menu a,
         .epd-dropdown-menu button {
             display: block;
@@ -644,12 +720,19 @@ function eikon_render_publication_dashboard()
             cursor: pointer;
             text-decoration: none;
         }
+
         .epd-dropdown-menu a:hover,
         .epd-dropdown-menu button:hover {
             background: #fafbfc;
         }
-        .epd-dropdown-danger { color: #d63638 !important; }
-        .epd-dropdown-danger:hover { background: #fef2f2 !important; }
+
+        .epd-dropdown-danger {
+            color: #d63638 !important;
+        }
+
+        .epd-dropdown-danger:hover {
+            background: #fef2f2 !important;
+        }
 
         /* ── Empty state ── */
         .epd-empty {
@@ -664,8 +747,14 @@ function eikon_render_publication_dashboard()
 
         /* ── Responsive ── */
         @media (max-width: 782px) {
-            .epd-stats { flex-direction: column; gap: 12px; }
-            .epd-sub-table-wrap { padding-left: 12px; }
+            .epd-stats {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .epd-sub-table-wrap {
+                padding-left: 12px;
+            }
         }
     </style>
 
@@ -702,7 +791,9 @@ function eikon_render_publication_dashboard()
                 $('.epd-dropdown').removeClass('open');
                 if (!wasOpen) dd.addClass('open');
             });
-            $(document).on('click', function() { $('.epd-dropdown').removeClass('open'); });
+            $(document).on('click', function() {
+                $('.epd-dropdown').removeClass('open');
+            });
 
             // ── AJAX helper ──
             function eikonDashboardAction(actionType, postId, button, onSuccess) {
@@ -760,8 +851,12 @@ function eikon_render_publication_dashboard()
 
                 if (confirm('Publier ce mandat ? Les projets non-highlights seront archivés.')) {
                     eikonDashboardAction('publish_mandat', mandatId, btn, function() {
-                        mandatRow.fadeOut(function() { $(this).remove(); });
-                        hlRow.fadeOut(function() { $(this).remove(); });
+                        mandatRow.fadeOut(function() {
+                            $(this).remove();
+                        });
+                        hlRow.fadeOut(function() {
+                            $(this).remove();
+                        });
                     });
                 }
             });
@@ -775,8 +870,12 @@ function eikon_render_publication_dashboard()
 
                 if (confirm('Archiver ce mandat ?')) {
                     eikonDashboardAction('archive_mandat', mandatId, btn, function() {
-                        mandatRow.fadeOut(function() { $(this).remove(); });
-                        hlRow.fadeOut(function() { $(this).remove(); });
+                        mandatRow.fadeOut(function() {
+                            $(this).remove();
+                        });
+                        hlRow.fadeOut(function() {
+                            $(this).remove();
+                        });
                     });
                 }
             });
@@ -788,7 +887,9 @@ function eikon_render_publication_dashboard()
                 const row = $('#standalone-proj-' + projectId);
 
                 eikonDashboardAction('publish_standalone_project', projectId, btn, function() {
-                    row.fadeOut(function() { $(this).remove(); });
+                    row.fadeOut(function() {
+                        $(this).remove();
+                    });
                 });
             });
 
@@ -800,7 +901,9 @@ function eikon_render_publication_dashboard()
 
                 if (confirm('Archiver ce projet ?')) {
                     eikonDashboardAction('archive_project', projectId, btn, function() {
-                        row.fadeOut(function() { $(this).remove(); });
+                        row.fadeOut(function() {
+                            $(this).remove();
+                        });
                     });
                 }
             });
@@ -844,5 +947,5 @@ function eikon_render_publication_dashboard()
             });
         });
     </script>
-    <?php
+<?php
 }
