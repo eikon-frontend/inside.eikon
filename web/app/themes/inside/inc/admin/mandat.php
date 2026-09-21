@@ -301,7 +301,7 @@ function eikon_render_mandat_projects_table($post)
 
     $projects = get_posts(array(
     'post_type' => 'project',
-    'post_status' => array('publish', 'draft', 'pending', 'future', 'private'),
+    'post_status' => array('publish', 'draft', 'pending', 'future', 'private', 'archive'),
     'posts_per_page' => -1,
     'orderby' => 'modified',
     'order' => 'DESC',
@@ -329,14 +329,20 @@ function eikon_render_mandat_projects_table($post)
     #eikon-mandat-projects-table th[data-sort].sort-desc .sort-indicator::after { content: "▼"; }
     #eikon-mandat-projects-table th[data-sort]:not(.sort-asc):not(.sort-desc) .sort-indicator::after { content: "⇅"; }
     #eikon-mandat-projects-table tr.eikon-highlight-row td { background: #fff8db; }
+    .eikon-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 18px; white-space: nowrap; }
+    .eikon-badge-publish { background: #d1fae5; color: #065f46; }
+    .eikon-badge-pending { background: #fef3c7; color: #92400e; }
+    .eikon-badge-archive { background: #fee2e2; color: #991b1b; }
+    .eikon-badge-draft { background: #f0f0f1; color: #646970; }
   </style>';
     echo '<table id="eikon-mandat-projects-table" class="widefat striped" style="margin: 0; table-layout: fixed;">';
     echo '<thead><tr>';
     echo '<th scope="col" data-sort="0">Prénom <span class="sort-indicator"></span></th>';
     echo '<th scope="col" data-sort="1">Nom <span class="sort-indicator"></span></th>';
     echo '<th scope="col">Projet</th>';
-    echo '<th scope="col" data-sort="3">Créé <span class="sort-indicator"></span></th>';
-    echo '<th scope="col" data-sort="4">Mis à jour <span class="sort-indicator"></span></th>';
+    echo '<th scope="col" data-sort="3">Statut <span class="sort-indicator"></span></th>';
+    echo '<th scope="col" data-sort="4">Créé <span class="sort-indicator"></span></th>';
+    echo '<th scope="col" data-sort="5">Mis à jour <span class="sort-indicator"></span></th>';
     echo '<th scope="col">Liens</th>';
     echo '<th scope="col">Highlight</th>';
     echo '</tr></thead>';
@@ -369,6 +375,22 @@ function eikon_render_mandat_projects_table($post)
             echo '<div style="margin-top: 4px; font-size: 12px; color: #6b7280;">' . esc_html($subtitle) . '</div>';
         }
         echo '</td>';
+
+        $status = $project->post_status;
+        $status_label = 'Brouillon';
+        $badge_class = 'eikon-badge-draft';
+        if ($status === 'publish') {
+            $status_label = 'Publié';
+            $badge_class = 'eikon-badge-publish';
+        } elseif ($status === 'pending') {
+            $status_label = 'En attente';
+            $badge_class = 'eikon-badge-pending';
+        } elseif ($status === 'archive') {
+            $status_label = 'Archivé';
+            $badge_class = 'eikon-badge-archive';
+        }
+        echo '<td data-value="' . esc_attr($status) . '"><span class="eikon-badge ' . $badge_class . '">' . esc_html($status_label) . '</span></td>';
+
         echo '<td data-value="' . esc_attr((string) $created_ts) . '">' . esc_html($formatted_created) . '</td>';
         echo '<td data-value="' . esc_attr((string) $modified_ts) . '">' . esc_html(get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'), $project)) . '</td>';
         echo '<td>';

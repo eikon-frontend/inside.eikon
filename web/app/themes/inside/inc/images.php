@@ -117,10 +117,10 @@ class Eikon_Images
         );
 
         wp_localize_script('eikon-filename-validation', 'eikonFilename', [
-        'regex'        => '^' . ltrim(rtrim(self::FILENAME_REGEX, '/'), '/') . '$', // Format for JS
-        'errorMessage' => self::FILENAME_ERROR,
-        'currentYear'  => $this->get_current_academic_year(),
-        'placeholders' => ['titre', 'nom', 'prenom', 'montitre'],
+            'regex'        => '^' . ltrim(rtrim(self::FILENAME_REGEX, '/'), '/') . '$', // Format for JS
+            'errorMessage' => self::FILENAME_ERROR,
+            'currentYear'  => $this->get_current_academic_year(),
+            'placeholders' => ['titre', 'nom', 'prenom', 'montitre'],
         ]);
     }
 
@@ -157,7 +157,7 @@ class Eikon_Images
                     if (!is_wp_error($image)) {
                         $image->save($webp_file, 'image/webp');
                         if (file_exists($file)) {
-                              unlink($file);
+                            unlink($file);
                         }
                         $metadata['sizes'][$size]['file'] = basename($webp_file);
                     }
@@ -224,9 +224,9 @@ class Eikon_Images
 
         if (!in_array($ext, $allowed_extensions)) {
             return array(
-            'ext' => false,
-            'type' => false,
-            'proper_filename' => false
+                'ext' => false,
+                'type' => false,
+                'proper_filename' => false
             );
         }
 
