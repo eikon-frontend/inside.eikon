@@ -112,6 +112,19 @@ function eikon_create_editor_role()
     'create_pages'              => true,
     'upload_files'              => true,
     'edit_files'                => true,
+    'edit_mandat'               => true,
+    'read_mandat'               => true,
+    'delete_mandat'             => true,
+    'edit_mandats'              => true,
+    'edit_others_mandats'       => true,
+    'edit_published_mandats'    => true,
+    'edit_private_mandats'      => true,
+    'publish_mandats'           => true,
+    'delete_mandats'            => true,
+    'delete_others_mandats'     => true,
+    'delete_published_mandats'  => true,
+    'read_private_mandats'      => true,
+    'create_mandats'            => true,
     );
 
   // Check if role already exists
