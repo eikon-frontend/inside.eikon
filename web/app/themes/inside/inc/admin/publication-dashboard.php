@@ -132,7 +132,7 @@ function eikon_render_publication_dashboard()
     $stats_mandats = $mandats_query->found_posts;
     $stats_projects = $standalone_projects_query->found_posts;
 
-?>
+    ?>
     <div class="wrap epd-wrap">
 
         <!-- Tabs -->
@@ -947,5 +947,5 @@ function eikon_render_publication_dashboard()
             });
         });
     </script>
-<?php
+    <?php
 }
