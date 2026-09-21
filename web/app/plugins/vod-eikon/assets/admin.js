@@ -599,6 +599,32 @@ jQuery(document).ready(function ($) {
     document.body.removeChild(textArea);
   }
 
+  // Download video functionality
+  $('.vod-eikon-videos').on('click', '.download-video', function (e) {
+    e.preventDefault();
+
+    var $icon = $(this);
+    var vodId = $icon.data('vod-id');
+    var $dashicon = $icon.find('.dashicons');
+
+    if (!vodId) return;
+
+    // Show loading state
+    $icon.addClass('loading').css('pointer-events', 'none').css('opacity', '0.6');
+    $dashicon.removeClass('dashicons-download').addClass('dashicons-update spin');
+
+    // Trigger download by navigating to the URL (browser will intercept the download header and not unload the page)
+    var downloadUrl = vodEikon.ajax_url + '?action=download_vod_video_source&vod_id=' + encodeURIComponent(vodId) + '&nonce=' + encodeURIComponent(vodEikon.nonce);
+    
+    window.location.href = downloadUrl;
+
+    // Assume download starts shortly and reset icon state
+    setTimeout(function () {
+      $icon.removeClass('loading').css('pointer-events', 'auto').css('opacity', '1');
+      $dashicon.removeClass('spin dashicons-update').addClass('dashicons-download');
+    }, 3000);
+  });
+
   // Video Player Modal functionality
   var $modal = $('#vod-player-modal');
   var $modalTitle = $('#vod-player-modal-title');

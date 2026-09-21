@@ -58,6 +58,7 @@ class VOD_Eikon
     add_action('wp_ajax_upload_vod_video', array($this, 'ajax_upload_video'));
     add_action('wp_ajax_test_api_logging', array($this, 'ajax_test_api_logging'));
     add_action('wp_ajax_test_callback_endpoint', array($this, 'ajax_test_callback_endpoint'));
+    add_action('wp_ajax_download_vod_video_source', array($this, 'ajax_download_vod_video_source'));
 
     // Add callback endpoint for Infomaniak VOD events
     add_action('init', array($this, 'register_callback_endpoint'));
@@ -353,6 +354,9 @@ class VOD_Eikon
                             <a class="action-icon admin-link" href="https://manager.infomaniak.com/v3/<?php echo esc_attr($this->infomaniak_account_id); ?>/ng/vod-aod/pack/<?php echo esc_attr($this->infomaniak_channel_id); ?>/media/<?php echo esc_attr($video->vod_id); ?>/dashboard" target="_blank" rel="noopener noreferrer" title="Ouvrir sur Infomaniak">
                               <span class="dashicons dashicons-external"></span>
                             </a>
+                            <span class="action-icon download-video" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" title="Télécharger la vidéo source">
+                              <span class="dashicons dashicons-download"></span>
+                            </span>
                           <?php endif; ?>
                           <span class="action-icon sync-single-video" data-video-id="<?php echo esc_attr($video->id); ?>" data-vod-id="<?php echo esc_attr($video->vod_id); ?>" title="Synchroniser cette vidéo">
                             <span class="dashicons dashicons-update"></span>
@@ -1045,6 +1049,63 @@ class VOD_Eikon
       "SELECT * FROM {$this->table_name} WHERE id = %d",
       $id
     ));
+  }
+
+  /**
+   * AJAX handler to download video source
+   */
+  public function ajax_download_vod_video_source()
+  {
+    if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'vod_eikon_nonce')) {
+      wp_die('Permission refusée ou jeton de sécurité invalide.');
+    }
+
+    if (!current_user_can('manage_options')) {
+      wp_die('Permission refusée.');
+    }
+
+    $vod_id = isset($_REQUEST['vod_id']) ? sanitize_text_field($_REQUEST['vod_id']) : '';
+
+    if (empty($vod_id)) {
+      wp_die('ID vidéo manquant.');
+    }
+
+    $channel_id = getenv('INFOMANIAK_CHANNEL_ID');
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+
+    if (empty($channel_id)) {
+      $channel_id = $_ENV['INFOMANIAK_CHANNEL_ID'] ?? '';
+      $api_token = $_ENV['INFOMANIAK_TOKEN_API'] ?? '';
+    }
+
+    if (empty($channel_id) || empty($api_token)) {
+      wp_die('Configuration API manquante.');
+    }
+
+    $api_url = "https://api.infomaniak.com/2/vod/res/media/{$vod_id}";
+
+    $response = wp_remote_get($api_url, array(
+      'headers' => array(
+        'Authorization' => 'Bearer ' . $api_token,
+      ),
+      'timeout' => 15,
+      'redirection' => 0, // We want to capture the 302 redirect location
+    ));
+
+    if (is_wp_error($response)) {
+      wp_die('Erreur de communication avec l\'API Infomaniak.');
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+    if ($status_code == 302 || $status_code == 301) {
+      $location = wp_remote_retrieve_header($response, 'location');
+      if ($location) {
+        wp_redirect($location);
+        exit;
+      }
+    }
+
+    wp_die('Impossible de récupérer l\'URL du fichier source original.');
   }
 
   /**

@@ -60,6 +60,7 @@ class acf_field_vod_video extends acf_field
       'no_videos_found' => __('Aucune vidéo trouvée', 'vod-video-field'),
       'remove_video' => __('Retirer la vidéo', 'vod-video-field'),
       'refresh_video' => __('Actualiser la vidéo', 'vod-video-field'),
+      'download_source' => __('Télécharger la source', 'vod-video-field'),
       'loading' => __('Chargement...', 'vod-video-field'),
       'error' => __('Erreur lors du chargement des vidéos', 'vod-video-field'),
       'refresh_success' => __('Vidéo actualisée avec succès', 'vod-video-field'),
@@ -75,6 +76,7 @@ class acf_field_vod_video extends acf_field
     // Add AJAX handlers
     add_action('wp_ajax_acf_vod_video_search', array($this, 'ajax_search_videos'));
     add_action('wp_ajax_acf_vod_video_refresh', array($this, 'ajax_refresh_video'));
+    add_action('wp_ajax_acf_vod_video_download', array($this, 'ajax_download_video'));
   }
 
   /**
@@ -192,12 +194,12 @@ class acf_field_vod_video extends acf_field
       echo '<div class="vod-video-details">';
       echo '<h4>' . esc_html($video_data['title'] ?? '') . '</h4>';
 
-      echo '<div class="vod-video-actions wp-core-ui button-group">';
+      echo '<div class="vod-video-actions wp-core-ui" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">';
       
       $mpd_url = isset($video_data['mpd_url']) ? $video_data['mpd_url'] : '';
       $poster   = isset($video_data['poster'])  ? $video_data['poster']  : '';
       $title    = isset($video_data['title'])   ? $video_data['title']   : '';
-      $btn_style = 'display:inline-flex;align-items:center;gap:4px;line-height:1;padding-top:0;padding-bottom:0;';
+      $btn_style = 'display:inline-flex;align-items:center;gap:4px;line-height:1;padding-top:0;padding-bottom:0;margin:0;';
       if ($mpd_url) {
         echo '<a href="#" class="vod-video-play button button-primary" title="' . esc_attr($this->l10n['play_video']) . '" data-mpd-url="' . esc_attr($mpd_url) . '" data-poster="' . esc_attr($poster) . '" data-title="' . esc_attr($title) . '" style="' . $btn_style . '"><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' . esc_html($this->l10n['play_video']) . '</span></a>';
         
@@ -207,6 +209,11 @@ class acf_field_vod_video extends acf_field
           $channel_id = getenv('INFOMANIAK_CHANNEL_ID') ?: '14234';
           $manager_url = "https://manager.infomaniak.com/v3/{$account_id}/ng/vod-aod/pack/{$channel_id}/media/{$vod_id}/dashboard";
           echo '<a href="' . esc_url($manager_url) . '" class="vod-video-source button" title="Accéder à la source" target="_blank" style="' . $btn_style . '"><span class="dashicons dashicons-external"></span><span class="vod-button-label">Accéder à la source</span></a>';
+        }
+
+        $current_user = wp_get_current_user();
+        if ($vod_id && !in_array('student', (array) $current_user->roles, true)) {
+          echo '<a href="#" class="vod-video-download button" title="' . esc_attr($this->l10n['download_source']) . '" data-vod-id="' . esc_attr($vod_id) . '" style="' . $btn_style . '"><span class="dashicons dashicons-download"></span><span class="vod-button-label">' . esc_html($this->l10n['download_source']) . '</span></a>';
         }
       }
       echo '<a href="#" class="vod-video-button button" title="' . esc_attr($this->l10n['select_video']) . '" style="' . $btn_style . '"><span class="dashicons dashicons-plus-alt2"></span><span class="vod-button-label">' . esc_html($this->l10n['select_video']) . '</span></a>';
@@ -265,11 +272,13 @@ class acf_field_vod_video extends acf_field
     wp_register_script('acf-vod-video-field', "{$dir}assets/js/vod-video-field.js", array('acf-input', 'jquery'), $version, true);
     wp_enqueue_script('acf-vod-video-field');
 
+    $current_user = wp_get_current_user();
     // Localize script
     wp_localize_script('acf-vod-video-field', 'acf_vod_video_field', array(
       'ajax_url' => admin_url('admin-ajax.php'),
       'nonce' => wp_create_nonce('acf_vod_video_search_nonce'),
       'i18n' => $this->l10n,
+      'can_download' => !in_array('student', (array) $current_user->roles, true)
     ));
   }
 
@@ -326,6 +335,61 @@ class acf_field_vod_video extends acf_field
     }
 
     wp_send_json_success(array('video' => $video_data));
+  }
+
+  /**
+   * AJAX callback to get direct MP4 download URL from Infomaniak API
+   */
+  public function ajax_download_video()
+  {
+    // Check nonce
+    if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'acf_vod_video_search_nonce')) {
+      wp_die(__('Invalid security token', 'vod-video-field'));
+    }
+
+    $current_user = wp_get_current_user();
+    if (in_array('student', (array) $current_user->roles, true)) {
+      wp_die(__('Permission refusée', 'vod-video-field'));
+    }
+
+    $vod_id = isset($_REQUEST['vod_id']) ? sanitize_text_field($_REQUEST['vod_id']) : '';
+    if (empty($vod_id)) {
+      wp_die(__('ID vidéo manquant', 'vod-video-field'));
+    }
+
+    $api_token = getenv('INFOMANIAK_TOKEN_API');
+    if (empty($api_token)) {
+      $api_token = $_ENV['INFOMANIAK_TOKEN_API'] ?? '';
+    }
+
+    if (empty($api_token)) {
+      wp_die(__('Configuration API manquante', 'vod-video-field'));
+    }
+
+    $api_url = "https://api.infomaniak.com/2/vod/res/media/{$vod_id}";
+
+    $response = wp_remote_get($api_url, array(
+      'headers' => array(
+        'Authorization' => 'Bearer ' . $api_token,
+      ),
+      'timeout' => 15,
+      'redirection' => 0, // We want to capture the 302 redirect location
+    ));
+
+    if (is_wp_error($response)) {
+      wp_die(__('Erreur de communication avec l\'API Infomaniak', 'vod-video-field'));
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+    if ($status_code == 302 || $status_code == 301) {
+      $location = wp_remote_retrieve_header($response, 'location');
+      if ($location) {
+        wp_redirect($location);
+        exit;
+      }
+    }
+
+    wp_die(__('Impossible de récupérer l\'URL du fichier source original.', 'vod-video-field'));
   }
 
   /**

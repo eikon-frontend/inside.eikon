@@ -232,6 +232,12 @@
           openPlayerModal(mpdUrl, poster, title);
         }
       });
+
+      // Download source button
+      $container.on('click', '.vod-video-download', function (e) {
+        e.preventDefault();
+        downloadSelectedVideoSource($(this));
+      });
     }
 
     /**
@@ -468,6 +474,37 @@
     }
 
     /**
+     * Download the selected video source
+     */
+    function downloadSelectedVideoSource($btn) {
+      const vodId = $btn.data('vod-id');
+      if (!vodId) {
+        return;
+      }
+
+      // Show loading state
+      const originalText = $btn.find('.vod-button-label').text();
+      const $icon = $btn.find('.dashicons');
+      const originalIconClass = $icon.attr('class');
+      
+      $btn.prop('disabled', true);
+      $icon.attr('class', 'dashicons dashicons-update');
+      $btn.find('.vod-button-label').text(acf_vod_video_field.i18n.loading);
+
+      // Trigger download by navigating to the URL (browser will intercept the download header and not unload the page)
+      const downloadUrl = acf_vod_video_field.ajax_url + '?action=acf_vod_video_download&vod_id=' + encodeURIComponent(vodId) + '&nonce=' + encodeURIComponent(acf_vod_video_field.nonce);
+      
+      window.location.href = downloadUrl;
+
+      // Assume download starts shortly and reset icon state
+      setTimeout(function () {
+        $btn.prop('disabled', false).css({'pointer-events': 'auto', 'opacity': '1'});
+        $icon.attr('class', originalIconClass);
+        $btn.find('.vod-button-label').text(originalText);
+      }, 3000);
+    }
+
+    /**
      * Update the video preview
      */
     function updatePreview(videoData) {
@@ -510,6 +547,12 @@
             ' data-title="' + $('<div>').text(videoData.title || '').html() + '"' +
             '><span class="dashicons dashicons-controls-play"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.play_video + '</span></a>');
           $actions.append($playBtn);
+        }
+
+        if (acf_vod_video_field.can_download && (videoData.vod_id || videoData.id)) {
+          const downloadVodId = videoData.vod_id || videoData.id;
+          const $downloadBtn = $('<a href="#" class="vod-video-download button" title="' + acf_vod_video_field.i18n.download_source + '" data-vod-id="' + downloadVodId + '"><span class="dashicons dashicons-download"></span><span class="vod-button-label">' + acf_vod_video_field.i18n.download_source + '</span></a>');
+          $actions.append($downloadBtn);
         }
 
         $actions.append($selectBtn).append($refreshBtn).append($removeBtn);
