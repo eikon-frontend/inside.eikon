@@ -39,13 +39,13 @@ function eikon_render_single_category_metabox($post)
     <div id="taxonomy-category" class="categorydiv" style="max-height: 220px; overflow: auto; padding: 4px 0;">
         <ul class="categorychecklist form-no-clear" style="margin: 0; padding: 0; list-style: none;">
             <?php foreach ($categories as $cat) : ?>
-                <li id="category-<?php echo esc_attr($cat->term_id); ?>" style="margin-bottom: 8px;">
+                <li id="category-<?php echo esc_attr((string) $cat->term_id); ?>" style="margin-bottom: 8px;">
                     <label class="selectit" style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
                         <input
                             type="radio"
                             name="post_category[]"
-                            value="<?php echo esc_attr($cat->term_id); ?>"
-                            id="in-category-<?php echo esc_attr($cat->term_id); ?>"
+                            value="<?php echo esc_attr((string) $cat->term_id); ?>"
+                            id="in-category-<?php echo esc_attr((string) $cat->term_id); ?>"
                             <?php checked($selected_cat, $cat->term_id); ?>
                             style="margin: 0;"
                         />

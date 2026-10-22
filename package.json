@@ -4,6 +4,15 @@
   "description": "WordPress headless CMS",
   "main": "index.js",
   "scripts": {
-    "build-all-blocks": "node build-all-blocks.js"
+    "build-all-blocks": "node build-all-blocks.js",
+    "prepare": "husky",
+    "lint:phpcs": "vendor/bin/phpcs",
+    "lint:phpstan": "vendor/bin/phpstan analyse --memory-limit=4G",
+    "lint": "vendor/bin/phpcs && vendor/bin/phpstan analyse --memory-limit=4G",
+    "test:phpunit": "vendor/bin/phpunit",
+    "test": "npm run lint && npm run test:phpunit"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }

@@ -97,8 +97,16 @@
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
     ],
+    "phpcs": "vendor/bin/phpcs",
+    "phpstan": "vendor/bin/phpstan analyse --memory-limit=4G",
+    "lint": [
+      "@phpcs",
+      "@phpstan"
+    ],
+    "phpunit": "vendor/bin/phpunit",
     "test": [
-      "phpcs"
+      "@lint",
+      "@phpunit"
     ]
   }
 }
