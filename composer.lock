@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed2cdcd250a10e6bc79f22deb25b746a",
+    "content-hash": "6bf7bac2f535b28592577ca4d59f2e5b",
     "packages": [
         {
             "name": "composer/installers",
@@ -1637,15 +1637,15 @@
         },
         {
             "name": "wpackagist-plugin/wp-graphql",
-            "version": "2.24.2",
+            "version": "2.25.0",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/wp-graphql/",
-                "reference": "tags/2.24.2"
+                "reference": "tags/2.25.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/wp-graphql.2.24.2.zip"
+                "url": "https://downloads.wordpress.org/plugin/wp-graphql.2.25.0.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -1655,15 +1655,15 @@
         },
         {
             "name": "wpackagist-plugin/wp-mail-smtp",
-            "version": "4.10.2",
+            "version": "4.10.3",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/wp-mail-smtp/",
-                "reference": "tags/4.10.2"
+                "reference": "tags/4.10.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/wp-mail-smtp.4.10.2.zip"
+                "url": "https://downloads.wordpress.org/plugin/wp-mail-smtp.4.10.3.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -1691,15 +1691,15 @@
         },
         {
             "name": "wpackagist-plugin/wpgraphql-smart-cache",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/wpgraphql-smart-cache/",
-                "reference": "tags/2.3.3"
+                "reference": "tags/2.3.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/wpgraphql-smart-cache.2.3.3.zip"
+                "url": "https://downloads.wordpress.org/plugin/wpgraphql-smart-cache.2.3.4.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"

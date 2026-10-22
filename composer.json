@@ -51,9 +51,9 @@
     "roots/wordpress": "^7.1.0",
     "roots/wp-config": "1.0.0",
     "wpengine/advanced-custom-fields-pro": "^6.5",
-    "wpackagist-plugin/wp-graphql": "^2.3",
+    "wpackagist-plugin/wp-graphql": "^2.25",
     "wpackagist-plugin/wpgraphql-acf": "^3.0",
-    "wpackagist-plugin/wp-mail-smtp": "^4.0",
+    "wpackagist-plugin/wp-mail-smtp": "^4.10",
     "jysperu/php-qr-code": "^2",
     "guzzlehttp/guzzle": "^7.9",
     "wpackagist-plugin/wpgraphql-smart-cache": "^2.3"

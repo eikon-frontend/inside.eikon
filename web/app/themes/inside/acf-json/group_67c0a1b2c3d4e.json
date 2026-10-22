@@ -1,0 +1,588 @@
+{
+    "key": "group_67c0a1b2c3d4e",
+    "title": "Magazine",
+    "fields": [
+        {
+            "key": "field_mag_issue_number",
+            "label": "Numéro de publication",
+            "name": "issue_number",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Numéro de l'édition (ex: 1 pour Work'in'progress — 1)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 1,
+            "min": 1,
+            "max": "",
+            "placeholder": "1",
+            "step": 1,
+            "prepend": "#",
+            "append": "",
+            "show_in_graphql": 1,
+            "graphql_description": "Issue number of the magazine",
+            "graphql_field_name": "issueNumber",
+            "graphql_non_null": 0
+        },
+        {
+            "key": "field_mag_pub_date_text",
+            "label": "Date affichée",
+            "name": "publication_date_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Date affichée personnalisée (optionnel, ex: 12 octobre 2027). Si vide, la date WordPress sera utilisée.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "67",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "ex: 12 octobre 2027",
+            "prepend": "",
+            "append": "",
+            "maxlength": "",
+            "show_in_graphql": 1,
+            "graphql_description": "Custom displayed publication date",
+            "graphql_field_name": "publicationDateText",
+            "graphql_non_null": 0
+        },
+        {
+            "key": "field_mag_intro_text",
+            "label": "Texte d'introduction",
+            "name": "intro_text",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Texte d'introduction éditoriale affiché sous le titre et la date.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "Ce magazine ouvre des fenêtres, propose des perspectives professionnelles...",
+            "maxlength": "",
+            "rows": 4,
+            "new_lines": "br",
+            "show_in_graphql": 1,
+            "graphql_description": "Editorial introduction text",
+            "graphql_field_name": "introText",
+            "graphql_non_null": 0
+        },
+        {
+            "key": "field_mag_sections",
+            "label": "Sections du magazine",
+            "name": "magazine_sections",
+            "aria-label": "",
+            "type": "flexible_content",
+            "instructions": "Composez les différentes sections du magazine dans l'ordre de votre choix.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "layouts": {
+                "layout_mag_story": {
+                    "key": "layout_mag_story",
+                    "name": "story",
+                    "label": "Story",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_story_variant",
+                            "label": "Variante",
+                            "name": "story_variant",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "Type de mise en avant.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "30",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "standard": "Article standard",
+                                "edito": "Édito"
+                            },
+                            "default_value": "standard",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Story variant type",
+                            "graphql_field_name": "storyVariant",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_story_article_post",
+                            "label": "Article lié (Post)",
+                            "name": "article_post",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "Sélectionnez un article existant",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "70",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "post"
+                            ],
+                            "allow_null": 1,
+                            "multiple": 0,
+                            "return_format": "object",
+                            "ui": 1,
+                            "show_in_graphql": 1,
+                            "graphql_description": "Linked post for this story",
+                            "graphql_field_name": "articlePost",
+                            "graphql_connection_type": "one_to_many",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_story_custom_title",
+                            "label": "Titre personnalisé",
+                            "name": "custom_title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Si vide, le titre du post lié sera utilisé automatiquement.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "ex: édito, camilo de martino",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Custom title override",
+                            "graphql_field_name": "customTitle",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_story_custom_subtitle",
+                            "label": "Sous-titre / Auteur / Fonction",
+                            "name": "custom_subtitle",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Ex: 'Vincent Maendly, Doyen' ou 'Un parcours pluriel'",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "ex: Vincent Maendly, Doyen",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Custom subtitle or author credit",
+                            "graphql_field_name": "customSubtitle",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_story_custom_excerpt",
+                            "label": "Extrait / Citation personnalisée",
+                            "name": "custom_excerpt",
+                            "aria-label": "",
+                            "type": "textarea",
+                            "instructions": "Si vide, l'extrait du post lié sera utilisé automatiquement.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "60",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "« Jamais, d'aussi loin que... »",
+                            "maxlength": "",
+                            "rows": 4,
+                            "new_lines": "br",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Custom excerpt or quote",
+                            "graphql_field_name": "customExcerpt",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_story_custom_image",
+                            "label": "Image personnalisée",
+                            "name": "custom_image",
+                            "aria-label": "",
+                            "type": "image",
+                            "instructions": "Si vide, l'image à la une du post lié sera utilisée automatiquement.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "40",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "preview_size": "medium",
+                            "library": "all",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Custom image override",
+                            "graphql_field_name": "customImage",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_story_button_label",
+                            "label": "Libellé du bouton",
+                            "name": "button_label",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Libellé affiché sur le bouton vers l'article.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "Lire l'aperçu",
+                            "placeholder": "ex: Lire l'édito, Lire l'aperçu",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Button label",
+                            "graphql_field_name": "buttonLabel",
+                            "graphql_non_null": 0
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_mag_directory": {
+                    "key": "layout_mag_directory",
+                    "name": "directory",
+                    "label": "Répertoire",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_dir_section_title",
+                            "label": "Titre de la section",
+                            "name": "section_title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Titre principal de la section (ex: 'références' ou 'parcours').",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "100",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "ex: références, parcours",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Section title",
+                            "graphql_field_name": "sectionTitle",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_dir_items",
+                            "label": "Éléments du répertoire",
+                            "name": "items",
+                            "aria-label": "",
+                            "type": "repeater",
+                            "instructions": "Ajoutez les éléments de la liste. Si une image est ajoutée, l'élément s'affiche avec avatar/vignette (style Parcours), sinon il s'affiche en liste textuelle épurée (style Références).",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "100",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "block",
+                            "pagination": 0,
+                            "min": 1,
+                            "max": 0,
+                            "collapsed": "",
+                            "button_label": "Ajouter un élément",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Directory items",
+                            "graphql_field_name": "items",
+                            "graphql_non_null": 0,
+                            "rows_per_page": 20,
+                            "sub_fields": [
+                                {
+                                    "key": "field_dir_item_title",
+                                    "label": "Titre",
+                                    "name": "title",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "Nom de la ressource ou de la personne (ex: Logolounge, Joachim Renaud).",
+                                    "required": 1,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "50",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "ex: Joachim Renaud",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": "",
+                                    "show_in_graphql": 1,
+                                    "graphql_description": "Item title",
+                                    "graphql_field_name": "title",
+                                    "graphql_non_null": 0,
+                                    "parent_repeater": "field_dir_items"
+                                },
+                                {
+                                    "key": "field_dir_item_link",
+                                    "label": "Lien",
+                                    "name": "link",
+                                    "aria-label": "",
+                                    "type": "link",
+                                    "instructions": "Lien vers la ressource ou le profil.",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "50",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "allow_in_bindings": 0,
+                                    "show_in_graphql": 1,
+                                    "graphql_description": "Item link",
+                                    "graphql_field_name": "link",
+                                    "graphql_non_null": 0,
+                                    "parent_repeater": "field_dir_items"
+                                },
+                                {
+                                    "key": "field_dir_item_description",
+                                    "label": "Description / Parcours",
+                                    "name": "description",
+                                    "aria-label": "",
+                                    "type": "textarea",
+                                    "instructions": "Description de la ressource ou résumé du parcours.",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "70",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "Description ou détails...",
+                                    "maxlength": "",
+                                    "rows": 3,
+                                    "new_lines": "br",
+                                    "show_in_graphql": 1,
+                                    "graphql_description": "Item description",
+                                    "graphql_field_name": "description",
+                                    "graphql_non_null": 0,
+                                    "parent_repeater": "field_dir_items"
+                                },
+                                {
+                                    "key": "field_dir_item_image",
+                                    "label": "Image / Avatar (optionnel)",
+                                    "name": "image",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "Vignette optionnelle. Si vide, l'élément s'affiche sans photo (ex: Références).",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "30",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "preview_size": "thumbnail",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": "",
+                                    "show_in_graphql": 1,
+                                    "graphql_description": "Item optional image or avatar",
+                                    "graphql_field_name": "image",
+                                    "graphql_non_null": 0,
+                                    "parent_repeater": "field_dir_items"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_mag_title": {
+                    "key": "layout_mag_title",
+                    "name": "title",
+                    "label": "Titre",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_title_text",
+                            "label": "Titre",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Texte du titre de section ou intertitre.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "70",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "ex: Dans les coulisses",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Heading text",
+                            "graphql_field_name": "title",
+                            "graphql_non_null": 0
+                        },
+                        {
+                            "key": "field_title_level",
+                            "label": "Niveau de titre",
+                            "name": "level",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "Niveau HTML de la balise titre.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "30",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "h2": "H2",
+                                "h3": "H3",
+                                "h4": "H4"
+                            },
+                            "default_value": "h2",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "show_in_graphql": 1,
+                            "graphql_description": "Heading level tag",
+                            "graphql_field_name": "level",
+                            "graphql_non_null": 0
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_mag_text": {
+                    "key": "layout_mag_text",
+                    "name": "text",
+                    "label": "Texte",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_text_content",
+                            "label": "Contenu texte",
+                            "name": "content",
+                            "aria-label": "",
+                            "type": "wysiwyg",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "100",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "tabs": "visual",
+                            "toolbar": "Magazine Text",
+                            "media_upload": 0,
+                            "delay": 0,
+                            "show_in_graphql": 1,
+                            "graphql_description": "Formatted text content",
+                            "graphql_field_name": "content",
+                            "graphql_non_null": 0
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                }
+            },
+            "button_label": "Ajouter une section",
+            "min": "",
+            "max": "",
+            "show_in_graphql": 1,
+            "graphql_description": "Flexible sections composing the magazine",
+            "graphql_field_name": "magazineSections",
+            "graphql_non_null": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "magazine"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "the_content",
+        "excerpt",
+        "discussion",
+        "comments"
+    ],
+    "active": true,
+    "description": "Champs pour composer un numéro de magazine",
+    "show_in_rest": 0,
+    "show_in_graphql": 1,
+    "graphql_field_name": "magazineFields",
+    "map_graphql_types_from_location_rules": 1,
+    "graphql_types": [
+        "Magazine"
+    ],
+    "modified": 1778587010
+}
