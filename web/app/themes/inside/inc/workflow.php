@@ -553,7 +553,7 @@ function eikon_render_workflow_metabox($post)
             <span></span>
         <?php endif; ?>
 
-        <button type="submit" name="save" id="publish" class="eikon-wf-save-btn" value="Enregistrer">
+        <button type="submit" name="save" id="eikon-save" class="eikon-wf-save-btn" value="Enregistrer">
             ✓ Enregistrer
         </button>
     </div>
@@ -598,7 +598,7 @@ function eikon_render_workflow_metabox($post)
             });
 
             // Legal validation on save (projects only)
-            var saveBtn = document.getElementById('publish');
+            var saveBtn = document.getElementById('eikon-save');
             var postType = '<?php echo esc_js($post_type); ?>';
 
             if (saveBtn && postType === 'project') {

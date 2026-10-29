@@ -352,29 +352,23 @@ add_action('pre_get_posts', 'eikon_restrict_manage_posts');
  *
  * These roles cannot use the "Publish" button
  */
-function eikon_remove_publish_capability($caps, $cap, $user_id)
+function eikon_remove_publish_capability($allcaps, $caps, $args, $user)
 {
-  // Get the user
-    $user = get_userdata($user_id);
-    if (!$user) {
-        return $caps;
-    }
-
   // Check if user is teacher or student
     $is_teacher = in_array('teacher', $user->roles, true);
     $is_student = in_array('student', $user->roles, true);
 
     if ($is_teacher || $is_student) {
       // For publish_posts capability (covers both posts and projects since project uses capability_type='post')
-        if ($cap === 'publish_posts') {
+        if (in_array('publish_posts', $caps, true)) {
           // Deny publish capability - they can only save as draft/pending
-            $caps[] = 'do_not_allow';
+            $allcaps['publish_posts'] = false;
         }
     }
 
-    return $caps;
+    return $allcaps;
 }
-add_filter('user_has_cap', 'eikon_remove_publish_capability', 10, 3);
+add_filter('user_has_cap', 'eikon_remove_publish_capability', 10, 4);
 
 /**
  * Prevent teachers from editing posts/projects they don't own.
@@ -484,6 +478,7 @@ function eikon_remove_admin_menu_items()
         remove_menu_page('edit.php?post_type=page'); // Pages
         remove_menu_page('edit.php?post_type=department'); // Departments
         remove_menu_page('edit.php?post_type=mandat'); // Mandats
+        remove_menu_page('edit.php?post_type=magazine'); // Magazines
         remove_menu_page('tools.php'); // Tools
         remove_menu_page('options-general.php'); // Settings
         remove_menu_page('users.php'); // Users
@@ -497,6 +492,7 @@ function eikon_remove_admin_menu_items()
         remove_menu_page('index.php'); // Dashboard
         remove_menu_page('edit.php?post_type=page'); // Pages
         remove_menu_page('edit.php?post_type=department'); // Departments
+        remove_menu_page('edit.php?post_type=magazine'); // Magazines
         remove_menu_page('tools.php'); // Tools
         remove_menu_page('options-general.php'); // Settings
         remove_menu_page('themes.php'); // Appearance
