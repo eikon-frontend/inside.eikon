@@ -205,12 +205,24 @@ class Eikon_Images
         return $url;
     }
 
+    private function user_can_upload_pdf()
+    {
+        $current_user = wp_get_current_user();
+        if (!$current_user->exists()) {
+            return false;
+        }
+        return !in_array('student', $current_user->roles, true) && !in_array('teacher', $current_user->roles, true);
+    }
+
     public function restrict_mimes_to_images($mimes)
     {
         $mimes = array();
         $mimes['jpg|jpeg|jpe'] = 'image/jpeg';
         $mimes['png'] = 'image/png';
         $mimes['webp'] = 'image/webp';
+        if ($this->user_can_upload_pdf()) {
+            $mimes['pdf'] = 'application/pdf';
+        }
         $mimes['zip'] = 'application/zip';
         return $mimes;
     }
@@ -221,6 +233,9 @@ class Eikon_Images
         $ext = $wp_filetype['ext'];
 
         $allowed_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'bmp', 'tiff', 'tif', 'webp', 'ico', 'heic', 'svg');
+        if ($this->user_can_upload_pdf()) {
+            $allowed_extensions[] = 'pdf';
+        }
 
         if (!in_array($ext, $allowed_extensions)) {
             return array(
