@@ -131,6 +131,55 @@ add_action('openid-connect-generic-update-user-using-current-claim', 'eikon_sso_
 add_action('openid-connect-generic-user-create', 'eikon_sso_map_role_from_claims', 10, 2);
 
 /**
+ * Allow inside.eikon.ch as a valid redirect host.
+ *
+ * In Bedrock headless setup, WP_HOME is eikon.ch (frontend), so WordPress
+ * wp_validate_redirect treats inside.eikon.ch (backend) as external by default.
+ *
+ * @param array<string> $hosts List of allowed redirect hosts.
+ * @return array<string>
+ */
+function eikon_sso_allowed_redirect_hosts($hosts)
+{
+    $admin_host = wp_parse_url(admin_url(), PHP_URL_HOST);
+    if (!empty($admin_host)) {
+        $hosts[] = (string) $admin_host;
+    }
+    return array_unique($hosts);
+}
+add_filter('allowed_redirect_hosts', 'eikon_sso_allowed_redirect_hosts');
+
+/**
+ * Default the OIDC client redirect destination to the WP Admin dashboard.
+ *
+ * @return string
+ */
+function eikon_sso_default_redirect_to()
+{
+    return admin_url();
+}
+add_filter('openid-connect-generic-client-redirect-to', 'eikon_sso_default_redirect_to');
+
+/**
+ * Catch and redirect to the WP Admin dashboard after SSO login.
+ *
+ * Prevents redirecting to home_url() (the headless frontend eikon.ch).
+ *
+ * @param string $location The redirect location.
+ * @return string
+ */
+function eikon_sso_fix_login_redirect($location)
+{
+    if (isset($_GET['action']) && $_GET['action'] === 'openid-connect-authorize') {
+        if (rtrim($location, '/') === rtrim(home_url(), '/')) {
+            return admin_url();
+        }
+    }
+    return $location;
+}
+add_filter('wp_redirect', 'eikon_sso_fix_login_redirect', 10, 1);
+
+/**
  * Check if an email belongs to the student domain.
  *
  * @param string $email
