@@ -128,6 +128,7 @@ function eikon_sso_map_role_from_claims($user, $user_claim)
     }
 }
 add_action('openid-connect-generic-update-user-using-current-claim', 'eikon_sso_map_role_from_claims', 10, 2);
+add_action('openid-connect-generic-user-create', 'eikon_sso_map_role_from_claims', 10, 2);
 
 /**
  * Check if an email belongs to the student domain.
