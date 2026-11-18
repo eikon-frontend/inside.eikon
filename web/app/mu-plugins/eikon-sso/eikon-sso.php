@@ -24,8 +24,10 @@ if (!defined('ABSPATH')) {
 /**
  * Configure OIDC plugin settings dynamically.
  *
- * Sets nickname_key to 'email' because Microsoft Graph userinfo endpoint
- * provides 'email' but does not include 'preferred_username'.
+ * - Sets nickname_key to 'email' because Microsoft Graph userinfo endpoint
+ *   provides 'email' but does not include 'preferred_username'.
+ * - Enables linking existing users by email.
+ * - Enables linking unverified users (Microsoft Entra does not send email_verified claim).
  *
  * @param object $settings The plugin settings object.
  * @return object
@@ -33,12 +35,15 @@ if (!defined('ABSPATH')) {
 function eikon_sso_configure_settings($settings)
 {
     $settings->nickname_key = 'email';
+    $settings->link_existing_users = true;
+    $settings->link_unverified_users = true;
     return $settings;
 }
 add_filter('openid-connect-generic-settings', 'eikon_sso_configure_settings');
 
 /**
- * Ensure both preferred_username and email are present in user claims.
+ * Ensure both preferred_username and email are present in user claims,
+ * and mark email as verified for Entra ID accounts.
  *
  * @param array<string, mixed> $user_claim The claims array from the IdP.
  * @return array<string, mixed>
@@ -52,6 +57,9 @@ function eikon_sso_alter_user_claim($user_claim)
     if (empty($user_claim['preferred_username']) && !empty($user_claim['email'])) {
         $user_claim['preferred_username'] = $user_claim['email'];
     }
+
+    // Mark email as verified since edufr.ch / studentfr.ch accounts are verified by the state.
+    $user_claim['email_verified'] = true;
 
     return $user_claim;
 }
@@ -120,72 +128,6 @@ function eikon_sso_map_role_from_claims($user, $user_claim)
     }
 }
 add_action('openid-connect-generic-update-user-using-current-claim', 'eikon_sso_map_role_from_claims', 10, 2);
-
-/**
- * Match existing WordPress users by email when logging in via SSO.
- *
- * Without this filter, the OIDC plugin may create duplicate accounts
- * instead of linking to existing users who were created manually.
- *
- * @param WP_User|null $user       The matched user, or null.
- * @param array        $user_claim The OIDC user claims.
- * @return WP_User|null
- */
-function eikon_sso_match_existing_user_by_email($user, $user_claim)
-{
-    // If a user was already matched, don't override
-    if ($user instanceof WP_User) {
-        return $user;
-    }
-
-    // Try to find existing user by email from claims
-    $email = $user_claim['email'] ?? ($user_claim['preferred_username'] ?? '');
-
-    if (empty($email) || !is_email($email)) {
-        return $user;
-    }
-
-    $existing_user = get_user_by('email', $email);
-
-    if ($existing_user instanceof WP_User) {
-        return $existing_user;
-    }
-
-    return $user;
-}
-add_filter('openid-connect-generic-user-login-test', 'eikon_sso_match_existing_user_by_email', 10, 2);
-
-/**
- * Also match by email during the user creation phase.
- *
- * The OIDC plugin calls this filter to check if a user already exists
- * before creating a new one. We ensure matching by email works.
- *
- * @param WP_User|false $user       The matched user, or false.
- * @param array         $user_claim The OIDC user claims.
- * @return WP_User|false
- */
-function eikon_sso_pre_create_user_match($user, $user_claim)
-{
-    if ($user instanceof WP_User) {
-        return $user;
-    }
-
-    $email = $user_claim['email'] ?? ($user_claim['preferred_username'] ?? '');
-
-    if (empty($email) || !is_email($email)) {
-        return $user;
-    }
-
-    $existing_user = get_user_by('email', $email);
-
-    if ($existing_user instanceof WP_User) {
-        return $existing_user;
-    }
-
-    return $user;
-}
-add_filter('openid-connect-generic-user-creation-test', 'eikon_sso_pre_create_user_match', 10, 2);
 
 /**
  * Check if an email belongs to the student domain.

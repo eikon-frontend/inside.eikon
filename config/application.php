@@ -109,6 +109,8 @@ Config::define('OIDC_ENDPOINT_JWKS_URL', env('OIDC_ENDPOINT_JWKS_URL') ?: 'https
 Config::define('OIDC_CLIENT_SCOPE', 'openid email profile');
 Config::define('OIDC_LOGIN_TYPE', 'button');
 Config::define('OIDC_CREATE_IF_DOES_NOT_EXIST', true);
+Config::define('OIDC_LINK_EXISTING_USERS', true);
+Config::define('OIDC_LINK_UNVERIFIED_USERS', true);
 
 /**
  * Custom Settings
