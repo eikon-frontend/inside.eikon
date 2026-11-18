@@ -22,6 +22,42 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Configure OIDC plugin settings dynamically.
+ *
+ * Sets nickname_key to 'email' because Microsoft Graph userinfo endpoint
+ * provides 'email' but does not include 'preferred_username'.
+ *
+ * @param object $settings The plugin settings object.
+ * @return object
+ */
+function eikon_sso_configure_settings($settings)
+{
+    $settings->nickname_key = 'email';
+    return $settings;
+}
+add_filter('openid-connect-generic-settings', 'eikon_sso_configure_settings');
+
+/**
+ * Ensure both preferred_username and email are present in user claims.
+ *
+ * @param array<string, mixed> $user_claim The claims array from the IdP.
+ * @return array<string, mixed>
+ */
+function eikon_sso_alter_user_claim($user_claim)
+{
+    if (empty($user_claim['email']) && !empty($user_claim['preferred_username'])) {
+        $user_claim['email'] = $user_claim['preferred_username'];
+    }
+
+    if (empty($user_claim['preferred_username']) && !empty($user_claim['email'])) {
+        $user_claim['preferred_username'] = $user_claim['email'];
+    }
+
+    return $user_claim;
+}
+add_filter('openid-connect-generic-alter-user-claim', 'eikon_sso_alter_user_claim');
+
+/**
  * Assign WordPress role based on the Microsoft Entra preferred_username claim.
  *
  * The FRITIC token provides:
