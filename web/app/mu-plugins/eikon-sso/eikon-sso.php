@@ -190,15 +190,13 @@ add_filter('openid-connect-generic-login-button-text', 'eikon_sso_login_button_t
  */
 function eikon_sso_login_styles()
 {
-    ?>
-    <style>
+    echo '<style>
         .openid-connect-login-button {
             display: block !important;
             width: 100% !important;
             text-align: center !important;
             padding: 12px 20px !important;
             margin: 16px 0 24px !important;
-            background-color: #0078d4 !important;
             color: #fff !important;
             border: none !important;
             border-radius: 4px !important;
@@ -211,7 +209,6 @@ function eikon_sso_login_styles()
         }
         .openid-connect-login-button:hover,
         .openid-connect-login-button:focus {
-            background-color: #106ebe !important;
             color: #fff !important;
         }
         /* Separator between SSO and local login */
@@ -223,8 +220,7 @@ function eikon_sso_login_styles()
             font-size: 13px;
             margin: 0 0 16px;
         }
-    </style>
-    <?php
+    </style>';
 }
 add_action('login_enqueue_scripts', 'eikon_sso_login_styles');
 
