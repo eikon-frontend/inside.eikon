@@ -34,7 +34,7 @@ class Eikon_GraphQL
         }
 
         if (
-            'project' === $data->post_type &&
+            in_array($data->post_type, ['project', 'magazine'], true) &&
             in_array($data->post_status, ['draft', 'pending', 'future'], true)
         ) {
             return 'public';
@@ -48,7 +48,7 @@ class Eikon_GraphQL
             $parent = get_post((int) $data->post_parent);
             if (
                 $parent instanceof \WP_Post &&
-                'project' === $parent->post_type &&
+                in_array($parent->post_type, ['project', 'magazine'], true) &&
                 in_array($parent->post_status, ['draft', 'pending', 'future'], true)
             ) {
                 return 'public';
@@ -81,8 +81,14 @@ class Eikon_GraphQL
         }
 
         $post_type = $query->get('post_type');
-        $is_project = $post_type === 'project' || (is_array($post_type) && in_array('project', $post_type, true));
-        if (!$is_project) {
+        $allowed_types = ['project', 'magazine'];
+        $matches = false;
+        if (is_array($post_type)) {
+            $matches = (bool) array_intersect($post_type, $allowed_types);
+        } else {
+            $matches = in_array($post_type, $allowed_types, true);
+        }
+        if (!$matches) {
             return;
         }
 

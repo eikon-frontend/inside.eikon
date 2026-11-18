@@ -232,20 +232,50 @@ class Eikon_Headless
             return trailingslashit($frontend_url) . 'projets/' . $post->post_name . '/';
         }
 
+        if ($post->post_type === 'magazine') {
+            $terms = wp_get_object_terms($post->ID, 'edition');
+            $edition_slug = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->slug : 'edition';
+            return trailingslashit($frontend_url) . $edition_slug . '/' . $post->post_name . '/';
+        }
+
+        if ($post->post_type === 'post') {
+            $categories = get_the_category($post->ID);
+            $cat_slug = !empty($categories) ? $categories[0]->slug : 'article';
+            return trailingslashit($frontend_url) . $cat_slug . '/' . $post->post_name . '/';
+        }
+
         return get_permalink($post);
     }
 
     public function customize_sample_permalink($permalink, $post_id, $title, $name, $post)
     {
-        if (!$post || $post->post_type !== 'project' || empty($post->post_name)) {
+        if (!$post || empty($post->post_name)) {
             return $permalink;
         }
 
         $frontend_url = home_url('/');
-        $project_url = trailingslashit($frontend_url) . 'projets/%postname%/';
         $slug = !empty($name) ? $name : $post->post_name;
 
-        return array($project_url, $slug);
+        if ($post->post_type === 'project') {
+            $project_url = trailingslashit($frontend_url) . 'projets/%postname%/';
+            return array($project_url, $slug);
+        }
+
+        if ($post->post_type === 'magazine') {
+            $terms = wp_get_object_terms($post->ID, 'edition');
+            $edition_slug = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->slug : 'edition';
+            $mag_url = trailingslashit($frontend_url) . $edition_slug . '/%postname%/';
+            return array($mag_url, $slug);
+        }
+
+        if ($post->post_type === 'post') {
+            $categories = get_the_category($post->ID);
+            $cat_slug = !empty($categories) ? $categories[0]->slug : 'article';
+            $post_url = trailingslashit($frontend_url) . $cat_slug . '/%postname%/';
+            return array($post_url, $slug);
+        }
+
+        return $permalink;
     }
 }
 

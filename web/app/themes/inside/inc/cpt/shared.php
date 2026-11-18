@@ -12,6 +12,9 @@ function prefix_disable_gutenberg($current_status, $post_type)
     if ('mandat' === $post_type) {
         return false;
     }
+    if ('magazine' === $post_type) {
+        return false;
+    }
     return $current_status;
 }
 

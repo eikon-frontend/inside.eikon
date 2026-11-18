@@ -96,6 +96,19 @@ Config::define('LOGGED_IN_SALT', env('LOGGED_IN_SALT'));
 Config::define('NONCE_SALT', env('NONCE_SALT'));
 
 /**
+ * OpenID Connect SSO (Microsoft Entra)
+ */
+Config::define('OIDC_CLIENT_ID', env('OIDC_CLIENT_ID'));
+Config::define('OIDC_CLIENT_SECRET', env('OIDC_CLIENT_SECRET'));
+Config::define('OIDC_ENDPOINT_LOGIN_URL', env('OIDC_ENDPOINT_LOGIN_URL'));
+Config::define('OIDC_ENDPOINT_TOKEN_URL', env('OIDC_ENDPOINT_TOKEN_URL'));
+Config::define('OIDC_ENDPOINT_USERINFO_URL', env('OIDC_ENDPOINT_USERINFO_URL'));
+Config::define('OIDC_ENDPOINT_LOGOUT_URL', env('OIDC_ENDPOINT_LOGOUT_URL'));
+Config::define('OIDC_CLIENT_SCOPE', 'openid email profile');
+Config::define('OIDC_LOGIN_TYPE', 'button');
+Config::define('OIDC_CREATE_IF_DOES_NOT_EXIST', true);
+
+/**
  * Custom Settings
  */
 Config::define('AUTOMATIC_UPDATER_DISABLED', true);

@@ -43,10 +43,10 @@ add_filter('media_buttons', function ($html) {
     return $html;
 }, 1, 1);
 
-// Remove media buttons from ACF WYSIWYG fields on project posts
+// Remove media buttons from ACF WYSIWYG fields on project and magazine posts
 add_filter('acf/fields/wysiwyg/media_buttons', function () {
     global $post;
-    if ($post && in_array($post->post_type, ['project', 'mandat'], true)) {
+    if ($post && in_array($post->post_type, ['project', 'mandat', 'magazine'], true)) {
         return false; // Disable media buttons in ACF WYSIWYG
     }
     return true;
@@ -56,6 +56,10 @@ add_filter('acf/fields/wysiwyg/media_buttons', function () {
 add_filter('acf/fields/wysiwyg/toolbars', function ($toolbars) {
     $toolbars['Portfolio Layout'] = [];
     $toolbars['Portfolio Layout'][1] = ['formatselect', 'italic', 'link', 'bullist', 'numlist', 'undo', 'redo', 'fullscreen'];
+
+    $toolbars['Magazine Text'] = [];
+    $toolbars['Magazine Text'][1] = ['bold', 'italic', 'link', 'bullist', 'numlist', 'undo', 'redo'];
+
     return $toolbars;
 });
 
