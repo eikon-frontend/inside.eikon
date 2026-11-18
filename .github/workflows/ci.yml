@@ -28,6 +28,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
+      - name: Add HTTP basic auth credentials for ACF
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
@@ -47,6 +50,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+
+      - name: Add HTTP basic auth credentials for ACF
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
