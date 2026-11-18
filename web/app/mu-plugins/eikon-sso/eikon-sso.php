@@ -37,9 +37,22 @@ function eikon_sso_configure_settings($settings)
     $settings->nickname_key = 'email';
     $settings->link_existing_users = true;
     $settings->link_unverified_users = true;
+    // Keep logout local to WordPress so users don't disconnect from their entire Microsoft session
+    $settings->endpoint_end_session = '';
     return $settings;
 }
 add_filter('openid-connect-generic-settings', 'eikon_sso_configure_settings');
+
+/**
+ * Keep logout local to WordPress: redirect to the login page without sending users to Microsoft.
+ *
+ * @return string
+ */
+function eikon_sso_local_logout_redirect()
+{
+    return wp_login_url();
+}
+add_filter('logout_redirect', 'eikon_sso_local_logout_redirect', 100);
 
 /**
  * Ensure both preferred_username and email are present in user claims,

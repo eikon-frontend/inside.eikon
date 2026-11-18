@@ -103,7 +103,6 @@ Config::define('OIDC_CLIENT_SECRET', env('OIDC_CLIENT_SECRET'));
 Config::define('OIDC_ENDPOINT_LOGIN_URL', env('OIDC_ENDPOINT_LOGIN_URL'));
 Config::define('OIDC_ENDPOINT_TOKEN_URL', env('OIDC_ENDPOINT_TOKEN_URL'));
 Config::define('OIDC_ENDPOINT_USERINFO_URL', env('OIDC_ENDPOINT_USERINFO_URL'));
-Config::define('OIDC_ENDPOINT_LOGOUT_URL', env('OIDC_ENDPOINT_LOGOUT_URL'));
 Config::define('OIDC_ISSUER', env('OIDC_ISSUER') ?: 'https://login.microsoftonline.com/2573b153-bfe1-43ab-ab7b-8c25535d8199/v2.0');
 Config::define('OIDC_ENDPOINT_JWKS_URL', env('OIDC_ENDPOINT_JWKS_URL') ?: 'https://login.microsoftonline.com/2573b153-bfe1-43ab-ab7b-8c25535d8199/discovery/v2.0/keys');
 Config::define('OIDC_CLIENT_SCOPE', 'openid email profile');
